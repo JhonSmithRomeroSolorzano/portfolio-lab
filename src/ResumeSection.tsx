@@ -10,14 +10,8 @@ export function ResumeSection() {
     >
       <div className="section-heading" data-reveal="0">
         <div>
-          <span className="eyebrow">
-            <span className="section-index">03 /</span> THE RÉSUMÉ
-          </span>
-          <h2 id="resume-title">
-            Experience behind
-            <br />
-            <em>the work.</em>
-          </h2>
+          <span className="eyebrow">CAREER & EDUCATION</span>
+          <h2 id="resume-title">Experience.</h2>
         </div>
         <a
           className="text-link"

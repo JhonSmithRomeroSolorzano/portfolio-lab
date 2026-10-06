@@ -42,6 +42,15 @@ Requested October 6; complete these before expanding the backend lab.
 - [x] Restrained scroll reveals with keyboard, mobile, and reduced-motion support.
 - [x] Reviewed the résumé, JSR mark, blue lab, theme selection/reload, and keyboard activation in the browser at desktop, 390px, and 320px widths; no horizontal page overflow. Verified lab controls after the refresh. Checked primary, muted, card, and lab text color pairs at 4.5:1 or better. The 51-test suite covers initial theme/storage fallbacks and reveal lifecycle, focus cancellation, and live reduced-motion changes; production build passes.
 
+### Personal design direction — October 6 follow-up
+
+- [x] Replaced the oversized editorial hero and numbered marketing sections with a compact identity rail, personal introduction, and interactive map of Jhon’s stack.
+- [x] Selectable Interface, Services, and Data layers describe verified experience and connect to useful portfolio sections. The map is authored for this repository in React/CSS/SVG.
+- [x] Retained uppercase JSR, warm light and navy dark themes, résumé content, keyboard operation, and reduced-motion support. Keep one theme toggle; do not restore a separate System button.
+- [x] Reworked the narrow lab diagram into two rows so its nodes remain visible on small phones. Browser checks covered all three stack selections, keyboard input, theme persistence, résumé navigation, lab state changes, and widths of 320px, 390px, 900px, and desktop. A compact sidebar keeps the toggle reachable in short desktop windows. All 52 tests pass.
+
+Future visual work should build on this workspace direction and Jhon’s actual engineering work. Avoid reinstating generic oversized slogan heroes, repeated numbered sections, or borrowed portfolio layouts. Do not claim a globally unique design; keep the implementation specific to this project.
+
 Next for this brief: a print/download résumé generated from the same verified profile data, then focused browser regression coverage. Keep newly supplied career details subject to verification.
 
 ## Next useful milestones

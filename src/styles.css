@@ -1,8 +1,8 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;450;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap");
 
 :root {
   color-scheme: light;
-  font-family: "DM Sans", sans-serif;
+  font-family: "IBM Plex Sans", sans-serif;
   color: var(--ink);
   background: var(--paper);
   font-synthesis: none;
@@ -25,7 +25,7 @@
   --lab-outline: #789bc6;
   --signal: #9bcbff;
   --served: #86a3c4;
-  --serif: "DM Serif Display", Georgia, serif;
+  --display: "IBM Plex Sans", sans-serif;
   --mono: "IBM Plex Mono", monospace;
 }
 
@@ -39,11 +39,6 @@
   --emphasis: #8fb6eb;
   --focus: #9bcbff;
   --soft: #1a2d45;
-}
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 26px;
 }
 .theme-toggle {
   display: inline-flex;
@@ -64,24 +59,6 @@
 .lab-shell {
   color-scheme: dark;
   --focus: var(--signal);
-}
-@media (max-width: 950px) {
-  .header-actions .header-link {
-    display: none;
-  }
-}
-@media (max-width: 600px) {
-  .site-header {
-    flex-wrap: wrap;
-    height: auto !important;
-    padding-block: 16px;
-    gap: 14px;
-  }
-  .site-header nav {
-    order: 3;
-    width: 100%;
-    justify-content: space-between;
-  }
 }
 
 * {
@@ -129,45 +106,8 @@ svg {
   width: min(1180px, calc(100% - 96px));
   margin-inline: auto;
 }
-.site-header {
-  height: 112px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--line);
-}
-.brand {
-  display: flex;
-  gap: 13px;
-  align-items: center;
-  font-size: 13px;
-  line-height: 1.3;
-}
-.brand strong {
-  font-weight: 600;
-}
-.monogram {
-  display: block;
-  height: 48px;
-  width: 48px;
-}
-.site-header nav {
-  display: flex;
-  gap: 34px;
-  font-size: 13px;
-}
-.site-header nav a {
-  padding: 12px 0;
-}
-.site-header a:hover,
 .text-link:hover {
   color: var(--accent);
-}
-.header-link {
-  display: flex;
-  gap: 15px;
-  align-items: center;
-  font-size: 13px;
 }
 .eyebrow {
   font-family: var(--mono);
@@ -175,51 +115,12 @@ svg {
   font-weight: 500;
   letter-spacing: 1.2px;
 }
-.hero {
-  padding-top: 59px;
-}
-.hero-kicker {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.availability {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  font-size: 11px;
-  border: 1px solid var(--line);
-  border-radius: 30px;
-  padding: 8px 12px;
-}
-.availability i,
 .status i {
   display: inline-block;
   width: 6px;
   height: 6px;
   border-radius: 50%;
   background: var(--accent);
-}
-.hero h1 {
-  font: 400 clamp(60px, 7.8vw, 108px)/1.06 var(--serif);
-  letter-spacing: -3.8px;
-  margin: 31px 0 30px;
-}
-.hero h1 em {
-  color: var(--emphasis);
-  font-weight: 400;
-}
-.hero-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 35px;
-}
-.hero-bottom p {
-  font-size: 16px;
-  line-height: 1.8;
-  color: var(--muted);
-  margin: 0;
 }
 .primary-button {
   display: inline-flex;
@@ -240,24 +141,6 @@ svg {
   background: var(--accent);
   transform: translateY(-2px);
 }
-.hero-foot {
-  border-top: 1px solid var(--line);
-  margin-top: 43px;
-  padding: 17px 0;
-  display: flex;
-  justify-content: space-between;
-  font-size: 11px;
-  color: var(--muted);
-}
-.hero-foot > span:last-child {
-  text-transform: uppercase;
-  font: 10px var(--mono);
-  letter-spacing: 0.8px;
-}
-.hero-foot > span:last-child span {
-  margin-left: 23px;
-  font-size: 16px;
-}
 .lab-section {
   padding-top: 75px;
 }
@@ -268,12 +151,8 @@ svg {
   gap: 40px;
   margin-bottom: 30px;
 }
-.section-index {
-  color: var(--muted);
-  margin-right: 10px;
-}
 h2 {
-  font: 400 44px/1.12 var(--serif);
+  font: 400 44px/1.12 var(--display);
   letter-spacing: -1px;
   margin: 20px 0 0;
 }
@@ -967,11 +846,6 @@ input[type="range"] {
 .skill-row:last-child {
   border-bottom: 1px solid var(--line);
 }
-.skill-number {
-  font: 10px var(--mono);
-  color: var(--muted);
-  padding-top: 6px;
-}
 .skill-row h3 {
   font-size: 20px;
   font-weight: 500;
@@ -1101,12 +975,6 @@ input[type="range"] {
   .wrap {
     width: min(1260px, calc(100% - 120px));
   }
-  .hero {
-    padding-top: 75px;
-  }
-  .hero h1 {
-    font-size: 116px;
-  }
   .lab-section {
     padding-top: 95px;
   }
@@ -1114,9 +982,6 @@ input[type="range"] {
 @media (max-width: 1050px) {
   .wrap {
     width: calc(100% - 64px);
-  }
-  .hero h1 {
-    font-size: 85px;
   }
   .lab-body {
     grid-template-columns: minmax(0, 1fr) 250px;
@@ -1171,64 +1036,14 @@ input[type="range"] {
   .wrap {
     width: calc(100% - 40px);
   }
-  .site-header {
-    height: 88px;
-  }
-  .site-header nav {
-    gap: 18px;
-    font-size: 12px;
-  }
-  .brand > span:last-child {
-    display: none;
-  }
-  .header-link {
-    font-size: 12px;
-    gap: 7px;
-  }
-  .hero {
-    padding-top: 37px;
-  }
-  .hero h1 {
-    font-size: clamp(47px, 10.7vw, 80px);
-    letter-spacing: -2px;
-    margin-top: 30px;
-  }
   .eyebrow {
     font-size: 9px;
     letter-spacing: 0.7px;
-  }
-  .availability {
-    font-size: 9px;
-    padding: 6px 8px;
-  }
-  .hero-bottom {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 24px;
-  }
-  .hero-bottom p {
-    font-size: 14px;
-  }
-  .desktop-break {
-    display: none;
   }
   .primary-button {
     font-size: 12px;
     padding: 16px 19px;
     gap: 30px;
-  }
-  .hero-foot {
-    margin-top: 32px;
-    font-size: 9px;
-    gap: 12px;
-    line-height: 1.5;
-  }
-  .hero-foot > span:last-child {
-    font-size: 8px;
-    text-align: right;
-  }
-  .hero-foot > span:last-child span {
-    display: none;
   }
   .lab-section {
     padding-top: 51px;
@@ -1424,15 +1239,6 @@ input[type="range"] {
 @media (max-width: 390px) {
   .wrap {
     width: calc(100% - 28px);
-  }
-  .site-header nav {
-    gap: 12px;
-  }
-  .hero h1 {
-    font-size: 45px;
-  }
-  .hero-kicker .eyebrow {
-    font-size: 8px;
   }
   .lab-display {
     padding-inline: 13px;

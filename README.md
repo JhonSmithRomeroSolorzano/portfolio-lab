@@ -1,12 +1,14 @@
 # Jhon Smith Romero · Portfolio Lab
 
-A full-stack developer's portfolio, with an interactive experiment you can actually use.
+Jhon Smith Romero’s engineering workspace: explore my stack, inspect a working systems experiment, and read my experience.
 
 **[Explore the portfolio](https://jhonsmithromerosolorzano.github.io/portfolio-lab/)** · **[Case study](CASE_STUDY.md)** · **[GitHub profile](https://github.com/JhonSmithRomeroSolorzano)** · **[Roadmap](ROADMAP.md)**
 
 ## Résumé and presentation
 
 The [résumé section](https://jhonsmithromerosolorzano.github.io/portfolio-lab/#resume) includes selected employment, education, and certifications verified against [my LinkedIn profile](https://www.linkedin.com/in/jhonsmithr) on October 6, 2026. Dates are preserved as listed, including overlapping roles; descriptions do not imply unverified employer relationships or outcomes. Public professional content lives in `src/profile.ts`.
+
+The portfolio uses a custom workspace composition: a compact identity rail and a connected stack map with selectable Interface, Services, and Data layers. The map explains verified experience and leads to the lab, résumé, and background. It is authored in React, CSS, and SVG for this project.
 
 The portfolio uses uppercase JSR branding, a warm neutral light theme, and a navy dark theme. A single light/dark toggle follows the device until the visitor chooses an appearance, then remembers that choice. There is no separate System button; existing automatic preferences remain supported. Blocked browser storage leaves the control usable for the current visit.
 

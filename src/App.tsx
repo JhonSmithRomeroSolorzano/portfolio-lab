@@ -16,6 +16,7 @@ import { CacheExpiryPanel } from "./CacheExpiryPanel";
 import { QueueExperiment } from "./QueueExperiment";
 
 import { observeScrollReveals } from "./scroll-reveals";
+import { StackMap } from "./StackMap";
 import { ResumeSection } from "./ResumeSection";
 import { LINKEDIN } from "./profile";
 import { ThemeSwitcher } from "./ThemeSwitcher";
@@ -461,241 +462,257 @@ export function App() {
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <header className="site-header wrap">
-        <a className="brand" href="#" aria-label="Jhon Smith Romero, home">
-          <img
-            className="monogram"
-            src="./favicon.svg"
-            alt="JSR"
-            width="48"
-            height="48"
-          />
-          <span>
-            Jhon Smith
-            <br />
-            <strong>Romero</strong>
-          </span>
-        </a>
-        <nav aria-label="Main navigation">
-          <a href="#lab">The lab</a>
-          <a href="#resume">Résumé</a>
-          <a href="#about">About</a>
-          <a href="#journal">Build log</a>
-        </nav>
-        <div className="header-actions">
-          <ThemeSwitcher />
+      <div className="portfolio-frame">
+        <header className="identity-rail">
           <a
-            className="header-link"
-            href={GITHUB}
-            target="_blank"
-            rel="noreferrer"
+            className="rail-brand"
+            href="#"
+            aria-label="Jhon Smith Romero, home"
           >
-            GitHub <Arrow diagonal />
+            <img src="./favicon.svg" alt="JSR" width="64" height="64" />
+            <span>
+              Jhon Smith
+              <br />
+              <strong>Romero</strong>
+            </span>
           </a>
-        </div>
-      </header>
-      <main id="main" ref={mainRef}>
-        <section className="hero wrap" aria-labelledby="hero-title">
-          <div className="hero-kicker">
-            <span className="eyebrow">FULL-STACK DEVELOPER</span>
-            <span className="availability">
-              <i />
-              Open to opportunities
-            </span>
-          </div>
-          <h1 id="hero-title">
-            Thoughtful code.
+          <p className="rail-caption">
+            ENGINEERING
             <br />
-            <em>Reliable systems.</em>
-          </h1>
-          <div className="hero-bottom">
-            <p>
-              I’m Jhon, a developer working across the JavaScript stack.
-              <br className="desktop-break" /> I connect useful interfaces with
-              the systems that power them.
-            </p>
-            <div className="hero-actions">
-              <a className="primary-button" href="#resume">
-                Explore my résumé <Arrow />
-              </a>
-              <a className="text-link" href="#lab">
-                Try the lab <Arrow diagonal />
-              </a>
-            </div>
-          </div>
-          <div className="hero-foot">
-            <span>7+ years in software development</span>
-            <span>
-              JAVASCRIPT & TYPESCRIPT <span aria-hidden="true">↙</span>
-            </span>
-          </div>
-        </section>
-        <section
-          className="lab-section wrap"
-          id="lab"
-          aria-labelledby="lab-title"
-        >
-          <div className="section-heading" data-reveal="0">
-            <div>
-              <span className="eyebrow">
-                <span className="section-index">01 /</span> THE ENGINEERING LAB
-              </span>
-              <h2 id="lab-title">
-                Don’t just read about it.
-                <br />
-                <em>Pull a few levers.</em>
-              </h2>
-            </div>
-            <p>
-              Good engineering is a series of choices. <br />
-              Change the traffic. Slow the database. <br />
-              See what a cache can—and can’t—do.
-            </p>
-          </div>
-          <SignalLab />
-          <div className="project-caption">
-            <span>
-              <b>Signal Lab</b> · An original portfolio experiment
-            </span>
-            <a
-              href={`${REPO}/blob/main/CASE_STUDY.md`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Read the engineering walkthrough ↗
-            </a>
-          </div>
-        </section>
-        <section
-          className="about-section wrap"
-          id="about"
-          aria-labelledby="about-title"
-        >
-          <div className="about-intro" data-reveal="0">
-            <span className="eyebrow">
-              <span className="section-index">02 /</span> ACROSS THE STACK
-            </span>
-            <h2 id="about-title">
-              From the first click
-              <br />
-              <em>to the last query.</em>
-            </h2>
-            <p>
-              I’m a systems and telecommunications engineer with more than seven
-              years in software development. My work spans frontend and backend
-              development, with a focus on the JavaScript and TypeScript
-              ecosystem.
-            </p>
-            <p>
-              I’ve worked primarily with NoSQL databases, alongside experience
-              with SQL, caching, real-time communication, and deployment
-              workflows.
-            </p>
-            <a
-              className="text-link"
-              href={GITHUB}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Meet me on GitHub <Arrow diagonal />
-            </a>
-          </div>
-          <div className="skill-list">
-            {skills.map((skill) => (
-              <article
-                className="skill-row"
-                key={skill.number}
-                data-reveal={Number(skill.number) * 50}
-              >
-                <span className="skill-number">{skill.number}</span>
-                <div>
-                  <h3>{skill.title}</h3>
-                  <p>{skill.text}</p>
-                  <div className="tags">
-                    {skill.tags.map((tag) => (
-                      <span key={tag}>{tag}</span>
-                    ))}
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-        <ResumeSection />
-        <section
-          className="journal-section wrap"
-          id="journal"
-          aria-labelledby="journal-title"
-        >
-          <div className="section-heading" data-reveal="0">
-            <div>
-              <span className="eyebrow">
-                <span className="section-index">04 /</span> BUILDING IN PUBLIC
-              </span>
-              <h2 id="journal-title">The work keeps moving.</h2>
-            </div>
-            <a
-              className="text-link"
-              href={`${REPO}/blob/main/ROADMAP.md`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              See the roadmap <Arrow diagonal />
-            </a>
-          </div>
-          <article className="journal-entry" data-reveal="0">
-            <time dateTime="2026-10-05">OCT 05, 2026</time>
-            <div>
-              <span className="journal-tag">LAB + LOCAL API</span>
-              <h3>From a sketch to a repeatable experiment.</h3>
-              <p>
-                Compare setups, save experiments, trace a request, and explore
-                cache expiry and burst queues. The repository now includes a
-                tested local Node API, batch replay tools, and a walkthrough
-                explaining the model’s decisions and limits.
-              </p>
-            </div>
-            <a
-              href={REPO}
-              className="journal-arrow"
-              aria-label="View the portfolio source code"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <Arrow diagonal />
-            </a>
-          </article>
-        </section>
-        <section className="contact-section wrap" data-reveal="0">
-          <span className="eyebrow">LET’S BUILD SOMETHING USEFUL</span>
-          <div>
-            <h2>
-              Your next idea.
-              <br />
-              <em>Let’s make it work.</em>
-            </h2>
-            <a
-              className="primary-button"
-              href={LINKEDIN}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Find me on LinkedIn <Arrow diagonal />
-            </a>
-          </div>
-          <p>
-            Open to full-stack opportunities with JavaScript, TypeScript, React,
-            and Node.js.
+            PORTFOLIO
           </p>
-        </section>
-      </main>
-      <footer className="site-footer wrap">
-        <span>© 2026 Jhon Smith Romero</span>
-        <span>Built with curiosity. Shipped with care.</span>
-        <a href={REPO} target="_blank" rel="noreferrer">
-          View source <Arrow diagonal />
-        </a>
-      </footer>
+          <nav aria-label="Main navigation">
+            <a href="#workbench">
+              <span aria-hidden="true">⌘</span> Workbench
+            </a>
+            <a href="#lab">
+              <span aria-hidden="true">↯</span> Signal Lab
+            </a>
+            <a href="#resume">
+              <span aria-hidden="true">↗</span> Résumé
+            </a>
+            <a href="#about">
+              <span aria-hidden="true">＋</span> About
+            </a>
+            <a href="#journal">
+              <span aria-hidden="true">≡</span> Build notes
+            </a>
+          </nav>
+          <div className="rail-bottom">
+            <p>
+              Based in Pereira,
+              <br />
+              Colombia.
+            </p>
+            <div className="rail-socials">
+              <a href={GITHUB} target="_blank" rel="noreferrer">
+                GitHub ↗
+              </a>
+              <a href={LINKEDIN} target="_blank" rel="noreferrer">
+                LinkedIn ↗
+              </a>
+            </div>
+            <ThemeSwitcher />
+          </div>
+        </header>
+        <div className="portfolio-content">
+          <main id="main" ref={mainRef} tabIndex={-1}>
+            <section
+              className="workbench wrap"
+              id="workbench"
+              aria-labelledby="intro-title"
+            >
+              <div className="workspace-topline">
+                <span>FULL-STACK DEVELOPER</span>
+                <span className="opportunity">
+                  <i aria-hidden="true" />
+                  Open to opportunities
+                </span>
+              </div>
+              <div className="workbench-intro">
+                <div>
+                  <h1 id="intro-title">
+                    Jhon Smith Romero<span>.</span>
+                  </h1>
+                  <p>
+                    I work across the JavaScript stack: the interface, the
+                    services,
+                    <br className="wide-break" /> and the data that connects
+                    them.
+                  </p>
+                </div>
+                <a className="resume-shortcut" href="#resume">
+                  <span>7+ years in software</span>
+                  <strong>
+                    Explore my résumé <Arrow diagonal />
+                  </strong>
+                </a>
+              </div>
+              <StackMap />
+              <div className="workbench-caption">
+                <span>My stack above. A working experiment below.</span>
+                <a href="#lab">
+                  Try Signal Lab <span aria-hidden="true">↓</span>
+                </a>
+              </div>
+            </section>
+            <section
+              className="lab-section wrap"
+              id="lab"
+              aria-labelledby="lab-title"
+            >
+              <div className="section-heading" data-reveal="0">
+                <div>
+                  <span className="eyebrow">INTERACTIVE PROJECT</span>
+                  <h2 id="lab-title">
+                    Signal Lab<span className="heading-dot">.</span>
+                  </h2>
+                </div>
+                <p>
+                  Change the traffic, cache, or database. Inspect how a small
+                  system responds, then read the decisions behind the model.
+                </p>
+              </div>
+              <SignalLab />
+              <div className="project-caption">
+                <span>
+                  <b>Signal Lab</b> · An original portfolio experiment
+                </span>
+                <a
+                  href={`${REPO}/blob/main/CASE_STUDY.md`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Read the engineering walkthrough ↗
+                </a>
+              </div>
+            </section>
+            <section
+              className="about-section wrap"
+              id="about"
+              aria-labelledby="about-title"
+            >
+              <div className="about-intro" data-reveal="0">
+                <span className="eyebrow">ABOUT JHON</span>
+                <h2 id="about-title">
+                  Across the stack,
+                  <br />
+                  through the details.
+                </h2>
+                <p>
+                  I’m a systems and telecommunications engineer with more than
+                  seven years in software development. My work spans frontend
+                  and backend development, with a focus on the JavaScript and
+                  TypeScript ecosystem.
+                </p>
+                <p>
+                  I’ve worked primarily with NoSQL databases, alongside
+                  experience with SQL, caching, real-time communication, and
+                  deployment workflows.
+                </p>
+                <a
+                  className="text-link"
+                  href={GITHUB}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Meet me on GitHub <Arrow diagonal />
+                </a>
+              </div>
+              <div className="skill-list">
+                {skills.map((skill) => (
+                  <article
+                    className="skill-row"
+                    key={skill.number}
+                    data-reveal={Number(skill.number) * 50}
+                  >
+                    <span className="skill-marker" aria-hidden="true">
+                      ↳
+                    </span>
+                    <div>
+                      <h3>{skill.title}</h3>
+                      <p>{skill.text}</p>
+                      <div className="tags">
+                        {skill.tags.map((tag) => (
+                          <span key={tag}>{tag}</span>
+                        ))}
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+            <ResumeSection />
+            <section
+              className="journal-section wrap"
+              id="journal"
+              aria-labelledby="journal-title"
+            >
+              <div className="section-heading" data-reveal="0">
+                <div>
+                  <span className="eyebrow">WORK IN PROGRESS</span>
+                  <h2 id="journal-title">Build notes.</h2>
+                </div>
+                <a
+                  className="text-link"
+                  href={`${REPO}/blob/main/ROADMAP.md`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  See the roadmap <Arrow diagonal />
+                </a>
+              </div>
+              <article className="journal-entry" data-reveal="0">
+                <time dateTime="2026-10-05">OCT 05, 2026</time>
+                <div>
+                  <span className="journal-tag">LAB + LOCAL API</span>
+                  <h3>From a sketch to a repeatable experiment.</h3>
+                  <p>
+                    Compare setups, save experiments, trace a request, and
+                    explore cache expiry and burst queues. The repository now
+                    includes a tested local Node API, batch replay tools, and a
+                    walkthrough explaining the model’s decisions and limits.
+                  </p>
+                </div>
+                <a
+                  href={REPO}
+                  className="journal-arrow"
+                  aria-label="View the portfolio source code"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Arrow diagonal />
+                </a>
+              </article>
+            </section>
+            <section className="contact-section wrap" data-reveal="0">
+              <span className="eyebrow">GET IN TOUCH</span>
+              <div>
+                <h2>Have a role in mind?</h2>
+                <a
+                  className="primary-button"
+                  href={LINKEDIN}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Find me on LinkedIn <Arrow diagonal />
+                </a>
+              </div>
+              <p>
+                Open to full-stack opportunities with JavaScript, TypeScript,
+                React, and Node.js.
+              </p>
+            </section>
+          </main>
+          <footer className="site-footer wrap">
+            <span>© 2026 Jhon Smith Romero</span>
+            <a href="#workbench">Back to the workbench ↑</a>
+            <a href={REPO} target="_blank" rel="noreferrer">
+              View source <Arrow diagonal />
+            </a>
+          </footer>
+        </div>
+      </div>
     </>
   );
 }

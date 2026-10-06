@@ -16,7 +16,7 @@
   background: var(--soft);
 }
 .resume-card h3 {
-  font: 400 30px/1.2 var(--serif);
+  font: 400 30px/1.2 var(--display);
   margin: 20px 0 16px;
 }
 .resume-card p {
@@ -121,12 +121,6 @@
 .experience-list ul li {
   margin-top: 6px;
 }
-.hero-actions {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 22px;
-}
 .sr-only {
   position: absolute;
   width: 1px;
@@ -141,9 +135,6 @@
 @media (max-width: 1050px) {
   .resume-layout {
     gap: 40px;
-  }
-  .hero-actions {
-    gap: 16px;
   }
 }
 @media (max-width: 760px) {
