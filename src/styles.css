@@ -1479,3 +1479,31 @@ input[type="range"] {
   margin: 18px 0;
   accent-color: var(--lime);
 }
+
+.exact-rate {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: 1fr 78px;
+  gap: 8px;
+  align-items: center;
+}
+.exact-rate label {
+  font-size: 11px;
+}
+.exact-rate input {
+  min-width: 0;
+  width: 100%;
+  min-height: 36px;
+  border: 1px solid #647257;
+  background: #172014;
+  color: #e3ecda;
+  padding: 5px;
+  border-radius: 4px;
+  font: inherit;
+}
+.exact-rate small {
+  grid-column: 1 / -1;
+  color: #b0bea5;
+  font-size: 10px;
+  line-height: 1.5;
+}

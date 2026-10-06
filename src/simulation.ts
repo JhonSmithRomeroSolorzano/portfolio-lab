@@ -29,12 +29,12 @@ export const MODEL = {
 
 export function simulate(scenario: Scenario) {
   if (
-    !Number.isFinite(scenario.requestsPerSecond) ||
+    !Number.isInteger(scenario.requestsPerSecond) ||
     scenario.requestsPerSecond < 1 ||
     scenario.requestsPerSecond > 600
   ) {
     throw new RangeError(
-      "Request rate must be between 1 and 600 requests per second.",
+      "Request rate must be an integer between 1 and 600 requests per second.",
     );
   }
   if (!Object.hasOwn(MODEL.databaseLatencyMs, scenario.database)) {

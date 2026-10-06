@@ -1,3 +1,4 @@
+import { parseRequestRate } from "./request-rate";
 import { DEFAULT_SCENARIO } from "./simulation";
 import type { Scenario } from "./simulation";
 
@@ -9,15 +10,11 @@ export function scenarioFromSearch(search: string): Scenario {
   const single = (key: string) =>
     params.getAll(key).length === 1 ? params.get(key) : null;
   const traffic = single("traffic");
-  const rate =
-    traffic !== null && /^\d+$/.test(traffic) ? Number(traffic) : NaN;
+  const rate = parseRequestRate(traffic ?? "");
   const cache = single("cache");
   const database = single("database");
   const result: Scenario = {
-    requestsPerSecond:
-      Number.isInteger(rate) && rate >= 20 && rate <= 600 && rate % 20 === 0
-        ? rate
-        : DEFAULT_SCENARIO.requestsPerSecond,
+    requestsPerSecond: rate ?? DEFAULT_SCENARIO.requestsPerSecond,
     cacheEnabled: cache === "off" ? false : DEFAULT_SCENARIO.cacheEnabled,
     database:
       database === "normal" || database === "slow" || database === "offline"

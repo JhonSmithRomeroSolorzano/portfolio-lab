@@ -4,9 +4,8 @@ export function validScenario(value: unknown): value is Scenario {
   const s = value as Scenario;
   return (
     Number.isInteger(s.requestsPerSecond) &&
-    s.requestsPerSecond >= 20 &&
+    s.requestsPerSecond >= 1 &&
     s.requestsPerSecond <= 600 &&
-    s.requestsPerSecond % 20 === 0 &&
     typeof s.cacheEnabled === "boolean" &&
     (s.cacheHitPercent === undefined ||
       (Number.isInteger(s.cacheHitPercent) &&

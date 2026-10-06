@@ -14,7 +14,7 @@ curl -X POST http://127.0.0.1:3001/v1/simulate \
 `PORT` overrides 3001. The launcher binds to loopback. SIGINT/SIGTERM stop accepting connections and allow up to five seconds for active requests to finish. This local teaching service has no authentication; public deployment needs an explicit hosting and security design.
 
 - `GET /health`: process readiness and model version, without probing external dependencies.
-- `POST /v1/simulate`: a scenario with `requestsPerSecond` (20–600, multiples of 20), `cacheEnabled` (boolean), and `database` (`normal`, `slow`, `offline`). Optional integer fields: `cacheHitPercent` (0–100), `databaseConnections` (1–32), `writePercent` (0–100). Unknown fields are rejected.
+- `POST /v1/simulate`: a scenario with `requestsPerSecond` (1–600, whole requests), `cacheEnabled` (boolean), and `database` (`normal`, `slow`, `offline`). Optional integer fields: `cacheHitPercent` (0–100), `databaseConnections` (1–32), `writePercent` (0–100). Unknown fields are rejected.
 - Successful response: `model`, `scenario`, `result`, and an explicit simulation `notice`.
 - Errors: 400 malformed JSON, 404 unknown route, 405 wrong method, 413 body over 16 KiB, 415 unsupported media type, 422 invalid scenario. Errors have an `error` string. Responses are JSON with `Cache-Control: no-store`.
 - Request and header timeouts: five seconds. No cross-origin browser access is enabled.

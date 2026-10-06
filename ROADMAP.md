@@ -58,6 +58,8 @@ Completed an explicit API request budget with 429/Retry-After responses and dete
 
 Completed batch scenario replay with NDJSON input/output, strict shared validation, bounded input, useful exit codes, and sample workloads.
 
+Completed exact keyboard-editable traffic rates from 1–600 req/s, aligned across the model, URL, saved files, CLI, and API.
+
 ## Working rule
 
 Completed step-by-step request tracing for cache hits, database reads, and timeouts, restricted to outcomes possible in the selected setup.

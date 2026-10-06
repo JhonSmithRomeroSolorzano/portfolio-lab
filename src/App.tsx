@@ -15,6 +15,8 @@ import { CacheExpiryPanel } from "./CacheExpiryPanel";
 
 import { QueueExperiment } from "./QueueExperiment";
 
+import { RequestRateInput } from "./RequestRateInput";
+
 const GITHUB = "https://github.com/JhonSmithRomeroSolorzano";
 const REPO = `${GITHUB}/portfolio-lab`;
 const labels = {
@@ -233,9 +235,9 @@ function SignalLab() {
             <input
               id="traffic"
               type="range"
-              min="20"
+              min="1"
               max="600"
-              step="20"
+              step="1"
               value={scenario.requestsPerSecond}
               onChange={(event) =>
                 update({ requestsPerSecond: Number(event.target.value) })
@@ -245,6 +247,10 @@ function SignalLab() {
               <span>Quiet morning</span>
               <span>Rush hour</span>
             </div>
+            <RequestRateInput
+              value={scenario.requestsPerSecond}
+              onChange={(requestsPerSecond) => update({ requestsPerSecond })}
+            />
           </div>
           <div className="control-block switch-row">
             <div>

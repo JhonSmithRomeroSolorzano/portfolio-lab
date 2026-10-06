@@ -33,7 +33,6 @@ test("invalid or ambiguous fields fall back without discarding valid ones", () =
     "0",
     "-20",
     "601",
-    "21",
     "20.5",
     "Infinity",
     "2e2",
