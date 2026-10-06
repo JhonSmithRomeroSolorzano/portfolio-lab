@@ -24,3 +24,7 @@ curl -X POST http://127.0.0.1:3001/v1/simulate \
 ## Request diagnostics
 
 Every response includes a fresh `X-Request-Id`. The launcher writes one JSON record per completed response: generated request ID, UTC timestamp, method, normalized route, status, and elapsed milliseconds. Match a client's response header to a log record when investigating a failure. Request bodies, query strings, cookies, headers, and client addresses are excluded. Incoming request IDs are ignored. Library users can supply a logger; logger failures cannot change a response.
+
+## Request budget
+
+The service permits 60 simulation POSTs per fixed 60-second window, shared across the process. Invalid simulation requests also consume the budget; health checks and unknown routes do not. Responses expose `X-RateLimit-Limit` and `X-RateLimit-Remaining`. An exhausted budget returns 429 with a `Retry-After` delay in whole seconds. Restarting the process resets the budget. This bounded in-memory example demonstrates backpressure, not distributed rate limiting or abuse prevention. The server factory accepts `budget` options for tests and local experiments.

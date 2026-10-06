@@ -54,6 +54,8 @@ Completed an optional local Node HTTP API with a shared typed model, strict requ
 
 Completed API request IDs and structured completion logs without payloads or personal request metadata.
 
+Completed an explicit API request budget with 429/Retry-After responses and deterministic time-boundary tests.
+
 ## Working rule
 
 Completed step-by-step request tracing for cache hits, database reads, and timeouts, restricted to outcomes possible in the selected setup.

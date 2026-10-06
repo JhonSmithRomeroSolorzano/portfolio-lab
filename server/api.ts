@@ -1,3 +1,5 @@
+import { createRequestBudget } from "./request-budget.ts";
+import type { BudgetOptions } from "./request-budget.ts";
 import { randomUUID } from "node:crypto";
 import { createServer } from "node:http";
 import type { IncomingMessage, ServerResponse } from "node:http";
@@ -61,10 +63,12 @@ export interface RequestLog {
   durationMs: number;
 }
 export interface ServerOptions {
+  budget?: BudgetOptions;
   logger?: (entry: RequestLog) => void;
 }
 /** Local educational API; no connection to Redis or a production database. */
 export function createSimulationServer(options: ServerOptions = {}) {
+  const consume = createRequestBudget(options.budget);
   const server = createServer(async (req, res) => {
     const requestId = randomUUID();
     const started = performance.now();
@@ -111,6 +115,18 @@ export function createSimulationServer(options: ServerOptions = {}) {
       }
       if (path === "/health") {
         send(res, 200, { status: "ok", model: "signal-lab/1" });
+        return;
+      }
+      const budget = consume();
+      res.setHeader("x-ratelimit-limit", budget.limit);
+      res.setHeader("x-ratelimit-remaining", budget.remaining);
+      if (!budget.allowed) {
+        req.resume();
+        res.setHeader("retry-after", budget.retryAfterSeconds);
+        send(res, 429, {
+          error:
+            "Simulation request budget exhausted. Retry after the indicated delay.",
+        });
         return;
       }
       if (
