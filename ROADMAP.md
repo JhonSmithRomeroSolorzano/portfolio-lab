@@ -95,6 +95,7 @@ Next for the résumé: generate a print/download version from the same verified 
 - [x] Preserved native anchors, smooth scrolling, query parameters, history, and keyboard behavior. User scrolling can interrupt menu feedback; reduced-motion preferences disable decoration and movement while retaining section tracking.
 - [x] Added behavioral coverage for section boundaries, modified clicks, coalesced frames, destination tracking, history changes, short sections sharing the last viewport, interruption, reduced-motion changes, and cleanup.
 - [x] Checked desktop menu clicks, selected-section feedback, both themes, reading progress, and timeline appearance in the browser. All 61 tests and the production build pass.
+- [x] Fixed WebKit keyboard anchor navigation by making destinations focusable and using immediate scrolling during keyboard focus. Verified Enter reaches About and Résumé at the expected top offset, transfers focus, and retains smooth scrolling for pointer clicks.
 
 ## Next useful milestones
 

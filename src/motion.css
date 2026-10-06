@@ -2,6 +2,10 @@
   position: relative;
   isolation: isolate;
 }
+/* Keep keyboard focus and the anchor destination together in WebKit. */
+html:has(.identity-rail nav a:focus-visible, main > section:focus-visible) {
+  scroll-behavior: auto;
+}
 .identity-rail .nav-cursor {
   position: absolute;
   pointer-events: none;

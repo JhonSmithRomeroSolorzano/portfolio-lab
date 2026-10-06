@@ -514,6 +514,7 @@ export function App() {
             <section
               className="workbench wrap"
               id="workbench"
+              tabIndex={-1}
               aria-labelledby="intro-title"
             >
               <span className="section-signal" aria-hidden="true" />
@@ -557,6 +558,7 @@ export function App() {
             <section
               className="lab-section wrap"
               id="lab"
+              tabIndex={-1}
               aria-labelledby="lab-title"
             >
               <span className="section-signal" aria-hidden="true" />
@@ -589,6 +591,7 @@ export function App() {
             <section
               className="about-section wrap"
               id="about"
+              tabIndex={-1}
               aria-labelledby="about-title"
             >
               <span className="section-signal" aria-hidden="true" />
@@ -648,6 +651,7 @@ export function App() {
             <section
               className="journal-section wrap"
               id="journal"
+              tabIndex={-1}
               aria-labelledby="journal-title"
             >
               <span className="section-signal" aria-hidden="true" />
@@ -691,6 +695,7 @@ export function App() {
             <section
               className="contact-section wrap"
               id="contact"
+              tabIndex={-1}
               aria-labelledby="contact-title"
               data-reveal="0"
             >

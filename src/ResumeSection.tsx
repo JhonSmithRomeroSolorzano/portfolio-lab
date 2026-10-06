@@ -16,6 +16,7 @@ export function ResumeSection() {
     <section
       className="resume-section wrap"
       id="resume"
+      tabIndex={-1}
       aria-labelledby="resume-title"
     >
       <span className="section-signal" aria-hidden="true" />
