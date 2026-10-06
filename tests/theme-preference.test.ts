@@ -22,6 +22,7 @@ test("pre-paint theme and interactive control agree for saved, missing, and corr
     for (const systemDark of [true, false]) {
       const root = { dataset: {} as Record<string, string> };
       let chromeColor = "";
+      let favicon = "";
       runInNewContext(script, {
         localStorage: {
           getItem: (key: string) => {
@@ -32,9 +33,10 @@ test("pre-paint theme and interactive control agree for saved, missing, and corr
         matchMedia: () => ({ matches: systemDark }),
         document: {
           documentElement: root,
-          querySelector: () => ({
+          querySelector: (selector: string) => ({
             setAttribute: (_: string, value: string) => {
-              chromeColor = value;
+              if (selector === 'meta[name="theme-color"]') chromeColor = value;
+              if (selector === 'link[rel="icon"]') favicon = value;
             },
           }),
         },
@@ -46,6 +48,10 @@ test("pre-paint theme and interactive control agree for saved, missing, and corr
       assert.equal(
         chromeColor,
         root.dataset.theme === "dark" ? "#0e1b2d" : "#f4f3ec",
+      );
+      assert.equal(
+        favicon,
+        root.dataset.theme === "dark" ? "./favicon-dark.svg" : "./favicon.svg",
       );
     }
   }

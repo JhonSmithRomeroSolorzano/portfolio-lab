@@ -20,6 +20,7 @@ import { StackMap } from "./StackMap";
 import { ResumeSection } from "./ResumeSection";
 import { LINKEDIN } from "./profile";
 import { ThemeSwitcher } from "./ThemeSwitcher";
+import { BrandMark } from "./BrandMark";
 
 import { RequestRateInput } from "./RequestRateInput";
 
@@ -435,7 +436,7 @@ const skills = [
     number: "01",
     title: "The experience.",
     text: "Interfaces that connect people to the systems behind them.",
-    tags: ["React", "TypeScript", "JavaScript", "Mithril.js"],
+    tags: ["React", "Material UI", "TypeScript", "JavaScript", "Mithril.js"],
   },
   {
     number: "02",
@@ -469,7 +470,7 @@ export function App() {
             href="#"
             aria-label="Jhon Smith Romero, home"
           >
-            <img src="./favicon.svg" alt="JSR" width="64" height="64" />
+            <BrandMark />
             <span>
               Jhon Smith
               <br />
@@ -496,6 +497,9 @@ export function App() {
             </a>
             <a href="#journal">
               <span aria-hidden="true">≡</span> Build notes
+            </a>
+            <a href="#contact">
+              <span aria-hidden="true">@</span> Contact
             </a>
           </nav>
           <div className="rail-bottom">
@@ -530,24 +534,61 @@ export function App() {
                 </span>
               </div>
               <div className="workbench-intro">
-                <div>
+                <div className="intro-copy">
                   <h1 id="intro-title">
                     Jhon Smith Romero<span>.</span>
                   </h1>
                   <p>
-                    I work across the JavaScript stack: the interface, the
-                    services,
-                    <br className="wide-break" /> and the data that connects
-                    them.
+                    I build interfaces with React and Material UI, backend
+                    services with Node.js and Express, and work with NoSQL and
+                    SQL databases.
                   </p>
+                  <div className="intro-links">
+                    <a className="resume-shortcut" href="#resume">
+                      <span>7+ years in software</span>
+                      <strong>
+                        Explore my résumé <Arrow diagonal />
+                      </strong>
+                    </a>
+                    <a className="intro-contact" href="#contact">
+                      Contact me <Arrow diagonal />
+                    </a>
+                  </div>
                 </div>
-                <a className="resume-shortcut" href="#resume">
-                  <span>7+ years in software</span>
-                  <strong>
-                    Explore my résumé <Arrow diagonal />
-                  </strong>
-                </a>
+                <img
+                  className="profile-portrait"
+                  src="./jhon-smith-romero.jpg"
+                  alt="Jhon Smith Romero"
+                  width="160"
+                  height="160"
+                  fetchPriority="high"
+                />
               </div>
+              <dl
+                className="technology-overview"
+                aria-label="My technology stack"
+              >
+                <div>
+                  <dt>Frontend</dt>
+                  <dd>
+                    React · Material UI
+                    <br />
+                    JavaScript · TypeScript
+                  </dd>
+                </div>
+                <div>
+                  <dt>Backend</dt>
+                  <dd>Node.js · Express</dd>
+                </div>
+                <div>
+                  <dt>Data</dt>
+                  <dd>
+                    NoSQL <span>— strongest experience</span>
+                    <br />
+                    SQL
+                  </dd>
+                </div>
+              </dl>
               <StackMap />
               <div className="workbench-caption">
                 <span>My stack above. A working experiment below.</span>
@@ -606,7 +647,7 @@ export function App() {
                   TypeScript ecosystem.
                 </p>
                 <p>
-                  I’ve worked primarily with NoSQL databases, alongside
+                  NoSQL is my strongest area of database experience, alongside
                   experience with SQL, caching, real-time communication, and
                   deployment workflows.
                 </p>
@@ -685,10 +726,15 @@ export function App() {
                 </a>
               </article>
             </section>
-            <section className="contact-section wrap" data-reveal="0">
+            <section
+              className="contact-section wrap"
+              id="contact"
+              aria-labelledby="contact-title"
+              data-reveal="0"
+            >
               <span className="eyebrow">GET IN TOUCH</span>
               <div>
-                <h2>Have a role in mind?</h2>
+                <h2 id="contact-title">Let’s talk.</h2>
                 <a
                   className="primary-button"
                   href={LINKEDIN}

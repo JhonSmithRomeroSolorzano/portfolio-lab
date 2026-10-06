@@ -10,7 +10,11 @@ The [résumé section](https://jhonsmithromerosolorzano.github.io/portfolio-lab/
 
 The portfolio uses a custom workspace composition: a compact identity rail and a connected stack map with selectable Interface, Services, and Data layers. The map explains verified experience and leads to the lab, résumé, and background. It is authored in React, CSS, and SVG for this project.
 
+The introduction shows my LinkedIn portrait and a compact frontend/backend/data overview. Material UI, Node.js with Express, and NoSQL as my strongest database experience were confirmed directly by me on October 6, 2026. SQL experience remains visible. The portrait is stored locally in `public/jhon-smith-romero.jpg`, so it does not depend on an expiring LinkedIn image URL. Contact links in the introduction and navigation lead to the contact section.
+
 The portfolio uses uppercase JSR branding, a warm neutral light theme, and a navy dark theme. A single light/dark toggle follows the device until the visitor chooses an appearance, then remembers that choice. There is no separate System button; existing automatic preferences remain supported. Blocked browser storage leaves the control usable for the current visit.
+
+The JSR mark reverses its tile and lettering colors with the theme. The browser favicon follows the same choice, including a saved preference before the application renders.
 
 Section entrances use progressive enhancement: content stays visible without animation support. Reduced-motion preferences disable entrances and smooth scrolling; keyboard focus cancels an active entrance.
 
@@ -79,7 +83,7 @@ The app uses React, TypeScript, and Vite. Relative asset paths support both GitH
 
 ## About me
 
-I'm Jhon Smith Romero, a systems and telecommunications engineer with more than seven years in software development. My experience includes JavaScript, TypeScript, React, Mithril.js, Node.js, Express, NoSQL, SQL, Redis, WebSockets, Docker, testing, and GitHub Actions.
+I'm Jhon Smith Romero, a systems and telecommunications engineer with more than seven years in software development. My experience includes JavaScript, TypeScript, React, Material UI, Mithril.js, Node.js, Express, NoSQL, SQL, Redis, WebSockets, Docker, testing, and GitHub Actions. NoSQL is my strongest area of database experience.
 
 This repository contains original portfolio work. It does not contain employer code or client data. Features are developed with AI assistance and reviewed through tests, builds, and documented checks.
 

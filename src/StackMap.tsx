@@ -7,8 +7,8 @@ const layers = [
     caption: "What people use",
     title: "The interface is part of the system.",
     description:
-      "I build frontend features with React and Mithril.js, working with JavaScript and TypeScript to connect the UI to the services behind it.",
-    tools: ["React", "TypeScript", "Mithril.js"],
+      "I build frontend features with React and Material UI, working with JavaScript and TypeScript to connect the UI to the services behind it.",
+    tools: ["React", "Material UI", "JavaScript", "TypeScript"],
     destination: "#about",
     action: "More about my work",
   },
@@ -18,7 +18,7 @@ const layers = [
     caption: "How it connects",
     title: "Follow the request beyond the screen.",
     description:
-      "My backend work includes Node.js and Express, with experience in Redis caching and WebSocket communication. Signal Lab explores some of those system trade-offs.",
+      "I build backend services with Node.js and Express, connecting interfaces to data and application logic. My experience also includes Redis caching and WebSocket communication.",
     tools: ["Node.js", "Express", "Redis", "WebSockets"],
     destination: "#lab",
     action: "Open Signal Lab",
@@ -26,11 +26,11 @@ const layers = [
   {
     id: "data",
     name: "Data",
-    caption: "Store. Test. Ship.",
-    title: "Data and delivery belong in the picture.",
+    caption: "NoSQL + SQL",
+    title: "Strongest in NoSQL. Experienced in SQL.",
     description:
-      "I work primarily with NoSQL, alongside SQL experience. Docker, testing, and GitHub Actions are also part of my development toolkit.",
-    tools: ["NoSQL", "SQL", "Docker", "GitHub Actions"],
+      "NoSQL databases are my strongest area of database experience. I also work with SQL databases, connecting both to backend services and the interfaces that use them.",
+    tools: ["NoSQL", "SQL"],
     destination: "#resume",
     action: "Read my experience",
   },

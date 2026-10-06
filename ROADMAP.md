@@ -53,6 +53,15 @@ Future visual work should build on this workspace direction and Jhon’s actual 
 
 Next for this brief: a print/download résumé generated from the same verified profile data, then focused browser regression coverage. Keep newly supplied career details subject to verification.
 
+### Personal introduction and contact — October 6 follow-up
+
+- [x] Added the user's own LinkedIn portrait as a local asset and brought the technology stack into the introduction.
+- [x] Incorporated directly confirmed React/Material UI, Node.js/Express, and NoSQL/SQL experience in the stack map; identify NoSQL as the strongest database experience.
+- [x] Made the uppercase JSR mark and favicon follow the selected theme, including saved preferences on reload.
+- [x] Added contact navigation and a prominent introduction link to the contact section; LinkedIn remains the available contact channel.
+- [x] Checked desktop, 900px, 390px, and 320px layouts, portrait loading, keyboard theme switching, saved theme/logo/favicon agreement, diagram content, and contact navigation. All 52 tests and the production build pass.
+- [ ] Add email and phone links once the user supplies the exact contact details to publish. Do not infer them from account metadata.
+
 ## Next useful milestones
 
 1. **Browser regression suite:** automate keyboard flows, reload/URL state, file import/export, and viewport checks. Start from observed user journeys; keep fixtures deterministic.

@@ -39,6 +39,12 @@ export function ThemeSwitcher() {
   useLayoutEffect(() => {
     document.documentElement.dataset.theme = theme;
     document
+      .querySelector('link[rel="icon"]')
+      ?.setAttribute(
+        "href",
+        theme === "dark" ? "./favicon-dark.svg" : "./favicon.svg",
+      );
+    document
       .querySelector('meta[name="theme-color"]')
       ?.setAttribute("content", theme === "dark" ? "#0e1b2d" : "#f4f3ec");
   }, [theme]);
