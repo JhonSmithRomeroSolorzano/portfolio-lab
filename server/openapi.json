@@ -1,0 +1,519 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Signal Lab local API",
+    "version": "1.0.0",
+    "description": "Educational simulation API bound to loopback. Results are modeled, not live infrastructure measurements. Simulation POSTs share a 60-request/60-second fixed-window budget by default. No authentication is provided."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:3001",
+      "description": "Local development (PORT may override 3001)"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "health",
+        "summary": "Check process readiness",
+        "responses": {
+          "200": {
+            "description": "Process is ready; no external dependencies are probed.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Generated correlation ID.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Use GET.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Generated correlation ID.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/openapi.json": {
+      "get": {
+        "operationId": "contract",
+        "summary": "Read this API contract",
+        "responses": {
+          "200": {
+            "description": "OpenAPI 3.1 document.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Generated correlation ID.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Use GET.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Generated correlation ID.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/simulate": {
+      "post": {
+        "operationId": "simulate",
+        "summary": "Evaluate a scenario",
+        "requestBody": {
+          "required": true,
+          "description": "At most 16 KiB of JSON; unknown properties are rejected.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Scenario"
+              },
+              "example": {
+                "requestsPerSecond": 120,
+                "cacheEnabled": true,
+                "database": "normal"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Computed illustrative results.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Generated correlation ID.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "X-RateLimit-Limit": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "X-RateLimit-Remaining": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimulationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed JSON.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Generated correlation ID.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "X-RateLimit-Limit": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "X-RateLimit-Remaining": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Wrong HTTP method; Allow identifies the supported method.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Generated correlation ID.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Request body exceeds 16 KiB.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Generated correlation ID.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "X-RateLimit-Limit": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "X-RateLimit-Remaining": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Content-Type must be application/json.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Generated correlation ID.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "X-RateLimit-Limit": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "X-RateLimit-Remaining": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid scenario or unknown field.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Generated correlation ID.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "X-RateLimit-Limit": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "X-RateLimit-Remaining": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Process-wide fixed-window budget exhausted.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Generated correlation ID.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "X-RateLimit-Limit": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "X-RateLimit-Remaining": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "Retry-After": {
+                "description": "Whole seconds until the next request window.",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected internal error.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Generated correlation ID.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Scenario": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["requestsPerSecond", "cacheEnabled", "database"],
+        "properties": {
+          "requestsPerSecond": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 600
+          },
+          "cacheEnabled": {
+            "type": "boolean"
+          },
+          "database": {
+            "type": "string",
+            "enum": ["normal", "slow", "offline"]
+          },
+          "cacheHitPercent": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100,
+            "default": 80
+          },
+          "databaseConnections": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 32,
+            "default": 8
+          },
+          "writePercent": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100,
+            "default": 0
+          }
+        }
+      },
+      "Result": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "offered",
+          "reads",
+          "writes",
+          "cacheHits",
+          "databaseDemand",
+          "databaseServed",
+          "databaseCapacity",
+          "successful",
+          "failed",
+          "meanLatencyMs",
+          "successPercent",
+          "utilizationPercent",
+          "status"
+        ],
+        "properties": {
+          "offered": {
+            "type": "number",
+            "minimum": 0
+          },
+          "reads": {
+            "type": "number",
+            "minimum": 0
+          },
+          "writes": {
+            "type": "number",
+            "minimum": 0
+          },
+          "cacheHits": {
+            "type": "number",
+            "minimum": 0
+          },
+          "databaseDemand": {
+            "type": "number",
+            "minimum": 0
+          },
+          "databaseServed": {
+            "type": "number",
+            "minimum": 0
+          },
+          "databaseCapacity": {
+            "type": "number",
+            "minimum": 0
+          },
+          "successful": {
+            "type": "number",
+            "minimum": 0
+          },
+          "failed": {
+            "type": "number",
+            "minimum": 0
+          },
+          "meanLatencyMs": {
+            "type": "number",
+            "minimum": 0
+          },
+          "successPercent": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "utilizationPercent": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "status": {
+            "type": "string",
+            "enum": ["healthy", "overloaded", "degraded", "unavailable"]
+          }
+        }
+      },
+      "SimulationResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["model", "scenario", "result", "notice"],
+        "properties": {
+          "model": {
+            "const": "signal-lab/1"
+          },
+          "scenario": {
+            "$ref": "#/components/schemas/Scenario"
+          },
+          "result": {
+            "$ref": "#/components/schemas/Result"
+          },
+          "notice": {
+            "type": "string"
+          }
+        }
+      },
+      "Health": {
+        "type": "object",
+        "required": ["status", "model"],
+        "properties": {
+          "status": {
+            "const": "ok"
+          },
+          "model": {
+            "const": "signal-lab/1"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

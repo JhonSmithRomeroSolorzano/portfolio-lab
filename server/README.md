@@ -28,3 +28,7 @@ Every response includes a fresh `X-Request-Id`. The launcher writes one JSON rec
 ## Request budget
 
 The service permits 60 simulation POSTs per fixed 60-second window, shared across the process. Invalid simulation requests also consume the budget; health checks and unknown routes do not. Responses expose `X-RateLimit-Limit` and `X-RateLimit-Remaining`. An exhausted budget returns 429 with a `Retry-After` delay in whole seconds. Restarting the process resets the budget. This bounded in-memory example demonstrates backpressure, not distributed rate limiting or abuse prevention. The server factory accepts `budget` options for tests and local experiments.
+
+## Machine-readable contract
+
+[openapi.json](openapi.json) describes request fields, response schemas, error statuses, correlation headers, and the request budget using [OpenAPI 3.1](https://spec.openapis.org/oas/v3.1.0.html). `GET /openapi.json` returns the same document and does not consume the simulation budget. Import the file into an OpenAPI-compatible API client, then use the local server URL. Integration checks compare the served contract and live response fields to catch drift.

@@ -1,3 +1,4 @@
+import openapi from "./openapi.json" with { type: "json" };
 import { createRequestBudget } from "./request-budget.ts";
 import type { BudgetOptions } from "./request-budget.ts";
 import { randomUUID } from "node:crypto";
@@ -82,7 +83,7 @@ export function createSimulationServer(options: ServerOptions = {}) {
           ].includes(req.method ?? "")
             ? req.method!
             : "OTHER",
-          route: ["/health", "/v1/simulate"].includes(path)
+          route: ["/health", "/v1/simulate", "/openapi.json"].includes(path)
             ? path
             : "unmatched",
           status: res.statusCode,
@@ -93,12 +94,16 @@ export function createSimulationServer(options: ServerOptions = {}) {
       }
     });
     try {
-      if (path !== "/health" && path !== "/v1/simulate") {
+      if (
+        path !== "/health" &&
+        path !== "/v1/simulate" &&
+        path !== "/openapi.json"
+      ) {
         req.resume();
         send(res, 404, { error: "Route not found." });
         return;
       }
-      const method = path === "/health" ? "GET" : "POST";
+      const method = path === "/v1/simulate" ? "POST" : "GET";
       if (req.method !== method) {
         req.resume();
         res.setHeader("allow", method);
@@ -107,6 +112,10 @@ export function createSimulationServer(options: ServerOptions = {}) {
       }
       if (path === "/health") {
         send(res, 200, { status: "ok", model: "signal-lab/1" });
+        return;
+      }
+      if (path === "/openapi.json") {
+        send(res, 200, openapi);
         return;
       }
       const budget = consume();

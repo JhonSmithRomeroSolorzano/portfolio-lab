@@ -60,6 +60,8 @@ Completed batch scenario replay with NDJSON input/output, strict shared validati
 
 Completed exact keyboard-editable traffic rates from 1–600 req/s, aligned across the model, URL, saved files, CLI, and API.
 
+Completed a machine-readable OpenAPI contract served by the API, with response and schema consistency checks.
+
 ## Working rule
 
 Completed step-by-step request tracing for cache hits, database reads, and timeouts, restricted to outcomes possible in the selected setup.
