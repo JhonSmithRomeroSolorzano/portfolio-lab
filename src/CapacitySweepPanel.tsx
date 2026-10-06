@@ -49,8 +49,8 @@ export function CapacitySweepPanel({ scenario }: { scenario: Scenario }) {
             type="button"
             onClick={() =>
               downloadText(
-                "signal-lab-capacity.csv",
                 sweepCsv(scenario),
+                "signal-lab-capacity.csv",
                 "text/csv",
               )
             }
