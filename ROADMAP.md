@@ -39,8 +39,10 @@ Requested October 6; complete these before expanding the backend lab.
 - [x] Uppercase JSR monogram in the header and favicon; cohesive blue branding with the original warm neutral light background.
 - [x] Visible light/dark/system theme control, saved preference, and readable navy dark theme.
 - [x] Recruiter-friendly résumé with experience and education verified from [the user's LinkedIn profile](https://www.linkedin.com/in/jhonsmithr). Profile access succeeded October 6 through the signed-in browser. Preserve the listed overlapping dates; do not infer employment relationships or add unverified achievements.
-- [ ] Restrained scroll reveals with keyboard, mobile, and reduced-motion support.
-- [ ] Review the complete résumé and visual refresh in the browser before publication.
+- [x] Restrained scroll reveals with keyboard, mobile, and reduced-motion support.
+- [x] Reviewed the résumé, JSR mark, blue lab, theme selection/reload, and keyboard activation in the browser at desktop, 390px, and 320px widths; no horizontal page overflow. Verified lab controls after the refresh. Checked primary, muted, card, and lab text color pairs at 4.5:1 or better. The 51-test suite covers initial theme/storage fallbacks and reveal lifecycle, focus cancellation, and live reduced-motion changes; production build passes.
+
+Next for this brief: a print/download résumé generated from the same verified profile data, then focused browser regression coverage. Keep newly supplied career details subject to verification.
 
 ## Next useful milestones
 

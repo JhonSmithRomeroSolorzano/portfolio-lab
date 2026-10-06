@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DEFAULT_SCENARIO, simulate } from "./simulation";
 import type { DatabaseMode, Scenario } from "./simulation";
 import { scenarioFromSearch, scenarioUrl } from "./scenario-url";
@@ -15,6 +15,7 @@ import { CacheExpiryPanel } from "./CacheExpiryPanel";
 
 import { QueueExperiment } from "./QueueExperiment";
 
+import { observeScrollReveals } from "./scroll-reveals";
 import { ResumeSection } from "./ResumeSection";
 import { LINKEDIN } from "./profile";
 import { ThemeSwitcher } from "./ThemeSwitcher";
@@ -450,6 +451,11 @@ const skills = [
 ];
 
 export function App() {
+  const mainRef = useRef<HTMLElement>(null);
+  useEffect(
+    () => (mainRef.current ? observeScrollReveals(mainRef.current) : undefined),
+    [],
+  );
   return (
     <>
       <a className="skip-link" href="#main">
@@ -488,7 +494,7 @@ export function App() {
           </a>
         </div>
       </header>
-      <main id="main">
+      <main id="main" ref={mainRef}>
         <section className="hero wrap" aria-labelledby="hero-title">
           <div className="hero-kicker">
             <span className="eyebrow">FULL-STACK DEVELOPER</span>
@@ -529,7 +535,7 @@ export function App() {
           id="lab"
           aria-labelledby="lab-title"
         >
-          <div className="section-heading">
+          <div className="section-heading" data-reveal="0">
             <div>
               <span className="eyebrow">
                 <span className="section-index">01 /</span> THE ENGINEERING LAB
@@ -565,7 +571,7 @@ export function App() {
           id="about"
           aria-labelledby="about-title"
         >
-          <div className="about-intro">
+          <div className="about-intro" data-reveal="0">
             <span className="eyebrow">
               <span className="section-index">02 /</span> ACROSS THE STACK
             </span>
@@ -596,7 +602,11 @@ export function App() {
           </div>
           <div className="skill-list">
             {skills.map((skill) => (
-              <article className="skill-row" key={skill.number}>
+              <article
+                className="skill-row"
+                key={skill.number}
+                data-reveal={Number(skill.number) * 50}
+              >
                 <span className="skill-number">{skill.number}</span>
                 <div>
                   <h3>{skill.title}</h3>
@@ -617,7 +627,7 @@ export function App() {
           id="journal"
           aria-labelledby="journal-title"
         >
-          <div className="section-heading">
+          <div className="section-heading" data-reveal="0">
             <div>
               <span className="eyebrow">
                 <span className="section-index">04 /</span> BUILDING IN PUBLIC
@@ -633,7 +643,7 @@ export function App() {
               See the roadmap <Arrow diagonal />
             </a>
           </div>
-          <article className="journal-entry">
+          <article className="journal-entry" data-reveal="0">
             <time dateTime="2026-10-05">OCT 05, 2026</time>
             <div>
               <span className="journal-tag">LAB + LOCAL API</span>
@@ -656,7 +666,7 @@ export function App() {
             </a>
           </article>
         </section>
-        <section className="contact-section wrap">
+        <section className="contact-section wrap" data-reveal="0">
           <span className="eyebrow">LET’S BUILD SOMETHING USEFUL</span>
           <div>
             <h2>

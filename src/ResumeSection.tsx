@@ -8,7 +8,7 @@ export function ResumeSection() {
       id="resume"
       aria-labelledby="resume-title"
     >
-      <div className="section-heading">
+      <div className="section-heading" data-reveal="0">
         <div>
           <span className="eyebrow">
             <span className="section-index">03 /</span> THE RÉSUMÉ
@@ -30,7 +30,7 @@ export function ResumeSection() {
       </div>
       <div className="resume-layout">
         <aside className="resume-overview" aria-label="Professional overview">
-          <div className="resume-card">
+          <div className="resume-card" data-reveal="0">
             <span className="eyebrow">JHON SMITH ROMERO</span>
             <h3>Senior full-stack developer</h3>
             <p>
@@ -54,7 +54,7 @@ export function ResumeSection() {
           <div className="resume-study">
             <h3>Education</h3>
             {education.map((item) => (
-              <article key={item.school}>
+              <article key={item.school} data-reveal="40">
                 <p className="resume-period">{item.period}</p>
                 <h4>{item.qualification}</h4>
                 <p>{item.school}</p>
@@ -64,7 +64,7 @@ export function ResumeSection() {
           <div className="resume-study">
             <h3>Selected certifications</h3>
             {certifications.map((item) => (
-              <article key={item.title}>
+              <article key={item.title} data-reveal="40">
                 <p className="resume-period">
                   {item.issuer} · {item.date}
                 </p>
@@ -76,9 +76,9 @@ export function ResumeSection() {
         <div className="resume-experience">
           <h3 className="resume-list-title">Selected experience</h3>
           <ol className="experience-list">
-            {experience.map((job) => (
+            {experience.map((job, index) => (
               <li key={`${job.employer}-${job.start}`}>
-                <article>
+                <article data-reveal={(index % 3) * 50}>
                   <div className="experience-meta">
                     <p className="resume-period">
                       <time dateTime={job.start}>{job.startLabel}</time>

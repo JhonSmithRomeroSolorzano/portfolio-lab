@@ -10,6 +10,8 @@ The [résumé section](https://jhonsmithromerosolorzano.github.io/portfolio-lab/
 
 The portfolio uses uppercase JSR branding, a warm neutral light theme, and a navy dark theme. The theme follows the device initially and remembers a manual choice. **System** restores automatic appearance; blocked browser storage leaves the control usable for the current visit.
 
+Section entrances use progressive enhancement: content stays visible without animation support. Reduced-motion preferences disable entrances and smooth scrolling; keyboard focus cancels an active entrance.
+
 ## Signal Lab
 
 Change incoming traffic, toggle a warm read cache, and slow down or disconnect the database. The interface shows how these choices affect successful requests, database demand, and mean response time.
