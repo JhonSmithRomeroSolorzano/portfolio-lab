@@ -42,6 +42,8 @@ Completed configurable cache hit rates, including safe URL/file validation and 0
 
 Completed adjustable database pools, including offline behavior and safe sharing/imports.
 
+Completed capacity sweeps with a throughput chart, accessible sample table, and downloadable CSV.
+
 ## Working rule
 
 Completed step-by-step request tracing for cache hits, database reads, and timeouts, restricted to outcomes possible in the selected setup.

@@ -1435,3 +1435,39 @@ input[type="range"] {
     animation: none !important;
   }
 }
+
+.sweep-chart {
+  max-width: 680px;
+  margin: 25px 0;
+}
+.sweep-chart svg {
+  display: block;
+  width: 100%;
+  overflow: visible;
+  border-left: 1px solid #56684e;
+  border-bottom: 1px solid #56684e;
+}
+.sweep-chart span {
+  display: block;
+  margin-top: 10px;
+  font-size: 11px;
+}
+.table-scroll {
+  overflow-x: auto;
+}
+.tool-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  text-align: right;
+}
+.tool-table caption {
+  text-align: left;
+  padding: 12px 0;
+}
+.tool-table th,
+.tool-table td {
+  border-bottom: 1px solid #40503a;
+  padding: 10px;
+  white-space: nowrap;
+}

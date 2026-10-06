@@ -9,6 +9,8 @@ import { ExperimentLibrary } from "./ExperimentLibrary";
 import { ExperimentFiles } from "./ExperimentFiles";
 import { RequestTrace } from "./RequestTrace";
 
+import { CapacitySweepPanel } from "./CapacitySweepPanel";
+
 const GITHUB = "https://github.com/JhonSmithRomeroSolorzano";
 const REPO = `${GITHUB}/portfolio-lab`;
 const labels = {
@@ -332,6 +334,7 @@ function SignalLab() {
       <div className="experiment-tools">
         <Presets onSelect={setScenario} />
         <Comparison scenario={scenario} />
+        <CapacitySweepPanel scenario={scenario} />
         <RequestTrace key={JSON.stringify(scenario)} scenario={scenario} />
         <ExperimentLibrary scenario={scenario} onSelect={setScenario} />
         <ExperimentFiles scenario={scenario} onSelect={setScenario} />
