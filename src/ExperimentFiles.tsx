@@ -1,9 +1,6 @@
+import { TextExport } from "./TextExport";
 import { useId, useRef, useState } from "react";
-import {
-  downloadText,
-  exportExperiment,
-  importExperiment,
-} from "./experiment-file";
+import { exportExperiment, importExperiment } from "./experiment-file";
 import type { Scenario } from "./simulation";
 export function ExperimentFiles({
   scenario,
@@ -22,18 +19,11 @@ export function ExperimentFiles({
       <summary>Import or export an experiment</summary>
       <div className="tool-content">
         <p role="status">{message}</p>
-        <div className="tool-actions">
-          <button
-            onClick={() =>
-              downloadText(
-                exportExperiment(scenario),
-                "signal-lab-experiment.json",
-              )
-            }
-          >
-            Download experiment JSON
-          </button>
-        </div>
+        <TextExport
+          text={exportExperiment(scenario)}
+          filename="signal-lab-experiment.json"
+          kind="experiment JSON"
+        />
         <label htmlFor={id}>Import experiment JSON (up to 100 KB)</label>
         <input
           className="tool-file"

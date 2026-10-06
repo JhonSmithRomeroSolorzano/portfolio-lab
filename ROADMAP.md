@@ -14,6 +14,7 @@ Aim: show practical full-stack engineering through working features and clear ex
 - [x] Versioned JSON import/export with validation and recalculated results.
 - [x] Exact traffic input, configurable read hit rate, connection pool, and write share.
 - [x] Capacity sweep, accessible results table, and CSV generation.
+- [x] Copyable JSON/CSV export views for browsers without working file downloads.
 - [x] Step-through cache/database/timeout traces.
 - [x] Separate cache expiry and bounded queue experiments.
 

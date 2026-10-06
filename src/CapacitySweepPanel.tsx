@@ -1,6 +1,6 @@
 import type { Scenario } from "./simulation";
 import { capacitySweep, sweepCsv } from "./capacity-sweep";
-import { downloadText } from "./experiment-file";
+import { TextExport } from "./TextExport";
 export function CapacitySweepPanel({ scenario }: { scenario: Scenario }) {
   const rows = capacitySweep(scenario);
   const firstFailure = rows.find((r) => r.failed > 0);
@@ -44,20 +44,12 @@ export function CapacitySweepPanel({ scenario }: { scenario: Scenario }) {
             20 → 600 incoming req/s · Green: successful · Dashed: offered
           </span>
         </div>
-        <div className="tool-actions">
-          <button
-            type="button"
-            onClick={() =>
-              downloadText(
-                sweepCsv(scenario),
-                "signal-lab-capacity.csv",
-                "text/csv",
-              )
-            }
-          >
-            Download capacity CSV
-          </button>
-        </div>
+        <TextExport
+          text={sweepCsv(scenario)}
+          filename="signal-lab-capacity.csv"
+          kind="capacity CSV"
+          type="text/csv"
+        />
         <details>
           <summary>Read all 30 samples</summary>
           <div className="table-scroll">
