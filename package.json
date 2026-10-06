@@ -12,19 +12,21 @@
     "preview": "vite preview --host 127.0.0.1",
     "test": "node --import tsx --test tests/*.test.ts",
     "check": "npm test && npm run build",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "api": "node --import tsx server/start.ts"
   },
   "dependencies": {
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@types/node": "^24.19.1",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
     "@vitejs/plugin-react": "^4.4.1",
+    "prettier": "^3.6.2",
     "tsx": "^4.19.0",
     "typescript": "~5.8.3",
-    "vite": "^6.3.5",
-    "prettier": "^3.6.2"
+    "vite": "^6.3.5"
   }
 }

@@ -50,6 +50,8 @@ Completed a deterministic cache-expiry timeline showing TTL boundaries, stale ve
 
 Completed bounded queue/backpressure experiments, reject-new overflow, and conservation checks for every supported buffer/capacity pair.
 
+Completed an optional local Node HTTP API with a shared typed model, strict request validation, body limits, health route, graceful shutdown, and real HTTP integration checks.
+
 ## Working rule
 
 Completed step-by-step request tracing for cache hits, database reads, and timeouts, restricted to outcomes possible in the selected setup.
