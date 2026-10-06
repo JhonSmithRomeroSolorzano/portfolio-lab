@@ -12,9 +12,9 @@ Aim: show practical full-stack engineering through small, working features and c
 
 ## Next — Shareable experiments
 
-- [ ] Encode the selected scenario in the URL; load valid values safely and reject invalid input.
+- [x] Encode the selected scenario in the URL; load valid values safely and reject invalid input.
 - [ ] Add a copy-link button with a useful success/failure state.
-- [ ] Test scenario serialization, invalid values, and reset behavior.
+- [x] Test scenario serialization, invalid values, and reset behavior.
 - [ ] Explain the feature in the build log.
 
 ## After that
@@ -33,6 +33,8 @@ Aim: show practical full-stack engineering through small, working features and c
 ### 2026-10-05
 
 Built the first portfolio and Signal Lab model. Added tests for warm-cache reads, saturation, outages, connection-pool boundaries, invalid traffic, and conservation of requests across all UI scenarios. Next task: shareable experiment URLs.
+
+Added shareable URL state with independent validation for each field, preservation of the deployment subpath, and clean reset behavior. Round-trip tests cover every UI scenario. Next task: a copy-link control.
 
 ## Working rule
 

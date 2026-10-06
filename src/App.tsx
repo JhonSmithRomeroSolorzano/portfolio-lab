@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DEFAULT_SCENARIO, simulate } from "./simulation";
 import type { DatabaseMode, Scenario } from "./simulation";
+import { scenarioFromSearch, scenarioUrl } from "./scenario-url";
 
 const GITHUB = "https://github.com/JhonSmithRomeroSolorzano";
 const REPO = `${GITHUB}/portfolio-lab`;
@@ -38,8 +39,27 @@ function Arrow({ diagonal = false }: { diagonal?: boolean }) {
 }
 
 function SignalLab() {
-  const [scenario, setScenario] = useState<Scenario>({ ...DEFAULT_SCENARIO });
+  const [scenario, setScenario] = useState<Scenario>(() =>
+    scenarioFromSearch(window.location.search),
+  );
   const [showModel, setShowModel] = useState(false);
+
+  useEffect(() => {
+    // Coalesce rapid slider changes and avoid filling browser history.
+    const timeout = window.setTimeout(() => {
+      const url = scenarioUrl(window.location.href, scenario);
+      if (url !== window.location.href)
+        window.history.replaceState(window.history.state, "", url);
+    }, 150);
+    return () => window.clearTimeout(timeout);
+  }, [scenario]);
+
+  useEffect(() => {
+    const restore = () =>
+      setScenario(scenarioFromSearch(window.location.search));
+    window.addEventListener("popstate", restore);
+    return () => window.removeEventListener("popstate", restore);
+  }, []);
   const result = simulate(scenario);
   const update = (change: Partial<Scenario>) =>
     setScenario((current) => ({ ...current, ...change }));
