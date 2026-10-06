@@ -701,6 +701,20 @@ input[type="range"] {
   color: #e5eadf;
   font-size: 14px;
 }
+.trace-list {
+  padding-left: 23px;
+}
+.trace-list li {
+  padding: 7px 0;
+}
+.trace-list code {
+  color: #d3f68a;
+  margin-right: 12px;
+}
+.tool-actions button[aria-pressed="true"] {
+  background: #d3f68a;
+  color: #213d30;
+}
 .tool-file {
   display: block;
   max-width: 100%;

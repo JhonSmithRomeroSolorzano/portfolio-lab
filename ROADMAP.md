@@ -40,6 +40,8 @@ Added the copy-link control with confirmation and a selectable link when clipboa
 
 ## Working rule
 
+Completed step-by-step request tracing for cache hits, database reads, and timeouts, restricted to outcomes possible in the selected setup.
+
 Completed portable experiment snapshots with JSON download, validated imports, and fresh result calculation.
 
 Completed a named experiment library with reload persistence, removal, bounded storage, and a session-only fallback when storage is blocked.

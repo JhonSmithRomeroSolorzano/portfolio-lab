@@ -7,6 +7,7 @@ import { Comparison } from "./ComparisonPanel";
 import { Presets } from "./ScenarioPresets";
 import { ExperimentLibrary } from "./ExperimentLibrary";
 import { ExperimentFiles } from "./ExperimentFiles";
+import { RequestTrace } from "./RequestTrace";
 
 const GITHUB = "https://github.com/JhonSmithRomeroSolorzano";
 const REPO = `${GITHUB}/portfolio-lab`;
@@ -289,6 +290,7 @@ function SignalLab() {
       <div className="experiment-tools">
         <Presets onSelect={setScenario} />
         <Comparison scenario={scenario} />
+        <RequestTrace key={JSON.stringify(scenario)} scenario={scenario} />
         <ExperimentLibrary scenario={scenario} onSelect={setScenario} />
         <ExperimentFiles scenario={scenario} onSelect={setScenario} />
       </div>
