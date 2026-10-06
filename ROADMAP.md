@@ -71,6 +71,16 @@ Next for this brief: a print/download résumé generated from the same verified 
 - [x] Verified the expanded overview and diagram at desktop, 900px, and 320px widths, both themes, every selection, keyboard activation, and no horizontal overflow. All 52 tests and the production build pass.
 - [x] Rewrote the opening introduction around the experience and systems Jhon builds; keep tool names in the organized stack below rather than repeating them in the opening paragraph.
 
+### Experience details — October 6 follow-up
+
+- [x] Made the senior full-stack role prominent directly below the name in the introduction.
+- [x] Added directly confirmed responsibilities for current Antecursor work across feature design, databases, backend, frontend, Azure, and GitHub Actions.
+- [x] Described Athletify frontend work with React/TypeScript, Figma design implementation, and some Next.js experience. Product context comes from the official Utah company's profile; do not attribute unverified libraries or Go development to Jhon.
+- [x] Expanded résumé tags into Languages, Frontend, Backend, Data, Infrastructure, and Testing groups using the shared technology source. Included Next.js with a qualification and Figma as design handoff.
+- [x] Checked the introduction, new role descriptions, and grouped tags in light/dark themes and at desktop, 900px, and 320px widths without horizontal overflow. All 52 tests and the production build pass.
+
+Next for the résumé: generate a print/download version from the same verified profile data.
+
 ## Next useful milestones
 
 1. **Browser regression suite:** automate keyboard flows, reload/URL state, file import/export, and viewport checks. Start from observed user journeys; keep fixtures deterministic.

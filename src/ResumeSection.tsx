@@ -1,5 +1,15 @@
 import { certifications, education, experience, LINKEDIN } from "./profile";
+import { languages, stackLayers, testing } from "./technology-stack";
 import "./resume.css";
+
+const resumeTechnologyGroups = [
+  { name: "Languages", items: languages },
+  ...stackLayers.map((layer) => ({
+    name: layer.name,
+    items: layer.groups.flatMap((group) => group.items),
+  })),
+  { name: "Testing", items: [...testing.tools, ...testing.levels] },
+];
 
 export function ResumeSection() {
   return (
@@ -32,16 +42,18 @@ export function ResumeSection() {
               with the services and data behind them.
             </p>
             <p className="resume-location">Pereira, Colombia</p>
-            <div className="tags" aria-label="Core technologies">
-              {[
-                "JavaScript",
-                "TypeScript",
-                "React",
-                "Node.js",
-                "NoSQL",
-                "SQL",
-              ].map((skill) => (
-                <span key={skill}>{skill}</span>
+            <div className="resume-technologies" aria-label="Core technologies">
+              {resumeTechnologyGroups.map((group) => (
+                <div className="resume-technology-group" key={group.name}>
+                  <h4>{group.name}</h4>
+                  <ul className="tags" aria-label={group.name}>
+                    {group.items.map((skill) => (
+                      <li key={skill}>
+                        <span>{skill}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               ))}
             </div>
           </div>

@@ -508,7 +508,7 @@ export function App() {
               aria-labelledby="intro-title"
             >
               <div className="workspace-topline">
-                <span>FULL-STACK DEVELOPER</span>
+                <span>ENGINEERING PORTFOLIO</span>
                 <span className="opportunity">
                   <i aria-hidden="true" />
                   Open to opportunities
@@ -519,6 +519,7 @@ export function App() {
                   <h1 id="intro-title">
                     Jhon Smith Romero<span>.</span>
                   </h1>
+                  <p className="intro-role">Senior Full-stack Engineer</p>
                   <p>
                     I turn ideas into web experiences that feel simple to use.
                     Behind the screen, I build the systems that bring them to

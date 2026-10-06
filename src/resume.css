@@ -28,6 +28,32 @@
   color: var(--ink);
   margin-block: 22px;
 }
+.resume-technologies {
+  display: grid;
+  gap: 18px;
+}
+.resume-technology-group h4 {
+  margin: 0 0 8px;
+  font: 500 10px/1.5 var(--mono);
+  color: var(--accent);
+}
+.resume-technology-group .tags {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.resume-technology-group .tags li {
+  min-width: 0;
+  max-width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 5px 8px;
+  font: 10px/1.5 var(--mono);
+}
+.resume-technology-group .tags span {
+  display: block;
+  overflow-wrap: anywhere;
+}
 .resume-study {
   margin-top: 32px;
 }

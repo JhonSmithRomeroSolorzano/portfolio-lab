@@ -1,4 +1,6 @@
-// Professional details verified from the user's own LinkedIn profile on 2026-10-06.
+// Roles and dates verified from the user's LinkedIn profile on 2026-10-06.
+// Current Antecursor and Athletify responsibilities confirmed directly by Jhon.
+// Athletify product context: https://www.linkedin.com/company/athletifyofficial
 // Keep the listed overlapping roles; do not infer a relationship between employers.
 export const LINKEDIN = "https://www.linkedin.com/in/jhonsmithr";
 export const experience = [
@@ -10,7 +12,11 @@ export const experience = [
     end: null,
     endLabel: "Present",
     context: "Freelance · Remote · Orlando, United States",
-    highlights: [],
+    highlights: [
+      "Participate in feature design and full implementation, from database models and backend services to frontend interfaces.",
+      "Build across the stack with React, Mithril.js, Node.js, and NoSQL databases.",
+      "Work with Azure and GitHub Actions for cloud delivery and CI/CD.",
+    ],
   },
   {
     employer: "Athletify",
@@ -20,7 +26,10 @@ export const experience = [
     end: "2024-11",
     endLabel: "Nov 2024",
     context: "Full-time · Remote · Utah, United States",
-    highlights: [],
+    highlights: [
+      "Developed frontend features for Athletify’s sports-management SaaS with React and TypeScript, in a full-stack developer role.",
+      "Translated Figma designs into product interfaces and gained experience working with Next.js.",
+    ],
   },
   {
     employer: "Antecursor",

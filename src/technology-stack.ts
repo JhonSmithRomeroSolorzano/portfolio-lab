@@ -16,8 +16,10 @@ export const stackLayers = [
       "I build frontend features with React and Mithril.js. Material UI provides components, while Tailwind CSS is also part of my styling toolkit. JavaScript and TypeScript connect these interfaces to backend services.",
     groups: [
       { label: "UI libraries", items: ["React", "Mithril.js"] },
+      { label: "Framework", items: ["Next.js (some experience)"] },
       { label: "Components", items: ["Material UI"] },
       { label: "Styling", items: ["Tailwind CSS", "CSS"] },
+      { label: "Design handoff", items: ["Figma"] },
     ],
     destination: "#about",
     action: "More about my work",
