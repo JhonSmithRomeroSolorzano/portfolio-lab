@@ -11,6 +11,8 @@ import { RequestTrace } from "./RequestTrace";
 
 import { CapacitySweepPanel } from "./CapacitySweepPanel";
 
+import { CacheExpiryPanel } from "./CacheExpiryPanel";
+
 const GITHUB = "https://github.com/JhonSmithRomeroSolorzano";
 const REPO = `${GITHUB}/portfolio-lab`;
 const labels = {
@@ -355,6 +357,7 @@ function SignalLab() {
         <Presets onSelect={setScenario} />
         <Comparison scenario={scenario} />
         <CapacitySweepPanel scenario={scenario} />
+        <CacheExpiryPanel />
         <RequestTrace key={JSON.stringify(scenario)} scenario={scenario} />
         <ExperimentLibrary scenario={scenario} onSelect={setScenario} />
         <ExperimentFiles scenario={scenario} onSelect={setScenario} />

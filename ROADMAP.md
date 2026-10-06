@@ -46,6 +46,8 @@ Completed capacity sweeps with a throughput chart, accessible sample table, and 
 
 Completed mixed read/write workloads with cache bypass for writes and portable scenario settings.
 
+Completed a deterministic cache-expiry timeline showing TTL boundaries, stale versions, and the freshness/database-load trade-off.
+
 ## Working rule
 
 Completed step-by-step request tracing for cache hits, database reads, and timeouts, restricted to outcomes possible in the selected setup.

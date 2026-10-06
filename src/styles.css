@@ -1471,3 +1471,11 @@ input[type="range"] {
   padding: 10px;
   white-space: nowrap;
 }
+
+.tool-range {
+  display: block;
+  width: 100%;
+  max-width: 480px;
+  margin: 18px 0;
+  accent-color: var(--lime);
+}

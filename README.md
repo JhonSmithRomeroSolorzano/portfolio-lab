@@ -26,7 +26,7 @@ For example, [`?traffic=300&cache=off&database=slow#lab`](https://jhonsmithromer
 - Requests over capacity or to an offline database time out after 1,000 ms.
 - Mean response time includes both successes and timeouts.
 
-No queue, retries, expiry, or network variability are modeled yet. These simplifications are deliberate and visible in the demo. The model illustrates trade-offs, not production performance.
+The main steady-state model excludes queues, retries, expiry, and network variability. A separate **cache expiry** experiment models one read per second, a version update at 5s, and a fixed TTL with no invalidation. These simplifications are deliberate and visible in the demo. The model illustrates trade-offs, not production performance.
 
 ## Run locally
 
