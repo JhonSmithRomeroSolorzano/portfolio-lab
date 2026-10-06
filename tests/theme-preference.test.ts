@@ -5,6 +5,7 @@ import { runInNewContext } from "node:vm";
 import {
   THEME_KEY,
   readTheme,
+  nextTheme,
   resolvedTheme,
   saveTheme,
   themePreference,
@@ -87,4 +88,26 @@ test("explicit choice persists and system mode can be restored", () => {
   saveTheme(storage, "system");
   assert.equal(resolvedTheme(readTheme(storage), false), "light");
   assert.equal(resolvedTheme(readTheme(storage), true), "dark");
+});
+
+test("one toggle switches the actual theme and persists an explicit choice", () => {
+  for (const preference of ["system", "light", "dark"] as const) {
+    for (const systemDark of [true, false]) {
+      const next = nextTheme(preference, systemDark);
+      assert.notEqual(next, resolvedTheme(preference, systemDark));
+      let stored: string | null = null;
+      const storage = {
+        getItem: () => stored,
+        setItem: (_: string, value: string) => {
+          stored = value;
+        },
+      };
+      saveTheme(storage, next);
+      assert.equal(resolvedTheme(readTheme(storage), !systemDark), next);
+      assert.equal(
+        nextTheme(next, systemDark),
+        resolvedTheme(preference, systemDark),
+      );
+    }
+  }
 });

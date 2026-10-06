@@ -8,7 +8,7 @@ A full-stack developer's portfolio, with an interactive experiment you can actua
 
 The [résumé section](https://jhonsmithromerosolorzano.github.io/portfolio-lab/#resume) includes selected employment, education, and certifications verified against [my LinkedIn profile](https://www.linkedin.com/in/jhonsmithr) on October 6, 2026. Dates are preserved as listed, including overlapping roles; descriptions do not imply unverified employer relationships or outcomes. Public professional content lives in `src/profile.ts`.
 
-The portfolio uses uppercase JSR branding, a warm neutral light theme, and a navy dark theme. The theme follows the device initially and remembers a manual choice. **System** restores automatic appearance; blocked browser storage leaves the control usable for the current visit.
+The portfolio uses uppercase JSR branding, a warm neutral light theme, and a navy dark theme. A single light/dark toggle follows the device until the visitor chooses an appearance, then remembers that choice. There is no separate System button; existing automatic preferences remain supported. Blocked browser storage leaves the control usable for the current visit.
 
 Section entrances use progressive enhancement: content stays visible without animation support. Reduced-motion preferences disable entrances and smooth scrolling; keyboard focus cancels an active entrance.
 

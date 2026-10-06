@@ -30,3 +30,11 @@ export function resolvedTheme(
 ): "light" | "dark" {
   return preference === "system" ? (systemDark ? "dark" : "light") : preference;
 }
+
+/** Toggle the actual appearance, including a first visit following the device. */
+export function nextTheme(
+  preference: ThemePreference,
+  systemDark: boolean,
+): "light" | "dark" {
+  return resolvedTheme(preference, systemDark) === "light" ? "dark" : "light";
+}
