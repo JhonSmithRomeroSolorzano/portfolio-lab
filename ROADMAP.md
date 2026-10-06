@@ -38,6 +38,8 @@ Added shareable URL state with independent validation for each field, preservati
 
 Added the copy-link control with confirmation and a selectable link when clipboard access is denied or unsupported. Shared links strip unrelated query parameters. Documented the feature and updated the portfolio build log. Next task: compare a saved baseline with the current experiment.
 
+Completed configurable cache hit rates, including safe URL/file validation and 0%/100% boundary behavior.
+
 ## Working rule
 
 Completed step-by-step request tracing for cache hits, database reads, and timeouts, restricted to outcomes possible in the selected setup.

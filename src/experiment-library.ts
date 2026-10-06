@@ -14,6 +14,10 @@ export function validScenario(value: unknown): value is Scenario {
     s.requestsPerSecond <= 600 &&
     s.requestsPerSecond % 20 === 0 &&
     typeof s.cacheEnabled === "boolean" &&
+    (s.cacheHitPercent === undefined ||
+      (Number.isInteger(s.cacheHitPercent) &&
+        s.cacheHitPercent >= 0 &&
+        s.cacheHitPercent <= 100)) &&
     ["normal", "slow", "offline"].includes(s.database)
   );
 }

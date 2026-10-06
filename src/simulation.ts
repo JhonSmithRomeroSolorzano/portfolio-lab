@@ -6,6 +6,7 @@ export interface Scenario {
   requestsPerSecond: number;
   cacheEnabled: boolean;
   database: DatabaseMode;
+  cacheHitPercent?: number;
 }
 
 export const DEFAULT_SCENARIO: Scenario = {
@@ -38,7 +39,10 @@ export function simulate(scenario: Scenario) {
     throw new RangeError("Unknown database mode.");
   }
   const offered = scenario.requestsPerSecond;
-  const cacheHits = scenario.cacheEnabled ? offered * MODEL.cacheHitRatio : 0;
+  const hitPercent = scenario.cacheHitPercent ?? MODEL.cacheHitRatio * 100;
+  if (!Number.isInteger(hitPercent) || hitPercent < 0 || hitPercent > 100)
+    throw new RangeError("Cache hit rate must be an integer from 0 to 100.");
+  const cacheHits = scenario.cacheEnabled ? (offered * hitPercent) / 100 : 0;
   const databaseDemand = offered - cacheHits;
   const databaseLatency = MODEL.databaseLatencyMs[scenario.database];
   const databaseCapacity =

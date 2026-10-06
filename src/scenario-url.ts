@@ -1,7 +1,7 @@
 import { DEFAULT_SCENARIO } from "./simulation";
 import type { Scenario } from "./simulation";
 
-const KEYS = ["traffic", "cache", "database"] as const;
+const KEYS = ["traffic", "cache", "database", "hit"] as const;
 
 /** Invalid or repeated parameters fall back independently to safe defaults. */
 export function scenarioFromSearch(search: string): Scenario {
@@ -13,7 +13,7 @@ export function scenarioFromSearch(search: string): Scenario {
     traffic !== null && /^\d+$/.test(traffic) ? Number(traffic) : NaN;
   const cache = single("cache");
   const database = single("database");
-  return {
+  const result: Scenario = {
     requestsPerSecond:
       Number.isInteger(rate) && rate >= 20 && rate <= 600 && rate % 20 === 0
         ? rate
@@ -24,6 +24,16 @@ export function scenarioFromSearch(search: string): Scenario {
         ? database
         : DEFAULT_SCENARIO.database,
   };
+  const hit = single("hit");
+  if (
+    hit !== null &&
+    /^\d+$/.test(hit) &&
+    Number(hit) >= 0 &&
+    Number(hit) <= 100 &&
+    Number(hit) !== 80
+  )
+    result.cacheHitPercent = Number(hit);
+  return result;
 }
 
 /** Preserve the host, deployment subpath, unrelated query parameters, and fragment. */
@@ -34,6 +44,8 @@ export function scenarioUrl(currentUrl: string, scenario: Scenario): string {
     url.searchParams.set("traffic", String(scenario.requestsPerSecond));
   }
   if (!scenario.cacheEnabled) url.searchParams.set("cache", "off");
+  if (scenario.cacheHitPercent !== undefined && scenario.cacheHitPercent !== 80)
+    url.searchParams.set("hit", String(scenario.cacheHitPercent));
   if (scenario.database !== DEFAULT_SCENARIO.database)
     url.searchParams.set("database", scenario.database);
   return url.toString();

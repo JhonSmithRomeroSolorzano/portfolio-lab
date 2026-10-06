@@ -122,7 +122,9 @@ function SignalLab() {
                 <span>
                   <strong>Cache</strong>
                   <small>
-                    {scenario.cacheEnabled ? "80% warm-cache hits" : "Bypassed"}
+                    {scenario.cacheEnabled
+                      ? `${scenario.cacheHitPercent ?? 80}% warm-cache hits`
+                      : "Bypassed"}
                   </small>
                 </span>
                 <i />
@@ -254,6 +256,26 @@ function SignalLab() {
               <span />
             </button>
           </div>
+          <div className="control-block">
+            <label htmlFor="cache-rate">
+              Cache hit rate{" "}
+              <output htmlFor="cache-rate">
+                {scenario.cacheHitPercent ?? 80}%
+              </output>
+            </label>
+            <input
+              id="cache-rate"
+              type="range"
+              min="0"
+              max="100"
+              step="5"
+              disabled={!scenario.cacheEnabled}
+              value={scenario.cacheHitPercent ?? 80}
+              onChange={(event) =>
+                update({ cacheHitPercent: Number(event.target.value) })
+              }
+            />
+          </div>
           <fieldset className="control-block">
             <legend>Database condition</legend>
             <div className="segmented">
@@ -314,11 +336,12 @@ function SignalLab() {
       {showModel && (
         <div id="model-details" className="model-details">
           <p>
-            Each request adds 12 ms of API overhead. With caching enabled, 80%
-            of reads hit a warm cache in 8 ms. The remaining reads share 8
-            database connections: 80 ms per read normally, 400 ms when slow.
-            Database capacity is connections × 1,000 ÷ latency. Requests above
-            that capacity, or to an offline database, time out after 1,000 ms.
+            Each request adds 12 ms of API overhead. With caching enabled,{" "}
+            {scenario.cacheHitPercent ?? 80}% of reads hit a warm cache in 8 ms.
+            The remaining reads share 8 database connections: 80 ms per read
+            normally, 400 ms when slow. Database capacity is connections × 1,000
+            ÷ latency. Requests above that capacity, or to an offline database,
+            time out after 1,000 ms.
           </p>
           <p>
             The mean includes successes and timeouts. This steady-state model
