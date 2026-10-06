@@ -27,7 +27,7 @@ export function CapacitySweepPanel({ scenario }: { scenario: Scenario }) {
           <svg viewBox="0 0 480 160">
             <path
               d="M16 154.667 L480 0"
-              stroke="#829583"
+              stroke="var(--lab-muted)"
               strokeWidth="2"
               strokeDasharray="5 5"
               fill="none"
@@ -35,13 +35,13 @@ export function CapacitySweepPanel({ scenario }: { scenario: Scenario }) {
             <polyline
               points={points}
               fill="none"
-              stroke="#c3f879"
+              stroke="var(--signal)"
               strokeWidth="3"
               vectorEffect="non-scaling-stroke"
             />
           </svg>
           <span>
-            20 → 600 incoming req/s · Green: successful · Dashed: offered
+            20 → 600 incoming req/s · Solid blue: successful · Dashed: offered
           </span>
         </div>
         <TextExport

@@ -453,9 +453,13 @@ export function App() {
       </a>
       <header className="site-header wrap">
         <a className="brand" href="#" aria-label="Jhon Smith Romero, home">
-          <span className="monogram">
-            jr<span>.</span>
-          </span>
+          <img
+            className="monogram"
+            src="./favicon.svg"
+            alt="JSR"
+            width="48"
+            height="48"
+          />
           <span>
             Jhon Smith
             <br />
