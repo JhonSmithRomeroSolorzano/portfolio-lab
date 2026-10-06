@@ -6,6 +6,7 @@ import { ShareExperiment } from "./ShareExperiment";
 import { Comparison } from "./ComparisonPanel";
 import { Presets } from "./ScenarioPresets";
 import { ExperimentLibrary } from "./ExperimentLibrary";
+import { ExperimentFiles } from "./ExperimentFiles";
 
 const GITHUB = "https://github.com/JhonSmithRomeroSolorzano";
 const REPO = `${GITHUB}/portfolio-lab`;
@@ -289,6 +290,7 @@ function SignalLab() {
         <Presets onSelect={setScenario} />
         <Comparison scenario={scenario} />
         <ExperimentLibrary scenario={scenario} onSelect={setScenario} />
+        <ExperimentFiles scenario={scenario} onSelect={setScenario} />
       </div>
       <div className="lab-bottom">
         <button

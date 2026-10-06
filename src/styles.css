@@ -701,6 +701,12 @@ input[type="range"] {
   color: #e5eadf;
   font-size: 14px;
 }
+.tool-file {
+  display: block;
+  max-width: 100%;
+  margin-top: 12px;
+  font-size: 11px;
+}
 .tool-input {
   background: #17271e;
   color: #e5eadf;
