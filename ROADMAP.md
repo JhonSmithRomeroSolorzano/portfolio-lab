@@ -84,10 +84,10 @@ Next for the résumé: generate a print/download version from the same verified 
 ### Project stories and navigation — October 6 follow-up
 
 - [x] Removed the misaligned résumé/contact shortcuts from the introduction and their unused responsive styles; both destinations remain in the main menu.
-- [x] Added Projects to the main menu and an Athletify product story before Signal Lab, with verified context, dates, role, and frontend contribution. A small handoff diagram shows Figma designs becoming React/TypeScript interfaces.
+- [x] Embedded Athletify's project context, link, and Figma-to-React/TypeScript handoff inside its Experience entry. Projects belong to their corresponding roles; do not add a separate Projects section or main-menu item.
 - [x] Kept Next.js experience qualified and Go as product context rather than a personal development claim.
-- [x] Verified menu links with keyboard activation, preserved lab query settings during navigation, and checked light/dark, desktop, 900px, and 320px layouts. The expanded menu fits a 720px-high desktop window; all 52 tests and the production build pass.
-- [ ] Add other professional products when Jhon supplies their names, public context, and his contributions; current Antecursor product details are pending.
+- [x] Verified the embedded project belongs to Athletify, removed the standalone Projects navigation, and checked light/dark, desktop, and 320px layouts without horizontal overflow. The project link has visible keyboard focus; all 52 tests and the production build pass.
+- [ ] Add other professional products beneath their corresponding Experience entries when Jhon supplies their names, public context, and his contributions; current Antecursor product details are pending.
 
 ## Next useful milestones
 

@@ -3,7 +3,28 @@
 // Athletify product context: https://www.linkedin.com/company/athletifyofficial
 // Keep the listed overlapping roles; do not infer a relationship between employers.
 export const LINKEDIN = "https://www.linkedin.com/in/jhonsmithr";
-export const experience = [
+
+type ExperienceProject = {
+  name: string;
+  description: string;
+  url: string;
+  context?: string;
+  handoff?: { input: string; implementation: string };
+};
+
+type ExperienceEntry = {
+  employer: string;
+  role: string;
+  start: string;
+  startLabel: string;
+  end: string | null;
+  endLabel: string;
+  context: string;
+  highlights: readonly string[];
+  projects?: readonly ExperienceProject[];
+};
+
+export const experience: readonly ExperienceEntry[] = [
   {
     employer: "Antecursor",
     role: "Senior Full Stack Developer",
@@ -29,6 +50,17 @@ export const experience = [
     highlights: [
       "Developed frontend features for Athletify’s sports-management SaaS with React and TypeScript, in a full-stack developer role.",
       "Translated Figma designs into product interfaces and gained experience working with Next.js.",
+    ],
+    projects: [
+      {
+        name: "Athletify SaaS",
+        description:
+          "Sports and recreation management software from a team based in Utah.",
+        url: "https://www.athletify.com/",
+        context:
+          "The wider platform used a Go backend; my contribution focused on the frontend.",
+        handoff: { input: "Figma", implementation: "React + TypeScript" },
+      },
     ],
   },
   {
