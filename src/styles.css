@@ -687,6 +687,93 @@ input[type="range"] {
   margin: 27px 0 0;
   max-width: 215px;
 }
+.experiment-tools {
+  border-top: 1px solid #40503d;
+  padding: 0 27px;
+}
+.preset-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 24px;
+}
+.preset-grid h4 {
+  margin: 0 0 8px;
+  color: #e5eadf;
+  font-size: 14px;
+}
+.tool-panel {
+  border-bottom: 1px solid #40503d;
+}
+.tool-panel:last-child {
+  border-bottom: 0;
+}
+.tool-panel summary {
+  cursor: pointer;
+  padding: 18px 0;
+  font-size: 12px;
+  color: #d7e5ce;
+}
+.tool-panel summary:focus-visible {
+  outline: 3px solid #91a572;
+  outline-offset: 3px;
+}
+.tool-content {
+  padding: 0 0 20px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: #bdcdb3;
+}
+.tool-content p {
+  margin: 0 0 15px;
+}
+.tool-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 12px 0;
+}
+.tool-actions button,
+.tool-button {
+  border: 1px solid #769063;
+  background: #30472f;
+  color: #e2eed9;
+  border-radius: 4px;
+  padding: 10px 14px;
+  font-size: 11px;
+  min-height: 40px;
+}
+.tool-actions button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.tool-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+.tool-metrics > div {
+  border-left: 2px solid #698252;
+  padding-left: 12px;
+}
+.tool-metrics span,
+.tool-metrics small {
+  display: block;
+  font-size: 10px;
+}
+.tool-metrics strong {
+  display: block;
+  font: 20px var(--mono);
+  color: #d3f68a;
+  margin: 8px 0;
+}
+@media (max-width: 600px) {
+  .tool-metrics {
+    grid-template-columns: 1fr;
+  }
+  .experiment-tools {
+    padding-inline: 18px;
+  }
+}
 .lab-bottom {
   border-top: 1px solid #40503d;
   padding: 15px 27px;

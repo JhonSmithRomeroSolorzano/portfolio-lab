@@ -40,4 +40,8 @@ Added the copy-link control with confirmation and a selectable link when clipboa
 
 ## Working rule
 
+Completed baseline comparison: capture a scenario and inspect latency, availability, and database-demand differences as the controls change.
+
+Completed guided experiments for cache benefits, slow databases, and partial outages.
+
 Take the next useful, bounded task, validate it, and commit a complete change. Do not create empty commits or alter dates for activity. Preserve unrelated edits. When this roadmap is complete, propose the next worthwhile milestone.

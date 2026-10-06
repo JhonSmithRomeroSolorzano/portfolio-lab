@@ -3,6 +3,8 @@ import { DEFAULT_SCENARIO, simulate } from "./simulation";
 import type { DatabaseMode, Scenario } from "./simulation";
 import { scenarioFromSearch, scenarioUrl } from "./scenario-url";
 import { ShareExperiment } from "./ShareExperiment";
+import { Comparison } from "./ComparisonPanel";
+import { Presets } from "./ScenarioPresets";
 
 const GITHUB = "https://github.com/JhonSmithRomeroSolorzano";
 const REPO = `${GITHUB}/portfolio-lab`;
@@ -281,6 +283,10 @@ function SignalLab() {
             production measurements.
           </p>
         </div>
+      </div>
+      <div className="experiment-tools">
+        <Presets onSelect={setScenario} />
+        <Comparison scenario={scenario} />
       </div>
       <div className="lab-bottom">
         <button
