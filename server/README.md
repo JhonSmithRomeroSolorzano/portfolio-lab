@@ -20,3 +20,7 @@ curl -X POST http://127.0.0.1:3001/v1/simulate \
 - Request and header timeouts: five seconds. No cross-origin browser access is enabled.
 
 `npm test` includes real HTTP integration tests on an ephemeral loopback port. `npm run build` type-checks the service along with the browser app. Production Pages hosting publishes only the browser's `dist/` output.
+
+## Request diagnostics
+
+Every response includes a fresh `X-Request-Id`. The launcher writes one JSON record per completed response: generated request ID, UTC timestamp, method, normalized route, status, and elapsed milliseconds. Match a client's response header to a log record when investigating a failure. Request bodies, query strings, cookies, headers, and client addresses are excluded. Incoming request IDs are ignored. Library users can supply a logger; logger failures cannot change a response.

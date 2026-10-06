@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { createServer } from "node:http";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { simulate } from "../src/simulation.ts";
@@ -51,11 +52,51 @@ function readJson(req: IncomingMessage): Promise<unknown> {
     });
   });
 }
+export interface RequestLog {
+  timestamp: string;
+  requestId: string;
+  method: string;
+  route: string;
+  status: number;
+  durationMs: number;
+}
+export interface ServerOptions {
+  logger?: (entry: RequestLog) => void;
+}
 /** Local educational API; no connection to Redis or a production database. */
-export function createSimulationServer() {
+export function createSimulationServer(options: ServerOptions = {}) {
   const server = createServer(async (req, res) => {
+    const requestId = randomUUID();
+    const started = performance.now();
+    const path = (req.url ?? "/").split("?")[0];
+    res.setHeader("x-request-id", requestId);
+    res.once("finish", () => {
+      try {
+        options.logger?.({
+          timestamp: new Date().toISOString(),
+          requestId,
+          method: [
+            "GET",
+            "POST",
+            "PUT",
+            "DELETE",
+            "PATCH",
+            "HEAD",
+            "OPTIONS",
+          ].includes(req.method ?? "")
+            ? req.method!
+            : "OTHER",
+          route: ["/health", "/v1/simulate"].includes(path)
+            ? path
+            : "unmatched",
+          status: res.statusCode,
+          durationMs: Number((performance.now() - started).toFixed(3)),
+        });
+      } catch {
+        /* Logging must not change an already completed response. */
+      }
+    });
     try {
-      const path = (req.url ?? "/").split("?")[0];
       if (path !== "/health" && path !== "/v1/simulate") {
         req.resume();
         send(res, 404, { error: "Route not found." });

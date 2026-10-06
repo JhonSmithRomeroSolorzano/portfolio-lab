@@ -52,6 +52,8 @@ Completed bounded queue/backpressure experiments, reject-new overflow, and conse
 
 Completed an optional local Node HTTP API with a shared typed model, strict request validation, body limits, health route, graceful shutdown, and real HTTP integration checks.
 
+Completed API request IDs and structured completion logs without payloads or personal request metadata.
+
 ## Working rule
 
 Completed step-by-step request tracing for cache hits, database reads, and timeouts, restricted to outcomes possible in the selected setup.
