@@ -69,6 +69,7 @@ Next for this brief: a print/download résumé generated from the same verified 
 - [x] Added shared testing coverage with Jest, Playwright, and Mocha, and the user-confirmed integration and end-to-end levels.
 - [x] Expanded the diagram to four keyboard-operable layers, including Infrastructure. The overview, diagram, and background use one shared technology source.
 - [x] Verified the expanded overview and diagram at desktop, 900px, and 320px widths, both themes, every selection, keyboard activation, and no horizontal overflow. All 52 tests and the production build pass.
+- [x] Rewrote the opening introduction around the experience and systems Jhon builds; keep tool names in the organized stack below rather than repeating them in the opening paragraph.
 
 ## Next useful milestones
 

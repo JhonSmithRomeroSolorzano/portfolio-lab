@@ -520,9 +520,9 @@ export function App() {
                     Jhon Smith Romero<span>.</span>
                   </h1>
                   <p>
-                    I build interfaces with React and Material UI, backend
-                    services with Node.js and Express, and work with NoSQL and
-                    SQL databases.
+                    I turn ideas into web experiences that feel simple to use.
+                    Behind the screen, I build the systems that bring them to
+                    life.
                   </p>
                   <div className="intro-links">
                     <a className="resume-shortcut" href="#resume">
