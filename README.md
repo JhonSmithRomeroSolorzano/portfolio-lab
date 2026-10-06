@@ -8,9 +8,11 @@ Jhon Smith Romero’s engineering workspace: explore my stack, inspect a working
 
 The [résumé section](https://jhonsmithromerosolorzano.github.io/portfolio-lab/#resume) includes selected employment, education, and certifications verified against [my LinkedIn profile](https://www.linkedin.com/in/jhonsmithr) on October 6, 2026. Dates are preserved as listed, including overlapping roles; descriptions do not imply unverified employer relationships or outcomes. Public professional content lives in `src/profile.ts`.
 
-The portfolio uses a custom workspace composition: a compact identity rail and a connected stack map with selectable Interface, Services, and Data layers. The map explains verified experience and leads to the lab, résumé, and background. It is authored in React, CSS, and SVG for this project.
+The portfolio uses a custom workspace composition: a compact identity rail and a connected stack map with selectable Frontend, Backend, Data, and Infrastructure layers. The map explains verified experience and leads to the lab, résumé, background, and build notes. It is authored in React, CSS, and SVG for this project.
 
-The introduction shows my LinkedIn portrait and a compact frontend/backend/data overview. Material UI, Node.js with Express, and NoSQL as my strongest database experience were confirmed directly by me on October 6, 2026. SQL experience remains visible. The portrait is stored locally in `public/jhon-smith-romero.jpg`, so it does not depend on an expiring LinkedIn image URL. Contact links in the introduction and navigation lead to the contact section.
+The introduction shows my LinkedIn portrait and an organized technology overview. Languages and testing span the stack; the four areas distinguish UI libraries, components and styling, runtimes and frameworks, APIs and real-time communication, databases and caching, containers, CI/CD, and cloud platforms. The overview, map, and background share `src/technology-stack.ts` to keep descriptions consistent.
+
+Technology details were confirmed directly by me on October 6, 2026. NoSQL is my strongest database experience, alongside SQL; cloud experience includes Azure and some AWS work. Testing lists Jest, Playwright, and Mocha, with integration and end-to-end testing. The portrait is stored locally in `public/jhon-smith-romero.jpg`, so it does not depend on an expiring LinkedIn image URL. Contact links in the introduction and navigation lead to the contact section.
 
 The portfolio uses uppercase JSR branding, a warm neutral light theme, and a navy dark theme. A single light/dark toggle follows the device until the visitor chooses an appearance, then remembers that choice. There is no separate System button; existing automatic preferences remain supported. Blocked browser storage leaves the control usable for the current visit.
 
@@ -83,7 +85,7 @@ The app uses React, TypeScript, and Vite. Relative asset paths support both GitH
 
 ## About me
 
-I'm Jhon Smith Romero, a systems and telecommunications engineer with more than seven years in software development. My experience includes JavaScript, TypeScript, React, Material UI, Mithril.js, Node.js, Express, NoSQL, SQL, Redis, WebSockets, Docker, testing, and GitHub Actions. NoSQL is my strongest area of database experience.
+I'm Jhon Smith Romero, a systems and telecommunications engineer with more than seven years in software development. My experience includes JavaScript, TypeScript, React, Material UI, Mithril.js, Tailwind CSS, Node.js, Express, REST APIs, WebSockets, NoSQL, SQL, Redis, Docker, GitHub Actions, Azure, and some AWS work. I use Jest, Playwright, and Mocha for testing, including integration and end-to-end tests. NoSQL is my strongest area of database experience.
 
 This repository contains original portfolio work. It does not contain employer code or client data. Features are developed with AI assistance and reviewed through tests, builds, and documented checks.
 

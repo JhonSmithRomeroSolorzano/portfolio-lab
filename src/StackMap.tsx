@@ -1,40 +1,6 @@
 import { useState } from "react";
 
-const layers = [
-  {
-    id: "interface",
-    name: "Interface",
-    caption: "What people use",
-    title: "The interface is part of the system.",
-    description:
-      "I build frontend features with React and Material UI, working with JavaScript and TypeScript to connect the UI to the services behind it.",
-    tools: ["React", "Material UI", "JavaScript", "TypeScript"],
-    destination: "#about",
-    action: "More about my work",
-  },
-  {
-    id: "services",
-    name: "Services",
-    caption: "How it connects",
-    title: "Follow the request beyond the screen.",
-    description:
-      "I build backend services with Node.js and Express, connecting interfaces to data and application logic. My experience also includes Redis caching and WebSocket communication.",
-    tools: ["Node.js", "Express", "Redis", "WebSockets"],
-    destination: "#lab",
-    action: "Open Signal Lab",
-  },
-  {
-    id: "data",
-    name: "Data",
-    caption: "NoSQL + SQL",
-    title: "Strongest in NoSQL. Experienced in SQL.",
-    description:
-      "NoSQL databases are my strongest area of database experience. I also work with SQL databases, connecting both to backend services and the interfaces that use them.",
-    tools: ["NoSQL", "SQL"],
-    destination: "#resume",
-    action: "Read my experience",
-  },
-] as const;
+import { stackLayers } from "./technology-stack";
 
 function LayerIcon({ kind }: { kind: string }) {
   return (
@@ -47,21 +13,26 @@ function LayerIcon({ kind }: { kind: string }) {
       strokeWidth="1.4"
       aria-hidden="true"
     >
-      {kind === "interface" ? (
+      {kind === "frontend" ? (
         <>
           <rect x="3" y="4" width="22" height="19" rx="2" />
           <path d="M3 10h22M7 7h1m2 0h1M8 14l-3 3 3 3m12-6 3 3-3 3m-5-6-2 6" />
         </>
-      ) : kind === "services" ? (
+      ) : kind === "backend" ? (
         <>
           <rect x="4" y="4" width="20" height="8" rx="2" />
           <rect x="4" y="16" width="20" height="8" rx="2" />
           <path d="M8 8h1m3 0h8M8 20h1m3 0h8M14 12v4" />
         </>
-      ) : (
+      ) : kind === "data" ? (
         <>
           <ellipse cx="14" cy="6" rx="10" ry="4" />
           <path d="M4 6v15c0 5.3 20 5.3 20 0V6M4 13c0 5.3 20 5.3 20 0" />
+        </>
+      ) : (
+        <>
+          <path d="M7 18H6a4 4 0 0 1 0-8 7 7 0 0 1 13-2 5 5 0 0 1 2 10h-2" />
+          <path d="M14 24V13m-4 4 4-4 4 4M9 25h10" />
         </>
       )}
     </svg>
@@ -70,8 +41,8 @@ function LayerIcon({ kind }: { kind: string }) {
 
 export function StackMap() {
   const [selected, setSelected] =
-    useState<(typeof layers)[number]["id"]>("interface");
-  const layer = layers.find((item) => item.id === selected)!;
+    useState<(typeof stackLayers)[number]["id"]>("frontend");
+  const layer = stackLayers.find((item) => item.id === selected)!;
   return (
     <div className="stack-map">
       <div className="stack-drawing" role="group" aria-label="Explore my stack">
@@ -88,15 +59,12 @@ export function StackMap() {
           fill="none"
           aria-hidden="true"
         >
-          <path
-            className="map-wire"
-            d="M140 140H280V250H400M400 250H530V140H660"
-          />
-          <path className="map-wire-secondary" d="M140 140V325H660V140" />
-          <circle cx="280" cy="250" r="4" />
-          <circle cx="530" cy="140" r="4" />
+          <path className="map-wire" d="M200 120H600V280H200V120" />
+          <path className="map-wire-secondary" d="M200 120H400V280H600" />
+          <circle cx="400" cy="120" r="4" />
+          <circle cx="400" cy="280" r="4" />
         </svg>
-        {layers.map((item) => (
+        {stackLayers.map((item) => (
           <button
             key={item.id}
             type="button"
@@ -111,7 +79,9 @@ export function StackMap() {
             <span>{item.caption}</span>
           </button>
         ))}
-        <p className="map-footnote">Frontend ↔ backend ↔ data</p>
+        <p className="map-footnote">
+          Frontend · backend · data · infrastructure
+        </p>
       </div>
       <div
         className="stack-detail"
@@ -124,11 +94,14 @@ export function StackMap() {
         <span className="stack-detail-label">{layer.name}</span>
         <h2>{layer.title}</h2>
         <p>{layer.description}</p>
-        <ul className="stack-tools" aria-label="Technologies">
-          {layer.tools.map((tool) => (
-            <li key={tool}>{tool}</li>
+        <dl className="stack-facts" aria-label="Technology categories">
+          {layer.groups.map((group) => (
+            <div key={group.label}>
+              <dt>{group.label}</dt>
+              <dd>{group.items.join(" · ")}</dd>
+            </div>
           ))}
-        </ul>
+        </dl>
         <a href={layer.destination}>
           {layer.action} <span aria-hidden="true">↗</span>
         </a>

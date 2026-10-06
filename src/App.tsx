@@ -17,6 +17,8 @@ import { QueueExperiment } from "./QueueExperiment";
 
 import { observeScrollReveals } from "./scroll-reveals";
 import { StackMap } from "./StackMap";
+import { TechnologyOverview } from "./TechnologyOverview";
+import { stackLayers } from "./technology-stack";
 import { ResumeSection } from "./ResumeSection";
 import { LINKEDIN } from "./profile";
 import { ThemeSwitcher } from "./ThemeSwitcher";
@@ -431,27 +433,6 @@ function SignalLab() {
   );
 }
 
-const skills = [
-  {
-    number: "01",
-    title: "The experience.",
-    text: "Interfaces that connect people to the systems behind them.",
-    tags: ["React", "Material UI", "TypeScript", "JavaScript", "Mithril.js"],
-  },
-  {
-    number: "02",
-    title: "The system.",
-    text: "APIs, data flows, and the details that keep an application moving.",
-    tags: ["Node.js", "Express", "NoSQL", "Redis", "WebSockets"],
-  },
-  {
-    number: "03",
-    title: "The delivery.",
-    text: "Testing, repeatable builds, and getting changes into production.",
-    tags: ["Docker", "GitHub Actions", "CI/CD", "Testing"],
-  },
-];
-
 export function App() {
   const mainRef = useRef<HTMLElement>(null);
   useEffect(
@@ -564,31 +545,7 @@ export function App() {
                   fetchPriority="high"
                 />
               </div>
-              <dl
-                className="technology-overview"
-                aria-label="My technology stack"
-              >
-                <div>
-                  <dt>Frontend</dt>
-                  <dd>
-                    React · Material UI
-                    <br />
-                    JavaScript · TypeScript
-                  </dd>
-                </div>
-                <div>
-                  <dt>Backend</dt>
-                  <dd>Node.js · Express</dd>
-                </div>
-                <div>
-                  <dt>Data</dt>
-                  <dd>
-                    NoSQL <span>— strongest experience</span>
-                    <br />
-                    SQL
-                  </dd>
-                </div>
-              </dl>
+              <TechnologyOverview />
               <StackMap />
               <div className="workbench-caption">
                 <span>My stack above. A working experiment below.</span>
@@ -661,22 +618,24 @@ export function App() {
                 </a>
               </div>
               <div className="skill-list">
-                {skills.map((skill) => (
+                {stackLayers.map((skill, index) => (
                   <article
                     className="skill-row"
-                    key={skill.number}
-                    data-reveal={Number(skill.number) * 50}
+                    key={skill.id}
+                    data-reveal={index * 50}
                   >
                     <span className="skill-marker" aria-hidden="true">
                       ↳
                     </span>
                     <div>
-                      <h3>{skill.title}</h3>
-                      <p>{skill.text}</p>
+                      <h3>{skill.name}</h3>
+                      <p>{skill.description}</p>
                       <div className="tags">
-                        {skill.tags.map((tag) => (
-                          <span key={tag}>{tag}</span>
-                        ))}
+                        {skill.groups
+                          .flatMap((group) => group.items)
+                          .map((tag) => (
+                            <span key={tag}>{tag}</span>
+                          ))}
                       </div>
                     </div>
                   </article>

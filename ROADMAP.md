@@ -62,6 +62,14 @@ Next for this brief: a print/download résumé generated from the same verified 
 - [x] Checked desktop, 900px, 390px, and 320px layouts, portrait loading, keyboard theme switching, saved theme/logo/favicon agreement, diagram content, and contact navigation. All 52 tests and the production build pass.
 - [ ] Add email and phone links once the user supplies the exact contact details to publish. Do not infer them from account metadata.
 
+### Organized technology stack — October 6 follow-up
+
+- [x] Separated shared JavaScript/TypeScript languages from frontend libraries/components/styling, backend runtime/framework/communication, databases/cache, and infrastructure.
+- [x] Included Material UI, Tailwind CSS, REST APIs, WebSockets, Redis, Docker, and GitHub Actions for CI/CD. Azure and some AWS experience were confirmed directly by the user; retain that distinction.
+- [x] Added shared testing coverage with Jest, Playwright, and Mocha, and the user-confirmed integration and end-to-end levels.
+- [x] Expanded the diagram to four keyboard-operable layers, including Infrastructure. The overview, diagram, and background use one shared technology source.
+- [x] Verified the expanded overview and diagram at desktop, 900px, and 320px widths, both themes, every selection, keyboard activation, and no horizontal overflow. All 52 tests and the production build pass.
+
 ## Next useful milestones
 
 1. **Browser regression suite:** automate keyboard flows, reload/URL state, file import/export, and viewport checks. Start from observed user journeys; keep fixtures deterministic.
