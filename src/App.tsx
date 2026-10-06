@@ -317,6 +317,26 @@ function SignalLab() {
               }
             />
           </div>
+          <div className="control-block">
+            <label htmlFor="write-share">
+              Write requests{" "}
+              <output htmlFor="write-share">
+                {scenario.writePercent ?? 0}%
+              </output>
+            </label>
+            <input
+              id="write-share"
+              type="range"
+              min="0"
+              max="100"
+              step="5"
+              value={scenario.writePercent ?? 0}
+              onChange={(event) =>
+                update({ writePercent: Number(event.target.value) })
+              }
+            />
+            <small>Writes always bypass the read cache.</small>
+          </div>
           <ShareExperiment key={JSON.stringify(scenario)} scenario={scenario} />
           <button
             className="reset-button"
@@ -361,15 +381,17 @@ function SignalLab() {
           <p>
             Each request adds 12 ms of API overhead. With caching enabled,{" "}
             {scenario.cacheHitPercent ?? 80}% of reads hit a warm cache in 8 ms.
-            The remaining reads share {scenario.databaseConnections ?? 8}{" "}
-            database connections: 80 ms per read normally, 400 ms when slow.
-            Database capacity is connections × 1,000 ÷ latency. Requests above
-            that capacity, or to an offline database, time out after 1,000 ms.
+            Uncached reads and all writes share{" "}
+            {scenario.databaseConnections ?? 8} database connections: 80 ms per
+            read normally, 400 ms when slow. Reads and writes have the same
+            modeled database cost. Database capacity is connections × 1,000 ÷
+            latency. Requests above that capacity, or to an offline database,
+            time out after 1,000 ms.
           </p>
           <p>
             The mean includes successes and timeouts. This steady-state model
-            has no queue, retries, cache expiry, writes, or network variance.
-            Its purpose is to make the trade-offs visible; it does not predict
+            has no queue, retries, cache expiry, or network variance. Its
+            purpose is to make the trade-offs visible; it does not predict
             production performance.
           </p>
         </div>

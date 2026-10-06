@@ -7,6 +7,7 @@ export interface Scenario {
   cacheEnabled: boolean;
   database: DatabaseMode;
   cacheHitPercent?: number;
+  writePercent?: number;
   databaseConnections?: number;
 }
 
@@ -43,7 +44,12 @@ export function simulate(scenario: Scenario) {
   const hitPercent = scenario.cacheHitPercent ?? MODEL.cacheHitRatio * 100;
   if (!Number.isInteger(hitPercent) || hitPercent < 0 || hitPercent > 100)
     throw new RangeError("Cache hit rate must be an integer from 0 to 100.");
-  const cacheHits = scenario.cacheEnabled ? (offered * hitPercent) / 100 : 0;
+  const writePercent = scenario.writePercent ?? 0;
+  if (!Number.isInteger(writePercent) || writePercent < 0 || writePercent > 100)
+    throw new RangeError("Write share must be an integer from 0 to 100.");
+  const writes = (offered * writePercent) / 100;
+  const reads = offered - writes;
+  const cacheHits = scenario.cacheEnabled ? (reads * hitPercent) / 100 : 0;
   const databaseDemand = offered - cacheHits;
   const connections = scenario.databaseConnections ?? MODEL.databaseConnections;
   if (!Number.isInteger(connections) || connections < 1 || connections > 32)
@@ -75,6 +81,8 @@ export function simulate(scenario: Scenario) {
 
   return {
     offered,
+    reads,
+    writes,
     cacheHits,
     databaseDemand,
     databaseServed,

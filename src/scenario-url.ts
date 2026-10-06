@@ -1,7 +1,7 @@
 import { DEFAULT_SCENARIO } from "./simulation";
 import type { Scenario } from "./simulation";
 
-const KEYS = ["traffic", "cache", "database", "hit", "pool"] as const;
+const KEYS = ["traffic", "cache", "database", "hit", "pool", "writes"] as const;
 
 /** Invalid or repeated parameters fall back independently to safe defaults. */
 export function scenarioFromSearch(search: string): Scenario {
@@ -42,6 +42,14 @@ export function scenarioFromSearch(search: string): Scenario {
     Number(pool) !== 8
   )
     result.databaseConnections = Number(pool);
+  const writes = single("writes");
+  if (
+    writes !== null &&
+    /^\d+$/.test(writes) &&
+    Number(writes) > 0 &&
+    Number(writes) <= 100
+  )
+    result.writePercent = Number(writes);
   return result;
 }
 
@@ -62,5 +70,7 @@ export function scenarioUrl(currentUrl: string, scenario: Scenario): string {
     scenario.databaseConnections !== 8
   )
     url.searchParams.set("pool", String(scenario.databaseConnections));
+  if (scenario.writePercent)
+    url.searchParams.set("writes", String(scenario.writePercent));
   return url.toString();
 }

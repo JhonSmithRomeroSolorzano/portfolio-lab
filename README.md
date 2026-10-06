@@ -22,10 +22,11 @@ For example, [`?traffic=300&cache=off&database=slow#lab`](https://jhonsmithromer
 - Warm cache: adjustable hit rate (80% by default); hits complete in 8 ms when enabled.
 - Database: adjustable pool of 1–32 connections (8 by default), 80 ms per read normally, 400 ms when slow.
 - Capacity: `connections × 1000 / latencyMs` requests per second.
-- Reads over capacity or to an offline database time out after 1,000 ms.
+- Adjustable write share (0% by default); writes bypass cache and use the same database latency as reads.
+- Requests over capacity or to an offline database time out after 1,000 ms.
 - Mean response time includes both successes and timeouts.
 
-No queue, retries, writes, expiry, or network variability are modeled yet. These simplifications are deliberate and visible in the demo. The model illustrates trade-offs, not production performance.
+No queue, retries, expiry, or network variability are modeled yet. These simplifications are deliberate and visible in the demo. The model illustrates trade-offs, not production performance.
 
 ## Run locally
 

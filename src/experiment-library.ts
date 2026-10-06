@@ -22,6 +22,10 @@ export function validScenario(value: unknown): value is Scenario {
       (Number.isInteger(s.databaseConnections) &&
         s.databaseConnections >= 1 &&
         s.databaseConnections <= 32)) &&
+    (s.writePercent === undefined ||
+      (Number.isInteger(s.writePercent) &&
+        s.writePercent >= 0 &&
+        s.writePercent <= 100)) &&
     ["normal", "slow", "offline"].includes(s.database)
   );
 }

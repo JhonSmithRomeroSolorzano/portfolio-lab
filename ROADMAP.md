@@ -44,6 +44,8 @@ Completed adjustable database pools, including offline behavior and safe sharing
 
 Completed capacity sweeps with a throughput chart, accessible sample table, and downloadable CSV.
 
+Completed mixed read/write workloads with cache bypass for writes and portable scenario settings.
+
 ## Working rule
 
 Completed step-by-step request tracing for cache hits, database reads, and timeouts, restricted to outcomes possible in the selected setup.

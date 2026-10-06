@@ -13,7 +13,7 @@ export function requestTrace(scenario: Scenario, route: TraceRoute) {
   if (!availableRoutes(scenario).includes(route))
     throw new Error("This outcome does not occur in the selected scenario.");
   const steps = [
-    { at: 0, label: "The client sends a read request." },
+    { at: 0, label: "The client sends a request." },
     { at: MODEL.apiLatencyMs, label: "The API finishes its modeled overhead." },
   ];
   if (route === "cache")
@@ -21,9 +21,12 @@ export function requestTrace(scenario: Scenario, route: TraceRoute) {
   else {
     steps.push({
       at: MODEL.apiLatencyMs,
-      label: scenario.cacheEnabled
-        ? "The read misses the cache."
-        : "The read bypasses the cache.",
+      label:
+        (scenario.writePercent ?? 0) > 0
+          ? "An uncached read or a write needs the database. Writes bypass the cache."
+          : scenario.cacheEnabled
+            ? "The read misses the cache."
+            : "The read bypasses the cache.",
     });
     steps.push({
       at:

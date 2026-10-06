@@ -26,7 +26,9 @@ export function Comparison({ scenario }: { scenario: Scenario }) {
             <p>
               Baseline: {baseline.requestsPerSecond} req/s · cache{" "}
               {baseline.cacheEnabled ? "on" : "off"} · database{" "}
-              {baseline.database}.
+              {baseline.database} · {baseline.databaseConnections ?? 8}{" "}
+              connections · {baseline.cacheHitPercent ?? 80}% read hit rate ·{" "}
+              {baseline.writePercent ?? 0}% writes.
             </p>
             <div className="tool-metrics" aria-live="polite">
               <div>
