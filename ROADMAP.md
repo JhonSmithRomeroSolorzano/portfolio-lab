@@ -26,6 +26,7 @@ Aim: show practical full-stack engineering through working features and clear ex
 - [x] NDJSON batch replay, sample scenarios, bounded input, and useful exit codes.
 - [x] Technical case study with architecture, formulas, trade-offs, and reproducible examples.
 - [x] Automated validation and GitHub Pages deployment.
+- [x] Grouped advanced workload controls to keep the initial lab compact after desktop review.
 - [x] Manual browser checks of controls, comparison, persistence, JSON import, expiry/queue results, and narrow-screen layout.
 
 The API is a local teaching service. The public browser demo is static and does not connect to a live cache or database. Expiry and queue experiments are separate from the steady-state model.

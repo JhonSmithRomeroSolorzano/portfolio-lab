@@ -1507,3 +1507,26 @@ input[type="range"] {
   font-size: 10px;
   line-height: 1.5;
 }
+
+.advanced-controls {
+  border-top: 1px solid #46503f;
+  padding: 16px 0;
+  margin-bottom: 10px;
+}
+.advanced-controls summary {
+  font-size: 12px;
+  cursor: pointer;
+  line-height: 1.5;
+}
+.advanced-controls summary small {
+  display: block;
+  margin-top: 5px;
+  color: #b2bda8;
+  font-size: 10px;
+}
+.advanced-body {
+  margin-top: 20px;
+}
+.advanced-body .control-block:last-child {
+  margin-bottom: 0;
+}

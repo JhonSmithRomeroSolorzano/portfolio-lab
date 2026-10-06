@@ -268,26 +268,6 @@ function SignalLab() {
               <span />
             </button>
           </div>
-          <div className="control-block">
-            <label htmlFor="cache-rate">
-              Cache hit rate{" "}
-              <output htmlFor="cache-rate">
-                {scenario.cacheHitPercent ?? 80}%
-              </output>
-            </label>
-            <input
-              id="cache-rate"
-              type="range"
-              min="0"
-              max="100"
-              step="5"
-              disabled={!scenario.cacheEnabled}
-              value={scenario.cacheHitPercent ?? 80}
-              onChange={(event) =>
-                update({ cacheHitPercent: Number(event.target.value) })
-              }
-            />
-          </div>
           <fieldset className="control-block">
             <legend>Database condition</legend>
             <div className="segmented">
@@ -307,46 +287,78 @@ function SignalLab() {
               ))}
             </div>
           </fieldset>
-          <div className="control-block">
-            <label htmlFor="pool-size">
-              Database pool{" "}
-              <output htmlFor="pool-size">
-                {scenario.databaseConnections ?? 8} connections
-              </output>
-            </label>
-            <input
-              id="pool-size"
-              type="range"
-              min="1"
-              max="32"
-              step="1"
-              value={scenario.databaseConnections ?? 8}
-              disabled={scenario.database === "offline"}
-              onChange={(event) =>
-                update({ databaseConnections: Number(event.target.value) })
-              }
-            />
-          </div>
-          <div className="control-block">
-            <label htmlFor="write-share">
-              Write requests{" "}
-              <output htmlFor="write-share">
-                {scenario.writePercent ?? 0}%
-              </output>
-            </label>
-            <input
-              id="write-share"
-              type="range"
-              min="0"
-              max="100"
-              step="5"
-              value={scenario.writePercent ?? 0}
-              onChange={(event) =>
-                update({ writePercent: Number(event.target.value) })
-              }
-            />
-            <small>Writes always bypass the read cache.</small>
-          </div>
+          <details className="advanced-controls">
+            <summary>
+              More workload settings
+              <small>
+                {scenario.cacheHitPercent ?? 80}% read hits ·{" "}
+                {scenario.databaseConnections ?? 8} connections ·{" "}
+                {scenario.writePercent ?? 0}% writes
+              </small>
+            </summary>
+            <div className="advanced-body">
+              <div className="control-block">
+                <label htmlFor="cache-rate">
+                  Cache hit rate{" "}
+                  <output htmlFor="cache-rate">
+                    {scenario.cacheHitPercent ?? 80}%
+                  </output>
+                </label>
+                <input
+                  id="cache-rate"
+                  type="range"
+                  min="0"
+                  max="100"
+                  step="5"
+                  disabled={!scenario.cacheEnabled}
+                  value={scenario.cacheHitPercent ?? 80}
+                  onChange={(event) =>
+                    update({ cacheHitPercent: Number(event.target.value) })
+                  }
+                />
+              </div>
+              <div className="control-block">
+                <label htmlFor="pool-size">
+                  Database pool{" "}
+                  <output htmlFor="pool-size">
+                    {scenario.databaseConnections ?? 8} connections
+                  </output>
+                </label>
+                <input
+                  id="pool-size"
+                  type="range"
+                  min="1"
+                  max="32"
+                  step="1"
+                  value={scenario.databaseConnections ?? 8}
+                  disabled={scenario.database === "offline"}
+                  onChange={(event) =>
+                    update({ databaseConnections: Number(event.target.value) })
+                  }
+                />
+              </div>
+              <div className="control-block">
+                <label htmlFor="write-share">
+                  Write requests{" "}
+                  <output htmlFor="write-share">
+                    {scenario.writePercent ?? 0}%
+                  </output>
+                </label>
+                <input
+                  id="write-share"
+                  type="range"
+                  min="0"
+                  max="100"
+                  step="5"
+                  value={scenario.writePercent ?? 0}
+                  onChange={(event) =>
+                    update({ writePercent: Number(event.target.value) })
+                  }
+                />
+                <small>Writes always bypass the read cache.</small>
+              </div>
+            </div>
+          </details>
           <ShareExperiment key={JSON.stringify(scenario)} scenario={scenario} />
           <button
             className="reset-button"
