@@ -15,6 +15,8 @@ import { CacheExpiryPanel } from "./CacheExpiryPanel";
 
 import { QueueExperiment } from "./QueueExperiment";
 
+import { ResumeSection } from "./ResumeSection";
+import { LINKEDIN } from "./profile";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 
 import { RequestRateInput } from "./RequestRateInput";
@@ -470,6 +472,7 @@ export function App() {
         </a>
         <nav aria-label="Main navigation">
           <a href="#lab">The lab</a>
+          <a href="#resume">Résumé</a>
           <a href="#about">About</a>
           <a href="#journal">Build log</a>
         </nav>
@@ -505,12 +508,17 @@ export function App() {
               <br className="desktop-break" /> I connect useful interfaces with
               the systems that power them.
             </p>
-            <a className="primary-button" href="#lab">
-              Step inside the lab <Arrow />
-            </a>
+            <div className="hero-actions">
+              <a className="primary-button" href="#resume">
+                Explore my résumé <Arrow />
+              </a>
+              <a className="text-link" href="#lab">
+                Try the lab <Arrow diagonal />
+              </a>
+            </div>
           </div>
           <div className="hero-foot">
-            <span>5+ years in full-stack development</span>
+            <span>7+ years in software development</span>
             <span>
               JAVASCRIPT & TYPESCRIPT <span aria-hidden="true">↙</span>
             </span>
@@ -567,9 +575,9 @@ export function App() {
               <em>to the last query.</em>
             </h2>
             <p>
-              For more than five years, I’ve worked as a full-stack developer
-              for a US-based company. My day-to-day work spans frontend and
-              backend development, with a focus on the JavaScript and TypeScript
+              I’m a systems and telecommunications engineer with more than seven
+              years in software development. My work spans frontend and backend
+              development, with a focus on the JavaScript and TypeScript
               ecosystem.
             </p>
             <p>
@@ -603,6 +611,7 @@ export function App() {
             ))}
           </div>
         </section>
+        <ResumeSection />
         <section
           className="journal-section wrap"
           id="journal"
@@ -611,7 +620,7 @@ export function App() {
           <div className="section-heading">
             <div>
               <span className="eyebrow">
-                <span className="section-index">03 /</span> BUILDING IN PUBLIC
+                <span className="section-index">04 /</span> BUILDING IN PUBLIC
               </span>
               <h2 id="journal-title">The work keeps moving.</h2>
             </div>
@@ -657,11 +666,11 @@ export function App() {
             </h2>
             <a
               className="primary-button"
-              href={GITHUB}
+              href={LINKEDIN}
               target="_blank"
               rel="noreferrer"
             >
-              Find me on GitHub <Arrow diagonal />
+              Find me on LinkedIn <Arrow diagonal />
             </a>
           </div>
           <p>

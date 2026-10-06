@@ -38,7 +38,7 @@ Requested October 6; complete these before expanding the backend lab.
 
 - [x] Uppercase JSR monogram in the header and favicon; cohesive blue branding with the original warm neutral light background.
 - [x] Visible light/dark/system theme control, saved preference, and readable navy dark theme.
-- [ ] Recruiter-friendly résumé with experience and education verified from [the user's LinkedIn profile](https://www.linkedin.com/in/jhonsmithr). Profile access succeeded October 6 through the signed-in browser. Preserve the listed overlapping dates; do not infer employment relationships or add unverified achievements.
+- [x] Recruiter-friendly résumé with experience and education verified from [the user's LinkedIn profile](https://www.linkedin.com/in/jhonsmithr). Profile access succeeded October 6 through the signed-in browser. Preserve the listed overlapping dates; do not infer employment relationships or add unverified achievements.
 - [ ] Restrained scroll reveals with keyboard, mobile, and reduced-motion support.
 - [ ] Review the complete résumé and visual refresh in the browser before publication.
 
@@ -51,7 +51,7 @@ Requested October 6; complete these before expanding the backend lab.
 5. **Retry experiment:** show retry amplification, a bounded retry budget, backoff, and jitter with a seeded source of randomness.
 6. **Service client:** add an explicitly selected local-API mode, request cancellation, and clear offline/error behavior. Keep the deployed static demo useful independently.
 7. **Accessibility review:** test screen-reader announcements, focus behavior, color contrast, and export fallbacks. Fix observed problems and document the evidence.
-8. **Recruiter path:** add a user-confirmed contact address, resume, and verified project case studies. Do not invent links, metrics, employer details, or achievements.
+8. **Recruiter path:** add a user-confirmed contact address, a downloadable résumé, and verified project case studies. Do not invent links, metrics, employer details, or achievements.
 
 ## Working rule
 

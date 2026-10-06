@@ -4,6 +4,12 @@ A full-stack developer's portfolio, with an interactive experiment you can actua
 
 **[Explore the portfolio](https://jhonsmithromerosolorzano.github.io/portfolio-lab/)** · **[Case study](CASE_STUDY.md)** · **[GitHub profile](https://github.com/JhonSmithRomeroSolorzano)** · **[Roadmap](ROADMAP.md)**
 
+## Résumé and presentation
+
+The [résumé section](https://jhonsmithromerosolorzano.github.io/portfolio-lab/#resume) includes selected employment, education, and certifications verified against [my LinkedIn profile](https://www.linkedin.com/in/jhonsmithr) on October 6, 2026. Dates are preserved as listed, including overlapping roles; descriptions do not imply unverified employer relationships or outcomes. Public professional content lives in `src/profile.ts`.
+
+The portfolio uses uppercase JSR branding, a warm neutral light theme, and a navy dark theme. The theme follows the device initially and remembers a manual choice. **System** restores automatic appearance; blocked browser storage leaves the control usable for the current visit.
+
 ## Signal Lab
 
 Change incoming traffic, toggle a warm read cache, and slow down or disconnect the database. The interface shows how these choices affect successful requests, database demand, and mean response time.
@@ -69,7 +75,7 @@ The app uses React, TypeScript, and Vite. Relative asset paths support both GitH
 
 ## About me
 
-I'm Jhon Smith Romero, a full-stack developer with more than five years of experience working for a US-based company. My experience includes JavaScript, TypeScript, React, Mithril.js, Node.js, Express, NoSQL, SQL, Redis, WebSockets, Docker, testing, and GitHub Actions.
+I'm Jhon Smith Romero, a systems and telecommunications engineer with more than seven years in software development. My experience includes JavaScript, TypeScript, React, Mithril.js, Node.js, Express, NoSQL, SQL, Redis, WebSockets, Docker, testing, and GitHub Actions.
 
 This repository contains original portfolio work. It does not contain employer code or client data. Features are developed with AI assistance and reviewed through tests, builds, and documented checks.
 

@@ -1,0 +1,179 @@
+.resume-section {
+  border-top: 1px solid var(--line);
+  padding-block: 58px 90px;
+}
+.resume-section .section-heading {
+  margin-bottom: 44px;
+}
+.resume-layout {
+  display: grid;
+  grid-template-columns: minmax(250px, 0.85fr) minmax(0, 1.6fr);
+  gap: 80px;
+}
+.resume-card {
+  padding: 28px;
+  border-radius: 8px;
+  background: var(--soft);
+}
+.resume-card h3 {
+  font: 400 30px/1.2 var(--serif);
+  margin: 20px 0 16px;
+}
+.resume-card p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.8;
+}
+.resume-card .resume-location {
+  color: var(--ink);
+  margin-block: 22px;
+}
+.resume-study {
+  margin-top: 32px;
+}
+.resume-study h3,
+.resume-list-title {
+  font: 500 12px var(--mono);
+  margin: 0 0 25px;
+}
+.resume-study article {
+  border-top: 1px solid var(--line);
+  padding-block: 18px;
+}
+.resume-study h4 {
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 500;
+  margin: 8px 0;
+}
+.resume-study p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 6px 0;
+}
+.resume-period,
+.resume-study .resume-period {
+  font: 10px/1.6 var(--mono);
+  color: var(--muted);
+  margin: 0;
+}
+.experience-list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.experience-list > li {
+  border-left: 1px solid var(--line);
+  padding: 0 0 34px 30px;
+  position: relative;
+}
+.experience-list > li:last-child {
+  padding-bottom: 0;
+}
+.experience-list > li::before {
+  content: "";
+  position: absolute;
+  left: -5px;
+  top: 5px;
+  width: 9px;
+  height: 9px;
+  border: 2px solid var(--paper);
+  border-radius: 50%;
+  background: var(--accent);
+}
+.experience-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+}
+.current-role {
+  font: 9px var(--mono);
+  padding: 4px 8px;
+  border-radius: 20px;
+  background: var(--soft);
+  color: var(--accent);
+}
+.experience-list h4 {
+  font-size: 21px;
+  line-height: 1.4;
+  font-weight: 500;
+  margin: 10px 0 3px;
+}
+.experience-employer {
+  font-size: 14px;
+  margin: 0;
+  line-height: 1.6;
+}
+.experience-context {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+  margin: 6px 0 14px;
+}
+.experience-list ul {
+  padding-left: 18px;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.8;
+}
+.experience-list ul li {
+  margin-top: 6px;
+}
+.hero-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 22px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+@media (max-width: 1050px) {
+  .resume-layout {
+    gap: 40px;
+  }
+  .hero-actions {
+    gap: 16px;
+  }
+}
+@media (max-width: 760px) {
+  .resume-section {
+    padding-block: 38px 55px;
+  }
+  .resume-layout {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+  .resume-experience {
+    grid-row: 1;
+  }
+  .resume-overview {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .resume-card {
+    grid-column: 1 / -1;
+  }
+  .resume-study {
+    margin-top: 0;
+  }
+  .experience-list > li {
+    padding-left: 22px;
+  }
+}
+@media (max-width: 450px) {
+  .resume-overview {
+    grid-template-columns: 1fr;
+  }
+}
