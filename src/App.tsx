@@ -86,7 +86,7 @@ function SignalLab() {
           <span className="signal-mark" aria-hidden="true">
             ▥
           </span>{" "}
-          SIGNAL LAB <span className="version">v0.1</span>
+          SIGNAL LAB <span className="version">v0.2</span>
         </span>
         <span className="simulation-tag">INTERACTIVE SIMULATION</span>
       </div>
@@ -522,7 +522,13 @@ export function App() {
             <span>
               <b>Signal Lab</b> · An original portfolio experiment
             </span>
-            <span>React / TypeScript / Tested model</span>
+            <a
+              href={`${REPO}/blob/main/CASE_STUDY.md`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Read the engineering walkthrough ↗
+            </a>
           </div>
         </section>
         <section
@@ -600,13 +606,13 @@ export function App() {
           <article className="journal-entry">
             <time dateTime="2026-10-05">OCT 05, 2026</time>
             <div>
-              <span className="journal-tag">FIRST MILESTONE</span>
-              <h3>A portfolio with something to explore.</h3>
+              <span className="journal-tag">LAB + LOCAL API</span>
+              <h3>From a sketch to a repeatable experiment.</h3>
               <p>
-                The foundation: an interactive cache and database model, a
-                responsive React interface, and tests for the behavior behind
-                the demo. Experiment links now preserve your settings, with a
-                copy button so you can share a specific scenario.
+                Compare setups, save experiments, trace a request, and explore
+                cache expiry and burst queues. The repository now includes a
+                tested local Node API, batch replay tools, and a walkthrough
+                explaining the model’s decisions and limits.
               </p>
             </div>
             <a

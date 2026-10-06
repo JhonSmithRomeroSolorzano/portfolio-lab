@@ -1,77 +1,48 @@
 # Portfolio roadmap
 
-Aim: show practical full-stack engineering through small, working features and clear explanations.
+Aim: show practical full-stack engineering through working features and clear explanations.
 
-## Milestone 1 — Foundation (2026-10-05)
+## Completed — 2026-10-05
+
+### Portfolio and repeatable experiments
 
 - [x] Responsive portfolio grounded in verified experience.
-- [x] Interactive traffic, caching, and database failure simulation.
-- [x] Typed model with explicit assumptions and behavior tests.
-- [x] Accessible controls and reduced-motion support.
-- [x] Repository documentation and automated build workflow.
+- [x] Typed cache/database model with visible assumptions and conservation tests.
+- [x] Shareable URL settings and clipboard fallback.
+- [x] Guided experiments and captured-baseline comparison.
+- [x] Named local experiment library, bounded to eight saved setups.
+- [x] Versioned JSON import/export with validation and recalculated results.
+- [x] Exact traffic input, configurable read hit rate, connection pool, and write share.
+- [x] Capacity sweep, accessible results table, and CSV generation.
+- [x] Step-through cache/database/timeout traces.
+- [x] Separate cache expiry and bounded queue experiments.
 
-## Milestone 2 — Shareable experiments (2026-10-05)
+### Local service and developer tools
 
-- [x] Encode the selected scenario in the URL; load valid values safely and reject invalid input.
-- [x] Add a copy-link button with a useful success/failure state.
-- [x] Test scenario serialization, invalid values, and reset behavior.
-- [x] Explain the feature in the build log.
+- [x] Node HTTP API using the same model; strict validation, body limits, health route, graceful shutdown, and integration checks.
+- [x] Generated request IDs and structured logs without request payloads or personal metadata.
+- [x] Process-wide fixed-window request budget with 429 and Retry-After.
+- [x] Served OpenAPI contract with consistency checks.
+- [x] NDJSON batch replay, sample scenarios, bounded input, and useful exit codes.
+- [x] Technical case study with architecture, formulas, trade-offs, and reproducible examples.
+- [x] Automated validation and GitHub Pages deployment.
+- [x] Manual browser checks of controls, comparison, persistence, JSON import, expiry/queue results, and narrow-screen layout.
 
-## After that
+The API is a local teaching service. The public browser demo is static and does not connect to a live cache or database. Expiry and queue experiments are separate from the steady-state model.
 
-1. **Compare scenarios:** save a baseline and compare the effects of changing one variable, with tests for comparison behavior.
-2. **Request tracing:** step through cache hits, misses, and timeouts with an accessible event log.
-3. **Backend service:** introduce a small Node/Express service in an isolated folder with a typed contract, validation, health route, and integration tests. Keep the public browser demo functional without a backend deployment.
-4. **Cache behavior:** add a configurable hit ratio and expiry model; explain freshness versus latency.
-5. **Queue experiment:** model bounded queues and backpressure, including an explicit overflow policy and tests.
-6. **Case study:** write a technical walkthrough of this original project with an architecture diagram and decisions supported by the implementation.
-7. **Recruiter path:** add a user-confirmed contact address, resume, and verified project case studies. Do not invent links, metrics, or achievements.
-8. **Quality review:** inspect keyboard navigation, contrast, small screens, loading performance, and real browser interactions; fix observed problems.
+## Next useful milestones
 
-## Work log
-
-### 2026-10-05
-
-Built the first portfolio and Signal Lab model. Added tests for warm-cache reads, saturation, outages, connection-pool boundaries, invalid traffic, and conservation of requests across all UI scenarios. Next task: shareable experiment URLs.
-
-Added shareable URL state with independent validation for each field, preservation of the deployment subpath, and clean reset behavior. Round-trip tests cover every UI scenario. Next task: a copy-link control.
-
-Added the copy-link control with confirmation and a selectable link when clipboard access is denied or unsupported. Shared links strip unrelated query parameters. Documented the feature and updated the portfolio build log. Next task: compare a saved baseline with the current experiment.
-
-Completed configurable cache hit rates, including safe URL/file validation and 0%/100% boundary behavior.
-
-Completed adjustable database pools, including offline behavior and safe sharing/imports.
-
-Completed capacity sweeps with a throughput chart, accessible sample table, and downloadable CSV.
-
-Completed mixed read/write workloads with cache bypass for writes and portable scenario settings.
-
-Completed a deterministic cache-expiry timeline showing TTL boundaries, stale versions, and the freshness/database-load trade-off.
-
-Completed bounded queue/backpressure experiments, reject-new overflow, and conservation checks for every supported buffer/capacity pair.
-
-Completed an optional local Node HTTP API with a shared typed model, strict request validation, body limits, health route, graceful shutdown, and real HTTP integration checks.
-
-Completed API request IDs and structured completion logs without payloads or personal request metadata.
-
-Completed an explicit API request budget with 429/Retry-After responses and deterministic time-boundary tests.
-
-Completed batch scenario replay with NDJSON input/output, strict shared validation, bounded input, useful exit codes, and sample workloads.
-
-Completed exact keyboard-editable traffic rates from 1–600 req/s, aligned across the model, URL, saved files, CLI, and API.
-
-Completed a machine-readable OpenAPI contract served by the API, with response and schema consistency checks.
+1. **Browser regression suite:** automate keyboard flows, reload/URL state, file import/export, and viewport checks. Start from observed user journeys; keep fixtures deterministic.
+2. **Comparison reports:** save and restore a baseline, export a readable comparison, and share both setups with explicit versioning and validation.
+3. **Cache invalidation:** compare fixed TTL, write-through invalidation, and stale-while-revalidate in the separate key timeline. Define update ordering and test boundary behavior.
+4. **Request scheduler:** introduce an event-based model with queue wait and deadlines. Compare it with the steady-state approximation; label all assumptions.
+5. **Retry experiment:** show retry amplification, a bounded retry budget, backoff, and jitter with a seeded source of randomness.
+6. **Service client:** add an explicitly selected local-API mode, request cancellation, and clear offline/error behavior. Keep the deployed static demo useful independently.
+7. **Accessibility review:** test screen-reader announcements, focus behavior, color contrast, and export fallbacks. Fix observed problems and document the evidence.
+8. **Recruiter path:** add a user-confirmed contact address, resume, and verified project case studies. Do not invent links, metrics, employer details, or achievements.
 
 ## Working rule
 
-Completed step-by-step request tracing for cache hits, database reads, and timeouts, restricted to outcomes possible in the selected setup.
+Take the next useful, bounded task, validate it, and commit a complete change. Keep relevant tests with the feature. Follow the user's current daily scope without padding commit counts. Never create empty commits, backdate changes, or manufacture activity. Preserve unrelated edits and existing history. If external authentication or publication is blocked, report it once; do not repeatedly edit this roadmap for activity.
 
-Completed portable experiment snapshots with JSON download, validated imports, and fresh result calculation.
-
-Completed a named experiment library with reload persistence, removal, bounded storage, and a session-only fallback when storage is blocked.
-
-Completed baseline comparison: capture a scenario and inspect latency, availability, and database-demand differences as the controls change.
-
-Completed guided experiments for cache benefits, slow databases, and partial outages.
-
-Take the next useful, bounded task, validate it, and commit a complete change. Do not create empty commits or alter dates for activity. Preserve unrelated edits. When this roadmap is complete, propose the next worthwhile milestone.
+Read README.md, CASE_STUDY.md, and AGENTS.md before continuing. Update this roadmap when real work changes its status. When these milestones are complete, propose the next worthwhile improvement.

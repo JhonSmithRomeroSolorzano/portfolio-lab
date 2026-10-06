@@ -2,13 +2,24 @@
 
 A full-stack developer's portfolio, with an interactive experiment you can actually use.
 
-**[Explore the portfolio](https://jhonsmithromerosolorzano.github.io/portfolio-lab/)** · **[GitHub profile](https://github.com/JhonSmithRomeroSolorzano)** · **[Roadmap](ROADMAP.md)**
+**[Explore the portfolio](https://jhonsmithromerosolorzano.github.io/portfolio-lab/)** · **[Case study](CASE_STUDY.md)** · **[GitHub profile](https://github.com/JhonSmithRomeroSolorzano)** · **[Roadmap](ROADMAP.md)**
 
 ## Signal Lab
 
 Change incoming traffic, toggle a warm read cache, and slow down or disconnect the database. The interface shows how these choices affect successful requests, database demand, and mean response time.
 
 This is an original, browser-only simulation, not a connection to live infrastructure. Every number follows the documented model in [`src/simulation.ts`](src/simulation.ts). The diagram shows a conceptual architecture; the public demo does not run an API, Redis, or a database. An optional [local Node HTTP API](server/README.md) exposes the same model with input validation and integration tests.
+
+### Explore the tools
+
+- Compare a captured baseline with your current setup.
+- Save up to eight named experiments in this browser, or move them between browsers with JSON snapshots.
+- Adjust exact traffic, read-cache hit rate, database pool size, and write share.
+- Sweep traffic, inspect every sample, and generate a CSV.
+- Follow a modeled request or explore the separate TTL and queue timelines.
+- Run the same model through the optional local API or NDJSON batch CLI.
+
+The [engineering walkthrough](CASE_STUDY.md) explains the formulas, architecture, limits, and a five-minute review path.
 
 ### Share an experiment
 
