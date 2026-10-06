@@ -16,6 +16,7 @@ import { CacheExpiryPanel } from "./CacheExpiryPanel";
 import { QueueExperiment } from "./QueueExperiment";
 
 import { observeScrollReveals } from "./scroll-reveals";
+import { observePortfolioMotion } from "./portfolio-motion";
 import { StackMap } from "./StackMap";
 import { TechnologyOverview } from "./TechnologyOverview";
 import { stackLayers } from "./technology-stack";
@@ -435,16 +436,23 @@ function SignalLab() {
 
 export function App() {
   const mainRef = useRef<HTMLElement>(null);
+  const navRef = useRef<HTMLElement>(null);
   useEffect(
     () => (mainRef.current ? observeScrollReveals(mainRef.current) : undefined),
     [],
   );
+  useEffect(() => {
+    if (mainRef.current && navRef.current) {
+      return observePortfolioMotion(mainRef.current, navRef.current);
+    }
+  }, []);
   return (
     <>
       <a className="skip-link" href="#main">
         Skip to content
       </a>
       <div className="portfolio-frame">
+        <span className="reading-progress" aria-hidden="true" />
         <header className="identity-rail">
           <a
             className="rail-brand"
@@ -463,7 +471,8 @@ export function App() {
             <br />
             PORTFOLIO
           </p>
-          <nav aria-label="Main navigation">
+          <nav aria-label="Main navigation" ref={navRef}>
+            <span className="nav-cursor" aria-hidden="true" />
             <a href="#workbench">
               <span aria-hidden="true">⌘</span> Workbench
             </a>
@@ -507,6 +516,7 @@ export function App() {
               id="workbench"
               aria-labelledby="intro-title"
             >
+              <span className="section-signal" aria-hidden="true" />
               <div className="workspace-topline">
                 <span>ENGINEERING PORTFOLIO</span>
                 <span className="opportunity">
@@ -549,6 +559,7 @@ export function App() {
               id="lab"
               aria-labelledby="lab-title"
             >
+              <span className="section-signal" aria-hidden="true" />
               <div className="section-heading" data-reveal="0">
                 <div>
                   <span className="eyebrow">INTERACTIVE PROJECT</span>
@@ -580,6 +591,7 @@ export function App() {
               id="about"
               aria-labelledby="about-title"
             >
+              <span className="section-signal" aria-hidden="true" />
               <div className="about-intro" data-reveal="0">
                 <span className="eyebrow">ABOUT JHON</span>
                 <h2 id="about-title">
@@ -638,6 +650,7 @@ export function App() {
               id="journal"
               aria-labelledby="journal-title"
             >
+              <span className="section-signal" aria-hidden="true" />
               <div className="section-heading" data-reveal="0">
                 <div>
                   <span className="eyebrow">WORK IN PROGRESS</span>
@@ -681,6 +694,7 @@ export function App() {
               aria-labelledby="contact-title"
               data-reveal="0"
             >
+              <span className="section-signal" aria-hidden="true" />
               <span className="eyebrow">GET IN TOUCH</span>
               <div>
                 <h2 id="contact-title">Let’s talk.</h2>

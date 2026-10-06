@@ -89,6 +89,13 @@ Next for the résumé: generate a print/download version from the same verified 
 - [x] Verified the embedded project belongs to Athletify, removed the standalone Projects navigation, and checked light/dark, desktop, and 320px layouts without horizontal overflow. The project link has visible keyboard focus; all 52 tests and the production build pass.
 - [ ] Add other professional products beneath their corresponding Experience entries when Jhon supplies their names, public context, and his contributions; current Antecursor product details are pending.
 
+### Scroll and menu motion — October 6 follow-up
+
+- [x] Added a sliding menu indicator with current-section semantics, a reading-progress line, section-arrival sweeps, and a scroll-linked experience timeline.
+- [x] Preserved native anchors, smooth scrolling, query parameters, history, and keyboard behavior. User scrolling can interrupt menu feedback; reduced-motion preferences disable decoration and movement while retaining section tracking.
+- [x] Added behavioral coverage for section boundaries, modified clicks, coalesced frames, destination tracking, history changes, short sections sharing the last viewport, interruption, reduced-motion changes, and cleanup.
+- [x] Checked desktop menu clicks, selected-section feedback, both themes, reading progress, and timeline appearance in the browser. All 61 tests and the production build pass.
+
 ## Next useful milestones
 
 1. **Browser regression suite:** automate keyboard flows, reload/URL state, file import/export, and viewport checks. Start from observed user journeys; keep fixtures deterministic.

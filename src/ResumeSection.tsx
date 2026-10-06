@@ -18,6 +18,7 @@ export function ResumeSection() {
       id="resume"
       aria-labelledby="resume-title"
     >
+      <span className="section-signal" aria-hidden="true" />
       <div className="section-heading" data-reveal="0">
         <div>
           <span className="eyebrow">CAREER & EDUCATION</span>
