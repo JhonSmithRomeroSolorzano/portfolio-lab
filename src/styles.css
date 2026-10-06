@@ -701,6 +701,33 @@ input[type="range"] {
   color: #e5eadf;
   font-size: 14px;
 }
+.tool-input {
+  background: #17271e;
+  color: #e5eadf;
+  border: 1px solid #81996e;
+  border-radius: 4px;
+  min-height: 40px;
+  padding: 9px 12px;
+  max-width: 100%;
+  font-size: 12px;
+}
+.saved-list {
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 12px;
+}
+.saved-list li {
+  border-top: 1px solid #40503d;
+  padding-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 15px;
+}
+.saved-list .tool-actions {
+  margin-left: auto;
+}
 .tool-panel {
   border-bottom: 1px solid #40503d;
 }

@@ -40,6 +40,8 @@ Added the copy-link control with confirmation and a selectable link when clipboa
 
 ## Working rule
 
+Completed a named experiment library with reload persistence, removal, bounded storage, and a session-only fallback when storage is blocked.
+
 Completed baseline comparison: capture a scenario and inspect latency, availability, and database-demand differences as the controls change.
 
 Completed guided experiments for cache benefits, slow databases, and partial outages.
