@@ -7,6 +7,7 @@ export interface Scenario {
   cacheEnabled: boolean;
   database: DatabaseMode;
   cacheHitPercent?: number;
+  databaseConnections?: number;
 }
 
 export const DEFAULT_SCENARIO: Scenario = {
@@ -44,11 +45,14 @@ export function simulate(scenario: Scenario) {
     throw new RangeError("Cache hit rate must be an integer from 0 to 100.");
   const cacheHits = scenario.cacheEnabled ? (offered * hitPercent) / 100 : 0;
   const databaseDemand = offered - cacheHits;
+  const connections = scenario.databaseConnections ?? MODEL.databaseConnections;
+  if (!Number.isInteger(connections) || connections < 1 || connections > 32)
+    throw new RangeError("Connection pool must contain 1 to 32 connections.");
   const databaseLatency = MODEL.databaseLatencyMs[scenario.database];
   const databaseCapacity =
     scenario.database === "offline"
       ? 0
-      : (MODEL.databaseConnections * 1000) / databaseLatency;
+      : (connections * 1000) / databaseLatency;
   const databaseServed = Math.min(databaseDemand, databaseCapacity);
   const successful = cacheHits + databaseServed;
   const failed = offered - successful;
@@ -59,13 +63,15 @@ export function simulate(scenario: Scenario) {
       failed * MODEL.timeoutMs) /
       offered;
   const status: SystemStatus =
-    scenario.database === "offline"
-      ? cacheHits > 0
-        ? "degraded"
-        : "unavailable"
-      : failed > 0
-        ? "overloaded"
-        : "healthy";
+    failed === 0
+      ? "healthy"
+      : scenario.database === "offline"
+        ? cacheHits > 0
+          ? "degraded"
+          : "unavailable"
+        : failed > 0
+          ? "overloaded"
+          : "healthy";
 
   return {
     offered,

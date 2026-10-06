@@ -19,13 +19,13 @@ const labels = {
 };
 const explanations = {
   healthy:
-    "The database can keep up. Cached reads leave more room for requests that need fresh data.",
+    "All offered requests can be served in this model. Cached reads leave more room for requests that need fresh data.",
   overloaded:
     "Demand exceeds the connection pool’s capacity. Caching or less incoming traffic can reduce the pressure.",
   degraded:
     "The database is offline. Warm cached reads still succeed, but uncached requests time out.",
   unavailable:
-    "With no cache and an offline database, every request times out. There is no fallback in this model.",
+    "With no successful cache hits and an offline database, every request times out. There is no fallback in this model.",
 };
 
 function Arrow({ diagonal = false }: { diagonal?: boolean }) {
@@ -138,7 +138,7 @@ function SignalLab() {
                   <small>
                     {scenario.database === "offline"
                       ? "Offline"
-                      : `${scenario.database === "slow" ? "400" : "80"} ms · 8 connections`}
+                      : `${scenario.database === "slow" ? "400" : "80"} ms · ${scenario.databaseConnections ?? 8} connections`}
                   </small>
                 </span>
                 <i />
@@ -295,6 +295,26 @@ function SignalLab() {
               ))}
             </div>
           </fieldset>
+          <div className="control-block">
+            <label htmlFor="pool-size">
+              Database pool{" "}
+              <output htmlFor="pool-size">
+                {scenario.databaseConnections ?? 8} connections
+              </output>
+            </label>
+            <input
+              id="pool-size"
+              type="range"
+              min="1"
+              max="32"
+              step="1"
+              value={scenario.databaseConnections ?? 8}
+              disabled={scenario.database === "offline"}
+              onChange={(event) =>
+                update({ databaseConnections: Number(event.target.value) })
+              }
+            />
+          </div>
           <ShareExperiment key={JSON.stringify(scenario)} scenario={scenario} />
           <button
             className="reset-button"
@@ -338,10 +358,10 @@ function SignalLab() {
           <p>
             Each request adds 12 ms of API overhead. With caching enabled,{" "}
             {scenario.cacheHitPercent ?? 80}% of reads hit a warm cache in 8 ms.
-            The remaining reads share 8 database connections: 80 ms per read
-            normally, 400 ms when slow. Database capacity is connections × 1,000
-            ÷ latency. Requests above that capacity, or to an offline database,
-            time out after 1,000 ms.
+            The remaining reads share {scenario.databaseConnections ?? 8}{" "}
+            database connections: 80 ms per read normally, 400 ms when slow.
+            Database capacity is connections × 1,000 ÷ latency. Requests above
+            that capacity, or to an offline database, time out after 1,000 ms.
           </p>
           <p>
             The mean includes successes and timeouts. This steady-state model

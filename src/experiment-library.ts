@@ -18,6 +18,10 @@ export function validScenario(value: unknown): value is Scenario {
       (Number.isInteger(s.cacheHitPercent) &&
         s.cacheHitPercent >= 0 &&
         s.cacheHitPercent <= 100)) &&
+    (s.databaseConnections === undefined ||
+      (Number.isInteger(s.databaseConnections) &&
+        s.databaseConnections >= 1 &&
+        s.databaseConnections <= 32)) &&
     ["normal", "slow", "offline"].includes(s.database)
   );
 }

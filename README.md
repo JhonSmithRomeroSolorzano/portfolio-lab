@@ -20,7 +20,7 @@ For example, [`?traffic=300&cache=off&database=slow#lab`](https://jhonsmithromer
 
 - API overhead: 12 ms per request.
 - Warm cache: adjustable hit rate (80% by default); hits complete in 8 ms when enabled.
-- Database: 8 connections, 80 ms per read normally, 400 ms when slow.
+- Database: adjustable pool of 1–32 connections (8 by default), 80 ms per read normally, 400 ms when slow.
 - Capacity: `connections × 1000 / latencyMs` requests per second.
 - Reads over capacity or to an offline database time out after 1,000 ms.
 - Mean response time includes both successes and timeouts.
