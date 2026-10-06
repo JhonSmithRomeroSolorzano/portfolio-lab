@@ -48,6 +48,8 @@ Completed mixed read/write workloads with cache bypass for writes and portable s
 
 Completed a deterministic cache-expiry timeline showing TTL boundaries, stale versions, and the freshness/database-load trade-off.
 
+Completed bounded queue/backpressure experiments, reject-new overflow, and conservation checks for every supported buffer/capacity pair.
+
 ## Working rule
 
 Completed step-by-step request tracing for cache hits, database reads, and timeouts, restricted to outcomes possible in the selected setup.
