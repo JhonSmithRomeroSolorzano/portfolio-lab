@@ -10,12 +10,12 @@ Aim: show practical full-stack engineering through small, working features and c
 - [x] Accessible controls and reduced-motion support.
 - [x] Repository documentation and automated build workflow.
 
-## Next — Shareable experiments
+## Milestone 2 — Shareable experiments (2026-10-05)
 
 - [x] Encode the selected scenario in the URL; load valid values safely and reject invalid input.
-- [ ] Add a copy-link button with a useful success/failure state.
+- [x] Add a copy-link button with a useful success/failure state.
 - [x] Test scenario serialization, invalid values, and reset behavior.
-- [ ] Explain the feature in the build log.
+- [x] Explain the feature in the build log.
 
 ## After that
 
@@ -35,6 +35,8 @@ Aim: show practical full-stack engineering through small, working features and c
 Built the first portfolio and Signal Lab model. Added tests for warm-cache reads, saturation, outages, connection-pool boundaries, invalid traffic, and conservation of requests across all UI scenarios. Next task: shareable experiment URLs.
 
 Added shareable URL state with independent validation for each field, preservation of the deployment subpath, and clean reset behavior. Round-trip tests cover every UI scenario. Next task: a copy-link control.
+
+Added the copy-link control with confirmation and a selectable link when clipboard access is denied or unsupported. Shared links strip unrelated query parameters. Documented the feature and updated the portfolio build log. Next task: compare a saved baseline with the current experiment.
 
 ## Working rule
 

@@ -2,7 +2,7 @@
 
 This is Jhon Smith Romero's public portfolio and original systems demo. Read README.md and ROADMAP.md before editing.
 
-- Scope changes to the next useful roadmap item. Complete one bounded improvement per daily run.
+- Work through useful, bounded roadmap improvements. Keep every commit coherent, independently reviewable, and buildable; include relevant tests with the feature or fix they verify. Follow the user's current daily scope without padding commit counts.
 - Preserve unrelated user changes and existing Git history. Do not force-push.
 - The user authorizes normal commits and pushes of verified portfolio improvements to the configured GitHub origin. Use current timestamps; never manufacture activity with empty commits, backdating, or date-only edits.
 - Keep claims grounded in verified experience. Do not publish private conversations, interview feedback, client information, employer source code, or invented achievements.

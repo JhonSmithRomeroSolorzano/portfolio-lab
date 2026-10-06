@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { DEFAULT_SCENARIO, simulate } from "./simulation";
 import type { DatabaseMode, Scenario } from "./simulation";
 import { scenarioFromSearch, scenarioUrl } from "./scenario-url";
+import { ShareExperiment } from "./ShareExperiment";
 
 const GITHUB = "https://github.com/JhonSmithRomeroSolorzano";
 const REPO = `${GITHUB}/portfolio-lab`;
@@ -267,6 +268,7 @@ function SignalLab() {
               ))}
             </div>
           </fieldset>
+          <ShareExperiment key={JSON.stringify(scenario)} scenario={scenario} />
           <button
             className="reset-button"
             type="button"
@@ -511,7 +513,8 @@ export function App() {
               <p>
                 The foundation: an interactive cache and database model, a
                 responsive React interface, and tests for the behavior behind
-                the demo.
+                the demo. Experiment links now preserve your settings, with a
+                copy button so you can share a specific scenario.
               </p>
             </div>
             <a
