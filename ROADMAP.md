@@ -81,6 +81,14 @@ Next for this brief: a print/download résumé generated from the same verified 
 
 Next for the résumé: generate a print/download version from the same verified profile data.
 
+### Project stories and navigation — October 6 follow-up
+
+- [x] Removed the misaligned résumé/contact shortcuts from the introduction and their unused responsive styles; both destinations remain in the main menu.
+- [x] Added Projects to the main menu and an Athletify product story before Signal Lab, with verified context, dates, role, and frontend contribution. A small handoff diagram shows Figma designs becoming React/TypeScript interfaces.
+- [x] Kept Next.js experience qualified and Go as product context rather than a personal development claim.
+- [x] Verified menu links with keyboard activation, preserved lab query settings during navigation, and checked light/dark, desktop, 900px, and 320px layouts. The expanded menu fits a 720px-high desktop window; all 52 tests and the production build pass.
+- [ ] Add other professional products when Jhon supplies their names, public context, and his contributions; current Antecursor product details are pending.
+
 ## Next useful milestones
 
 1. **Browser regression suite:** automate keyboard flows, reload/URL state, file import/export, and viewport checks. Start from observed user journeys; keep fixtures deterministic.

@@ -20,6 +20,7 @@ import { StackMap } from "./StackMap";
 import { TechnologyOverview } from "./TechnologyOverview";
 import { stackLayers } from "./technology-stack";
 import { ResumeSection } from "./ResumeSection";
+import { ProjectsSection } from "./ProjectsSection";
 import { LINKEDIN } from "./profile";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { BrandMark } from "./BrandMark";
@@ -467,6 +468,9 @@ export function App() {
             <a href="#workbench">
               <span aria-hidden="true">⌘</span> Workbench
             </a>
+            <a href="#projects">
+              <span aria-hidden="true">▱</span> Projects
+            </a>
             <a href="#lab">
               <span aria-hidden="true">↯</span> Signal Lab
             </a>
@@ -525,17 +529,6 @@ export function App() {
                     Behind the screen, I build the systems that bring them to
                     life.
                   </p>
-                  <div className="intro-links">
-                    <a className="resume-shortcut" href="#resume">
-                      <span>7+ years in software</span>
-                      <strong>
-                        Explore my résumé <Arrow diagonal />
-                      </strong>
-                    </a>
-                    <a className="intro-contact" href="#contact">
-                      Contact me <Arrow diagonal />
-                    </a>
-                  </div>
                 </div>
                 <img
                   className="profile-portrait"
@@ -549,12 +542,13 @@ export function App() {
               <TechnologyOverview />
               <StackMap />
               <div className="workbench-caption">
-                <span>My stack above. A working experiment below.</span>
-                <a href="#lab">
-                  Try Signal Lab <span aria-hidden="true">↓</span>
+                <span>My stack above. Product work below.</span>
+                <a href="#projects">
+                  Explore projects <span aria-hidden="true">↓</span>
                 </a>
               </div>
             </section>
+            <ProjectsSection />
             <section
               className="lab-section wrap"
               id="lab"
