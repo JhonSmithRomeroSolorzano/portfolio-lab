@@ -15,6 +15,8 @@ import { CacheExpiryPanel } from "./CacheExpiryPanel";
 
 import { QueueExperiment } from "./QueueExperiment";
 
+import { ThemeSwitcher } from "./ThemeSwitcher";
+
 import { RequestRateInput } from "./RequestRateInput";
 
 const GITHUB = "https://github.com/JhonSmithRomeroSolorzano";
@@ -471,14 +473,17 @@ export function App() {
           <a href="#about">About</a>
           <a href="#journal">Build log</a>
         </nav>
-        <a
-          className="header-link"
-          href={GITHUB}
-          target="_blank"
-          rel="noreferrer"
-        >
-          GitHub <Arrow diagonal />
-        </a>
+        <div className="header-actions">
+          <ThemeSwitcher />
+          <a
+            className="header-link"
+            href={GITHUB}
+            target="_blank"
+            rel="noreferrer"
+          >
+            GitHub <Arrow diagonal />
+          </a>
+        </div>
       </header>
       <main id="main">
         <section className="hero wrap" aria-labelledby="hero-title">

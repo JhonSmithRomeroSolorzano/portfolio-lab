@@ -37,7 +37,7 @@ The API is a local teaching service. The public browser demo is static and does 
 Requested October 6; complete these before expanding the backend lab.
 
 - [x] Uppercase JSR monogram in the header and favicon; cohesive blue branding with the original warm neutral light background.
-- [ ] Visible light/dark/system theme control, saved preference, and readable navy dark theme.
+- [x] Visible light/dark/system theme control, saved preference, and readable navy dark theme.
 - [ ] Recruiter-friendly résumé with experience and education verified from [the user's LinkedIn profile](https://www.linkedin.com/in/jhonsmithr). Profile access succeeded October 6 through the signed-in browser. Preserve the listed overlapping dates; do not infer employment relationships or add unverified achievements.
 - [ ] Restrained scroll reveals with keyboard, mobile, and reduced-motion support.
 - [ ] Review the complete résumé and visual refresh in the browser before publication.
