@@ -1,0 +1,3 @@
+{"requestsPerSecond":120,"cacheEnabled":true,"database":"normal"}
+{"requestsPerSecond":300,"cacheEnabled":false,"database":"slow"}
+{"requestsPerSecond":200,"cacheEnabled":true,"database":"offline","writePercent":25}

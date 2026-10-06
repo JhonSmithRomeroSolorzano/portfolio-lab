@@ -4,16 +4,8 @@ import { randomUUID } from "node:crypto";
 import { createServer } from "node:http";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { simulate } from "../src/simulation.ts";
-import { validScenario } from "../src/scenario-validation.ts";
+import { validStrictScenario } from "../src/scenario-validation.ts";
 const MAX_BODY = 16_384;
-const FIELDS = [
-  "requestsPerSecond",
-  "cacheEnabled",
-  "database",
-  "cacheHitPercent",
-  "databaseConnections",
-  "writePercent",
-];
 class RequestError extends Error {
   constructor(
     public status: number,
@@ -139,10 +131,7 @@ export function createSimulationServer(options: ServerOptions = {}) {
         return;
       }
       const scenario = await readJson(req);
-      if (
-        !validScenario(scenario) ||
-        Object.keys(scenario).some((key) => !FIELDS.includes(key))
-      )
+      if (!validStrictScenario(scenario))
         throw new RequestError(
           422,
           "Provide a valid scenario with only supported fields.",

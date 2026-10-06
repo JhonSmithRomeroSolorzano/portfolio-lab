@@ -13,7 +13,8 @@
     "test": "node --import tsx --test tests/*.test.ts",
     "check": "npm test && npm run build",
     "format": "prettier --write .",
-    "api": "node --import tsx server/start.ts"
+    "api": "node --import tsx server/start.ts",
+    "replay": "node --import tsx scripts/replay.ts"
   },
   "dependencies": {
     "react": "^19.1.0",

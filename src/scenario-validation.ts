@@ -23,3 +23,19 @@ export function validScenario(value: unknown): value is Scenario {
     ["normal", "slow", "offline"].includes(s.database)
   );
 }
+
+/** Service and batch boundaries reject unknown fields to catch misspelled settings. */
+export function validStrictScenario(value: unknown): value is Scenario {
+  const fields = [
+    "requestsPerSecond",
+    "cacheEnabled",
+    "database",
+    "cacheHitPercent",
+    "databaseConnections",
+    "writePercent",
+  ];
+  return (
+    validScenario(value) &&
+    Object.keys(value).every((key) => fields.includes(key))
+  );
+}

@@ -56,6 +56,8 @@ Completed API request IDs and structured completion logs without payloads or per
 
 Completed an explicit API request budget with 429/Retry-After responses and deterministic time-boundary tests.
 
+Completed batch scenario replay with NDJSON input/output, strict shared validation, bounded input, useful exit codes, and sample workloads.
+
 ## Working rule
 
 Completed step-by-step request tracing for cache hits, database reads, and timeouts, restricted to outcomes possible in the selected setup.

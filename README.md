@@ -69,3 +69,15 @@ Each change should add something useful: a feature, a fix, a meaningful test, or
 ## Deployment
 
 GitHub Actions validates pull requests and deploys passing changes on `main` to GitHub Pages. The repository's Pages source must be set to **GitHub Actions**. The `.openai/hosting.json` manifest also supports an owner-private Sites preview.
+
+## Batch experiments
+
+Replay scenarios without a browser or running API:
+
+```sh
+npm run replay -- examples/scenarios.ndjson
+# Direct command keeps stdout free of npm's script banner:
+node --import tsx scripts/replay.ts examples/scenarios.ndjson > results.ndjson
+```
+
+The CLI accepts a file path or stdin, with one scenario per line and a 1 MiB input limit. It emits one JSON result per nonblank line, preserving source line numbers. Invalid rows produce structured errors while later rows continue. Exit codes: 0 all valid, 1 invalid scenarios, 2 input/read errors. A human-readable summary goes to stderr.
