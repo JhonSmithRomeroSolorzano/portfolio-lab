@@ -5,6 +5,22 @@
 .resume-section .section-heading {
   margin-bottom: 44px;
 }
+.resume-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 18px;
+}
+.resume-actions .text-link {
+  font-size: 12px;
+  white-space: nowrap;
+}
+.resume-actions .resume-download {
+  padding: 10px 14px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  color: var(--accent);
+}
 .resume-layout {
   display: grid;
   grid-template-columns: minmax(250px, 0.85fr) minmax(0, 1.6fr);

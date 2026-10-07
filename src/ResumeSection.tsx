@@ -1,15 +1,12 @@
-import { certifications, education, experience, LINKEDIN } from "./profile";
-import { languages, stackLayers, testing } from "./technology-stack";
+import {
+  certifications,
+  education,
+  experience,
+  LINKEDIN,
+  professionalProfile,
+} from "./profile";
+import { resumeTechnologyGroups, resumeDownloads } from "./resume-data";
 import "./resume.css";
-
-const resumeTechnologyGroups = [
-  { name: "Languages", items: languages },
-  ...stackLayers.map((layer) => ({
-    name: layer.name,
-    items: layer.groups.flatMap((group) => group.items),
-  })),
-  { name: "Testing", items: [...testing.tools, ...testing.levels] },
-];
 
 export function ResumeSection() {
   return (
@@ -25,25 +22,40 @@ export function ResumeSection() {
           <span className="eyebrow">CAREER & EDUCATION</span>
           <h2 id="resume-title">Experience.</h2>
         </div>
-        <a
-          className="text-link"
-          href={LINKEDIN}
-          target="_blank"
-          rel="noreferrer"
-        >
-          Full profile on LinkedIn <span aria-hidden="true">↗</span>
-        </a>
+        <div className="resume-actions" aria-label="Resume resources">
+          <a
+            className="text-link resume-download"
+            href={`./resume/${resumeDownloads.pdf}`}
+            download={resumeDownloads.pdf}
+          >
+            Download PDF <span aria-hidden="true">↓</span>
+          </a>
+          <a
+            className="text-link"
+            href={`./resume/${resumeDownloads.text}`}
+            download={resumeDownloads.text}
+          >
+            Plain text <span aria-hidden="true">↓</span>
+          </a>
+          <a
+            className="text-link"
+            href={LINKEDIN}
+            target="_blank"
+            rel="noreferrer"
+          >
+            LinkedIn <span aria-hidden="true">↗</span>
+          </a>
+        </div>
       </div>
       <div className="resume-layout">
         <aside className="resume-overview" aria-label="Professional overview">
           <div className="resume-card" data-reveal="0">
-            <span className="eyebrow">JHON SMITH ROMERO</span>
-            <h3>Senior full-stack developer</h3>
-            <p>
-              7+ years in software development, connecting JavaScript interfaces
-              with the services and data behind them.
-            </p>
-            <p className="resume-location">Pereira, Colombia</p>
+            <span className="eyebrow">
+              {professionalProfile.name.toUpperCase()}
+            </span>
+            <h3>{professionalProfile.role}</h3>
+            <p>{professionalProfile.summary}</p>
+            <p className="resume-location">{professionalProfile.location}</p>
             <div className="resume-technologies" aria-label="Core technologies">
               {resumeTechnologyGroups.map((group) => (
                 <div className="resume-technology-group" key={group.name}>

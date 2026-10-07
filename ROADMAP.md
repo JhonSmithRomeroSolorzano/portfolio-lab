@@ -51,7 +51,7 @@ Requested October 6; complete these before expanding the backend lab.
 
 Future visual work should build on this workspace direction and Jhon’s actual engineering work. Avoid reinstating generic oversized slogan heroes, repeated numbered sections, or borrowed portfolio layouts. Do not claim a globally unique design; keep the implementation specific to this project.
 
-Next for this brief: a print/download résumé generated from the same verified profile data, then focused browser regression coverage. Keep newly supplied career details subject to verification.
+Next for this brief: focused browser regression coverage, including résumé downloads. Keep newly supplied career details subject to verification.
 
 ### Personal introduction and contact — October 6 follow-up
 
@@ -79,7 +79,7 @@ Next for this brief: a print/download résumé generated from the same verified 
 - [x] Expanded résumé tags into Languages, Frontend, Backend, Data, Infrastructure, and Testing groups using the shared technology source. Included Next.js with a qualification and Figma as design handoff.
 - [x] Checked the introduction, new role descriptions, and grouped tags in light/dark themes and at desktop, 900px, and 320px widths without horizontal overflow. All 52 tests and the production build pass.
 
-Next for the résumé: generate a print/download version from the same verified profile data.
+The print/download résumé milestone is complete; see the October 7 export work below.
 
 ### Project stories and navigation — October 6 follow-up
 
@@ -106,6 +106,16 @@ Next for the résumé: generate a print/download version from the same verified 
 - [x] Checked desktop menu clicks, selected-section feedback, both themes, reading progress, and timeline appearance in the browser. All 61 tests and the production build pass.
 - [x] Fixed WebKit keyboard anchor navigation by making destinations focusable and using immediate scrolling during keyboard focus. Verified Enter reaches About and Résumé at the expected top offset, transfers focus, and retains smooth scrolling for pointer clicks.
 
+### Résumé exports — October 7 follow-up
+
+- [x] Added PDF and plain-text downloads beside the Experience heading, generated from the shared verified profile, technology groups, and role contributions.
+- [x] Kept each role's responsibilities together in a readable two-page PDF, with selectable text, accented education names, page numbers, and clickable public profile/project links. Both Antecursor periods retain their Nimrod contributions.
+- [x] Generate fresh assets before development and production builds; keep generated binaries out of Git and the PDF library out of the browser bundle.
+- [x] Added coverage for retained contributions, overlapping dates, qualified experience, actual PDF page count, and oversized-section rejection. All 64 tests and the production build pass. Rendered and reviewed both pages, checked extracted text and link annotations, and verified the served PDF/text match the generated files.
+- [x] Reviewed download controls at desktop and 320px widths without horizontal overflow. The browser's automated file download timed out; direct HTTP checks confirmed both assets return 200 with the expected content types and bytes.
+
+Next: automate the recruiter journey through menu navigation, theme selection, and résumé downloads. Exact email/phone details and more concrete project outcomes still require Jhon's confirmation.
+
 ## Next useful milestones
 
 1. **Browser regression suite:** automate keyboard flows, reload/URL state, file import/export, and viewport checks. Start from observed user journeys; keep fixtures deterministic.
@@ -115,7 +125,7 @@ Next for the résumé: generate a print/download version from the same verified 
 5. **Retry experiment:** show retry amplification, a bounded retry budget, backoff, and jitter with a seeded source of randomness.
 6. **Service client:** add an explicitly selected local-API mode, request cancellation, and clear offline/error behavior. Keep the deployed static demo useful independently.
 7. **Accessibility review:** test screen-reader announcements, focus behavior, color contrast, and export fallbacks. Fix observed problems and document the evidence.
-8. **Recruiter path:** add a user-confirmed contact address, a downloadable résumé, and verified project case studies. Do not invent links, metrics, employer details, or achievements.
+8. **Recruiter path:** add a user-confirmed contact address and further verified project examples. Résumé downloads are complete. Do not invent links, metrics, employer details, or achievements.
 
 ## Working rule
 

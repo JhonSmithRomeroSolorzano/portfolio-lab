@@ -6,6 +6,15 @@
 // Nimrod public product context: https://nimrod.io/
 // Keep the listed overlapping roles; do not infer a relationship between employers.
 export const LINKEDIN = "https://www.linkedin.com/in/jhonsmithr";
+export const GITHUB = "https://github.com/JhonSmithRomeroSolorzano";
+export const professionalProfile = {
+  name: "Jhon Smith Romero",
+  role: "Senior full-stack developer",
+  location: "Pereira, Colombia",
+  summary:
+    "7+ years in software development, connecting JavaScript interfaces with the services and data behind them.",
+  portfolio: "https://jhonsmithromerosolorzano.github.io/portfolio-lab/",
+} as const;
 
 type ExperienceProject = {
   name: string;
@@ -38,8 +47,7 @@ export const experience: readonly ExperienceEntry[] = [
     projects: [
       {
         name: "Nimrod",
-        description:
-          "Healthcare facility automation platform.",
+        description: "Healthcare facility automation platform.",
         url: "https://nimrod.io/",
         contributions: [
           "Participate in feature design and implement changes across database models, backend services, and frontend interfaces.",
@@ -60,8 +68,7 @@ export const experience: readonly ExperienceEntry[] = [
     projects: [
       {
         name: "Athletify SaaS",
-        description:
-          "Sports and recreation management SaaS.",
+        description: "Sports and recreation management SaaS.",
         url: "https://www.athletify.com/",
         contributions: [
           "Developed frontend features for the product with React and TypeScript.",

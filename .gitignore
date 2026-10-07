@@ -9,4 +9,5 @@ dist/
 .sites-checkout/
 .sites-checkout-*/
 artifacts/
+public/resume/
 *.log

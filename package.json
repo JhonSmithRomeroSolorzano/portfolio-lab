@@ -7,8 +7,10 @@
     "node": ">=22.12.0"
   },
   "scripts": {
+    "predev": "npm run build:resume",
     "dev": "vite --host 127.0.0.1",
-    "build": "tsc -b && vite build",
+    "build:resume": "node --import tsx scripts/build-resume.ts",
+    "build": "tsc -b && npm run build:resume && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "test": "node --import tsx --test tests/*.test.ts",
     "check": "npm test && npm run build",
@@ -22,9 +24,11 @@
   },
   "devDependencies": {
     "@types/node": "^24.19.1",
+    "@types/pdfkit": "0.17.6",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
     "@vitejs/plugin-react": "^4.4.1",
+    "pdfkit": "0.20.2",
     "prettier": "^3.6.2",
     "tsx": "^4.19.0",
     "typescript": "~5.8.3",
