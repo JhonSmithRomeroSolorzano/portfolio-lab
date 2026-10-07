@@ -174,8 +174,9 @@
   line-height: 1.8;
   color: var(--muted);
 }
-.experience-project .project-context-note {
-  font-size: 11px;
+.experience-project ul {
+  margin: 14px 0 0;
+  color: var(--ink);
 }
 .sr-only {
   position: absolute;

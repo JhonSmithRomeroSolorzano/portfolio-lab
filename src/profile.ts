@@ -1,7 +1,9 @@
 // Roles and dates verified from the user's LinkedIn profile on 2026-10-06.
 // Current Antecursor and Athletify responsibilities confirmed directly by Jhon.
 // Athletify product context: https://www.linkedin.com/company/athletifyofficial
-// Nimrod linked to Antecursor by Jhon; public product context: https://nimrod.io/
+// Jhon confirmed Nimrod belongs to both Antecursor roles on 2026-10-07.
+// Project contributions use the verified responsibilities for each role.
+// Nimrod public product context: https://nimrod.io/
 // Keep the listed overlapping roles; do not infer a relationship between employers.
 export const LINKEDIN = "https://www.linkedin.com/in/jhonsmithr";
 
@@ -9,7 +11,7 @@ type ExperienceProject = {
   name: string;
   description: string;
   url: string;
-  context?: string;
+  contributions: readonly string[];
 };
 
 type ExperienceEntry = {
@@ -20,7 +22,7 @@ type ExperienceEntry = {
   end: string | null;
   endLabel: string;
   context: string;
-  highlights: readonly string[];
+  highlights?: readonly string[];
   projects?: readonly ExperienceProject[];
 };
 
@@ -33,17 +35,17 @@ export const experience: readonly ExperienceEntry[] = [
     end: null,
     endLabel: "Present",
     context: "Freelance · Remote · Orlando, United States",
-    highlights: [
-      "Participate in feature design and full implementation, from database models and backend services to frontend interfaces.",
-      "Build across the stack with React, Mithril.js, Node.js, and NoSQL databases.",
-      "Work with Azure and GitHub Actions for cloud delivery and CI/CD.",
-    ],
     projects: [
       {
         name: "Nimrod",
         description:
-          "Healthcare facility automation software connecting building systems, monitoring, and compliance workflows.",
+          "Healthcare facility automation platform.",
         url: "https://nimrod.io/",
+        contributions: [
+          "Participate in feature design and implement changes across database models, backend services, and frontend interfaces.",
+          "Build features with React and Mithril.js, connected to Node.js services and NoSQL databases.",
+          "Work with Azure and GitHub Actions for cloud delivery and CI/CD.",
+        ],
       },
     ],
   },
@@ -55,18 +57,16 @@ export const experience: readonly ExperienceEntry[] = [
     end: "2024-11",
     endLabel: "Nov 2024",
     context: "Full-time · Remote · Utah, United States",
-    highlights: [
-      "Developed frontend features for Athletify’s sports-management SaaS with React and TypeScript, in a full-stack developer role.",
-      "Translated Figma designs into product interfaces and gained experience working with Next.js.",
-    ],
     projects: [
       {
         name: "Athletify SaaS",
         description:
-          "Sports and recreation management software from a team based in Utah.",
+          "Sports and recreation management SaaS.",
         url: "https://www.athletify.com/",
-        context:
-          "The wider platform used a Go backend; my contribution focused on the frontend.",
+        contributions: [
+          "Developed frontend features for the product with React and TypeScript.",
+          "Translated Figma designs into working product interfaces and gained some experience with Next.js.",
+        ],
       },
     ],
   },
@@ -78,9 +78,16 @@ export const experience: readonly ExperienceEntry[] = [
     end: "2024-07",
     endLabel: "Jul 2024",
     context: "Full-time",
-    highlights: [
-      "Built responsive interfaces with React and Mithril.js, connected to Node.js services and NoSQL data.",
-      "Worked across features, application maintenance, and refactoring in agile iterations.",
+    projects: [
+      {
+        name: "Nimrod",
+        description: "Healthcare facility automation platform.",
+        url: "https://nimrod.io/",
+        contributions: [
+          "Built responsive interfaces with React and Mithril.js, connected to Node.js services and NoSQL data.",
+          "Developed features, maintained the application, and refactored code through agile iterations.",
+        ],
+      },
     ],
   },
   {

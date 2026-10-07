@@ -105,7 +105,7 @@ export function ResumeSection() {
                   <h4>{job.role}</h4>
                   <p className="experience-employer">{job.employer}</p>
                   <p className="experience-context">{job.context}</p>
-                  {job.highlights.length > 0 && (
+                  {job.highlights && job.highlights.length > 0 && (
                     <ul>
                       {job.highlights.map((highlight) => (
                         <li key={highlight}>{highlight}</li>
@@ -114,18 +114,18 @@ export function ResumeSection() {
                   )}
                   {job.projects?.map((project) => (
                     <div className="experience-project" key={project.name}>
-                      <span className="eyebrow">PROJECT</span>
+                      <span className="eyebrow">MY CONTRIBUTIONS</span>
                       <h5>
                         <a href={project.url} target="_blank" rel="noreferrer">
                           {project.name} <span aria-hidden="true">↗</span>
                         </a>
                       </h5>
                       <p>{project.description}</p>
-                      {project.context && (
-                        <p className="project-context-note">
-                          {project.context}
-                        </p>
-                      )}
+                      <ul>
+                        {project.contributions.map((contribution) => (
+                          <li key={contribution}>{contribution}</li>
+                        ))}
+                      </ul>
                     </div>
                   ))}
                 </article>

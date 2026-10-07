@@ -90,6 +90,14 @@ Next for the résumé: generate a print/download version from the same verified 
 - [x] Removed the Figma-to-React/TypeScript handoff diagram at Jhon's request and its unused data and styles. Added Nimrod's public link beneath the current Antecursor role, with product context verified from nimrod.io and no unverified feature ownership claims.
 - [ ] Add further professional projects and individual contributions beneath their corresponding Experience entries when Jhon confirms their details.
 
+### Project contributions — October 7 follow-up
+
+- [x] Linked Nimrod beneath both Antecursor roles, as confirmed by Jhon, with contributions specific to each period.
+- [x] Made personal contributions the focus of Nimrod and Athletify cards, keeping product descriptions brief and removing duplicate responsibility lists above the cards.
+- [x] Used verified frontend, backend, database, maintenance, and delivery work; retained the qualification for Next.js and omitted unrelated product-backend details.
+- [x] Checked the rendered links and contribution lists for all three role/project pairs, with no duplicate role lists. All 61 tests and the production build pass.
+- [ ] Add concrete feature examples and outcomes when Jhon supplies verified details; do not invent metrics or ownership.
+
 ### Scroll and menu motion — October 6 follow-up
 
 - [x] Added a sliding menu indicator with current-section semantics, a reading-progress line, section-arrival sweeps, and a scroll-linked experience timeline.
