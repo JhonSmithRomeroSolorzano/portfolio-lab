@@ -121,24 +121,6 @@ export function ResumeSection() {
                         </a>
                       </h5>
                       <p>{project.description}</p>
-                      {project.handoff && (
-                        <div
-                          className="experience-handoff"
-                          aria-label="Design to implementation"
-                        >
-                          <div>
-                            <span>Design input</span>
-                            <strong>{project.handoff.input}</strong>
-                          </div>
-                          <span className="handoff-arrow" aria-hidden="true">
-                            →
-                          </span>
-                          <div>
-                            <span>My implementation</span>
-                            <strong>{project.handoff.implementation}</strong>
-                          </div>
-                        </div>
-                      )}
                       {project.context && (
                         <p className="project-context-note">
                           {project.context}

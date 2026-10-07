@@ -84,10 +84,11 @@ Next for the résumé: generate a print/download version from the same verified 
 ### Project stories and navigation — October 6 follow-up
 
 - [x] Removed the misaligned résumé/contact shortcuts from the introduction and their unused responsive styles; both destinations remain in the main menu.
-- [x] Embedded Athletify's project context, link, and Figma-to-React/TypeScript handoff inside its Experience entry. Projects belong to their corresponding roles; do not add a separate Projects section or main-menu item.
+- [x] Embedded Athletify's project context and link inside its Experience entry. Projects belong to their corresponding roles; do not add a separate Projects section or main-menu item.
 - [x] Kept Next.js experience qualified and Go as product context rather than a personal development claim.
 - [x] Verified the embedded project belongs to Athletify, removed the standalone Projects navigation, and checked light/dark, desktop, and 320px layouts without horizontal overflow. The project link has visible keyboard focus; all 52 tests and the production build pass.
-- [ ] Add other professional products beneath their corresponding Experience entries when Jhon supplies their names, public context, and his contributions; current Antecursor product details are pending.
+- [x] Removed the Figma-to-React/TypeScript handoff diagram at Jhon's request and its unused data and styles. Added Nimrod's public link beneath the current Antecursor role, with product context verified from nimrod.io and no unverified feature ownership claims.
+- [ ] Add further professional projects and individual contributions beneath their corresponding Experience entries when Jhon confirms their details.
 
 ### Scroll and menu motion — October 6 follow-up
 

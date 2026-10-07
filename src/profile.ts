@@ -1,6 +1,7 @@
 // Roles and dates verified from the user's LinkedIn profile on 2026-10-06.
 // Current Antecursor and Athletify responsibilities confirmed directly by Jhon.
 // Athletify product context: https://www.linkedin.com/company/athletifyofficial
+// Nimrod linked to Antecursor by Jhon; public product context: https://nimrod.io/
 // Keep the listed overlapping roles; do not infer a relationship between employers.
 export const LINKEDIN = "https://www.linkedin.com/in/jhonsmithr";
 
@@ -9,7 +10,6 @@ type ExperienceProject = {
   description: string;
   url: string;
   context?: string;
-  handoff?: { input: string; implementation: string };
 };
 
 type ExperienceEntry = {
@@ -38,6 +38,14 @@ export const experience: readonly ExperienceEntry[] = [
       "Build across the stack with React, Mithril.js, Node.js, and NoSQL databases.",
       "Work with Azure and GitHub Actions for cloud delivery and CI/CD.",
     ],
+    projects: [
+      {
+        name: "Nimrod",
+        description:
+          "Healthcare facility automation software connecting building systems, monitoring, and compliance workflows.",
+        url: "https://nimrod.io/",
+      },
+    ],
   },
   {
     employer: "Athletify",
@@ -59,7 +67,6 @@ export const experience: readonly ExperienceEntry[] = [
         url: "https://www.athletify.com/",
         context:
           "The wider platform used a Go backend; my contribution focused on the frontend.",
-        handoff: { input: "Figma", implementation: "React + TypeScript" },
       },
     ],
   },

@@ -174,32 +174,6 @@
   line-height: 1.8;
   color: var(--muted);
 }
-.experience-handoff {
-  display: grid;
-  grid-template-columns: minmax(0, 0.7fr) auto minmax(0, 1fr);
-  align-items: center;
-  gap: 12px;
-  margin-block: 16px;
-  padding-block: 14px;
-  border-block: 1px solid var(--line);
-}
-.experience-handoff > div {
-  display: grid;
-  gap: 6px;
-}
-.experience-handoff div > span {
-  font: 9px/1.5 var(--mono);
-  color: var(--muted);
-}
-.experience-handoff strong {
-  font-size: 11px;
-  font-weight: 500;
-  line-height: 1.5;
-}
-.experience-handoff .handoff-arrow {
-  font-size: 20px;
-  color: var(--accent);
-}
 .experience-project .project-context-note {
   font-size: 11px;
 }
