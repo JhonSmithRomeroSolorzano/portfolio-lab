@@ -116,6 +116,14 @@ The print/download résumé milestone is complete; see the October 7 export work
 
 Next: automate the recruiter journey through menu navigation, theme selection, and résumé downloads. Exact email/phone details and more concrete project outcomes still require Jhon's confirmation.
 
+### Combined introduction — October 7 follow-up
+
+- [x] Merged About into Workbench, keeping the verified engineering background beside the existing introduction, portrait, technology overview, and interactive stack map.
+- [x] Removed the duplicate About navigation item, repeated skill cards, and unused styles. The frontend diagram link now leads to résumé contributions; old `#about` links still reach the introduction.
+- [x] Checked desktop/light and 320px/dark layouts, keyboard navigation to experience and back, existing About links with query parameters, and all internal anchor targets. No horizontal overflow; all 64 tests and the production build pass.
+
+Next: browser regression coverage for the simplified menu and recruiter journey.
+
 ## Next useful milestones
 
 1. **Browser regression suite:** automate keyboard flows, reload/URL state, file import/export, and viewport checks. Start from observed user journeys; keep fixtures deterministic.

@@ -21,8 +21,8 @@ export const stackLayers = [
       { label: "Styling", items: ["Tailwind CSS", "CSS"] },
       { label: "Design handoff", items: ["Figma"] },
     ],
-    destination: "#about",
-    action: "More about my work",
+    destination: "#resume",
+    action: "See my project contributions",
   },
   {
     id: "backend",

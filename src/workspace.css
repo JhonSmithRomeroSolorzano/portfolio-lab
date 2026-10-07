@@ -171,6 +171,11 @@
   line-height: 1.65;
   color: var(--muted);
 }
+.workbench-intro .intro-background {
+  margin-top: 14px;
+  font-size: 13px;
+  max-width: 540px;
+}
 .workbench-intro .intro-role {
   font-size: clamp(19px, 2.1vw, 25px);
   line-height: 1.35;
@@ -398,23 +403,7 @@ h2 {
   border-radius: 5px;
   box-shadow: none;
 }
-.about-section {
-  gap: 56px;
-  padding-block: 80px;
-}
-.about-intro p {
-  font-size: 13px;
-}
-.skill-marker {
-  color: var(--accent);
-  font: 24px var(--mono);
-}
-.skill-row {
-  gap: 20px;
-}
-.skill-row h3 {
-  font-size: 18px;
-}
+
 .tags > span {
   border-radius: 2px;
 }
@@ -586,9 +575,7 @@ h2 {
   .wide-break {
     display: none;
   }
-  .about-section {
-    gap: 35px;
-  }
+
   .resume-layout {
     gap: 30px;
   }
@@ -662,9 +649,7 @@ h2 {
     font-size: 40px;
     letter-spacing: -1.5px;
   }
-  .about-section {
-    grid-template-columns: 1fr;
-  }
+
   .resume-layout {
     grid-template-columns: 1fr;
   }
@@ -806,9 +791,7 @@ h2 {
   .legend {
     gap: 10px;
   }
-  .about-section {
-    padding-block: 58px;
-  }
+
   .resume-overview {
     display: block;
   }

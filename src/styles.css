@@ -807,22 +807,7 @@ input[type="range"] {
   font-family: var(--mono);
   font-size: 9px;
 }
-.about-section {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 105px;
-  padding-top: 120px;
-  padding-bottom: 100px;
-}
-.about-intro p {
-  font-size: 14px;
-  line-height: 1.9;
-  color: var(--muted);
-  max-width: 430px;
-}
-.about-intro p:first-of-type {
-  margin-top: 28px;
-}
+
 .text-link {
   display: inline-flex;
   align-items: center;
@@ -831,33 +816,7 @@ input[type="range"] {
   border-bottom: 1px solid var(--line);
   padding-bottom: 7px;
 }
-.about-intro .text-link {
-  margin-top: 14px;
-}
-.skill-list {
-  padding-top: 10px;
-}
-.skill-row {
-  display: flex;
-  gap: 25px;
-  padding: 25px 0;
-  border-top: 1px solid var(--line);
-}
-.skill-row:last-child {
-  border-bottom: 1px solid var(--line);
-}
-.skill-row h3 {
-  font-size: 20px;
-  font-weight: 500;
-  margin: 0;
-}
-.skill-row p {
-  font-size: 12px;
-  line-height: 1.7;
-  color: var(--muted);
-  margin: 10px 0 16px;
-  max-width: 330px;
-}
+
 .tags {
   display: flex;
   flex-wrap: wrap;
@@ -1022,9 +981,7 @@ input[type="range"] {
   .metrics strong {
     font-size: 28px;
   }
-  .about-section {
-    gap: 60px;
-  }
+
   .section-heading > p {
     margin-right: 0;
   }
@@ -1170,21 +1127,7 @@ input[type="range"] {
     font-size: 8px;
     text-align: right;
   }
-  .about-section {
-    grid-template-columns: 1fr;
-    gap: 35px;
-    padding-top: 75px;
-    padding-bottom: 65px;
-  }
-  .about-intro p {
-    max-width: none;
-  }
-  .skill-list {
-    padding: 0;
-  }
-  .skill-row p {
-    max-width: none;
-  }
+
   .journal-section {
     padding-top: 35px;
     padding-bottom: 54px;

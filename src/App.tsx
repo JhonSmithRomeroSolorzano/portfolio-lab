@@ -19,7 +19,6 @@ import { observeScrollReveals } from "./scroll-reveals";
 import { observePortfolioMotion } from "./portfolio-motion";
 import { StackMap } from "./StackMap";
 import { TechnologyOverview } from "./TechnologyOverview";
-import { stackLayers } from "./technology-stack";
 import { ResumeSection } from "./ResumeSection";
 import { LINKEDIN } from "./profile";
 import { ThemeSwitcher } from "./ThemeSwitcher";
@@ -482,9 +481,6 @@ export function App() {
             <a href="#resume">
               <span aria-hidden="true">↗</span> Résumé
             </a>
-            <a href="#about">
-              <span aria-hidden="true">＋</span> About
-            </a>
             <a href="#journal">
               <span aria-hidden="true">≡</span> Build notes
             </a>
@@ -526,7 +522,7 @@ export function App() {
                 </span>
               </div>
               <div className="workbench-intro">
-                <div className="intro-copy">
+                <div className="intro-copy" id="about" tabIndex={-1}>
                   <h1 id="intro-title">
                     Jhon Smith Romero<span>.</span>
                   </h1>
@@ -535,6 +531,11 @@ export function App() {
                     I turn ideas into web experiences that feel simple to use.
                     Behind the screen, I build the systems that bring them to
                     life.
+                  </p>
+                  <p className="intro-background">
+                    I’m a systems and telecommunications engineer with 7+ years
+                    in software development, working across frontend and backend
+                    with JavaScript and TypeScript.
                   </p>
                 </div>
                 <img
@@ -586,65 +587,6 @@ export function App() {
                 >
                   Read the engineering walkthrough ↗
                 </a>
-              </div>
-            </section>
-            <section
-              className="about-section wrap"
-              id="about"
-              tabIndex={-1}
-              aria-labelledby="about-title"
-            >
-              <span className="section-signal" aria-hidden="true" />
-              <div className="about-intro" data-reveal="0">
-                <span className="eyebrow">ABOUT JHON</span>
-                <h2 id="about-title">
-                  Across the stack,
-                  <br />
-                  through the details.
-                </h2>
-                <p>
-                  I’m a systems and telecommunications engineer with more than
-                  seven years in software development. My work spans frontend
-                  and backend development, with a focus on the JavaScript and
-                  TypeScript ecosystem.
-                </p>
-                <p>
-                  NoSQL is my strongest area of database experience, alongside
-                  experience with SQL, caching, real-time communication, and
-                  deployment workflows.
-                </p>
-                <a
-                  className="text-link"
-                  href={GITHUB}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Meet me on GitHub <Arrow diagonal />
-                </a>
-              </div>
-              <div className="skill-list">
-                {stackLayers.map((skill, index) => (
-                  <article
-                    className="skill-row"
-                    key={skill.id}
-                    data-reveal={index * 50}
-                  >
-                    <span className="skill-marker" aria-hidden="true">
-                      ↳
-                    </span>
-                    <div>
-                      <h3>{skill.name}</h3>
-                      <p>{skill.description}</p>
-                      <div className="tags">
-                        {skill.groups
-                          .flatMap((group) => group.items)
-                          .map((tag) => (
-                            <span key={tag}>{tag}</span>
-                          ))}
-                      </div>
-                    </div>
-                  </article>
-                ))}
               </div>
             </section>
             <ResumeSection />
