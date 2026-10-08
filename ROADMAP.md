@@ -136,7 +136,9 @@ Next: persist and restore comparison baselines, then add readable reports and sh
 
 - [x] Export a readable Markdown comparison with both configurations, recalculated metrics, signed differences, and explicit model limitations. A copyable view remains available when downloads are blocked.
 
-Next: portable comparison snapshots and links.
+- [x] Import/export versioned comparison JSON containing both setups; validate both before changing either, bound input size, and recalculate all results.
+
+Next: share both comparison setups with one URL.
 
 ## Next useful milestones
 

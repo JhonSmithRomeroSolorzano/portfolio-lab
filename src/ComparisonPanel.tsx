@@ -1,3 +1,4 @@
+import { ComparisonFiles } from "./ComparisonFiles";
 import { TextExport } from "./TextExport";
 import { comparisonReport } from "./comparison-report";
 import { loadBaseline, saveBaseline } from "./comparison-storage";
@@ -60,6 +61,13 @@ export function Comparison({
           )}
         </div>
         <p role="status">{notice}</p>
+        <ComparisonFiles
+          value={baseline ? { baseline, current: scenario } : null}
+          onImport={(pair) => {
+            capture(pair.baseline);
+            onSelect(pair.current);
+          }}
+        />
         {baseline && delta && (
           <>
             <p>
