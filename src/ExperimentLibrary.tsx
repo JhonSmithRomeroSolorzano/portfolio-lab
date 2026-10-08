@@ -56,15 +56,18 @@ export function ExperimentLibrary({
     window.addEventListener("storage", sync);
     return () => window.removeEventListener("storage", sync);
   }, []);
-  function save(next: SavedExperiment[]) {
+  function save(
+    next: SavedExperiment[],
+    action = "Experiment library updated.",
+  ) {
     entriesRef.current = next;
     setEntries(next);
     try {
       localStorage.setItem(LIBRARY_KEY, JSON.stringify(next));
-      setMessage("Experiment library saved in this browser.");
+      setMessage(`${action} Saved in this browser.`);
     } catch {
       setMessage(
-        "Browser storage is unavailable. Changes will last only for this visit.",
+        `${action} Browser storage is unavailable. Changes will last only for this visit. Export a library backup to keep them.`,
       );
     }
   }
@@ -220,8 +223,8 @@ export function ExperimentLibrary({
                   </button>
                   <button
                     onClick={() => {
-                      save(updateExperiment(entries, entry.id, scenario));
-                      setMessage(
+                      save(
+                        updateExperiment(entries, entry.id, scenario),
                         `${entry.name} updated with the current setup.`,
                       );
                     }}

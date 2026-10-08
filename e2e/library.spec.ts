@@ -137,3 +137,57 @@ test("a cross-tab update recovers focus from a removed rename editor", async ({
   ).toBeVisible();
   await other.close();
 });
+
+test("storage failure remains visible after updating a saved experiment", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    Storage.prototype.setItem = () => {
+      throw new DOMException("Quota reached", "QuotaExceededError");
+    };
+  });
+  await page.goto("/#lab");
+  await page.getByText("Your experiment library", { exact: true }).click();
+  await page.getByLabel("Name this setup", { exact: true }).fill("Visit only");
+  await page
+    .getByRole("button", { name: "Save experiment", exact: true })
+    .click();
+  await expect(
+    page.getByLabel("Name this setup", { exact: true }),
+  ).toBeFocused();
+  await expect(
+    page.getByText("Browser storage is unavailable.", { exact: false }),
+  ).toBeVisible();
+  await page.getByLabel("Exact request rate", { exact: true }).fill("333");
+  await page
+    .getByRole("button", {
+      name: "Update Visit only with current setup",
+      exact: true,
+    })
+    .click();
+  await expect(
+    page.getByText(
+      "Visit only updated with the current setup. Browser storage is unavailable. Changes will last only for this visit. Export a library backup to keep them.",
+      { exact: true },
+    ),
+  ).toBeVisible();
+  await page.getByLabel("Exact request rate", { exact: true }).fill("120");
+  await page
+    .getByRole("button", { name: "Load Visit only", exact: true })
+    .click();
+  await expect(
+    page.getByLabel("Exact request rate", { exact: true }),
+  ).toHaveValue("333");
+  await page
+    .getByText("Back up or import your library", { exact: true })
+    .click();
+  await page.getByText("View or copy library JSON", { exact: true }).click();
+  await expect(
+    page.getByLabel("library JSON contents", { exact: true }),
+  ).toContainText('"requestsPerSecond": 333');
+  await page.reload();
+  await page.getByText("Your experiment library", { exact: true }).click();
+  await expect(
+    page.getByText("No saved experiments yet.", { exact: true }),
+  ).toBeVisible();
+});

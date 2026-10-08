@@ -216,6 +216,13 @@ Next: resolve observed keyboard-focus and storage-feedback problems in the exist
 
 Next: preserve truthful persistence feedback when browser storage fails.
 
+### Honest storage feedback — October 8
+
+- [x] Fixed Update setup replacing a storage-failure warning with a success message. Every save now reports the operation and persistence outcome together.
+- [x] Keep visit-only changes usable and point to the portable backup. Added a blocked-storage browser journey covering save, update, reload loss, and backup content.
+
+Next: make failed downloads lead directly to the copyable export.
+
 ## Next useful milestones
 
 1. **Browser regression suite — established:** extend the existing recruiter, comparison, library, and keyboard journeys as behavior changes; keep fixtures deterministic.
