@@ -83,7 +83,7 @@ The browser suite now also covers comparison restoration, saved-library edits, c
 
 ## Compact investigations across the stack
 
-The portfolio puts professional experience before the lab. The lab presents one experiment at a time in a bounded workspace, with an optional expanded view, instead of growing the page as tools are opened. Its searchable catalog separates frontend, backend, data, and workspace tools. Guided investigations ask a question, load a reproducible configuration, and reveal evidence on demand.
+The portfolio puts professional experience before the lab. The lab presents one experiment at a time in a bounded workspace, with an optional expanded view, instead of growing the page as tools are opened. Its searchable catalog separates frontend, backend, data, and workspace tools. The catalog, sharing controls, and guides are secondary options behind **More experiments**, keeping the initial portfolio view focused on one working demo. Guided investigations ask a question, load a reproducible configuration, and reveal evidence on demand.
 
 Six additional pure models expose specific decisions:
 

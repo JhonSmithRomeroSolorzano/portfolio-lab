@@ -1,3 +1,4 @@
+import { chooseLab } from "./lab-tools";
 import { test, expect } from "@playwright/test";
 
 test.beforeEach(async ({ page }) => {
@@ -10,7 +11,7 @@ test("recruiter can navigate by keyboard and download the verified resume", asyn
 }) => {
   await page.goto("/?traffic=300#workbench");
   const navigation = page.getByRole("navigation", { name: "Main navigation" });
-  await expect(navigation.getByRole("link")).toHaveCount(5);
+  await expect(navigation.getByRole("link")).toHaveCount(4);
   await navigation
     .getByRole("link", { name: "Résumé", exact: true })
     .press("Enter");
@@ -53,7 +54,7 @@ test("an imported scenario changes controls and survives a URL reload", async ({
   page,
 }) => {
   await page.goto("/#lab");
-  await page.getByLabel("Choose a lab", { exact: true }).selectOption("files");
+  await chooseLab(page, "files");
   await page.getByLabel("Import experiment JSON (up to 100 KB)").setInputFiles({
     name: "scenario.json",
     mimeType: "application/json",
@@ -107,13 +108,13 @@ test("experience and contact precede the lab in document and menu order", async 
     await page
       .locator("main > section[id]")
       .evaluateAll((nodes) => nodes.map((n) => n.id)),
-  ).toEqual(["workbench", "resume", "journal", "contact", "lab"]);
+  ).toEqual(["workbench", "resume", "contact", "lab"]);
   expect(
     await page
       .getByRole("navigation", { name: "Main navigation" })
       .getByRole("link")
       .evaluateAll((nodes) => nodes.map((n) => n.getAttribute("href"))),
-  ).toEqual(["#workbench", "#resume", "#journal", "#contact", "#lab"]);
+  ).toEqual(["#workbench", "#resume", "#contact", "#lab"]);
   await page
     .getByRole("link", { name: "Explore my experience", exact: false })
     .press("Enter");

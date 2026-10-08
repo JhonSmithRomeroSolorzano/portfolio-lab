@@ -1,3 +1,4 @@
+import { openLabTools, chooseLab } from "./lab-tools";
 import { test, expect } from "@playwright/test";
 test("frontend experiments show stale responses and different event policies", async ({
   page,
@@ -16,7 +17,7 @@ test("frontend experiments show stale responses and different event policies", a
       exact: false,
     }),
   ).toBeVisible();
-  await page.getByLabel("Choose a lab", { exact: true }).selectOption("events");
+  await chooseLab(page, "events");
   await page
     .getByLabel("Input pattern", { exact: true })
     .selectOption("steady");
@@ -36,15 +37,11 @@ test("backend and data experiments have distinct controls and retain choices", a
   await expect(
     page.getByLabel("Circuit cooldown", { exact: false }),
   ).toBeVisible();
-  await page
-    .getByLabel("Choose a lab", { exact: true })
-    .selectOption("rate-limit");
+  await chooseLab(page, "rate-limit");
   await page.getByLabel("Rate limiter", { exact: true }).selectOption("bucket");
-  await page
-    .getByLabel("Choose a lab", { exact: true })
-    .selectOption("eviction");
+  await chooseLab(page, "eviction");
   await page.getByLabel("Eviction policy", { exact: true }).selectOption("lru");
-  await page.getByLabel("Choose a lab", { exact: true }).selectOption("writes");
+  await chooseLab(page, "writes");
   await page
     .getByLabel("Conflict policy", { exact: true })
     .selectOption("retry");
@@ -53,9 +50,7 @@ test("backend and data experiments have distinct controls and retain choices", a
       exact: false,
     }),
   ).toBeVisible();
-  await page
-    .getByLabel("Choose a lab", { exact: true })
-    .selectOption("eviction");
+  await chooseLab(page, "eviction");
   await expect(page.getByLabel("Eviction policy", { exact: true })).toHaveValue(
     "lru",
   );
@@ -78,13 +73,12 @@ test("independent lab links preserve settings through immediate reload and histo
   await expect(page.getByLabel("Conflict policy", { exact: true })).toHaveValue(
     "retry",
   );
+  await openLabTools(page);
   await page.getByText("Link to this lab", { exact: true }).click();
   const link = await page
     .getByLabel("Lab entry link", { exact: true })
     .inputValue();
-  await page
-    .getByLabel("Choose a lab", { exact: true })
-    .selectOption("eviction");
+  await chooseLab(page, "eviction");
   await page.goBack();
   await expect(page.getByLabel("Conflict policy", { exact: true })).toHaveValue(
     "retry",
@@ -106,6 +100,7 @@ test("guided investigation loads each remedy without opening more panels", async
   page,
 }) => {
   await page.goto("/?lab=writes#lab");
+  await openLabTools(page);
   await page.getByText("Follow an investigation", { exact: false }).click();
   await page
     .getByLabel("Investigation", { exact: true })
@@ -136,6 +131,7 @@ test("lab discovery filters results, restores focus, and keeps the workspace com
   page,
 }) => {
   await page.goto("/#lab");
+  await openLabTools(page);
   await page
     .getByRole("button", { name: "Browse experiments", exact: true })
     .click();
@@ -152,6 +148,7 @@ test("lab discovery filters results, restores focus, and keeps the workspace com
     "search",
   );
   await expect(page.getByLabel("Choose a lab", { exact: true })).toBeFocused();
+  await openLabTools(page);
   await page
     .getByRole("button", { name: "Browse experiments", exact: true })
     .click();
@@ -188,11 +185,9 @@ test("event playback advances on demand, stops on lab change, and honors reduced
   await expect(
     visible.getByRole("slider", { name: "Inspect event", exact: false }),
   ).toHaveValue("1");
-  await page
-    .getByLabel("Choose a lab", { exact: true })
-    .selectOption("eviction");
+  await chooseLab(page, "eviction");
   await page.clock.runFor(3000);
-  await page.getByLabel("Choose a lab", { exact: true }).selectOption("search");
+  await chooseLab(page, "search");
   await expect(
     visible.getByRole("button", { name: "Play events", exact: true }),
   ).toBeVisible();
@@ -232,9 +227,7 @@ test("timing charts expose request durations and exact retry window counts", asy
       { exact: true },
     ),
   ).toBeVisible();
-  await page
-    .getByLabel("Choose a lab", { exact: true })
-    .selectOption("retries");
+  await chooseLab(page, "retries");
   await expect(
     page.getByRole("img", { name: "Attempt distribution.", exact: false }),
   ).toBeVisible();

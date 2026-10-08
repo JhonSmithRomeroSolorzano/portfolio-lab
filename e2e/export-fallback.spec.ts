@@ -1,3 +1,4 @@
+import { chooseLab } from "./lab-tools";
 import { test, expect } from "@playwright/test";
 
 test("unavailable downloads open and focus the exact copyable export", async ({
@@ -9,7 +10,7 @@ test("unavailable downloads open and focus the exact copyable export", async ({
     };
   });
   await page.goto("/?traffic=321#lab");
-  await page.getByLabel("Choose a lab", { exact: true }).selectOption("files");
+  await chooseLab(page, "files");
   await page
     .getByRole("button", { name: "Download experiment JSON", exact: true })
     .click();
@@ -40,9 +41,7 @@ test("export fallback remains usable when a browser refuses the download click",
     };
   });
   await page.goto("/#lab");
-  await page
-    .getByLabel("Choose a lab", { exact: true })
-    .selectOption("compare");
+  await chooseLab(page, "compare");
   await page
     .getByRole("button", { name: "Capture baseline", exact: true })
     .click();

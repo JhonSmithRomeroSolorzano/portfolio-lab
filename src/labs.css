@@ -703,3 +703,45 @@
     min-width: 0;
   }
 }
+
+.lab-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.lab-more {
+  color: var(--signal);
+  background: transparent;
+  border: 0;
+  padding: 8px 0;
+  min-height: 38px;
+  font: 11px var(--mono);
+  cursor: pointer;
+}
+.lab-topbar > span {
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+.lab-link-warning {
+  margin: 0;
+  padding: 14px 24px;
+  font-size: 12px;
+  color: var(--lab-text);
+  border-bottom: 1px solid var(--lab-line);
+}
+@media (max-width: 700px) {
+  .lab-topbar {
+    flex-wrap: wrap;
+    height: auto;
+    padding-block: 12px;
+  }
+  .lab-toolbar-actions {
+    flex: 1 0 100%;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .lab-toolbar-actions .expand-lab {
+    max-width: none;
+    font-size: 10px;
+  }
+}

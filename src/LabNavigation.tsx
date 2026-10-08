@@ -14,7 +14,7 @@ export function LabNavigation({
   scenario: Scenario;
   onSelect: (id: LabId) => void;
 }) {
-  const { settings, invalid } = useLabSettings();
+  const { settings } = useLabSettings();
   const selected = LABS.find((lab) => lab.id === active)!;
   return (
     <div className="lab-navigation">
@@ -41,12 +41,6 @@ export function LabNavigation({
         {selected.detail}
       </p>
       <LabBrowser active={active} onSelect={onSelect} />
-      {invalid && (
-        <p role="status">
-          The lab setup in this link is invalid or unsupported. Defaults are
-          shown on first load; existing choices are kept during this visit.
-        </p>
-      )}
       <details className="lab-entry-link">
         <summary>Link to this lab</summary>
         <label htmlFor="lab-entry-url">Lab entry link</label>

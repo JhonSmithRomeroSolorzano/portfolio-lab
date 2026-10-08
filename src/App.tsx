@@ -85,7 +85,8 @@ function Arrow({ diagonal = false }: { diagonal?: boolean }) {
 }
 
 function SignalLab() {
-  const { settings, apply } = useLabSettings();
+  const { settings, apply, invalid } = useLabSettings();
+  const [showTools, setShowTools] = useState(false);
   const { expanded, setExpanded, shell, toggle } = useExpandedLab();
   const [activeLab, setActiveLab] = useState<LabId>(() =>
     labFromSearch(window.location.search),
@@ -168,22 +169,40 @@ function SignalLab() {
           <span className="signal-mark" aria-hidden="true">
             ▥
           </span>{" "}
-          SIGNAL LAB <span className="version">v0.2</span>
+          {selectedLab.name}
         </span>
-        <button
-          className="expand-lab"
-          ref={toggle}
-          aria-expanded={expanded}
-          onClick={() => setExpanded(!expanded)}
-        >
-          {expanded ? "Close expanded workspace" : "Expand workspace"}
-        </button>
+        <div className="lab-toolbar-actions">
+          <button
+            className="lab-more"
+            aria-expanded={showTools}
+            aria-controls="lab-extra-tools lab-guides"
+            onClick={() => setShowTools(!showTools)}
+          >
+            {showTools ? "Hide extra tools" : "More experiments"}
+          </button>
+          <button
+            className="expand-lab"
+            ref={toggle}
+            aria-expanded={expanded}
+            onClick={() => setExpanded(!expanded)}
+          >
+            {expanded ? "Close expanded workspace" : "Expand workspace"}
+          </button>
+        </div>
       </div>
-      <LabNavigation
-        active={activeLab}
-        onSelect={chooseLab}
-        scenario={scenario}
-      />
+      {invalid && (
+        <p className="lab-link-warning" role="status">
+          The lab setup in this link is invalid or unsupported. Defaults are
+          shown on first load; existing choices are kept during this visit.
+        </p>
+      )}
+      <div id="lab-extra-tools" hidden={!showTools}>
+        <LabNavigation
+          active={activeLab}
+          onSelect={chooseLab}
+          scenario={scenario}
+        />
+      </div>
       <div
         ref={viewportRef}
         className="lab-viewport"
@@ -191,7 +210,9 @@ function SignalLab() {
         aria-label="Experiment workspace"
         tabIndex={0}
       >
-        <InvestigationGuide active={activeLab} onOpen={openSetup} />
+        <div id="lab-guides" hidden={!showTools}>
+          <InvestigationGuide active={activeLab} onOpen={openSetup} />
+        </div>
         <div
           className={`lab-body ${activeLab === "traffic" ? "" : "tool-mode"}`}
           hidden={!selectedLab.shared}
@@ -630,9 +651,6 @@ export function App() {
             <a href="#resume">
               <span aria-hidden="true">↗</span> Résumé
             </a>
-            <a href="#journal">
-              <span aria-hidden="true">≡</span> Build notes
-            </a>
             <a href="#contact">
               <span aria-hidden="true">@</span> Contact
             </a>
@@ -710,50 +728,6 @@ export function App() {
             </section>
             <ResumeSection />
             <section
-              className="journal-section wrap"
-              id="journal"
-              tabIndex={-1}
-              aria-labelledby="journal-title"
-            >
-              <span className="section-signal" aria-hidden="true" />
-              <div className="section-heading" data-reveal="0">
-                <div>
-                  <span className="eyebrow">WORK IN PROGRESS</span>
-                  <h2 id="journal-title">Build notes.</h2>
-                </div>
-                <a
-                  className="text-link"
-                  href={`${REPO}/blob/main/ROADMAP.md`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  See the roadmap <Arrow diagonal />
-                </a>
-              </div>
-              <article className="journal-entry" data-reveal="0">
-                <time dateTime="2026-10-05">OCT 05, 2026</time>
-                <div>
-                  <span className="journal-tag">LAB + LOCAL API</span>
-                  <h3>From a sketch to a repeatable experiment.</h3>
-                  <p>
-                    Compare setups, save experiments, trace a request, and
-                    explore cache expiry and burst queues. The repository now
-                    includes a tested local Node API, batch replay tools, and a
-                    walkthrough explaining the model’s decisions and limits.
-                  </p>
-                </div>
-                <a
-                  href={REPO}
-                  className="journal-arrow"
-                  aria-label="View the portfolio source code"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <Arrow diagonal />
-                </a>
-              </article>
-            </section>
-            <section
               className="contact-section wrap"
               id="contact"
               tabIndex={-1}
@@ -793,25 +767,13 @@ export function App() {
                   </h2>
                 </div>
                 <p>
-                  Choose an experiment. Adjust a few inputs, inspect the result,
-                  and explore the decisions behind the behavior.
+                  A hands-on look at how an application responds to traffic,
+                  caching, and failure.
                 </p>
               </div>
               <LabSettingsProvider>
                 <SignalLab />
               </LabSettingsProvider>
-              <div className="project-caption">
-                <span>
-                  <b>Signal Lab</b> · An original portfolio experiment
-                </span>
-                <a
-                  href={`${REPO}/blob/main/CASE_STUDY.md`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Read the engineering walkthrough ↗
-                </a>
-              </div>
             </section>
           </main>
           <footer className="site-footer wrap">

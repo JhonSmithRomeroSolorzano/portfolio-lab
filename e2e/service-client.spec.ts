@@ -1,8 +1,9 @@
+import { chooseLab } from "./lab-tools";
 import { test, expect } from "@playwright/test";
 const local = "http://127.0.0.1:4174/#lab";
 async function openClient(page: import("@playwright/test").Page) {
   await page.goto(local);
-  await page.getByLabel("Choose a lab", { exact: true }).selectOption("api");
+  await chooseLab(page, "api");
 }
 test("local API is explicitly selected and real responses remain distinct from round-trip time", async ({
   page,
@@ -117,7 +118,7 @@ test("production build offers setup instructions without a local network control
   page,
 }) => {
   await page.goto("/#lab");
-  await page.getByLabel("Choose a lab", { exact: true }).selectOption("api");
+  await chooseLab(page, "api");
   await expect(
     page.getByText("This hosted demo uses browser calculations.", {
       exact: false,

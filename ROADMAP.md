@@ -309,3 +309,11 @@ The requested compact workspace is implemented. This feedback authorizes the new
 - [x] Add explicit event playback, pause, pace, and manual stepping across the six new labs. Stop playback when switching experiments, changing inputs, hiding the tab, reaching the end, or enabling reduced motion; never autoplay.
 
 Manual review covers the compact and expanded workspaces, dark/light themes, responsive 320px layout without page overflow, lab discovery focus, and Escape restoration. Browser regression is run in Chromium and WebKit through CI before publication. Further career additions still need verified details; additional lab expansion should start with a concrete user need.
+
+## Simpler public presentation — October 8 feedback
+
+- [x] Remove the Build notes section, its menu entry, the “Work in progress” label, and public roadmap promotion. Route the infrastructure map link to verified experience.
+- [x] Start Signal Lab with one demo; reveal the chooser, sharing, and guided tools only through More experiments. Preserve selected labs, deep links, settings, and expanded mode.
+- [x] Remove repeated lab branding, version, and the extra promotional footer beneath the demo.
+
+Next: refine the existing presentation from user feedback. Keep the portfolio focused on professional experience and a small demonstration; do not expand the public lab catalog without a clear request.

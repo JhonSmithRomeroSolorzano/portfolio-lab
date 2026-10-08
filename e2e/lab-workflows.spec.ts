@@ -1,11 +1,10 @@
+import { chooseLab } from "./lab-tools";
 import { test, expect } from "@playwright/test";
 test("a comparison link restores both setups and can restore the baseline", async ({
   page,
 }) => {
   await page.goto("/#lab");
-  await page
-    .getByLabel("Choose a lab", { exact: true })
-    .selectOption("compare");
+  await chooseLab(page, "compare");
   await page
     .getByRole("button", { name: "Capture baseline", exact: true })
     .click();
@@ -50,9 +49,7 @@ test("mobile data tables can be scrolled with the keyboard", async ({
   await page.setViewportSize({ width: 320, height: 800 });
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/#lab");
-  await page
-    .getByLabel("Choose a lab", { exact: true })
-    .selectOption("requests");
+  await chooseLab(page, "requests");
   const region = page.getByRole("region", {
     name: "Request timing",
     exact: true,
@@ -73,16 +70,14 @@ test("cache strategies and request deadlines expose their different outcomes", a
   page,
 }) => {
   await page.goto("/#lab");
-  await page.getByLabel("Choose a lab", { exact: true }).selectOption("cache");
+  await chooseLab(page, "cache");
   await page.getByLabel("Cache strategy", { exact: true }).selectOption("swr");
   const row = page
     .getByRole("region", { name: "Cache strategy comparison", exact: true })
     .getByRole("row")
     .filter({ hasText: "Stale-while-revalidate" });
   await expect(row.locator("td")).toHaveText(["3", "1", "4"]);
-  await page
-    .getByLabel("Choose a lab", { exact: true })
-    .selectOption("requests");
+  await chooseLab(page, "requests");
   await page
     .getByLabel("Enforce a deadline from arrival", { exact: true })
     .check();

@@ -65,7 +65,7 @@ export const stackLayers = [
       { label: "CI/CD", items: ["GitHub Actions"] },
       { label: "Cloud", items: ["Azure", "AWS (some experience)"] },
     ],
-    destination: "#journal",
-    action: "Read the build notes",
+    destination: "#resume",
+    action: "See my delivery experience",
   },
 ] as const;
