@@ -40,8 +40,11 @@ export function downloadText(
   const a = document.createElement("a");
   a.href = url;
   a.download = filename;
-  document.body.append(a);
-  a.click();
-  a.remove();
-  window.setTimeout(() => URL.revokeObjectURL(url), 30_000);
+  try {
+    document.body.append(a);
+    a.click();
+  } finally {
+    a.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 30_000);
+  }
 }

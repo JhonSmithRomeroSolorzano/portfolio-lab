@@ -223,6 +223,14 @@ Next: preserve truthful persistence feedback when browser storage fails.
 
 Next: make failed downloads lead directly to the copyable export.
 
+### Export fallback — October 8
+
+- [x] Handle hosts that cannot create a download or reject its click. Open the exact text export, focus it, select its contents, and announce the fallback.
+- [x] Avoid claiming a file was saved when a browser can only confirm a download request; clean up the temporary link even when it throws.
+- [x] Added blocked-download journeys for experiment JSON and comparison reports.
+
+Next: reduce competing announcements during rapid slider changes.
+
 ## Next useful milestones
 
 1. **Browser regression suite — established:** extend the existing recruiter, comparison, library, and keyboard journeys as behavior changes; keep fixtures deterministic.
