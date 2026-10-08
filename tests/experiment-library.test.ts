@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   parseLibrary,
+  restoreExperiment,
   renameExperiment,
   updateExperiment,
 } from "../src/experiment-library.ts";
@@ -59,4 +60,22 @@ test("rename and update preserve saved identity, order, and unrelated experiment
   assert.equal(updated[0].id, "a");
   assert.throws(() => renameExperiment(entries, "a", " "));
   assert.throws(() => updateExperiment(entries, "missing", DEFAULT_SCENARIO));
+});
+
+test("undo restores the original position without overwriting newer saves", () => {
+  const a = { id: "a", name: "A", scenario: DEFAULT_SCENARIO },
+    b = { ...a, id: "b" },
+    c = { ...a, id: "c" };
+  assert.deepEqual(
+    restoreExperiment([a, c], b, 1).map((e) => e.id),
+    ["a", "b", "c"],
+  );
+  assert.throws(() => restoreExperiment([a], a, 0));
+  assert.throws(() =>
+    restoreExperiment(
+      Array.from({ length: 8 }, (_, i) => ({ ...a, id: String(i) })),
+      b,
+      0,
+    ),
+  );
 });

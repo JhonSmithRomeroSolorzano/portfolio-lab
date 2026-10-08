@@ -65,3 +65,20 @@ export function updateExperiment(
     e.id === id ? { ...e, scenario: { ...scenario } } : e,
   );
 }
+
+export function restoreExperiment(
+  entries: readonly SavedExperiment[],
+  removed: SavedExperiment,
+  index: number,
+): SavedExperiment[] {
+  if (entries.length >= 8)
+    throw new Error("Make room before restoring this experiment.");
+  if (entries.some((e) => e.id === removed.id))
+    throw new Error("This experiment is already in the library.");
+  const next = [...entries];
+  next.splice(Math.max(0, Math.min(next.length, index)), 0, {
+    ...removed,
+    scenario: { ...removed.scenario },
+  });
+  return next;
+}

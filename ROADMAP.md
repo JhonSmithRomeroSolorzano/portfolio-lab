@@ -176,7 +176,9 @@ Next: inspect the new tools through browser journeys and document the completed 
 
 - [x] Rename saved experiments and replace a named setup with current controls while preserving identity and order. Validate names and copy scenario values so later edits cannot alter a saved snapshot.
 
-Next: make accidental removal recoverable and back up the library.
+- [x] Undo the last removal at its original position without overwriting newer entries; keyboard focus moves to Undo and returns to the save input after restoration. The eight-item bound still applies.
+
+Next: back up and merge a portable library.
 
 ## Next useful milestones
 

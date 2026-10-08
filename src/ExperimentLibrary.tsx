@@ -1,7 +1,8 @@
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import {
   LIBRARY_KEY,
   loadLibrary,
+  restoreExperiment,
   renameExperiment,
   updateExperiment,
 } from "./experiment-library";
@@ -16,6 +17,15 @@ export function ExperimentLibrary({
 }) {
   const [entries, setEntries] = useState(loadLibrary);
   const [name, setName] = useState("");
+  const [removed, setRemoved] = useState<{
+    entry: SavedExperiment;
+    index: number;
+  } | null>(null);
+  const undoRef = useRef<HTMLButtonElement>(null);
+  const nameRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (removed) undoRef.current?.focus();
+  }, [removed]);
   const [editing, setEditing] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
   const [message, setMessage] = useState(
@@ -42,6 +52,7 @@ export function ExperimentLibrary({
           <input
             className="tool-input"
             id={id}
+            ref={nameRef}
             value={name}
             maxLength={40}
             onChange={(e) => setName(e.target.value)}
@@ -65,6 +76,33 @@ export function ExperimentLibrary({
           </button>
         </div>
         <p role="status">{message}</p>
+        {removed && (
+          <div className="tool-actions">
+            <span>Removed {removed.entry.name}.</span>
+            <button
+              ref={undoRef}
+              disabled={entries.length >= 8}
+              onClick={() => {
+                try {
+                  save(
+                    restoreExperiment(entries, removed.entry, removed.index),
+                  );
+                  setRemoved(null);
+                  nameRef.current?.focus();
+                } catch (error) {
+                  setMessage(
+                    error instanceof Error
+                      ? error.message
+                      : "Could not restore this experiment.",
+                  );
+                }
+              }}
+            >
+              Undo last removal
+            </button>
+            {entries.length >= 8 && <span>Make room to restore it.</span>}
+          </div>
+        )}
         {entries.length === 0 ? (
           <p>No saved experiments yet.</p>
         ) : (
@@ -142,9 +180,16 @@ export function ExperimentLibrary({
                     Update setup
                   </button>
                   <button
-                    onClick={() =>
-                      save(entries.filter((item) => item.id !== entry.id))
-                    }
+                    onClick={() => {
+                      setRemoved({
+                        entry,
+                        index: entries.findIndex(
+                          (item) => item.id === entry.id,
+                        ),
+                      });
+                      if (editing === entry.id) setEditing(null);
+                      save(entries.filter((item) => item.id !== entry.id));
+                    }}
                     aria-label={`Remove ${entry.name}`}
                   >
                     Remove
