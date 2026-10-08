@@ -124,6 +124,12 @@ Next: automate the recruiter journey through menu navigation, theme selection, a
 
 Next: browser regression coverage for the simplified menu and recruiter journey.
 
+### Browser regression coverage — October 7
+
+- [x] Added Chromium and WebKit journeys for keyboard navigation, résumé downloads, persistent themes, narrow layout, imported scenario reloads, and legacy links. CI runs against the production build before deployment.
+
+Next: persist and restore comparison baselines, then add readable reports and sharing.
+
 ## Next useful milestones
 
 1. **Browser regression suite:** automate keyboard flows, reload/URL state, file import/export, and viewport checks. Start from observed user journeys; keep fixtures deterministic.

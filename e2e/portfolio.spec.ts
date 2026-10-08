@@ -1,0 +1,102 @@
+import { test, expect } from "@playwright/test";
+
+test.beforeEach(async ({ page }) => {
+  await page.route("https://fonts.googleapis.com/**", (route) => route.abort());
+  await page.route("https://fonts.gstatic.com/**", (route) => route.abort());
+});
+
+test("recruiter can navigate by keyboard and download the verified resume", async ({
+  page,
+}) => {
+  await page.goto("/?traffic=300#workbench");
+  const navigation = page.getByRole("navigation", { name: "Main navigation" });
+  await expect(navigation.getByRole("link")).toHaveCount(5);
+  await navigation
+    .getByRole("link", { name: "Résumé", exact: true })
+    .press("Enter");
+  await expect(page.locator("#resume")).toBeFocused();
+  await expect(page).toHaveURL(/traffic=300#resume$/);
+  const downloaded = page.waitForEvent("download");
+  await page.getByRole("link", { name: "Download PDF", exact: true }).click();
+  const pdf = await downloaded;
+  expect(pdf.suggestedFilename()).toBe("jhon-smith-romero-resume.pdf");
+  expect(await pdf.failure()).toBeNull();
+  const plain = await page.request.get("/resume/jhon-smith-romero-resume.txt");
+  expect(plain.ok()).toBeTruthy();
+  expect(await plain.text()).toContain("Nimrod | https://nimrod.io/");
+});
+
+test("theme selection survives reload and a small viewport stays usable", async ({
+  page,
+}) => {
+  await page.emulateMedia({ colorScheme: "light", reducedMotion: "reduce" });
+  await page.setViewportSize({ width: 320, height: 800 });
+  await page.goto("/#workbench");
+  await page.getByRole("button", { name: "Switch to dark theme" }).click();
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await expect(
+    page.getByRole("button", { name: "Switch to light theme" }),
+  ).toBeVisible();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBeTruthy();
+  await page.getByRole("button", { name: "Explore data experience" }).click();
+  await expect(
+    page.getByRole("region", { name: "Selected stack experience" }),
+  ).toContainText("Strongest in NoSQL");
+});
+
+test("an imported scenario changes controls and survives a URL reload", async ({
+  page,
+}) => {
+  await page.goto("/#lab");
+  await page
+    .getByText("Import or export an experiment", { exact: true })
+    .click();
+  await page.getByLabel("Import experiment JSON (up to 100 KB)").setInputFiles({
+    name: "scenario.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(
+      JSON.stringify({
+        format: "signal-lab",
+        version: 1,
+        scenario: {
+          requestsPerSecond: 237,
+          cacheEnabled: false,
+          database: "slow",
+          writePercent: 40,
+        },
+      }),
+    ),
+  });
+  await expect(
+    page.getByRole("spinbutton", { name: "Exact request rate" }),
+  ).toHaveValue("237");
+  await expect(
+    page.getByRole("switch", { name: "Read cache" }),
+  ).not.toBeChecked();
+  await page.reload();
+  await expect(
+    page.getByRole("spinbutton", { name: "Exact request rate" }),
+  ).toHaveValue("237");
+  await expect(
+    page.getByRole("button", { name: "Slow", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
+});
+
+test("legacy About links still select Workbench without losing query state", async ({
+  page,
+}) => {
+  await page.goto("/?traffic=250#about");
+  await expect(page.locator('nav a[href="#workbench"]')).toHaveAttribute(
+    "aria-current",
+    "location",
+  );
+  await expect(page.locator("#about")).toBeInViewport();
+  await expect(
+    page.getByRole("spinbutton", { name: "Exact request rate" }),
+  ).toHaveValue("250");
+});

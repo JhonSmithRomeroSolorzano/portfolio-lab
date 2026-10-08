@@ -71,7 +71,7 @@ Logs contain a generated request ID, normalized route, method, status, timestamp
 
 `npm test` covers the model, request conservation, URL round trips, storage/file boundaries, comparison, expiry, queues, rate-window boundaries, batch CLI exit codes, and real HTTP responses on an ephemeral loopback port. `npm run build` checks TypeScript for the browser, server, and scripts before producing static assets. GitHub Actions runs both before Pages deployment.
 
-Browser checks cover precise traffic input, baseline comparison, saved-library persistence, file import, expiry/queue interaction, and a narrow mobile viewport. These are manual checks, not a permanent browser regression suite. Browser downloads depend on host support; copyable JSON/CSV views provide a visible fallback. File contents are generated and tested independently.
+Browser checks cover precise traffic input, baseline comparison, saved-library persistence, file import, expiry/queue interaction, and a narrow mobile viewport. A permanent Playwright suite now runs recruiter navigation, résumé downloads, theme persistence, mobile layout, legacy links, and imported URL state in Chromium and WebKit before Pages deployment. Browser downloads depend on host support; copyable JSON/CSV views provide a visible fallback. File contents are generated and tested independently.
 
 The next useful work is a persistent browser regression suite, a more realistic request scheduler, explicit cache invalidation strategies, and a comparison report that can be shared. Those features should explain a new engineering trade-off rather than imply this model predicts production performance.
 

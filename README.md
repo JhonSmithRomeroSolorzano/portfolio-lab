@@ -76,6 +76,9 @@ npm run dev
 npm test       # behavior and boundary tests for the model
 npm run build # strict TypeScript check and production build
 npm run preview
+# Optional local browser regression run after building:
+npx playwright install chromium webkit
+npm run test:browser
 ```
 
 ### Résumé downloads

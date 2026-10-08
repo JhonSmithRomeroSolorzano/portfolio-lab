@@ -16,7 +16,8 @@
     "check": "npm test && npm run build",
     "format": "prettier --write .",
     "api": "node --import tsx server/start.ts",
-    "replay": "node --import tsx scripts/replay.ts"
+    "replay": "node --import tsx scripts/replay.ts",
+    "test:browser": "playwright test"
   },
   "dependencies": {
     "react": "^19.1.0",
@@ -32,6 +33,7 @@
     "prettier": "^3.6.2",
     "tsx": "^4.19.0",
     "typescript": "~5.8.3",
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+    "@playwright/test": "1.64.0"
   }
 }
