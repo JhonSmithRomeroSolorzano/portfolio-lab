@@ -1,3 +1,4 @@
+import { RequestSchedulerPanel } from "./RequestSchedulerPanel";
 import { useEffect, useRef, useState } from "react";
 import { DEFAULT_SCENARIO, simulate } from "./simulation";
 import type { DatabaseMode, Scenario } from "./simulation";
@@ -396,6 +397,7 @@ function SignalLab() {
         <CapacitySweepPanel scenario={scenario} />
         <CacheExpiryPanel />
         <QueueExperiment />
+        <RequestSchedulerPanel />
         <RequestTrace key={JSON.stringify(scenario)} scenario={scenario} />
         <ExperimentLibrary scenario={scenario} onSelect={selectScenario} />
         <ExperimentFiles scenario={scenario} onSelect={selectScenario} />
