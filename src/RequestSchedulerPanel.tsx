@@ -1,3 +1,4 @@
+import { RequestTimeline } from "./labs/RequestTimeline";
 import { ToolPanel } from "./ToolPanel";
 import { useState } from "react";
 import { scheduleRequests, SCHEDULER_ARRIVALS } from "./request-scheduler";
@@ -113,6 +114,7 @@ export function RequestSchedulerPanel() {
             <strong>{meanWait.toFixed(1)} ms</strong>
           </div>
         </div>
+        <RequestTimeline rows={rows} />
         <div
           className="table-scroll"
           role="region"
