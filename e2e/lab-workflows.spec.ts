@@ -24,7 +24,23 @@ test("a comparison link restores both setups and can restore the baseline", asyn
   await expect(
     page.getByRole("switch", { name: "Read cache", exact: true }),
   ).toBeChecked();
+  expect(
+    JSON.parse(new URL(page.url()).searchParams.get("baseline")!).cacheEnabled,
+  ).toBe(true);
+  await page.reload();
+  await expect(
+    page.getByRole("button", { name: "Restore baseline", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("switch", { name: "Read cache", exact: true }),
+  ).toBeChecked();
+  await page
+    .getByRole("button", { name: "Clear baseline", exact: true })
+    .click();
   expect(new URL(page.url()).searchParams.has("baseline")).toBeFalsy();
+  await expect(
+    page.getByRole("button", { name: "Restore baseline", exact: true }),
+  ).toHaveCount(0);
 });
 test("mobile data tables can be scrolled with the keyboard", async ({
   page,

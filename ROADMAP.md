@@ -193,6 +193,7 @@ Next: final accessibility and browser regression checks for the expanded tools.
 ### Accessible tool inspection — October 7
 
 - [x] Mobile inspection found wide result tables lacked a keyboard focus target. Every table viewport now has an accessible name, a Tab stop, visible focus, and native arrow-key scrolling.
+- [x] Shared-comparison regression checks distinguish restoring the current controls (which retains the baseline through reload) from clearing the baseline (which removes it from the link and storage).
 - [x] Added browser journeys for comparison links/restoration, cache accounting, request deadlines, keyboard table scrolling, library rename/undo/reload, and cross-tab synchronization. The suite contains 18 Chromium/WebKit checks; deployment is gated on their success.
 - [x] Reviewed baseline persistence and restoration, cache strategy totals, mobile table scrolling, and saved-experiment editing at 320px without page overflow. All 91 unit/integration tests and the production build pass.
 
