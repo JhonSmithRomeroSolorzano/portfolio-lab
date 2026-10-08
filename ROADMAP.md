@@ -144,6 +144,12 @@ Next: keep browser coverage aligned with completed comparison tools.
 
 Next: cache invalidation experiments and accessibility review.
 
+### Cache strategy experiments — October 7
+
+- [x] Added update invalidation and stale-while-revalidate alongside fixed TTL, with explicit event ordering, origin-fetch accounting, and tests for exact expiry/update boundaries.
+
+Next: compare freshness and origin work across strategies.
+
 ## Next useful milestones
 
 1. **Browser regression suite:** automate keyboard flows, reload/URL state, file import/export, and viewport checks. Start from observed user journeys; keep fixtures deterministic.

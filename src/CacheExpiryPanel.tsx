@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { cacheTimeline } from "./cache-expiry";
+import type { CachePolicy } from "./cache-expiry";
 export function CacheExpiryPanel() {
+  const [policy, setPolicy] = useState<CachePolicy>("ttl");
   const [ttl, setTtl] = useState(8);
   const [step, setStep] = useState(0);
-  const rows = cacheTimeline(ttl);
+  const rows = cacheTimeline(ttl, policy);
   const visible = rows.slice(0, step + 1);
   const current = rows[step];
   return (
@@ -13,9 +15,27 @@ export function CacheExpiryPanel() {
         <p>
           A separate single-key experiment: one read per second for 21 seconds.
           The origin changes from version 1 to version 2 just before the read at
-          5s. Cache misses fetch and store the current version. A hit does not
-          extend expiry; there is no invalidation or background refresh.
+          5s. A hit does not extend expiry. Fixed TTL waits for expiration;
+          invalidation expires the entry at the origin update.
+          Stale-while-revalidate serves an expired entry and fetches its
+          replacement in the background, completing before the next second’s
+          read. Fetches capture the version when they start. This model assumes
+          successful fetches and no network variance.
         </p>
+        <label htmlFor="cache-policy">Cache strategy</label>
+        <select
+          id="cache-policy"
+          className="tool-input"
+          value={policy}
+          onChange={(e) => {
+            setPolicy(e.target.value as CachePolicy);
+            setStep(0);
+          }}
+        >
+          <option value="ttl">Fixed TTL</option>
+          <option value="invalidate">Invalidate on update</option>
+          <option value="swr">Stale-while-revalidate</option>
+        </select>
         <label htmlFor="ttl">Cache TTL: {ttl} seconds</label>
         <input
           className="tool-range"
@@ -47,7 +67,9 @@ export function CacheExpiryPanel() {
           {current.stale
             ? "This response is stale."
             : "This response is fresh."}{" "}
-          Cache expires at {current.expiresAt}s.
+          Cache expires at {current.expiresAt}s.{" "}
+          {current.refreshing &&
+            "A background refresh completes before the next read."}
         </p>
         <div className="tool-metrics">
           <div>
@@ -59,7 +81,7 @@ export function CacheExpiryPanel() {
           <div>
             <span>Database reads</span>
             <strong>
-              {visible.filter((r) => r.source === "database").length}
+              {visible.reduce((sum, r) => sum + r.originReads, 0)}
             </strong>
           </div>
           <div>
@@ -76,6 +98,7 @@ export function CacheExpiryPanel() {
                 <th scope="col">Source</th>
                 <th scope="col">Version</th>
                 <th scope="col">Freshness</th>
+                <th scope="col">Origin fetch</th>
               </tr>
             </thead>
             <tbody>
@@ -85,6 +108,13 @@ export function CacheExpiryPanel() {
                   <td>{r.source}</td>
                   <td>{r.returnedVersion}</td>
                   <td>{r.stale ? "Stale" : "Fresh"}</td>
+                  <td>
+                    {r.refreshing
+                      ? "Background"
+                      : r.originReads
+                        ? "Blocking"
+                        : "None"}
+                  </td>
                 </tr>
               ))}
             </tbody>
