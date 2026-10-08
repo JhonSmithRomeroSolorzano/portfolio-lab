@@ -1,0 +1,79 @@
+import { test, expect } from "@playwright/test";
+test("a comparison link restores both setups and can restore the baseline", async ({
+  page,
+}) => {
+  await page.goto("/#lab");
+  await page.getByText("Compare two setups", { exact: true }).click();
+  await page
+    .getByRole("button", { name: "Capture baseline", exact: true })
+    .click();
+  await page.getByRole("switch", { name: "Read cache", exact: true }).click();
+  const link = await page
+    .getByLabel("Comparison link", { exact: true })
+    .inputValue();
+  await page.goto(link);
+  await expect(
+    page.getByRole("button", { name: "Restore baseline", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("switch", { name: "Read cache", exact: true }),
+  ).not.toBeChecked();
+  await page
+    .getByRole("button", { name: "Restore baseline", exact: true })
+    .click();
+  await expect(
+    page.getByRole("switch", { name: "Read cache", exact: true }),
+  ).toBeChecked();
+  expect(new URL(page.url()).searchParams.has("baseline")).toBeFalsy();
+});
+test("mobile data tables can be scrolled with the keyboard", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 320, height: 800 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/#lab");
+  await page
+    .getByText("Inspect request wait and service times", { exact: true })
+    .click();
+  const region = page.getByRole("region", {
+    name: "Request timing",
+    exact: true,
+  });
+  await region.focus();
+  await expect(region).toBeFocused();
+  await region.press("ArrowRight");
+  await expect
+    .poll(() => region.evaluate((e) => e.scrollLeft))
+    .toBeGreaterThan(0);
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBeTruthy();
+});
+test("cache strategies and request deadlines expose their different outcomes", async ({
+  page,
+}) => {
+  await page.goto("/#lab");
+  await page
+    .getByText("Explore cache expiry and stale reads", { exact: true })
+    .click();
+  await page.getByLabel("Cache strategy", { exact: true }).selectOption("swr");
+  const row = page
+    .getByRole("region", { name: "Cache strategy comparison", exact: true })
+    .getByRole("row")
+    .filter({ hasText: "Stale-while-revalidate" });
+  await expect(row.locator("td")).toHaveText(["3", "1", "4"]);
+  await page
+    .getByText("Inspect request wait and service times", { exact: true })
+    .click();
+  await page
+    .getByLabel("Enforce a deadline from arrival", { exact: true })
+    .check();
+  await page.getByLabel(/^Deadline:/).press("Home");
+  await expect(
+    page
+      .getByRole("region", { name: "Request timing", exact: true })
+      .getByRole("cell", { name: "timed-out", exact: true }),
+  ).toHaveCount(16);
+});

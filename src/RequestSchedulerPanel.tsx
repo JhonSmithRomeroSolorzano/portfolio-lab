@@ -113,7 +113,12 @@ export function RequestSchedulerPanel() {
             <strong>{meanWait.toFixed(1)} ms</strong>
           </div>
         </div>
-        <div className="table-scroll">
+        <div
+          className="table-scroll"
+          role="region"
+          aria-label="Request timing"
+          tabIndex={0}
+        >
           <table className="tool-table">
             <caption>
               Every request through completion, rejection, or timeout

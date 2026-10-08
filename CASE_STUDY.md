@@ -53,11 +53,17 @@ The default 120 req/s scenario sends 96 reads to cache and 24 to the database. I
 
 With the cache disabled, eight 80 ms connections have capacity `8×1000/80 = 100 req/s`. Request conservation is an invariant: **cached + database-served + failed = offered**. Tests check this across supported scenarios.
 
-## Two separate time-based experiments
+## Separate time-based experiments
 
 The TTL timeline reads one key each second from t=0 through t=20. The origin changes just before t=5. A cache miss stores the latest version for the selected TTL; hits do not renew expiry. With an eight-second TTL, t=5, 6, and 7 return stale version 1. At t=8, an expired entry is fetched again. The strategy selector also offers invalidation on the origin update and stale-while-revalidate. Invalidation expires the cached entry before the t=5 read. Stale-while-revalidate returns expired data while a single background fetch completes before the next second; it captures the origin version when it starts. Origin-read totals include background fetches. These policies assume successful fetches, no variable network delay, and no link to the main model's hit-rate slider.
 
 The queue experiment has eight one-second ticks with arrivals `[4, 4, 20, 20, 4, 4, 4, 4]`. Each tick serves old backlog first and then arrivals. Excess work waits up to the buffer limit; overflow rejects the newest arrivals. At capacity 8 and buffer 16, 56 requests finish, 8 are rejected, and none remain waiting. With no buffer, 24 are rejected. The conservation rule is **completed + rejected + waiting = total arrivals**. Waiting work never counts as successful. There are no retries, deadlines, or within-tick latency estimates.
+
+The queue now offers equal-volume steady and single-spike profiles alongside the original burst. An optional recovery phase adds no new arrivals and serves only accepted backlog. Rejected requests never reappear.
+
+The request scheduler uses discrete arrival and completion events, fixed service time, configurable worker concurrency, and a bounded FIFO waiting queue. Completions and already-queued work take priority over arrivals at the same timestamp. Optional deadlines include wait plus service; queued requests expire before dispatch and running requests are cancelled at their deadline, releasing a worker. Completion exactly at the deadline succeeds. This is deliberately different from the main model’s steady-state rates: individual requests have integer identities and explicit timestamps, and the experiment drains through terminal outcomes.
+
+The retry experiment starts eight requests together and models an instant failure before a chosen recovery time, then instant success. Exponential backoff and optional seeded full jitter schedule future attempts; a global budget limits retry amplification independently of the per-request limit. The trace shows where a budget or attempt limit ends work. Jitter can consume retries before recovery, so it does not guarantee success. This experiment excludes server capacity, network latency, and deadlines; it does not silently combine those assumptions with the scheduler.
 
 ## The local service boundary
 
@@ -73,7 +79,7 @@ Logs contain a generated request ID, normalized route, method, status, timestamp
 
 Browser checks cover precise traffic input, baseline comparison, saved-library persistence, file import, expiry/queue interaction, and a narrow mobile viewport. A permanent Playwright suite now runs recruiter navigation, résumé downloads, theme persistence, mobile layout, legacy links, and imported URL state in Chromium and WebKit before Pages deployment. Browser downloads depend on host support; copyable JSON/CSV views provide a visible fallback. File contents are generated and tested independently.
 
-The next useful work is a persistent browser regression suite, a more realistic request scheduler, explicit cache invalidation strategies, and a comparison report that can be shared. Those features should explain a new engineering trade-off rather than imply this model predicts production performance.
+The browser suite now also covers comparison restoration, saved-library edits, cross-tab changes, deadline outcomes, cache accounting, and keyboard table scrolling. Unit tests check exact event ordering, conservation, retry budgets, reproducibility, and invalid imports. The next useful integration is an explicitly selected local-API client with cancellation and clear offline behavior.
 
 ## Review path
 

@@ -190,13 +190,21 @@ Next: maintain browser coverage for the saved workflow.
 
 Next: final accessibility and browser regression checks for the expanded tools.
 
+### Accessible tool inspection — October 7
+
+- [x] Mobile inspection found wide result tables lacked a keyboard focus target. Every table viewport now has an accessible name, a Tab stop, visible focus, and native arrow-key scrolling.
+- [x] Added browser journeys for comparison links/restoration, cache accounting, request deadlines, keyboard table scrolling, library rename/undo/reload, and cross-tab synchronization. The suite contains 18 Chromium/WebKit checks; deployment is gated on their success.
+- [x] Reviewed baseline persistence and restoration, cache strategy totals, mobile table scrolling, and saved-experiment editing at 320px without page overflow. All 91 unit/integration tests and the production build pass.
+
+Next: the optional local-API client and more verified project examples. Keep professional achievements and contact details dependent on Jhon’s confirmation.
+
 ## Next useful milestones
 
-1. **Browser regression suite:** automate keyboard flows, reload/URL state, file import/export, and viewport checks. Start from observed user journeys; keep fixtures deterministic.
-2. **Comparison reports:** save and restore a baseline, export a readable comparison, and share both setups with explicit versioning and validation.
-3. **Cache invalidation:** compare fixed TTL, write-through invalidation, and stale-while-revalidate in the separate key timeline. Define update ordering and test boundary behavior.
-4. **Request scheduler:** introduce an event-based model with queue wait and deadlines. Compare it with the steady-state approximation; label all assumptions.
-5. **Retry experiment:** show retry amplification, a bounded retry budget, backoff, and jitter with a seeded source of randomness.
+1. **Browser regression suite — established:** extend the existing recruiter, comparison, library, and keyboard journeys as behavior changes; keep fixtures deterministic.
+2. **Comparison reports — complete:** persisted baselines, readable reports, versioned JSON, and links for both setups.
+3. **Cache invalidation — complete:** fixed TTL, invalidation on update, and stale-while-revalidate with explicit ordering, policy comparison, and CSV evidence.
+4. **Request scheduler — complete:** inspect individual arrival, wait, service, rejection, and deadline outcomes. Keep this finite FIFO experiment distinct from the steady-state approximation.
+5. **Retry experiment — complete:** bounded global budget, exponential backoff, seeded full jitter, and explicit recovery assumptions.
 6. **Service client:** add an explicitly selected local-API mode, request cancellation, and clear offline/error behavior. Keep the deployed static demo useful independently.
 7. **Accessibility review:** test screen-reader announcements, focus behavior, color contrast, and export fallbacks. Fix observed problems and document the evidence.
 8. **Recruiter path:** add a user-confirmed contact address and further verified project examples. Résumé downloads are complete. Do not invent links, metrics, employer details, or achievements.

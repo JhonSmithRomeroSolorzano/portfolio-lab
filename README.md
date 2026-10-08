@@ -45,6 +45,14 @@ This is an original, browser-only simulation, not a connection to live infrastru
 
 The [engineering walkthrough](CASE_STUDY.md) explains the formulas, architecture, limits, and a five-minute review path.
 
+### Compare, save, and inspect
+
+Capture a baseline in **Compare two setups**, change the workload, and restore the baseline whenever needed. Baselines persist in this browser; blocked storage falls back to the current visit. Export a readable Markdown report or versioned JSON containing both setups, or copy a comparison link that opens both. Results are always recalculated. Shared links omit unrelated URL parameters.
+
+The experiment library supports rename, update, undo removal, cross-tab synchronization, and portable JSON backups. Imports retain existing saves, skip equivalent named setups, and reject overflow before changing the library. Browser storage has last-write-wins semantics across simultaneous tabs; backups are the portable copy.
+
+The cache timeline compares fixed TTL, invalidation on update, and stale-while-revalidate. It separates blocking reads from background fetches and exports every read as CSV. Queue profiles hold 64 arrivals constant while varying burst shape, and optional recovery continues until accepted work drains. A separate event-based scheduler shows per-request timing and optional deadlines; the retry experiment shows exponential backoff, a shared budget, and seeded jitter. Every experiment states its assumptions. Wide tables accept keyboard focus and horizontal arrow-key scrolling.
+
 ### Share an experiment
 
 The address bar reflects your settings. Use **Copy experiment link** to share a URL that opens the same scenario at the lab. If clipboard access is unavailable, select and copy the fallback link. Shared links include only experiment settings, excluding unrelated query parameters.

@@ -1263,6 +1263,10 @@ input[type="range"] {
 .table-scroll {
   overflow-x: auto;
 }
+.table-scroll:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+}
 .tool-table {
   width: 100%;
   border-collapse: collapse;

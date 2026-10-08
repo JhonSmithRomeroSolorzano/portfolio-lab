@@ -43,7 +43,6 @@ export function ExperimentLibrary({
       if (next === null) return;
       entriesRef.current = next;
       setEntries(next);
-      entriesRef.current = next;
       setEditing(null);
       setRemoved(null);
       setMessage("Experiment library updated from another tab.");
@@ -52,6 +51,7 @@ export function ExperimentLibrary({
     return () => window.removeEventListener("storage", sync);
   }, []);
   function save(next: SavedExperiment[]) {
+    entriesRef.current = next;
     setEntries(next);
     try {
       localStorage.setItem(LIBRARY_KEY, JSON.stringify(next));

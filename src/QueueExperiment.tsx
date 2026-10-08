@@ -93,7 +93,12 @@ export function QueueExperiment() {
           requests. Here, {end.totalServed} served + {end.queued} waiting +{" "}
           {end.totalRejected} rejected = {end.totalArrived} offered.
         </p>
-        <div className="table-scroll">
+        <div
+          className="table-scroll"
+          role="region"
+          aria-label="Queue timeline"
+          tabIndex={0}
+        >
           <table className="tool-table">
             <caption>
               Queue timeline —{" "}

@@ -91,7 +91,12 @@ export function CacheExpiryPanel() {
             <strong>{visible.filter((r) => r.stale).length}</strong>
           </div>
         </div>
-        <div className="table-scroll">
+        <div
+          className="table-scroll"
+          role="region"
+          aria-label="Cache strategy comparison"
+          tabIndex={0}
+        >
           <table className="tool-table">
             <caption>
               Strategy comparison — all 21 reads at the selected TTL
@@ -129,7 +134,12 @@ export function CacheExpiryPanel() {
           Background refresh reduces blocking reads, but can serve stale data.
           Invalidation assumes the update reliably reaches the cache.
         </p>
-        <div className="table-scroll">
+        <div
+          className="table-scroll"
+          role="region"
+          aria-label="Cache read timeline"
+          tabIndex={0}
+        >
           <table className="tool-table">
             <caption>Expiry timeline — reads shown so far</caption>
             <thead>

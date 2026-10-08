@@ -106,7 +106,12 @@ export function RetryExperiment() {
           success. Jitter spreads attempts, but can consume a budget before
           recovery; it does not guarantee success.
         </p>
-        <div className="table-scroll">
+        <div
+          className="table-scroll"
+          role="region"
+          aria-label="Retry attempts"
+          tabIndex={0}
+        >
           <table className="tool-table">
             <caption>
               Attempts in time order; initial requests do not consume retry
