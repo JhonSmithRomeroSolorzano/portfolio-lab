@@ -493,9 +493,6 @@ export function App() {
             <a href="#workbench">
               <span aria-hidden="true">⌘</span> Workbench
             </a>
-            <a href="#lab">
-              <span aria-hidden="true">↯</span> Signal Lab
-            </a>
             <a href="#resume">
               <span aria-hidden="true">↗</span> Résumé
             </a>
@@ -504,6 +501,9 @@ export function App() {
             </a>
             <a href="#contact">
               <span aria-hidden="true">@</span> Contact
+            </a>
+            <a href="#lab">
+              <span aria-hidden="true">↯</span> Signal Lab
             </a>
           </nav>
           <div className="rail-bottom">
@@ -568,42 +568,9 @@ export function App() {
               <TechnologyOverview />
               <StackMap />
               <div className="workbench-caption">
-                <span>My stack above. A working experiment below.</span>
-                <a href="#lab">
-                  Try Signal Lab <span aria-hidden="true">↓</span>
-                </a>
-              </div>
-            </section>
-            <section
-              className="lab-section wrap"
-              id="lab"
-              tabIndex={-1}
-              aria-labelledby="lab-title"
-            >
-              <span className="section-signal" aria-hidden="true" />
-              <div className="section-heading" data-reveal="0">
-                <div>
-                  <span className="eyebrow">INTERACTIVE PROJECT</span>
-                  <h2 id="lab-title">
-                    Signal Lab<span className="heading-dot">.</span>
-                  </h2>
-                </div>
-                <p>
-                  Change the traffic, cache, or database. Inspect how a small
-                  system responds, then read the decisions behind the model.
-                </p>
-              </div>
-              <SignalLab />
-              <div className="project-caption">
-                <span>
-                  <b>Signal Lab</b> · An original portfolio experiment
-                </span>
-                <a
-                  href={`${REPO}/blob/main/CASE_STUDY.md`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Read the engineering walkthrough ↗
+                <span>The tools I use. The work behind them.</span>
+                <a href="#resume">
+                  Explore my experience <span aria-hidden="true">↓</span>
                 </a>
               </div>
             </section>
@@ -676,6 +643,39 @@ export function App() {
                 Open to full-stack opportunities with JavaScript, TypeScript,
                 React, and Node.js.
               </p>
+            </section>
+            <section
+              className="lab-section wrap"
+              id="lab"
+              tabIndex={-1}
+              aria-labelledby="lab-title"
+            >
+              <span className="section-signal" aria-hidden="true" />
+              <div className="section-heading" data-reveal="0">
+                <div>
+                  <span className="eyebrow">INTERACTIVE PROJECT</span>
+                  <h2 id="lab-title">
+                    Signal Lab<span className="heading-dot">.</span>
+                  </h2>
+                </div>
+                <p>
+                  Change the traffic, cache, or database. Inspect how a small
+                  system responds, then read the decisions behind the model.
+                </p>
+              </div>
+              <SignalLab />
+              <div className="project-caption">
+                <span>
+                  <b>Signal Lab</b> · An original portfolio experiment
+                </span>
+                <a
+                  href={`${REPO}/blob/main/CASE_STUDY.md`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Read the engineering walkthrough ↗
+                </a>
+              </div>
             </section>
           </main>
           <footer className="site-footer wrap">

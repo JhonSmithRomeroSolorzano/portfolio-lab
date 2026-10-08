@@ -100,3 +100,24 @@ test("legacy About links still select Workbench without losing query state", asy
     page.getByRole("spinbutton", { name: "Exact request rate" }),
   ).toHaveValue("250");
 });
+
+test("experience and contact precede the lab in document and menu order", async ({
+  page,
+}) => {
+  await page.goto("/");
+  expect(
+    await page
+      .locator("main > section[id]")
+      .evaluateAll((nodes) => nodes.map((n) => n.id)),
+  ).toEqual(["workbench", "resume", "journal", "contact", "lab"]);
+  expect(
+    await page
+      .getByRole("navigation", { name: "Main navigation" })
+      .getByRole("link")
+      .evaluateAll((nodes) => nodes.map((n) => n.getAttribute("href"))),
+  ).toEqual(["#workbench", "#resume", "#journal", "#contact", "#lab"]);
+  await page
+    .getByRole("link", { name: "Explore my experience", exact: false })
+    .press("Enter");
+  await expect(page.locator("#resume")).toBeInViewport();
+});

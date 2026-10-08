@@ -12,6 +12,8 @@ I directly confirmed the descriptions of my current Antecursor role and my Athle
 
 The portfolio uses a custom workspace composition: a compact identity rail and a connected stack map with selectable Frontend, Backend, Data, and Infrastructure layers. The map explains verified experience and leads to the lab, résumé contributions, and build notes. It is authored in React, CSS, and SVG for this project.
 
+Experience and contact precede the lab in document and menu order; the introduction links directly to experience. Signal Lab is the final main section.
+
 Workbench combines my introduction, engineering background, LinkedIn portrait, prominent senior full-stack role, and organized technology overview. The former About section and its repeated skill cards have been merged into this opening section; existing `#about` links still reach the introduction. Languages and testing span the stack; the four areas distinguish UI libraries, components and styling, frameworks and Figma design handoff, APIs and real-time communication, databases and caching, containers, CI/CD, and cloud platforms. The overview, map, and categorized résumé tags share `src/technology-stack.ts` to keep descriptions consistent. Next.js is labeled as some experience.
 
 Technology details were confirmed directly by me on October 6, 2026. NoSQL is my strongest database experience, alongside SQL; cloud experience includes Azure and some AWS work. Testing lists Jest, Playwright, and Mocha, with integration and end-to-end testing. The portrait is stored locally in `public/jhon-smith-romero.jpg`, so it does not depend on an expiring LinkedIn image URL. Résumé and Contact are available in the main menu; duplicate links were removed from the introduction.
