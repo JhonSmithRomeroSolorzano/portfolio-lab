@@ -52,3 +52,30 @@ export const QUEUE_PROFILES = [
   { id: "steady", name: "Steady flow", arrivals: [8, 8, 8, 8, 8, 8, 8, 8] },
   { id: "spike", name: "Single spike", arrivals: [4, 4, 4, 36, 4, 4, 4, 4] },
 ] as const;
+
+/** After arrivals stop, serve accepted backlog; rejected work is never retried. */
+export function queueRecovery(
+  capacity: number,
+  buffer: number,
+  arrivals: readonly number[] = BURST,
+) {
+  const rows = queueTimeline(capacity, buffer, arrivals);
+  let last = rows.at(-1);
+  while (last && last.queued > 0) {
+    const served = Math.min(capacity, last.queued);
+    const next = {
+      second: last.second + 1,
+      incoming: 0,
+      backlog: last.queued,
+      served,
+      queued: last.queued - served,
+      rejected: 0,
+      totalArrived: last.totalArrived,
+      totalServed: last.totalServed + served,
+      totalRejected: last.totalRejected,
+    };
+    rows.push(next);
+    last = next;
+  }
+  return rows;
+}

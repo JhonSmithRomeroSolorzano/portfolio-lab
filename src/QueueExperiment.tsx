@@ -1,11 +1,15 @@
 import { useState } from "react";
-import { queueTimeline, QUEUE_PROFILES } from "./queue-model";
+import { queueTimeline, queueRecovery, QUEUE_PROFILES } from "./queue-model";
 export function QueueExperiment() {
   const [profile, setProfile] = useState("burst");
   const arrivals = QUEUE_PROFILES.find((p) => p.id === profile)!.arrivals;
   const [capacity, setCapacity] = useState(8);
   const [buffer, setBuffer] = useState(16);
-  const rows = queueTimeline(capacity, buffer, arrivals);
+  const [showRecovery, setShowRecovery] = useState(false);
+  const initial = queueTimeline(capacity, buffer, arrivals);
+  const rows = showRecovery
+    ? queueRecovery(capacity, buffer, arrivals)
+    : initial;
   const end = rows[rows.length - 1];
   const unbuffered = queueTimeline(capacity, 0, arrivals).at(-1)!;
   return (
@@ -56,9 +60,23 @@ export function QueueExperiment() {
           value={buffer}
           onChange={(e) => setBuffer(Number(e.target.value))}
         />
+        <label className="tool-actions">
+          <input
+            type="checkbox"
+            checked={showRecovery}
+            onChange={(e) => setShowRecovery(e.target.checked)}
+          />
+          Continue until the accepted queue is empty
+        </label>
+        <p>
+          The arrival window ends after {arrivals.length}s with{" "}
+          {initial.at(-1)!.queued} waiting requests. Draining that backlog takes{" "}
+          {Math.ceil(initial.at(-1)!.queued / capacity)} more seconds with no
+          new arrivals.
+        </p>
         <div className="tool-metrics" aria-live="polite">
           <div>
-            <span>Served after 8s</span>
+            <span>Served after {end.second}s</span>
             <strong>{end.totalServed}</strong>
           </div>
           <div>
@@ -77,7 +95,11 @@ export function QueueExperiment() {
         </p>
         <div className="table-scroll">
           <table className="tool-table">
-            <caption>Burst timeline, one row per second</caption>
+            <caption>
+              Queue timeline —{" "}
+              {showRecovery ? "including recovery" : "arrival window"}, one row
+              per second
+            </caption>
             <thead>
               <tr>
                 {["Second", "Arrivals", "Served", "Waiting", "Rejected"].map(

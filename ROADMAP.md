@@ -158,7 +158,9 @@ Next: richer queue workloads and request timing.
 
 - [x] Added equal-volume steady, two-second burst, and single-spike workloads. Holding 64 arrivals fixed makes burstiness visible independently of total traffic. All patterns retain request conservation checks.
 
-Next: show how long the accepted backlog takes to drain.
+- [x] Continue the queue timeline after arrivals stop, showing drain time and counting accepted work as completed only when served. Rejected requests remain rejected.
+
+Next: inspect individual request wait and service times.
 
 ## Next useful milestones
 

@@ -1,6 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { QUEUE_PROFILES, queueTimeline } from "../src/queue-model.ts";
+import {
+  QUEUE_PROFILES,
+  queueTimeline,
+  queueRecovery,
+} from "../src/queue-model.ts";
 test("buffer absorbs a burst with explicit overflow and drains when capacity allows", () => {
   const rows = queueTimeline(8, 16);
   assert.equal(rows[3].rejected, 8);
@@ -55,4 +59,23 @@ test("equal-volume workloads isolate burstiness and preserve all requests", () =
   const spike = queueTimeline(8, 0, QUEUE_PROFILES[2].arrivals).at(-1)!;
   assert.equal(steady.totalRejected, 0);
   assert.ok(spike.totalRejected > 0);
+});
+
+test("recovery drains accepted work without resurrecting rejected requests", () => {
+  for (const capacity of [1, 8, 16])
+    for (const buffer of [0, 16, 40]) {
+      const base = queueTimeline(capacity, buffer),
+        recovered = queueRecovery(capacity, buffer);
+      const initial = base.at(-1)!,
+        end = recovered.at(-1)!;
+      assert.equal(end.queued, 0);
+      assert.equal(end.totalRejected, initial.totalRejected);
+      assert.equal(end.totalServed + end.totalRejected, end.totalArrived);
+      assert.equal(
+        recovered.length - base.length,
+        Math.ceil(initial.queued / capacity),
+      );
+      assert.ok(recovered.slice(base.length).every((r) => r.incoming === 0));
+    }
+  assert.deepEqual(queueRecovery(8, 16, []), []);
 });
