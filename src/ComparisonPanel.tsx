@@ -1,3 +1,5 @@
+import { baselineFromSearch, clearComparisonUrl } from "./comparison-link";
+import { ShareComparison } from "./ShareComparison";
 import { ComparisonFiles } from "./ComparisonFiles";
 import { TextExport } from "./TextExport";
 import { comparisonReport } from "./comparison-report";
@@ -13,12 +15,20 @@ export function Comparison({
   scenario: Scenario;
   onSelect: (value: Scenario) => void;
 }) {
-  const [baseline, setBaseline] = useState<Scenario | null>(loadBaseline);
+  const [shared] = useState(() => baselineFromSearch(window.location.search));
+  const [baseline, setBaseline] = useState<Scenario | null>(
+    () => shared ?? loadBaseline(),
+  );
   const [notice, setNotice] = useState(
     "Your baseline is saved only in this browser.",
   );
   function capture(value: Scenario | null) {
     setBaseline(value);
+    window.history.replaceState(
+      window.history.state,
+      "",
+      clearComparisonUrl(window.location.href),
+    );
     let saved = false;
     try {
       saved = saveBaseline(value, localStorage);
@@ -35,7 +45,7 @@ export function Comparison({
   }
   const delta = baseline ? compareScenarios(baseline, scenario) : null;
   return (
-    <details className="tool-panel">
+    <details className="tool-panel" open={shared !== null}>
       <summary>Compare two setups</summary>
       <div className="tool-content">
         <p>
@@ -94,6 +104,11 @@ export function Comparison({
                 <small>Lower is less pressure</small>
               </div>
             </div>
+            <ShareComparison
+              key={JSON.stringify([baseline, scenario])}
+              baseline={baseline}
+              current={scenario}
+            />
             <TextExport
               text={comparisonReport(baseline, scenario)}
               filename="signal-lab-comparison.md"

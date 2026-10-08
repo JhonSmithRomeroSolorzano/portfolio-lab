@@ -138,7 +138,9 @@ Next: persist and restore comparison baselines, then add readable reports and sh
 
 - [x] Import/export versioned comparison JSON containing both setups; validate both before changing either, bound input size, and recalculate all results.
 
-Next: share both comparison setups with one URL.
+- [x] Share both setups with a versioned URL that strips unrelated parameters. Incoming links open the comparison; replacing/clearing the baseline removes stale shared state while retaining current controls.
+
+Next: cache invalidation experiments and accessibility review.
 
 ## Next useful milestones
 
