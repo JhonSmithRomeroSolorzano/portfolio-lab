@@ -281,3 +281,5 @@ Read README.md, CASE_STUDY.md, and AGENTS.md before continuing. Update this road
 Next: build the compact workspace around the existing experiments. This feedback authorizes the new lab direction and supersedes the earlier request to confirm a next milestone.
 
 - [x] Link directly to a selected lab with validated URL state and browser back/forward support. Preserve legacy comparison links, strip unrelated parameters from copied entry URLs, and reset only the workspace scroll when switching experiments.
+
+- [x] Add an expanded workspace with a contained Tab cycle, Escape dismissal, inert background, restored focus/scroll behavior, and preserved experiment state. The normal page remains compact.

@@ -195,3 +195,43 @@
   margin-top: 8px;
   color: var(--lab-muted);
 }
+.expand-lab {
+  background: transparent;
+  color: var(--signal);
+  border: 1px solid var(--lab-outline);
+  border-radius: 4px;
+  padding: 8px 12px;
+  font: 11px var(--mono);
+  min-height: 38px;
+}
+.lab-expanded {
+  position: fixed;
+  inset: 18px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 0 40px #071221cc;
+}
+.lab-expanded .lab-topbar,
+.lab-expanded .lab-navigation {
+  flex: 0 0 auto;
+}
+.lab-expanded .lab-viewport {
+  flex: 1 1 auto;
+  max-height: none;
+  min-height: 0;
+}
+@media (max-width: 700px) {
+  .lab-expanded {
+    inset: 0;
+    border-radius: 0;
+  }
+  .lab-topbar {
+    gap: 12px;
+    padding-inline: 16px;
+  }
+  .expand-lab {
+    font-size: 9px;
+    max-width: 150px;
+  }
+}

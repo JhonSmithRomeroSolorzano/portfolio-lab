@@ -58,3 +58,45 @@ test("selected labs survive reload and browser history restores the previous lab
   await page.goForward();
   await expect(picker).toHaveValue("queue");
 });
+
+test("expanded workspace retains settings, traps focus, and returns with Escape", async ({
+  page,
+}) => {
+  await page.goto("/?traffic=345#lab");
+  await page
+    .getByRole("button", { name: "Expand workspace", exact: true })
+    .click();
+  const dialog = page.getByRole("dialog", {
+    name: "Expanded Signal Lab",
+    exact: true,
+  });
+  await expect(dialog).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Close expanded workspace", exact: true }),
+  ).toBeFocused();
+  await page.getByLabel("Choose a lab", { exact: true }).selectOption("cache");
+  await page.getByLabel("Cache strategy", { exact: true }).selectOption("swr");
+  await page
+    .getByRole("button", { name: "Close expanded workspace", exact: true })
+    .press("Shift+Tab");
+  expect(
+    await dialog.evaluate((el) => el.contains(document.activeElement)),
+  ).toBeTruthy();
+  await page.keyboard.press("Escape");
+  await expect(dialog).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "Expand workspace", exact: true }),
+  ).toBeFocused();
+  await expect(page.getByLabel("Cache strategy", { exact: true })).toHaveValue(
+    "swr",
+  );
+  await page
+    .getByLabel("Choose a lab", { exact: true })
+    .selectOption("traffic");
+  await expect(
+    page.getByLabel("Exact request rate", { exact: true }),
+  ).toHaveValue("345");
+  expect(
+    await page.locator("body").evaluate((el) => el.style.overflow),
+  ).not.toBe("hidden");
+});

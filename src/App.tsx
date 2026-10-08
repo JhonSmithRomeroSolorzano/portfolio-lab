@@ -1,3 +1,4 @@
+import { useExpandedLab } from "./use-expanded-lab";
 import { LABS } from "./lab-catalog";
 import type { LabId } from "./lab-catalog";
 import { LabNavigation } from "./LabNavigation";
@@ -71,6 +72,7 @@ function Arrow({ diagonal = false }: { diagonal?: boolean }) {
 }
 
 function SignalLab() {
+  const { expanded, setExpanded, shell, toggle } = useExpandedLab();
   const [activeLab, setActiveLab] = useState<LabId>(() =>
     labFromSearch(window.location.search),
   );
@@ -128,7 +130,13 @@ function SignalLab() {
   const statusClass = result.status === "healthy" ? "good" : "warning";
 
   return (
-    <div className="lab-shell">
+    <div
+      ref={shell}
+      className={`lab-shell ${expanded ? "lab-expanded" : ""}`}
+      role={expanded ? "dialog" : undefined}
+      aria-modal={expanded ? true : undefined}
+      aria-label={expanded ? "Expanded Signal Lab" : undefined}
+    >
       <div className="lab-topbar">
         <span>
           <span className="signal-mark" aria-hidden="true">
@@ -136,7 +144,14 @@ function SignalLab() {
           </span>{" "}
           SIGNAL LAB <span className="version">v0.2</span>
         </span>
-        <span className="simulation-tag">INTERACTIVE SIMULATION</span>
+        <button
+          className="expand-lab"
+          ref={toggle}
+          aria-expanded={expanded}
+          onClick={() => setExpanded(!expanded)}
+        >
+          {expanded ? "Close expanded workspace" : "Expand workspace"}
+        </button>
       </div>
       <LabNavigation
         active={activeLab}
