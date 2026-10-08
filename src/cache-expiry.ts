@@ -51,3 +51,21 @@ export function cacheTimeline(
     };
   });
 }
+
+export const CACHE_POLICIES: ReadonlyArray<{ id: CachePolicy; name: string }> =
+  [
+    { id: "ttl", name: "Fixed TTL" },
+    { id: "invalidate", name: "Invalidate on update" },
+    { id: "swr", name: "Stale-while-revalidate" },
+  ];
+export function compareCachePolicies(ttlSeconds: number) {
+  return CACHE_POLICIES.map((policy) => {
+    const rows = cacheTimeline(ttlSeconds, policy.id);
+    return {
+      ...policy,
+      originReads: rows.reduce((n, r) => n + r.originReads, 0),
+      blockingReads: rows.filter((r) => r.source === "database").length,
+      staleResponses: rows.filter((r) => r.stale).length,
+    };
+  });
+}

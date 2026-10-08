@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { cacheTimeline } from "./cache-expiry";
+import { cacheTimeline, compareCachePolicies } from "./cache-expiry";
 import type { CachePolicy } from "./cache-expiry";
 export function CacheExpiryPanel() {
   const [policy, setPolicy] = useState<CachePolicy>("ttl");
@@ -89,6 +89,38 @@ export function CacheExpiryPanel() {
             <strong>{visible.filter((r) => r.stale).length}</strong>
           </div>
         </div>
+        <div className="table-scroll">
+          <table className="tool-table">
+            <caption>
+              Strategy comparison — all 21 reads at the selected TTL
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">Strategy</th>
+                <th scope="col">Origin fetches</th>
+                <th scope="col">Blocking reads</th>
+                <th scope="col">Stale responses</th>
+              </tr>
+            </thead>
+            <tbody>
+              {compareCachePolicies(ttl).map((row) => (
+                <tr key={row.id}>
+                  <th scope="row">
+                    {row.name}
+                    {policy === row.id ? " (selected)" : ""}
+                  </th>
+                  <td>{row.originReads}</td>
+                  <td>{row.blockingReads}</td>
+                  <td>{row.staleResponses}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p>
+          Background refresh reduces blocking reads, but can serve stale data.
+          Invalidation assumes the update reliably reaches the cache.
+        </p>
         <div className="table-scroll">
           <table className="tool-table">
             <caption>Expiry timeline — reads shown so far</caption>

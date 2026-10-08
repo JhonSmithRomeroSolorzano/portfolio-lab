@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { cacheTimeline } from "../src/cache-expiry.ts";
+import { cacheTimeline, compareCachePolicies } from "../src/cache-expiry.ts";
 test("a long TTL trades database reads for temporarily stale responses", () => {
   const rows = cacheTimeline(8);
   assert.deepEqual(
@@ -48,4 +48,16 @@ test("background fetches keep their captured version when origin updates before 
       assert.ok(rows.every((r) => r.originReads === 0 || r.originReads === 1));
       assert.equal(rows[0].source, "database");
     }
+});
+
+test("policy comparisons distinguish blocking work from total origin fetches", () => {
+  const [ttl, invalidate, swr] = compareCachePolicies(8);
+  assert.equal(ttl.staleResponses, 3);
+  assert.equal(invalidate.staleResponses, 0);
+  assert.equal(swr.staleResponses, 4);
+  assert.equal(swr.blockingReads, 1);
+  assert.equal(swr.originReads, 3);
+  for (let t = 1; t <= 12; t++)
+    for (const p of compareCachePolicies(t))
+      assert.ok(p.blockingReads <= p.originReads && p.originReads <= 21);
 });

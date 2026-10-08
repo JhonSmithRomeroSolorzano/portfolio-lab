@@ -148,7 +148,9 @@ Next: cache invalidation experiments and accessibility review.
 
 - [x] Added update invalidation and stale-while-revalidate alongside fixed TTL, with explicit event ordering, origin-fetch accounting, and tests for exact expiry/update boundaries.
 
-Next: compare freshness and origin work across strategies.
+- [x] Compare all strategies over the same 21 reads, separating total origin fetches, blocking reads, and stale responses. Explain that reliable invalidation is an assumption.
+
+Next: export a reproducible cache timeline.
 
 ## Next useful milestones
 
