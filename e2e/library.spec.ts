@@ -42,9 +42,7 @@ test("another tab sees new experiments without a reload", async ({
   await chooseLab(page, "library");
   const other = await context.newPage();
   await other.goto("/#lab");
-  await other
-    .getByLabel("Choose a lab", { exact: true })
-    .selectOption("library");
+  await chooseLab(other, "library");
   await page
     .getByLabel("Name this setup", { exact: true })
     .fill("Shared browser save");
@@ -123,9 +121,7 @@ test("a cross-tab update recovers focus from a removed rename editor", async ({
     .click();
   const other = await context.newPage();
   await other.goto("/#lab");
-  await other
-    .getByLabel("Choose a lab", { exact: true })
-    .selectOption("library");
+  await chooseLab(other, "library");
   await page
     .getByRole("button", { name: "Rename Concurrent edit", exact: true })
     .click();

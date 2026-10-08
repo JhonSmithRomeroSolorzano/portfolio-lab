@@ -319,3 +319,5 @@ Manual review covers the compact and expanded workspaces, dark/light themes, res
 Next: refine the existing presentation from user feedback. Keep the portfolio focused on professional experience and a small demonstration; do not expand the public lab catalog without a clear request.
 
 - [x] Give the two-row mobile toolbar its natural height with sufficient CSS specificity; verify that actions stay inside the header above the demo.
+
+- [x] Update both two-tab library journeys to open the secondary tools in each tab before choosing the saved-setup library.
