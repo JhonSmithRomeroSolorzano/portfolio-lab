@@ -291,3 +291,5 @@ Next: build the compact workspace around the existing experiments. This feedback
 - [x] Add a circuit-breaker lab with configurable threshold, cooldown, recovery time, and a state-by-state event log. Verify cooldown ties and failed probes; distinguish blocked calls from successful work.
 
 - [x] Add fixed-window/token-bucket admission comparison on identical arrivals, including boundary bursts, remaining budget, conservation, and refill bounds.
+
+- [x] Add FIFO/LRU cache eviction with bounded capacity, ordered snapshots, origin-read accounting, and identical-workload comparisons.

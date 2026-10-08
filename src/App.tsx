@@ -1,3 +1,4 @@
+import { CacheEvictionLab } from "./labs/CacheEvictionLab";
 import { RateLimitLab } from "./labs/RateLimitLab";
 import { CircuitBreakerLab } from "./labs/CircuitBreakerLab";
 import { EventCoalescingLab } from "./labs/EventCoalescingLab";
@@ -468,6 +469,9 @@ function SignalLab() {
           </div>
         </div>
         <div className="experiment-tools">
+          <div hidden={activeLab !== "eviction"}>
+            <CacheEvictionLab />
+          </div>
           <div hidden={activeLab !== "rate-limit"}>
             <RateLimitLab />
           </div>

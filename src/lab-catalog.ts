@@ -1,5 +1,12 @@
 export const LABS = [
   {
+    id: "eviction",
+    name: "Cache eviction",
+    area: "Data",
+    detail: "Inspect FIFO and LRU choices in a small cache.",
+    shared: false,
+  },
+  {
     id: "rate-limit",
     name: "Rate limiting",
     area: "Backend",
