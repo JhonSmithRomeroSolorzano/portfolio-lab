@@ -184,6 +184,12 @@ Next: inspect the new tools through browser journeys and document the completed 
 
 Next: maintain browser coverage for the saved workflow.
 
+### Capacity interpretation — October 7
+
+- [x] Added analytical whole-request capacity, spare database capacity, and minimum connections at the current load beside the sampled sweep. Explain offline/all-cached cases and distinguish model capacity from real infrastructure limits.
+
+Next: final accessibility and browser regression checks for the expanded tools.
+
 ## Next useful milestones
 
 1. **Browser regression suite:** automate keyboard flows, reload/URL state, file import/export, and viewport checks. Start from observed user journeys; keep fixtures deterministic.

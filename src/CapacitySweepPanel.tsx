@@ -1,8 +1,10 @@
+import { capacityHeadroom } from "./capacity-headroom";
 import type { Scenario } from "./simulation";
 import { capacitySweep, sweepCsv } from "./capacity-sweep";
 import { TextExport } from "./TextExport";
 export function CapacitySweepPanel({ scenario }: { scenario: Scenario }) {
   const rows = capacitySweep(scenario);
+  const headroom = capacityHeadroom(scenario);
   const firstFailure = rows.find((r) => r.failed > 0);
   const points = rows
     .map(
@@ -22,6 +24,36 @@ export function CapacitySweepPanel({ scenario }: { scenario: Scenario }) {
           {firstFailure
             ? `The first sample with failures is ${firstFailure.offered} req/s.`
             : "Every sampled load fits within this setup’s capacity."}
+        </p>
+        <div className="tool-metrics" aria-live="polite">
+          <div>
+            <span>Whole-request capacity</span>
+            <strong>
+              {headroom.maximumTraffic === null
+                ? "All reads cached"
+                : `${headroom.maximumTraffic} /s`}
+            </strong>
+          </div>
+          <div>
+            <span>Spare database capacity</span>
+            <strong>{headroom.spareDatabaseCapacity.toFixed(1)} /s</strong>
+          </div>
+          <div>
+            <span>Connections needed at this load</span>
+            <strong>
+              {headroom.minimumConnections === null
+                ? "Database offline"
+                : headroom.minimumConnections}
+            </strong>
+          </div>
+        </div>
+        <p>
+          {headroom.allReadsCached
+            ? "This modeled workload never reaches the database. It does not imply unlimited real capacity."
+            : "The analytical boundary complements the sampled chart. A negative spare capacity means database demand exceeds capacity."}{" "}
+          {headroom.minimumConnections !== null &&
+            headroom.minimumConnections > 32 &&
+            "The required connection count exceeds the control’s 32-connection limit."}
         </p>
         <div className="sweep-chart" aria-hidden="true">
           <svg viewBox="0 0 480 160">
@@ -52,7 +84,12 @@ export function CapacitySweepPanel({ scenario }: { scenario: Scenario }) {
         />
         <details>
           <summary>Read all 30 samples</summary>
-          <div className="table-scroll">
+          <div
+            className="table-scroll"
+            role="region"
+            aria-label="Capacity sweep samples"
+            tabIndex={0}
+          >
             <table className="tool-table">
               <caption>
                 Modeled traffic sweep, holding all other settings fixed
