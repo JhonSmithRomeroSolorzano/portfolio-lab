@@ -128,7 +128,9 @@ Next: browser regression coverage for the simplified menu and recruiter journey.
 
 - [x] Added Chromium and WebKit journeys for keyboard navigation, résumé downloads, persistent themes, narrow layout, imported scenario reloads, and legacy links. CI runs against the production build before deployment.
 
-Next: persist and restore comparison baselines, then add readable reports and sharing.
+- [x] The first browser run exposed an import/reload race: the controls updated before the debounced URL write. Explicit imports, presets, and baseline restores now synchronize the URL before updating the controls; rapid slider input remains coalesced. The immediate-reload journey guards this regression.
+
+Next: keep browser coverage aligned with completed comparison tools.
 
 ### Comparison workspace — October 7
 

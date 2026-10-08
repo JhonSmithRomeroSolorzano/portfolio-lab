@@ -83,6 +83,14 @@ function SignalLab() {
     window.addEventListener("popstate", restore);
     return () => window.removeEventListener("popstate", restore);
   }, []);
+  // Explicit imports/restores must survive an immediate reload. Only continuous
+  // slider changes use the debounced URL effect above.
+  const selectScenario = (next: Scenario) => {
+    const url = scenarioUrl(window.location.href, next);
+    if (url !== window.location.href)
+      window.history.replaceState(window.history.state, "", url);
+    setScenario(next);
+  };
   const result = simulate(scenario);
   const update = (change: Partial<Scenario>) =>
     setScenario((current) => ({ ...current, ...change }));
@@ -383,14 +391,14 @@ function SignalLab() {
         </div>
       </div>
       <div className="experiment-tools">
-        <Presets onSelect={setScenario} />
-        <Comparison scenario={scenario} onSelect={setScenario} />
+        <Presets onSelect={selectScenario} />
+        <Comparison scenario={scenario} onSelect={selectScenario} />
         <CapacitySweepPanel scenario={scenario} />
         <CacheExpiryPanel />
         <QueueExperiment />
         <RequestTrace key={JSON.stringify(scenario)} scenario={scenario} />
-        <ExperimentLibrary scenario={scenario} onSelect={setScenario} />
-        <ExperimentFiles scenario={scenario} onSelect={setScenario} />
+        <ExperimentLibrary scenario={scenario} onSelect={selectScenario} />
+        <ExperimentFiles scenario={scenario} onSelect={selectScenario} />
       </div>
       <div className="lab-bottom">
         <button
