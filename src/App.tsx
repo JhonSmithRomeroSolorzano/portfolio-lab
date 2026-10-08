@@ -384,7 +384,7 @@ function SignalLab() {
       </div>
       <div className="experiment-tools">
         <Presets onSelect={setScenario} />
-        <Comparison scenario={scenario} />
+        <Comparison scenario={scenario} onSelect={setScenario} />
         <CapacitySweepPanel scenario={scenario} />
         <CacheExpiryPanel />
         <QueueExperiment />

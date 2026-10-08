@@ -130,6 +130,12 @@ Next: browser regression coverage for the simplified menu and recruiter journey.
 
 Next: persist and restore comparison baselines, then add readable reports and sharing.
 
+### Comparison workspace — October 7
+
+- [x] Capture, persist, restore, and clear a validated comparison baseline. Corrupt or unavailable storage leaves the current visit usable and shows an honest persistence message.
+
+Next: export a readable comparison report.
+
 ## Next useful milestones
 
 1. **Browser regression suite:** automate keyboard flows, reload/URL state, file import/export, and viewport checks. Start from observed user journeys; keep fixtures deterministic.
