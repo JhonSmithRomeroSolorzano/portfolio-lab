@@ -317,3 +317,5 @@ Manual review covers the compact and expanded workspaces, dark/light themes, res
 - [x] Remove repeated lab branding, version, and the extra promotional footer beneath the demo.
 
 Next: refine the existing presentation from user feedback. Keep the portfolio focused on professional experience and a small demonstration; do not expand the public lab catalog without a clear request.
+
+- [x] Give the two-row mobile toolbar its natural height with sufficient CSS specificity; verify that actions stay inside the header above the demo.

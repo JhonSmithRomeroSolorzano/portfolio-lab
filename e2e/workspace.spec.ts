@@ -140,6 +140,10 @@ test("the portfolio starts with one demo and preserves it when extra tools are h
   );
   await page.setViewportSize({ width: 320, height: 800 });
   const toolbar = await page.locator(".lab-topbar").boundingBox();
+  const actions = await page.locator(".lab-toolbar-actions").boundingBox();
+  expect(actions!.y + actions!.height).toBeLessThanOrEqual(
+    toolbar!.y + toolbar!.height,
+  );
   const workspace = await page
     .getByRole("region", { name: "Experiment workspace", exact: true })
     .boundingBox();

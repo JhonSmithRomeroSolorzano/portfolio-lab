@@ -730,7 +730,7 @@
   border-bottom: 1px solid var(--lab-line);
 }
 @media (max-width: 700px) {
-  .lab-topbar {
+  .lab-shell .lab-topbar {
     flex-wrap: wrap;
     height: auto;
     padding-block: 12px;
