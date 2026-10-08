@@ -1,3 +1,5 @@
+import { LibraryFiles } from "./LibraryFiles";
+import { mergeLibrary } from "./library-file";
 import { useEffect, useId, useRef, useState } from "react";
 import {
   LIBRARY_KEY,
@@ -16,6 +18,8 @@ export function ExperimentLibrary({
   onSelect: (s: Scenario) => void;
 }) {
   const [entries, setEntries] = useState(loadLibrary);
+  const entriesRef = useRef(entries);
+  entriesRef.current = entries;
   const [name, setName] = useState("");
   const [removed, setRemoved] = useState<{
     entry: SavedExperiment;
@@ -76,6 +80,12 @@ export function ExperimentLibrary({
           </button>
         </div>
         <p role="status">{message}</p>
+        <LibraryFiles
+          entries={entries}
+          onImport={(incoming) =>
+            save(mergeLibrary(entriesRef.current, incoming))
+          }
+        />
         {removed && (
           <div className="tool-actions">
             <span>Removed {removed.entry.name}.</span>

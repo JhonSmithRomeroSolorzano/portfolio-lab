@@ -178,7 +178,9 @@ Next: inspect the new tools through browser journeys and document the completed 
 
 - [x] Undo the last removal at its original position without overwriting newer entries; keyboard focus moves to Undo and returns to the save input after restoration. The eight-item bound still applies.
 
-Next: back up and merge a portable library.
+- [x] Back up and merge versioned libraries without overwriting existing saves. Validate the complete import, skip matching names/settings, regenerate local IDs, and reject imports exceeding eight entries atomically.
+
+Next: synchronize library changes between open tabs.
 
 ## Next useful milestones
 
