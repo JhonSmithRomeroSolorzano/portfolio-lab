@@ -199,6 +199,15 @@ Next: final accessibility and browser regression checks for the expanded tools.
 
 Next: the optional local-API client and more verified project examples. Keep professional achievements and contact details dependent on Jhon’s confirmation.
 
+### Local API verification — October 8
+
+- [x] Added an opt-in development client through a same-origin Vite proxy; the published site only offers setup instructions.
+- [x] Validate model identity, echoed settings, every result, and response size. Show correlation IDs and distinguish HTTP timing from modeled latency.
+- [x] Handle cancel, changed inputs, timeout, offline, malformed replies, and rate limits without automatic retries or stale responses.
+- [x] Added real HTTP integration coverage and Chromium/WebKit journeys for opt-in, cancellation, stale results, retry, and production isolation.
+
+Next: resolve observed keyboard-focus and storage-feedback problems in the existing tools.
+
 ## Next useful milestones
 
 1. **Browser regression suite — established:** extend the existing recruiter, comparison, library, and keyboard journeys as behavior changes; keep fixtures deterministic.
@@ -206,7 +215,7 @@ Next: the optional local-API client and more verified project examples. Keep pro
 3. **Cache invalidation — complete:** fixed TTL, invalidation on update, and stale-while-revalidate with explicit ordering, policy comparison, and CSV evidence.
 4. **Request scheduler — complete:** inspect individual arrival, wait, service, rejection, and deadline outcomes. Keep this finite FIFO experiment distinct from the steady-state approximation.
 5. **Retry experiment — complete:** bounded global budget, exponential backoff, seeded full jitter, and explicit recovery assumptions.
-6. **Service client:** add an explicitly selected local-API mode, request cancellation, and clear offline/error behavior. Keep the deployed static demo useful independently.
+6. **Service client — complete:** explicitly selected local-API verification with cancellation, timeouts, bounded response validation, model agreement, and separate transport timing. Hosted builds stay independent.
 7. **Accessibility review:** test screen-reader announcements, focus behavior, color contrast, and export fallbacks. Fix observed problems and document the evidence.
 8. **Recruiter path:** add a user-confirmed contact address and further verified project examples. Résumé downloads are complete. Do not invent links, metrics, employer details, or achievements.
 

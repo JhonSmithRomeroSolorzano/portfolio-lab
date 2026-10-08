@@ -53,6 +53,10 @@ The experiment library supports rename, update, undo removal, cross-tab synchron
 
 The cache timeline compares fixed TTL, invalidation on update, and stale-while-revalidate. It separates blocking reads from background fetches and exports every read as CSV. Queue profiles hold 64 arrivals constant while varying burst shape, and optional recovery continues until accepted work drains. A separate event-based scheduler shows per-request timing and optional deadlines; the retry experiment shows exponential backoff, a shared budget, and seeded jitter. Every experiment states its assumptions. Wide tables accept keyboard focus and horizontal arrow-key scrolling.
 
+### Verify through HTTP
+
+The **Verify with the local API** panel explains how to run the optional service. In local development, choose the API mode and explicitly send a setup; the client checks agreement with the browser model, supports cancellation, and shows HTTP timing separately from simulated latency. Published builds do not access localhost. See the [local workflow](server/README.md#browser-client-local-development).
+
 ### Share an experiment
 
 The address bar reflects your settings. Use **Copy experiment link** to share a URL that opens the same scenario at the lab. If clipboard access is unavailable, select and copy the fallback link. Shared links include only experiment settings, excluding unrelated query parameters.

@@ -79,7 +79,7 @@ Logs contain a generated request ID, normalized route, method, status, timestamp
 
 Browser checks cover precise traffic input, baseline comparison, saved-library persistence, file import, expiry/queue interaction, and a narrow mobile viewport. A permanent Playwright suite now runs recruiter navigation, résumé downloads, theme persistence, mobile layout, legacy links, and imported URL state in Chromium and WebKit before Pages deployment. Browser downloads depend on host support; copyable JSON/CSV views provide a visible fallback. File contents are generated and tested independently.
 
-The browser suite now also covers comparison restoration, saved-library edits, cross-tab changes, deadline outcomes, cache accounting, and keyboard table scrolling. Unit tests check exact event ordering, conservation, retry budgets, reproducibility, and invalid imports. The next useful integration is an explicitly selected local-API client with cancellation and clear offline behavior.
+The browser suite now also covers comparison restoration, saved-library edits, cross-tab changes, deadline outcomes, cache accounting, and keyboard table scrolling. Unit tests check exact event ordering, conservation, retry budgets, reproducibility, and invalid imports. The local development client now checks explicitly requested scenarios through the Node service. A same-origin development proxy avoids enabling CORS. Replies are bounded and checked against the echoed scenario, model version, and all calculated fields. Cancellation and input changes invalidate pending replies. HTTP round-trip time remains separate from modeled latency; published builds never contact localhost.
 
 ## Review path
 

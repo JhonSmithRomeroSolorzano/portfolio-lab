@@ -1,4 +1,5 @@
 import { RetryExperiment } from "./RetryExperiment";
+import { ServiceClientPanel } from "./ServiceClientPanel";
 import { RequestSchedulerPanel } from "./RequestSchedulerPanel";
 import { useEffect, useRef, useState } from "react";
 import { DEFAULT_SCENARIO, simulate } from "./simulation";
@@ -403,6 +404,7 @@ function SignalLab() {
         <RequestTrace key={JSON.stringify(scenario)} scenario={scenario} />
         <ExperimentLibrary scenario={scenario} onSelect={selectScenario} />
         <ExperimentFiles scenario={scenario} onSelect={selectScenario} />
+        <ServiceClientPanel scenario={scenario} />
       </div>
       <div className="lab-bottom">
         <button

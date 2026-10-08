@@ -32,3 +32,9 @@ The service permits 60 simulation POSTs per fixed 60-second window, shared acros
 ## Machine-readable contract
 
 [openapi.json](openapi.json) describes request fields, response schemas, error statuses, correlation headers, and the request budget using [OpenAPI 3.1](https://spec.openapis.org/oas/v3.1.0.html). `GET /openapi.json` returns the same document and does not consume the simulation budget. Import the file into an OpenAPI-compatible API client, then use the local server URL. Integration checks compare the served contract and live response fields to catch drift.
+
+## Browser client (local development)
+
+Run `npm run api` in one terminal and `npm run dev` in another. Open the printed Vite URL, expand **Verify with the local API**, select **Browser + local API check**, and choose **Send current setup**. The development proxy forwards `/local-api` to `http://127.0.0.1:3001`; use the default API port for this workflow. No CORS permission is needed or enabled. Production builds and previews offer instructions only and never contact a visitor’s localhost.
+
+The client sends only explicitly requested snapshots, omits credentials, refuses redirects, bounds replies to 64 KiB, checks the model version and echoed settings, and verifies every result against the browser model. HTTP round-trip duration is labeled separately from simulated mean latency. Changing controls cancels a pending request and marks earlier results as belonging to the previous setup. Cancellation, a five-second timeout, incompatible responses, offline errors, and rate limits have separate messages. Retry is manual; it never silently falls back to a different result source. Request IDs correlate with the API terminal’s completion logs.

@@ -61,6 +61,35 @@
   --focus: var(--signal);
 }
 
+.service-mode {
+  border: 1px solid var(--lab-line);
+  padding: 14px;
+  margin: 18px 0;
+}
+.service-mode label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+}
+.service-result {
+  border-left: 2px solid var(--signal);
+  padding: 4px 16px;
+  margin-block: 20px;
+}
+.service-result dl {
+  display: grid;
+  gap: 14px;
+}
+.service-result dt {
+  font-size: 12px;
+  color: var(--lab-muted);
+}
+.service-result dd {
+  margin: 4px 0 0;
+  overflow-wrap: anywhere;
+}
+
 * {
   box-sizing: border-box;
 }
