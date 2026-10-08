@@ -293,3 +293,5 @@ Next: build the compact workspace around the existing experiments. This feedback
 - [x] Add fixed-window/token-bucket admission comparison on identical arrivals, including boundary bursts, remaining budget, conservation, and refill bounds.
 
 - [x] Add FIFO/LRU cache eviction with bounded capacity, ordered snapshots, origin-read accounting, and identical-workload comparisons.
+
+- [x] Add concurrent-write exploration: blind overwrite, atomic version rejection, and explicit reread/retry of additive changes, including version progression and lost-update tests.

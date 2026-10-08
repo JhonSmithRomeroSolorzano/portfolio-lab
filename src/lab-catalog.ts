@@ -1,5 +1,12 @@
 export const LABS = [
   {
+    id: "writes",
+    name: "Concurrent writes",
+    area: "Data",
+    detail: "Resolve an update made from an old data snapshot.",
+    shared: false,
+  },
+  {
     id: "eviction",
     name: "Cache eviction",
     area: "Data",
