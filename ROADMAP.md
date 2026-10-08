@@ -150,7 +150,9 @@ Next: cache invalidation experiments and accessibility review.
 
 - [x] Compare all strategies over the same 21 reads, separating total origin fetches, blocking reads, and stale responses. Explain that reliable invalidation is an assumption.
 
-Next: export a reproducible cache timeline.
+- [x] Export every cache read as CSV with policy, TTL, source/returned versions, freshness, expiry, origin fetches, and pending refresh state. The copyable fallback uses identical data.
+
+Next: richer queue workloads and request timing.
 
 ## Next useful milestones
 

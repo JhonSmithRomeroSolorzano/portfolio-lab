@@ -1,3 +1,5 @@
+import { TextExport } from "./TextExport";
+import { cacheTimelineCsv } from "./cache-export";
 import { useState } from "react";
 import { cacheTimeline, compareCachePolicies } from "./cache-expiry";
 import type { CachePolicy } from "./cache-expiry";
@@ -117,6 +119,12 @@ export function CacheExpiryPanel() {
             </tbody>
           </table>
         </div>
+        <TextExport
+          text={cacheTimelineCsv(ttl, policy)}
+          filename="signal-lab-cache-timeline.csv"
+          kind="cache timeline CSV"
+          type="text/csv;charset=utf-8"
+        />
         <p>
           Background refresh reduces blocking reads, but can serve stale data.
           Invalidation assumes the update reliably reaches the cache.
