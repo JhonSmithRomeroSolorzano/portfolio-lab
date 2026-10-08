@@ -101,3 +101,33 @@ test("independent lab links preserve settings through immediate reload and histo
     "overwrite",
   );
 });
+
+test("guided investigation loads each remedy without opening more panels", async ({
+  page,
+}) => {
+  await page.goto("/?lab=writes#lab");
+  await page.getByText("Follow an investigation", { exact: false }).click();
+  await page
+    .getByLabel("Investigation", { exact: true })
+    .selectOption("conflicts");
+  await page
+    .getByRole("button", { name: "Start investigation", exact: true })
+    .click();
+  await expect(page.getByLabel("Conflict policy", { exact: true })).toHaveValue(
+    "overwrite",
+  );
+  await page.getByRole("button", { name: "Next step", exact: true }).click();
+  await expect(page.getByLabel("Conflict policy", { exact: true })).toHaveValue(
+    "reject",
+  );
+  await page.getByRole("button", { name: "Next step", exact: true }).click();
+  await expect(page.getByLabel("Conflict policy", { exact: true })).toHaveValue(
+    "retry",
+  );
+  await page
+    .getByRole("button", { name: "Finish investigation", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Start investigation", exact: true }),
+  ).toBeVisible();
+});

@@ -40,6 +40,8 @@ The lab shows one experiment at a time. Use **Choose a lab** to switch between f
 
 The six independent frontend/reliability/data experiments also preserve their own settings in versioned links: async search, debounce/throttle, circuit breakers, rate limiting, cache eviction, and concurrent writes. **Link to this lab** includes the selected setup; results are recomputed, never trusted from a URL. Configuration changes survive immediate reload, and switching tools keeps the other experiments’ in-memory settings. Invalid, oversized, partial, duplicate, or unsupported setup links show a warning and do not apply partial values. Older independent tools still open at their defaults.
 
+Open **Follow an investigation** for three guided paths: keep an async interface correct, protect a recovering service, or resolve competing writes. Each step loads a known setup, asks a question, and offers optional evidence. These paths connect engineering decisions; their independent models do not simulate one combined production system.
+
 ### Explore the tools
 
 - Compare a captured baseline with your current setup.

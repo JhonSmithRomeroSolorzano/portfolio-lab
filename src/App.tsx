@@ -1,3 +1,5 @@
+import { InvestigationGuide } from "./labs/InvestigationGuide";
+import type { LabSetup } from "./labs/lab-setup";
 import {
   LabSettingsProvider,
   useLabSettings,
@@ -83,7 +85,7 @@ function Arrow({ diagonal = false }: { diagonal?: boolean }) {
 }
 
 function SignalLab() {
-  const { settings } = useLabSettings();
+  const { settings, apply } = useLabSettings();
   const { expanded, setExpanded, shell, toggle } = useExpandedLab();
   const [activeLab, setActiveLab] = useState<LabId>(() =>
     labFromSearch(window.location.search),
@@ -105,6 +107,18 @@ function SignalLab() {
       setupUrl(labUrl(window.location.href, id), id, settings),
     );
     setActiveLab(id);
+  }
+  function openSetup(setup: LabSetup) {
+    apply(setup);
+    window.history.pushState(
+      window.history.state,
+      "",
+      setupUrl(labUrl(window.location.href, setup.lab), setup.lab, {
+        ...settings,
+        [setup.lab]: setup.settings,
+      }),
+    );
+    setActiveLab(setup.lab);
   }
   const selectedLab = LABS.find((lab) => lab.id === activeLab)!;
   const [scenario, setScenario] = useState<Scenario>(() =>
@@ -177,6 +191,7 @@ function SignalLab() {
         aria-label="Experiment workspace"
         tabIndex={0}
       >
+        <InvestigationGuide active={activeLab} onOpen={openSetup} />
         <div
           className={`lab-body ${activeLab === "traffic" ? "" : "tool-mode"}`}
           hidden={!selectedLab.shared}

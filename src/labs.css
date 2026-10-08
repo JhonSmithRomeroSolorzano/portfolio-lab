@@ -492,3 +492,66 @@
   width: 100%;
   accent-color: var(--signal);
 }
+
+.investigation-guide {
+  border-bottom: 1px solid var(--lab-line);
+  padding: 18px 26px;
+}
+.investigation-guide > summary {
+  cursor: pointer;
+  color: var(--signal);
+  font-size: 12px;
+}
+.investigation-guide > summary > span {
+  color: var(--lab-muted);
+  margin-left: 12px;
+  font-size: 10px;
+}
+.guide-body {
+  padding-top: 20px;
+}
+.guide-body p {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--lab-muted);
+}
+.guide-body button {
+  color: var(--signal);
+  border: 1px solid var(--lab-outline);
+  background: transparent;
+  border-radius: 4px;
+  min-height: 38px;
+  padding: 8px 12px;
+  font-size: 11px;
+}
+.guide-body button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.guide-step {
+  margin-top: 20px;
+}
+.guide-step > span {
+  font: 10px var(--mono);
+  color: var(--signal);
+}
+.guide-step h4 {
+  margin: 8px 0;
+  font: 500 19px var(--display);
+}
+.guide-evidence {
+  margin-block: 12px;
+}
+.guide-evidence > summary {
+  cursor: pointer;
+  font-size: 12px;
+}
+@media (max-width: 700px) {
+  .investigation-guide {
+    padding-inline: 16px;
+  }
+  .investigation-guide > summary > span {
+    display: block;
+    margin: 6px 0 0;
+  }
+}

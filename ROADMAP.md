@@ -301,3 +301,5 @@ Next: build the compact workspace around the existing experiments. This feedback
 - [x] Compare jittered and synchronized retries with aligned time/count scales, a recovery marker, and an accessible per-window inspector. Keep attempt totals conserved and the original detailed attempt table.
 
 - [x] Share and restore all six new experiments with strict, versioned setup links. Preserve immediate reload and history behavior, reject malformed configurations atomically, and recompute every result from validated settings.
+
+- [x] Connect selected experiments with three compact guided investigations: async UI correctness, service recovery, and write conflicts. Each explicit step loads a reproducible setup, offers optional evidence, and leaves room to explore.
