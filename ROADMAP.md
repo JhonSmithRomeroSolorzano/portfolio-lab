@@ -246,6 +246,14 @@ Next: finish browser regression and contrast checks before publishing.
 
 Next: finish the full browser and visual review; professional details remain dependent on user confirmation.
 
+### Browser review evidence — October 8
+
+- [x] Verified real local API agreement, stale-result labeling, retained Send focus, rename focus, and Clear baseline focus in the browser.
+- [x] Checked 320px and desktop layouts without horizontal page overflow. Measured primary/muted text contrast: light 11.34:1 / 5.05:1; dark 14.82:1 / 9.56:1. Lab text pairs range from 7.79:1 to 13.55:1.
+- [x] The expanded browser suite contains 42 Chromium/WebKit checks. Its download cleanup assertion now targets temporary blob links and preserves both permanent résumé downloads.
+
+The currently specified implementation milestones are complete. Career/contact additions still require verified details. Proposed next milestone: a guided, reproducible failure investigation that connects a shared workload, API result, and written engineering explanation, rather than adding more standalone controls. Confirm that direction before expanding the lab again.
+
 ## Next useful milestones
 
 1. **Browser regression suite — established:** extend the existing recruiter, comparison, library, and keyboard journeys as behavior changes; keep fixtures deterministic.
@@ -254,7 +262,7 @@ Next: finish the full browser and visual review; professional details remain dep
 4. **Request scheduler — complete:** inspect individual arrival, wait, service, rejection, and deadline outcomes. Keep this finite FIFO experiment distinct from the steady-state approximation.
 5. **Retry experiment — complete:** bounded global budget, exponential backoff, seeded full jitter, and explicit recovery assumptions.
 6. **Service client — complete:** explicitly selected local-API verification with cancellation, timeouts, bounded response validation, model agreement, and separate transport timing. Hosted builds stay independent.
-7. **Accessibility review:** test screen-reader announcements, focus behavior, color contrast, and export fallbacks. Fix observed problems and document the evidence.
+7. **Accessibility review — completed for the current changes:** automated DOM announcement semantics, keyboard recovery, blocked-storage messages, and export fallbacks. Manual review covered light/dark and 320px layouts; a human screen-reader listening session remains useful.
 8. **Recruiter path:** add a user-confirmed contact address and further verified project examples. Résumé downloads are complete. Do not invent links, metrics, employer details, or achievements.
 
 ## Working rule

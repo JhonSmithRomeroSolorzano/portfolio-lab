@@ -52,5 +52,11 @@ test("export fallback remains usable when a browser refuses the download click",
   await expect(
     page.getByLabel("comparison report contents", { exact: true }),
   ).toBeFocused();
-  await expect(page.locator("a[download]")).toHaveCount(0);
+  await expect(page.locator('a[download][href^="blob:"]')).toHaveCount(0);
+  await expect(
+    page.getByRole("link", { name: "Download PDF", exact: true }),
+  ).toHaveAttribute("download");
+  await expect(
+    page.getByRole("link", { name: "Plain text", exact: true }),
+  ).toHaveAttribute("download");
 });
