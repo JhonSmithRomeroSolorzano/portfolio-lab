@@ -1,3 +1,4 @@
+import { AsyncSearchLab } from "./labs/AsyncSearchLab";
 import { useExpandedLab } from "./use-expanded-lab";
 import { LABS } from "./lab-catalog";
 import type { LabId } from "./lab-catalog";
@@ -464,6 +465,9 @@ function SignalLab() {
           </div>
         </div>
         <div className="experiment-tools">
+          <div hidden={activeLab !== "search"}>
+            <AsyncSearchLab />
+          </div>
           <div hidden={activeLab !== "presets"}>
             <Presets onSelect={selectScenario} />
           </div>

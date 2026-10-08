@@ -1,5 +1,12 @@
 export const LABS = [
   {
+    id: "search",
+    name: "Async search",
+    area: "Frontend",
+    detail: "Prevent a slow response from replacing a newer search.",
+    shared: false,
+  },
+  {
     id: "traffic",
     name: "Traffic & capacity",
     area: "Backend",
