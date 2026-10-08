@@ -1,3 +1,4 @@
+import { CircuitBreakerLab } from "./labs/CircuitBreakerLab";
 import { EventCoalescingLab } from "./labs/EventCoalescingLab";
 import { AsyncSearchLab } from "./labs/AsyncSearchLab";
 import { useExpandedLab } from "./use-expanded-lab";
@@ -466,6 +467,9 @@ function SignalLab() {
           </div>
         </div>
         <div className="experiment-tools">
+          <div hidden={activeLab !== "circuit"}>
+            <CircuitBreakerLab />
+          </div>
           <div hidden={activeLab !== "events"}>
             <EventCoalescingLab />
           </div>

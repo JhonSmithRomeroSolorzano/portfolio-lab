@@ -1,5 +1,12 @@
 export const LABS = [
   {
+    id: "circuit",
+    name: "Circuit breaker",
+    area: "Backend",
+    detail: "Follow closed, open, and half-open recovery states.",
+    shared: false,
+  },
+  {
     id: "events",
     name: "Debounce & throttle",
     area: "Frontend",
