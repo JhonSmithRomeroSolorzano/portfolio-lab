@@ -470,3 +470,25 @@
   color: #eab978;
   font: 700 13px var(--mono);
 }
+
+.retry-distribution {
+  margin-block: 24px;
+}
+.retry-distribution svg {
+  width: 100%;
+  height: auto;
+  color: var(--lab-text);
+}
+.retry-distribution svg text {
+  fill: currentColor;
+  font: 11px var(--mono);
+}
+.retry-distribution > label {
+  display: block;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+.retry-distribution > input {
+  width: 100%;
+  accent-color: var(--signal);
+}

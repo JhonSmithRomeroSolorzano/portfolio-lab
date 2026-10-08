@@ -1,3 +1,4 @@
+import { RetryDistribution } from "./labs/RetryDistribution";
 import { ToolPanel } from "./ToolPanel";
 import { useState } from "react";
 import { retryExperiment } from "./retry-model";
@@ -106,6 +107,33 @@ export function RetryExperiment() {
           success. Jitter spreads attempts, but can consume a budget before
           recovery; it does not guarantee success.
         </p>
+        <RetryDistribution
+          plain={
+            jitter
+              ? retryExperiment({
+                  retries,
+                  budget,
+                  baseDelayMs: delay,
+                  recoveryMs: recovery,
+                  jitter: false,
+                  seed: 42,
+                })
+              : rows
+          }
+          jitter={
+            jitter
+              ? rows
+              : retryExperiment({
+                  retries,
+                  budget,
+                  baseDelayMs: delay,
+                  recoveryMs: recovery,
+                  jitter: true,
+                  seed: 42,
+                })
+          }
+          recovery={recovery}
+        />
         <div
           className="table-scroll"
           role="region"
