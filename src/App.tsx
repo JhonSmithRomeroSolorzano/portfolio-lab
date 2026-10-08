@@ -1,3 +1,4 @@
+import { RetryExperiment } from "./RetryExperiment";
 import { RequestSchedulerPanel } from "./RequestSchedulerPanel";
 import { useEffect, useRef, useState } from "react";
 import { DEFAULT_SCENARIO, simulate } from "./simulation";
@@ -398,6 +399,7 @@ function SignalLab() {
         <CacheExpiryPanel />
         <QueueExperiment />
         <RequestSchedulerPanel />
+        <RetryExperiment />
         <RequestTrace key={JSON.stringify(scenario)} scenario={scenario} />
         <ExperimentLibrary scenario={scenario} onSelect={selectScenario} />
         <ExperimentFiles scenario={scenario} onSelect={selectScenario} />

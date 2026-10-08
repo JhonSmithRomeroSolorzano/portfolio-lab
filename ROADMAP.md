@@ -168,7 +168,9 @@ Next: inspect individual request wait and service times.
 
 - [x] Optional deadlines include queue wait and service, expire waiting requests, and cancel running work to release workers. Exact-boundary completion wins; tests cover expiry/arrival ties and every outcome.
 
-Next: demonstrate bounded retries and backoff.
+- [x] Added a separate retry experiment with exponential backoff, a global retry budget, seeded full jitter, explicit outage recovery, attempt amplification, and a time-ordered trace. Limits are visible and retries never imply guaranteed success.
+
+Next: inspect the new tools through browser journeys and document the completed models.
 
 ## Next useful milestones
 
