@@ -1,5 +1,12 @@
 export const LABS = [
   {
+    id: "rate-limit",
+    name: "Rate limiting",
+    area: "Backend",
+    detail: "Compare fixed windows with continuous token refill.",
+    shared: false,
+  },
+  {
     id: "circuit",
     name: "Circuit breaker",
     area: "Backend",
