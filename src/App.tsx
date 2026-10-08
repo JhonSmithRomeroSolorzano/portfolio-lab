@@ -1,3 +1,4 @@
+import { EventCoalescingLab } from "./labs/EventCoalescingLab";
 import { AsyncSearchLab } from "./labs/AsyncSearchLab";
 import { useExpandedLab } from "./use-expanded-lab";
 import { LABS } from "./lab-catalog";
@@ -465,6 +466,9 @@ function SignalLab() {
           </div>
         </div>
         <div className="experiment-tools">
+          <div hidden={activeLab !== "events"}>
+            <EventCoalescingLab />
+          </div>
           <div hidden={activeLab !== "search"}>
             <AsyncSearchLab />
           </div>

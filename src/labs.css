@@ -378,3 +378,24 @@
     gap: 16px;
   }
 }
+.policy-comparison {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 20px 0;
+}
+.policy-comparison > div {
+  padding: 14px;
+  border: 1px solid var(--lab-line);
+  border-radius: 5px;
+}
+.policy-comparison span {
+  display: block;
+  color: var(--lab-muted);
+  font: 10px var(--mono);
+  margin-bottom: 8px;
+}
+.policy-comparison strong {
+  font-size: 15px;
+  font-weight: 500;
+}

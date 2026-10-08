@@ -285,3 +285,5 @@ Next: build the compact workspace around the existing experiments. This feedback
 - [x] Add an expanded workspace with a contained Tab cycle, Escape dismissal, inert background, restored focus/scroll behavior, and preserved experiment state. The normal page remains compact.
 
 - [x] Add an async-search lab that exposes out-of-order responses and compares unguarded rendering with latest-request protection. Include a compact event inspector, tie-order tests, and explicit limits.
+
+- [x] Add debounce/throttle exploration with burst/steady input, side-by-side call counts, handler timing, final-input loss, and exact-boundary tests.

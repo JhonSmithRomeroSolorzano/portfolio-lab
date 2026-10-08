@@ -1,5 +1,12 @@
 export const LABS = [
   {
+    id: "events",
+    name: "Debounce & throttle",
+    area: "Frontend",
+    detail: "Control expensive work during bursts of input.",
+    shared: false,
+  },
+  {
     id: "search",
     name: "Async search",
     area: "Frontend",
