@@ -93,3 +93,28 @@ test("cache strategies and request deadlines expose their different outcomes", a
       .getByRole("cell", { name: "timed-out", exact: true }),
   ).toHaveCount(16);
 });
+
+test("reset clears scenario URL fields synchronously and survives an immediate reload", async ({
+  page,
+}) => {
+  await page.goto(
+    "/?traffic=333&cache=off&database=offline&campaign=review#lab",
+  );
+  const search = await page
+    .getByRole("button", { name: "Reset the experiment", exact: false })
+    .evaluate((button: HTMLButtonElement) => {
+      button.click();
+      return window.location.search;
+    });
+  expect(search).toBe("?campaign=review");
+  await page.reload();
+  await expect(
+    page.getByLabel("Exact request rate", { exact: true }),
+  ).toHaveValue("120");
+  await expect(
+    page.getByRole("switch", { name: "Read cache", exact: true }),
+  ).toHaveAttribute("aria-checked", "true");
+  await expect(
+    page.getByRole("button", { name: "Normal", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
+});

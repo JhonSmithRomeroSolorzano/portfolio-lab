@@ -239,6 +239,13 @@ Next: reduce competing announcements during rapid slider changes.
 
 Next: finish browser regression and contrast checks before publishing.
 
+### Reset persistence — October 8
+
+- [x] Reset now writes default settings to the URL immediately, closing the same 150 ms reload race previously fixed for imports and restores. Unrelated query parameters remain intact.
+- [x] Added an immediate-reload browser regression for the traffic/cache/database defaults and preserved campaign parameter.
+
+Next: finish the full browser and visual review; professional details remain dependent on user confirmation.
+
 ## Next useful milestones
 
 1. **Browser regression suite — established:** extend the existing recruiter, comparison, library, and keyboard journeys as behavior changes; keep fixtures deterministic.

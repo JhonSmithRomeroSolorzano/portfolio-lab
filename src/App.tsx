@@ -387,7 +387,7 @@ function SignalLab() {
           <button
             className="reset-button"
             type="button"
-            onClick={() => setScenario({ ...DEFAULT_SCENARIO })}
+            onClick={() => selectScenario({ ...DEFAULT_SCENARIO })}
           >
             ↺ Reset the experiment
           </button>
