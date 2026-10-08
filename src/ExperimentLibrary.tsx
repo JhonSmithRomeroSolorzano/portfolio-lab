@@ -3,6 +3,7 @@ import { mergeLibrary } from "./library-file";
 import { useEffect, useId, useRef, useState } from "react";
 import {
   LIBRARY_KEY,
+  libraryFromStorageEvent,
   loadLibrary,
   restoreExperiment,
   renameExperiment,
@@ -36,6 +37,20 @@ export function ExperimentLibrary({
     "Stored only in this browser. Up to eight experiments.",
   );
   const id = useId();
+  useEffect(() => {
+    const sync = (event: StorageEvent) => {
+      const next = libraryFromStorageEvent(event);
+      if (next === null) return;
+      entriesRef.current = next;
+      setEntries(next);
+      entriesRef.current = next;
+      setEditing(null);
+      setRemoved(null);
+      setMessage("Experiment library updated from another tab.");
+    };
+    window.addEventListener("storage", sync);
+    return () => window.removeEventListener("storage", sync);
+  }, []);
   function save(next: SavedExperiment[]) {
     setEntries(next);
     try {

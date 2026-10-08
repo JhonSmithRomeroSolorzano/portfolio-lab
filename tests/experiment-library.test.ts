@@ -2,6 +2,8 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   parseLibrary,
+  libraryFromStorageEvent,
+  LIBRARY_KEY,
   restoreExperiment,
   renameExperiment,
   updateExperiment,
@@ -78,4 +80,24 @@ test("undo restores the original position without overwriting newer saves", () =
       0,
     ),
   );
+});
+
+test("library storage events distinguish another feature from a clear or update", () => {
+  const entries = [{ id: "a", name: "A", scenario: DEFAULT_SCENARIO }];
+  assert.deepEqual(
+    libraryFromStorageEvent({
+      key: LIBRARY_KEY,
+      newValue: JSON.stringify(entries),
+    }),
+    entries,
+  );
+  assert.equal(
+    libraryFromStorageEvent({ key: "portfolio-theme", newValue: null }),
+    null,
+  );
+  assert.deepEqual(
+    libraryFromStorageEvent({ key: LIBRARY_KEY, newValue: null }),
+    [],
+  );
+  assert.deepEqual(libraryFromStorageEvent({ key: null, newValue: null }), []);
 });

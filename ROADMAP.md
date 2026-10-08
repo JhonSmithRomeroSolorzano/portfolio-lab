@@ -180,7 +180,9 @@ Next: inspect the new tools through browser journeys and document the completed 
 
 - [x] Back up and merge versioned libraries without overwriting existing saves. Validate the complete import, skip matching names/settings, regenerate local IDs, and reject imports exceeding eight entries atomically.
 
-Next: synchronize library changes between open tabs.
+- [x] Synchronize library changes between tabs through storage events, distinguish unrelated preferences from a clear, cancel stale edits/undo state, and announce the update. Concurrent writes retain browser storage’s last-write-wins semantics.
+
+Next: maintain browser coverage for the saved workflow.
 
 ## Next useful milestones
 

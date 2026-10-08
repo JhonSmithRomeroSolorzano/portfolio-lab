@@ -82,3 +82,11 @@ export function restoreExperiment(
   });
   return next;
 }
+
+/** A null result means the event belongs to another feature, not an empty library. */
+export function libraryFromStorageEvent(
+  event: Pick<StorageEvent, "key" | "newValue">,
+): SavedExperiment[] | null {
+  if (event.key === null) return [];
+  return event.key === LIBRARY_KEY ? parseLibrary(event.newValue) : null;
+}
