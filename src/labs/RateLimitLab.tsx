@@ -1,12 +1,10 @@
-import { useState } from "react";
+import { useIndependentLab } from "./LabSettingsProvider";
 import { ToolPanel } from "../ToolPanel";
 import { LabRange, LabChoice } from "./LabControls";
 import { EventInspector } from "./EventInspector";
 import { limitArrivals } from "./rate-limiting";
-import type { RatePolicy } from "./rate-limiting";
 export function RateLimitLab() {
-  const [limit, setLimit] = useState(4),
-    [policy, setPolicy] = useState<RatePolicy>("fixed");
+  const [{ limit, policy }, update] = useIndependentLab("rate-limit");
   const run = limitArrivals(limit, policy);
   return (
     <ToolPanel title="A request budget at the window boundary">
@@ -22,7 +20,7 @@ export function RateLimitLab() {
             value={limit}
             min={1}
             max={10}
-            onChange={setLimit}
+            onChange={(value) => update({ limit: value })}
           />
           <LabChoice
             label="Rate limiter"
@@ -31,7 +29,7 @@ export function RateLimitLab() {
               { value: "fixed", label: "Fixed one-second window" },
               { value: "bucket", label: "Continuously refilled token bucket" },
             ]}
-            onChange={setPolicy}
+            onChange={(value) => update({ policy: value })}
           />
         </div>
         <div className="lab-outcome">

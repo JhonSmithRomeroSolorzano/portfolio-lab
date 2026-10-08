@@ -1,13 +1,11 @@
-import { useState } from "react";
+import { useIndependentLab } from "./LabSettingsProvider";
 import { ToolPanel } from "../ToolPanel";
 import { LabRange, LabChoice } from "./LabControls";
 import { EventInspector } from "./EventInspector";
 import { concurrentWrites } from "./concurrent-writes";
-import type { WritePolicy } from "./concurrent-writes";
 export function ConcurrentWritesLab() {
-  const [firstDelta, setFirstDelta] = useState(1),
-    [secondDelta, setSecondDelta] = useState(5),
-    [policy, setPolicy] = useState<WritePolicy>("overwrite");
+  const [{ firstDelta, secondDelta, policy }, update] =
+    useIndependentLab("writes");
   const run = concurrentWrites(firstDelta, secondDelta, policy);
   return (
     <ToolPanel title="Two clients, one shared value">
@@ -23,14 +21,14 @@ export function ConcurrentWritesLab() {
             value={firstDelta}
             min={-5}
             max={10}
-            onChange={setFirstDelta}
+            onChange={(value) => update({ firstDelta: value })}
           />
           <LabRange
             label="Client B change"
             value={secondDelta}
             min={-5}
             max={10}
-            onChange={setSecondDelta}
+            onChange={(value) => update({ secondDelta: value })}
           />
           <LabChoice
             label="Conflict policy"
@@ -40,7 +38,7 @@ export function ConcurrentWritesLab() {
               { value: "reject", label: "Reject stale version" },
               { value: "retry", label: "Reread and retry delta" },
             ]}
-            onChange={setPolicy}
+            onChange={(value) => update({ policy: value })}
           />
         </div>
         <div

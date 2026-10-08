@@ -1,3 +1,5 @@
+import { useLabSettings } from "./labs/LabSettingsProvider";
+import { hasSetup, setupUrl } from "./labs/lab-setup";
 import { labEntryUrl } from "./lab-navigation";
 import type { Scenario } from "./simulation";
 import { LABS, LAB_AREAS } from "./lab-catalog";
@@ -11,6 +13,7 @@ export function LabNavigation({
   scenario: Scenario;
   onSelect: (id: LabId) => void;
 }) {
+  const { settings, invalid } = useLabSettings();
   const selected = LABS.find((lab) => lab.id === active)!;
   return (
     <div className="lab-navigation">
@@ -36,18 +39,29 @@ export function LabNavigation({
         <span>{selected.area}</span>
         {selected.detail}
       </p>
+      {invalid && (
+        <p role="status">
+          The lab setup in this link is invalid or unsupported. Defaults are
+          shown on first load; existing choices are kept during this visit.
+        </p>
+      )}
       <details className="lab-entry-link">
         <summary>Link to this lab</summary>
         <label htmlFor="lab-entry-url">Lab entry link</label>
         <input
           id="lab-entry-url"
-          value={labEntryUrl(window.location.href, active, scenario)}
+          value={setupUrl(
+            labEntryUrl(window.location.href, active, scenario),
+            active,
+            settings,
+          )}
           readOnly
           onFocus={(e) => e.currentTarget.select()}
         />
         <small>
-          Opens this lab with the shared traffic setup. Independent lab settings
-          use their defaults.
+          {hasSetup(active)
+            ? "Includes this experiment’s settings. Results are recomputed when opened."
+            : "Includes the shared traffic setup. Other independent lab controls use their defaults."}
         </small>
       </details>
     </div>

@@ -66,3 +66,38 @@ test("backend and data experiments have distinct controls and retain choices", a
     ),
   ).toBeTruthy();
 });
+
+test("independent lab links preserve settings through immediate reload and history", async ({
+  page,
+}) => {
+  await page.goto("/?lab=writes#lab");
+  await page
+    .getByLabel("Conflict policy", { exact: true })
+    .selectOption("retry");
+  await page.reload();
+  await expect(page.getByLabel("Conflict policy", { exact: true })).toHaveValue(
+    "retry",
+  );
+  await page.getByText("Link to this lab", { exact: true }).click();
+  const link = await page
+    .getByLabel("Lab entry link", { exact: true })
+    .inputValue();
+  await page
+    .getByLabel("Choose a lab", { exact: true })
+    .selectOption("eviction");
+  await page.goBack();
+  await expect(page.getByLabel("Conflict policy", { exact: true })).toHaveValue(
+    "retry",
+  );
+  await page.goto(link);
+  await expect(page.getByLabel("Conflict policy", { exact: true })).toHaveValue(
+    "retry",
+  );
+  await page.goto("/?lab=writes&setup=broken#lab");
+  await expect(
+    page.getByText("The lab setup in this link is invalid", { exact: false }),
+  ).toBeVisible();
+  await expect(page.getByLabel("Conflict policy", { exact: true })).toHaveValue(
+    "overwrite",
+  );
+});

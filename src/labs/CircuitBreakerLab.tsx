@@ -1,12 +1,11 @@
-import { useState } from "react";
+import { useIndependentLab } from "./LabSettingsProvider";
 import { ToolPanel } from "../ToolPanel";
 import { LabRange } from "./LabControls";
 import { EventInspector } from "./EventInspector";
 import { circuitBreaker } from "./circuit-breaker";
 export function CircuitBreakerLab() {
-  const [threshold, setThreshold] = useState(3),
-    [cooldown, setCooldown] = useState(500),
-    [recovery, setRecovery] = useState(800);
+  const [{ threshold, cooldown, recovery }, update] =
+    useIndependentLab("circuit");
   const run = circuitBreaker(threshold, cooldown, recovery);
   return (
     <ToolPanel title="Give a failing service time to recover">
@@ -22,7 +21,7 @@ export function CircuitBreakerLab() {
             value={threshold}
             min={1}
             max={5}
-            onChange={setThreshold}
+            onChange={(value) => update({ threshold: value })}
           />
           <LabRange
             label="Circuit cooldown"
@@ -31,7 +30,7 @@ export function CircuitBreakerLab() {
             max={700}
             step={100}
             unit=" ms"
-            onChange={setCooldown}
+            onChange={(value) => update({ cooldown: value })}
           />
           <LabRange
             label="Service recovers at"
@@ -40,7 +39,7 @@ export function CircuitBreakerLab() {
             max={1200}
             step={100}
             unit=" ms"
-            onChange={setRecovery}
+            onChange={(value) => update({ recovery: value })}
           />
         </div>
         <div className="policy-comparison">

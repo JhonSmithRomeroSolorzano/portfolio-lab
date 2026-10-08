@@ -14,6 +14,7 @@ export function labFromSearch(search: string): LabId {
 export function labUrl(current: string, id: LabId) {
   const url = new URL(current);
   url.searchParams.delete("lab");
+  url.searchParams.delete("setup");
   if (id !== "traffic") url.searchParams.set("lab", id);
   url.hash = "lab";
   return url.toString();

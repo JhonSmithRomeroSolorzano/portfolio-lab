@@ -1,13 +1,11 @@
-import { useState } from "react";
+import { useIndependentLab } from "./LabSettingsProvider";
 import { ToolPanel } from "../ToolPanel";
 import { LabRange, LabChoice } from "./LabControls";
 import { EventInspector } from "./EventInspector";
 import { searchResponses } from "./async-search";
-import type { ResponsePolicy } from "./async-search";
 export function AsyncSearchLab() {
-  const [oldDelay, setOldDelay] = useState(800),
-    [newestDelay, setNewestDelay] = useState(100),
-    [policy, setPolicy] = useState<ResponsePolicy>("every");
+  const [{ oldDelay, newestDelay, policy }, update] =
+    useIndependentLab("search");
   const run = searchResponses(oldDelay, newestDelay, policy);
   return (
     <ToolPanel title="When an old search arrives last">
@@ -25,7 +23,7 @@ export function AsyncSearchLab() {
             max={1000}
             step={50}
             unit=" ms"
-            onChange={setOldDelay}
+            onChange={(value) => update({ oldDelay: value })}
           />
           <LabRange
             label="Latest response delay"
@@ -34,7 +32,7 @@ export function AsyncSearchLab() {
             max={1000}
             step={50}
             unit=" ms"
-            onChange={setNewestDelay}
+            onChange={(value) => update({ newestDelay: value })}
           />
           <LabChoice
             label="Response policy"
@@ -43,7 +41,7 @@ export function AsyncSearchLab() {
               { value: "every", label: "Apply every response" },
               { value: "latest", label: "Only the latest request" },
             ]}
-            onChange={setPolicy}
+            onChange={(value) => update({ policy: value })}
           />
         </div>
         <div className="lab-outcome" data-tone={run.stale ? "warning" : "good"}>

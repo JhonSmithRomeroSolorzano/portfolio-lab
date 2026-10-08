@@ -1,3 +1,8 @@
+import {
+  LabSettingsProvider,
+  useLabSettings,
+} from "./labs/LabSettingsProvider";
+import { setupUrl } from "./labs/lab-setup";
 import { ConcurrentWritesLab } from "./labs/ConcurrentWritesLab";
 import { CacheEvictionLab } from "./labs/CacheEvictionLab";
 import { RateLimitLab } from "./labs/RateLimitLab";
@@ -78,6 +83,7 @@ function Arrow({ diagonal = false }: { diagonal?: boolean }) {
 }
 
 function SignalLab() {
+  const { settings } = useLabSettings();
   const { expanded, setExpanded, shell, toggle } = useExpandedLab();
   const [activeLab, setActiveLab] = useState<LabId>(() =>
     labFromSearch(window.location.search),
@@ -96,7 +102,7 @@ function SignalLab() {
     window.history.pushState(
       window.history.state,
       "",
-      labUrl(window.location.href, id),
+      setupUrl(labUrl(window.location.href, id), id, settings),
     );
     setActiveLab(id);
   }
@@ -776,7 +782,9 @@ export function App() {
                   and explore the decisions behind the behavior.
                 </p>
               </div>
-              <SignalLab />
+              <LabSettingsProvider>
+                <SignalLab />
+              </LabSettingsProvider>
               <div className="project-caption">
                 <span>
                   <b>Signal Lab</b> · An original portfolio experiment

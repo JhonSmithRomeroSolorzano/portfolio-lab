@@ -1,13 +1,10 @@
-import { useState } from "react";
+import { useIndependentLab } from "./LabSettingsProvider";
 import { ToolPanel } from "../ToolPanel";
 import { LabRange, LabChoice } from "./LabControls";
 import { EventInspector } from "./EventInspector";
 import { coalesceInputs } from "./event-coalescing";
-import type { CoalescingPolicy, InputPattern } from "./event-coalescing";
 export function EventCoalescingLab() {
-  const [pattern, setPattern] = useState<InputPattern>("burst"),
-    [delay, setDelay] = useState(200),
-    [policy, setPolicy] = useState<CoalescingPolicy>("debounce");
+  const [{ pattern, delay, policy }, update] = useIndependentLab("events");
   const run = coalesceInputs(pattern, delay, policy);
   return (
     <ToolPanel title="How often should the interface react?">
@@ -25,7 +22,7 @@ export function EventCoalescingLab() {
               { value: "burst", label: "Bursty typing" },
               { value: "steady", label: "Steady pointer input" },
             ]}
-            onChange={setPattern}
+            onChange={(value) => update({ pattern: value })}
           />
           <LabRange
             label="Quiet period / throttle interval"
@@ -34,7 +31,7 @@ export function EventCoalescingLab() {
             max={500}
             step={50}
             unit=" ms"
-            onChange={setDelay}
+            onChange={(value) => update({ delay: value })}
           />
           <LabChoice
             label="Event policy"
@@ -44,7 +41,7 @@ export function EventCoalescingLab() {
               { value: "debounce", label: "Trailing debounce" },
               { value: "throttle", label: "Leading throttle" },
             ]}
-            onChange={setPolicy}
+            onChange={(value) => update({ policy: value })}
           />
         </div>
         <div className="lab-outcome">

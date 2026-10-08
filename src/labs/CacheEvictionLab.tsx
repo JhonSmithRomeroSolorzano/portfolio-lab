@@ -1,12 +1,10 @@
-import { useState } from "react";
+import { useIndependentLab } from "./LabSettingsProvider";
 import { ToolPanel } from "../ToolPanel";
 import { LabRange, LabChoice } from "./LabControls";
 import { EventInspector } from "./EventInspector";
 import { evictCache, CACHE_KEYS } from "./cache-eviction";
-import type { EvictionPolicy } from "./cache-eviction";
 export function CacheEvictionLab() {
-  const [capacity, setCapacity] = useState(3),
-    [policy, setPolicy] = useState<EvictionPolicy>("fifo");
+  const [{ capacity, policy }, update] = useIndependentLab("eviction");
   const run = evictCache(capacity, policy);
   return (
     <ToolPanel title="Which item should leave a full cache?">
@@ -22,7 +20,7 @@ export function CacheEvictionLab() {
             value={capacity}
             min={2}
             max={5}
-            onChange={setCapacity}
+            onChange={(value) => update({ capacity: value })}
           />
           <LabChoice
             label="Eviction policy"
@@ -31,7 +29,7 @@ export function CacheEvictionLab() {
               { value: "fifo", label: "First in, first out" },
               { value: "lru", label: "Least recently used" },
             ]}
-            onChange={setPolicy}
+            onChange={(value) => update({ policy: value })}
           />
         </div>
         <div className="lab-outcome">

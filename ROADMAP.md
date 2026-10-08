@@ -299,3 +299,5 @@ Next: build the compact workspace around the existing experiments. This feedback
 - [x] Visualize scheduler queue wait and worker time on a shared timeline, including immediate rejection and waiting/running deadlines; keep every request accessible through a selector and full evidence table.
 
 - [x] Compare jittered and synchronized retries with aligned time/count scales, a recovery marker, and an accessible per-window inspector. Keep attempt totals conserved and the original detailed attempt table.
+
+- [x] Share and restore all six new experiments with strict, versioned setup links. Preserve immediate reload and history behavior, reject malformed configurations atomically, and recompute every result from validated settings.
