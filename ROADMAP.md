@@ -231,6 +231,14 @@ Next: make failed downloads lead directly to the copyable export.
 
 Next: reduce competing announcements during rapid slider changes.
 
+### Assistive result feedback — October 8
+
+- [x] Replaced competing main status/metric announcements with one complete, atomic summary after a 350 ms pause. Visual results remain immediate.
+- [x] Disabled redundant live announcements on the workload outputs; inputs retain their labels and values. Browser coverage checks the settled summary after rapid changes.
+- [x] Verification covers DOM accessibility semantics and keyboard behavior; it does not substitute for a human screen-reader listening session.
+
+Next: finish browser regression and contrast checks before publishing.
+
 ## Next useful milestones
 
 1. **Browser regression suite — established:** extend the existing recruiter, comparison, library, and keyboard journeys as behavior changes; keep fixtures deterministic.

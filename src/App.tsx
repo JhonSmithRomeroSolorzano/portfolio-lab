@@ -1,5 +1,6 @@
 import { RetryExperiment } from "./RetryExperiment";
 import { ServiceClientPanel } from "./ServiceClientPanel";
+import { ResultAnnouncement } from "./ResultAnnouncement";
 import { RequestSchedulerPanel } from "./RequestSchedulerPanel";
 import { useEffect, useRef, useState } from "react";
 import { DEFAULT_SCENARIO, simulate } from "./simulation";
@@ -117,7 +118,7 @@ function SignalLab() {
               <span className="eyebrow dark-label">REQUEST FLOW</span>
               <h3>A small system. Real trade-offs.</h3>
             </div>
-            <span className={`status ${statusClass}`} role="status">
+            <span className={`status ${statusClass}`}>
               <i />
               {labels[result.status]}
             </span>
@@ -173,7 +174,7 @@ function SignalLab() {
               </div>
             </div>
           </div>
-          <div className="metrics" aria-live="polite" aria-atomic="true">
+          <div className="metrics">
             <div>
               <span>Mean response</span>
               <strong>
@@ -196,6 +197,9 @@ function SignalLab() {
               </strong>
             </div>
           </div>
+          <ResultAnnouncement
+            message={`${labels[result.status]}. At ${scenario.requestsPerSecond} requests per second: mean response ${Math.round(result.meanLatencyMs)} milliseconds, ${Math.round(result.successPercent)} percent successful, database demand ${Math.round(result.databaseDemand)} per second.`}
+          />
           <div className="request-budget">
             <div className="budget-label">
               <span>Where the requests go</span>
@@ -247,7 +251,7 @@ function SignalLab() {
           <div className="control-block">
             <label htmlFor="traffic">
               Incoming traffic{" "}
-              <output htmlFor="traffic">
+              <output htmlFor="traffic" aria-live="off">
                 {scenario.requestsPerSecond}
                 <small> req/s</small>
               </output>
@@ -320,7 +324,7 @@ function SignalLab() {
               <div className="control-block">
                 <label htmlFor="cache-rate">
                   Cache hit rate{" "}
-                  <output htmlFor="cache-rate">
+                  <output htmlFor="cache-rate" aria-live="off">
                     {scenario.cacheHitPercent ?? 80}%
                   </output>
                 </label>
@@ -340,7 +344,7 @@ function SignalLab() {
               <div className="control-block">
                 <label htmlFor="pool-size">
                   Database pool{" "}
-                  <output htmlFor="pool-size">
+                  <output htmlFor="pool-size" aria-live="off">
                     {scenario.databaseConnections ?? 8} connections
                   </output>
                 </label>
@@ -360,7 +364,7 @@ function SignalLab() {
               <div className="control-block">
                 <label htmlFor="write-share">
                   Write requests{" "}
-                  <output htmlFor="write-share">
+                  <output htmlFor="write-share" aria-live="off">
                     {scenario.writePercent ?? 0}%
                   </output>
                 </label>
