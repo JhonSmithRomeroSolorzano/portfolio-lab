@@ -4,7 +4,7 @@ import { ComparisonFiles } from "./ComparisonFiles";
 import { TextExport } from "./TextExport";
 import { comparisonReport } from "./comparison-report";
 import { loadBaseline, saveBaseline } from "./comparison-storage";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { compareScenarios, signed } from "./comparison";
 import type { Scenario } from "./simulation";
 
@@ -15,6 +15,7 @@ export function Comparison({
   scenario: Scenario;
   onSelect: (value: Scenario) => void;
 }) {
+  const captureRef = useRef<HTMLButtonElement>(null);
   const [shared] = useState(() => baselineFromSearch(window.location.search));
   const [baseline, setBaseline] = useState<Scenario | null>(
     () => shared ?? loadBaseline(),
@@ -53,7 +54,7 @@ export function Comparison({
           are current minus baseline.
         </p>
         <div className="tool-actions">
-          <button onClick={() => capture({ ...scenario })}>
+          <button ref={captureRef} onClick={() => capture({ ...scenario })}>
             {baseline ? "Update baseline" : "Capture baseline"}
           </button>
           {baseline && (
@@ -66,7 +67,14 @@ export function Comparison({
               >
                 Restore baseline
               </button>
-              <button onClick={() => capture(null)}>Clear baseline</button>
+              <button
+                onClick={() => {
+                  capture(null);
+                  captureRef.current?.focus();
+                }}
+              >
+                Clear baseline
+              </button>
             </>
           )}
         </div>

@@ -28,6 +28,8 @@ export function ExperimentLibrary({
   } | null>(null);
   const undoRef = useRef<HTMLButtonElement>(null);
   const nameRef = useRef<HTMLInputElement>(null);
+  const renameRefs = useRef(new Map<string, HTMLButtonElement>());
+  const editRef = useRef<HTMLFormElement>(null);
   useEffect(() => {
     if (removed) undoRef.current?.focus();
   }, [removed]);
@@ -41,11 +43,15 @@ export function ExperimentLibrary({
     const sync = (event: StorageEvent) => {
       const next = libraryFromStorageEvent(event);
       if (next === null) return;
+      const restoreFocus =
+        editRef.current?.contains(document.activeElement) ||
+        document.activeElement === undoRef.current;
       entriesRef.current = next;
       setEntries(next);
       setEditing(null);
       setRemoved(null);
       setMessage("Experiment library updated from another tab.");
+      if (restoreFocus) nameRef.current?.focus();
     };
     window.addEventListener("storage", sync);
     return () => window.removeEventListener("storage", sync);
@@ -61,6 +67,10 @@ export function ExperimentLibrary({
         "Browser storage is unavailable. Changes will last only for this visit.",
       );
     }
+  }
+  function finishRename(entryId: string) {
+    setEditing(null);
+    renameRefs.current.get(entryId)?.focus();
   }
   return (
     <details className="tool-panel">
@@ -89,6 +99,7 @@ export function ExperimentLibrary({
                 },
               ]);
               setName("");
+              nameRef.current?.focus();
             }}
           >
             Save experiment
@@ -136,11 +147,18 @@ export function ExperimentLibrary({
               <li key={entry.id}>
                 {editing === entry.id ? (
                   <form
+                    ref={editRef}
+                    onKeyDown={(e) => {
+                      if (e.key === "Escape") {
+                        e.preventDefault();
+                        finishRename(entry.id);
+                      }
+                    }}
                     onSubmit={(e) => {
                       e.preventDefault();
                       try {
                         save(renameExperiment(entries, entry.id, editName));
-                        setEditing(null);
+                        finishRename(entry.id);
                       } catch (error) {
                         setMessage(
                           error instanceof Error
@@ -165,7 +183,10 @@ export function ExperimentLibrary({
                       <button type="submit" disabled={!editName.trim()}>
                         Save name
                       </button>
-                      <button type="button" onClick={() => setEditing(null)}>
+                      <button
+                        type="button"
+                        onClick={() => finishRename(entry.id)}
+                      >
                         Cancel rename
                       </button>
                     </div>
@@ -185,6 +206,10 @@ export function ExperimentLibrary({
                     Load
                   </button>
                   <button
+                    ref={(node) => {
+                      if (node) renameRefs.current.set(entry.id, node);
+                      else renameRefs.current.delete(entry.id);
+                    }}
                     onClick={() => {
                       setEditing(entry.id);
                       setEditName(entry.name);

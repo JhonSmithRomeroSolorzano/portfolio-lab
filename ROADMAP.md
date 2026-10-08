@@ -208,6 +208,14 @@ Next: the optional local-API client and more verified project examples. Keep pro
 
 Next: resolve observed keyboard-focus and storage-feedback problems in the existing tools.
 
+### Keyboard recovery — October 8
+
+- [x] Return focus to the name field after saving a setup and to the entry after saving/cancelling a rename; Escape cancels without losing the keyboard position.
+- [x] Restore focus to the name input if a cross-tab update removes the active editor or Undo control. Clearing a baseline returns focus to Capture.
+- [x] Added Chromium/WebKit coverage for rename save/cancel/Escape, cross-tab removal during editing, and comparison clearing.
+
+Next: preserve truthful persistence feedback when browser storage fails.
+
 ## Next useful milestones
 
 1. **Browser regression suite — established:** extend the existing recruiter, comparison, library, and keyboard journeys as behavior changes; keep fixtures deterministic.
