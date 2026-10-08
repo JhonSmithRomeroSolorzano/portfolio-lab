@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { queueTimeline } from "../src/queue-model.ts";
+import { QUEUE_PROFILES, queueTimeline } from "../src/queue-model.ts";
 test("buffer absorbs a burst with explicit overflow and drains when capacity allows", () => {
   const rows = queueTimeline(8, 16);
   assert.equal(rows[3].rejected, 8);
@@ -37,4 +37,22 @@ test("idle ticks drain backlog and invalid loads fail explicitly", () => {
       RangeError,
     );
   assert.throws(() => queueTimeline(4, 4, [-1]), RangeError);
+});
+
+test("equal-volume workloads isolate burstiness and preserve all requests", () => {
+  for (const profile of QUEUE_PROFILES) {
+    assert.equal(
+      profile.arrivals.reduce((sum, n) => sum + n, 0),
+      64,
+    );
+    for (const capacity of [1, 8, 16])
+      for (const buffer of [0, 16, 40]) {
+        const end = queueTimeline(capacity, buffer, profile.arrivals).at(-1)!;
+        assert.equal(end.totalServed + end.totalRejected + end.queued, 64);
+      }
+  }
+  const steady = queueTimeline(8, 0, QUEUE_PROFILES[1].arrivals).at(-1)!;
+  const spike = queueTimeline(8, 0, QUEUE_PROFILES[2].arrivals).at(-1)!;
+  assert.equal(steady.totalRejected, 0);
+  assert.ok(spike.totalRejected > 0);
 });

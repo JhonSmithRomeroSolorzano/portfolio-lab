@@ -154,6 +154,12 @@ Next: cache invalidation experiments and accessibility review.
 
 Next: richer queue workloads and request timing.
 
+### Queue workload exploration — October 7
+
+- [x] Added equal-volume steady, two-second burst, and single-spike workloads. Holding 64 arrivals fixed makes burstiness visible independently of total traffic. All patterns retain request conservation checks.
+
+Next: show how long the accepted backlog takes to drain.
+
 ## Next useful milestones
 
 1. **Browser regression suite:** automate keyboard flows, reload/URL state, file import/export, and viewport checks. Start from observed user journeys; keep fixtures deterministic.

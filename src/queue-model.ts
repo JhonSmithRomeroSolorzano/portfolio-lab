@@ -45,3 +45,10 @@ export function queueTimeline(
     };
   });
 }
+
+/** Equal volume isolates burst shape rather than changing total demand. */
+export const QUEUE_PROFILES = [
+  { id: "burst", name: "Two-second burst", arrivals: BURST },
+  { id: "steady", name: "Steady flow", arrivals: [8, 8, 8, 8, 8, 8, 8, 8] },
+  { id: "spike", name: "Single spike", arrivals: [4, 4, 4, 36, 4, 4, 4, 4] },
+] as const;

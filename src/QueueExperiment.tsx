@@ -1,22 +1,37 @@
 import { useState } from "react";
-import { queueTimeline } from "./queue-model";
+import { queueTimeline, QUEUE_PROFILES } from "./queue-model";
 export function QueueExperiment() {
+  const [profile, setProfile] = useState("burst");
+  const arrivals = QUEUE_PROFILES.find((p) => p.id === profile)!.arrivals;
   const [capacity, setCapacity] = useState(8);
   const [buffer, setBuffer] = useState(16);
-  const rows = queueTimeline(capacity, buffer);
+  const rows = queueTimeline(capacity, buffer, arrivals);
   const end = rows[rows.length - 1];
-  const unbuffered = queueTimeline(capacity, 0).at(-1)!;
+  const unbuffered = queueTimeline(capacity, 0, arrivals).at(-1)!;
   return (
     <details className="tool-panel">
       <summary>Absorb a burst with a bounded queue</summary>
       <div className="tool-content">
         <p>
-          A separate eight-second experiment with 4, 4, 20, 20, 4, 4, 4, 4
-          arrivals. Each tick serves old backlog first, then new arrivals.
-          Remaining work enters a bounded queue; overflow rejects the newest
-          arrivals. No retries or request deadlines are modeled. Queued work is
-          waiting, not successful.
+          A separate eight-second experiment. Each workload offers 64 requests,
+          distributed as {arrivals.join(", ")} arrivals. Each tick serves old
+          backlog first, then new arrivals. Remaining work enters a bounded
+          queue; overflow rejects the newest arrivals. No retries or request
+          deadlines are modeled. Queued work is waiting, not successful.
         </p>
+        <label htmlFor="queue-profile">Arrival pattern</label>
+        <select
+          id="queue-profile"
+          className="tool-input"
+          value={profile}
+          onChange={(e) => setProfile(e.target.value)}
+        >
+          {QUEUE_PROFILES.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.name}
+            </option>
+          ))}
+        </select>
         <label htmlFor="queue-capacity">
           Service capacity: {capacity} requests per tick
         </label>
