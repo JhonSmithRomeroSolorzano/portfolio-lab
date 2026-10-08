@@ -1,3 +1,4 @@
+import { LabBrowser } from "./labs/LabBrowser";
 import { useLabSettings } from "./labs/LabSettingsProvider";
 import { hasSetup, setupUrl } from "./labs/lab-setup";
 import { labEntryUrl } from "./lab-navigation";
@@ -39,6 +40,7 @@ export function LabNavigation({
         <span>{selected.area}</span>
         {selected.detail}
       </p>
+      <LabBrowser active={active} onSelect={onSelect} />
       {invalid && (
         <p role="status">
           The lab setup in this link is invalid or unsupported. Defaults are

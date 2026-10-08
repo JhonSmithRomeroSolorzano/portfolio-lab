@@ -303,3 +303,5 @@ Next: build the compact workspace around the existing experiments. This feedback
 - [x] Share and restore all six new experiments with strict, versioned setup links. Preserve immediate reload and history behavior, reject malformed configurations atomically, and recompute every result from validated settings.
 
 - [x] Connect selected experiments with three compact guided investigations: async UI correctness, service recovery, and write conflicts. Each explicit step loads a reproducible setup, offers optional evidence, and leaves room to explore.
+
+- [x] Add a bounded lab browser with area filters, purpose-based search, result counts, empty-state recovery, and keyboard focus restoration. The native selector remains available for quick switching.

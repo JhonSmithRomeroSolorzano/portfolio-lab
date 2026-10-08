@@ -131,3 +131,43 @@ test("guided investigation loads each remedy without opening more panels", async
     page.getByRole("button", { name: "Start investigation", exact: true }),
   ).toBeVisible();
 });
+
+test("lab discovery filters results, restores focus, and keeps the workspace compact", async ({
+  page,
+}) => {
+  await page.goto("/#lab");
+  await page
+    .getByRole("button", { name: "Browse experiments", exact: true })
+    .click();
+  await expect(
+    page.getByLabel("Find an experiment", { exact: true }),
+  ).toBeFocused();
+  await page
+    .getByLabel("Find an experiment", { exact: true })
+    .fill("slow response");
+  await page
+    .getByRole("button", { name: "Frontend Async search", exact: false })
+    .click();
+  await expect(page.getByLabel("Choose a lab", { exact: true })).toHaveValue(
+    "search",
+  );
+  await expect(page.getByLabel("Choose a lab", { exact: true })).toBeFocused();
+  await page
+    .getByRole("button", { name: "Browse experiments", exact: true })
+    .click();
+  await page
+    .getByLabel("Find an experiment", { exact: true })
+    .fill("not-a-match");
+  await expect(
+    page.getByText("No match. Try a broader term or another area.", {
+      exact: true,
+    }),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Clear filters", exact: true })
+    .click();
+  await page.getByLabel("Find an experiment", { exact: true }).press("Escape");
+  await expect(
+    page.getByRole("button", { name: "Browse experiments", exact: true }),
+  ).toBeFocused();
+});
