@@ -172,6 +172,12 @@ Next: inspect individual request wait and service times.
 
 Next: inspect the new tools through browser journeys and document the completed models.
 
+### Saved experiment workflow — October 7
+
+- [x] Rename saved experiments and replace a named setup with current controls while preserving identity and order. Validate names and copy scenario values so later edits cannot alter a saved snapshot.
+
+Next: make accidental removal recoverable and back up the library.
+
 ## Next useful milestones
 
 1. **Browser regression suite:** automate keyboard flows, reload/URL state, file import/export, and viewport checks. Start from observed user journeys; keep fixtures deterministic.

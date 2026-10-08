@@ -1,6 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseLibrary } from "../src/experiment-library.ts";
+import {
+  parseLibrary,
+  renameExperiment,
+  updateExperiment,
+} from "../src/experiment-library.ts";
 import { DEFAULT_SCENARIO } from "../src/simulation.ts";
 test("corrupt browser storage is harmless and invalid entries are ignored", () => {
   assert.deepEqual(parseLibrary("{"), []);
@@ -37,4 +41,22 @@ test("library size is bounded and meaningful names are required", () => {
     ),
     [],
   );
+});
+
+test("rename and update preserve saved identity, order, and unrelated experiments", () => {
+  const entries = [
+    { id: "a", name: "Old", scenario: DEFAULT_SCENARIO },
+    { id: "b", name: "Other", scenario: DEFAULT_SCENARIO },
+  ];
+  const renamed = renameExperiment(entries, "a", "  New  ");
+  assert.equal(renamed[0].name, "New");
+  assert.equal(entries[0].name, "Old");
+  assert.equal(renamed[1], entries[1]);
+  const scenario = { ...DEFAULT_SCENARIO, requestsPerSecond: 200 };
+  const updated = updateExperiment(renamed, "a", scenario);
+  scenario.requestsPerSecond = 300;
+  assert.equal(updated[0].scenario.requestsPerSecond, 200);
+  assert.equal(updated[0].id, "a");
+  assert.throws(() => renameExperiment(entries, "a", " "));
+  assert.throws(() => updateExperiment(entries, "missing", DEFAULT_SCENARIO));
 });

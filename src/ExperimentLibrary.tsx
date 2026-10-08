@@ -1,5 +1,10 @@
 import { useId, useState } from "react";
-import { LIBRARY_KEY, loadLibrary } from "./experiment-library";
+import {
+  LIBRARY_KEY,
+  loadLibrary,
+  renameExperiment,
+  updateExperiment,
+} from "./experiment-library";
 import type { SavedExperiment } from "./experiment-library";
 import type { Scenario } from "./simulation";
 export function ExperimentLibrary({
@@ -11,6 +16,8 @@ export function ExperimentLibrary({
 }) {
   const [entries, setEntries] = useState(loadLibrary);
   const [name, setName] = useState("");
+  const [editing, setEditing] = useState<string | null>(null);
+  const [editName, setEditName] = useState("");
   const [message, setMessage] = useState(
     "Stored only in this browser. Up to eight experiments.",
   );
@@ -64,7 +71,45 @@ export function ExperimentLibrary({
           <ul className="saved-list">
             {entries.map((entry) => (
               <li key={entry.id}>
-                <strong>{entry.name}</strong>
+                {editing === entry.id ? (
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      try {
+                        save(renameExperiment(entries, entry.id, editName));
+                        setEditing(null);
+                      } catch (error) {
+                        setMessage(
+                          error instanceof Error
+                            ? error.message
+                            : "Could not rename this experiment.",
+                        );
+                      }
+                    }}
+                  >
+                    <label htmlFor={`${id}-${entry.id}`}>
+                      New name for {entry.name}
+                    </label>
+                    <input
+                      id={`${id}-${entry.id}`}
+                      className="tool-input"
+                      value={editName}
+                      maxLength={40}
+                      onChange={(e) => setEditName(e.target.value)}
+                      autoFocus
+                    />
+                    <div className="tool-actions">
+                      <button type="submit" disabled={!editName.trim()}>
+                        Save name
+                      </button>
+                      <button type="button" onClick={() => setEditing(null)}>
+                        Cancel rename
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <strong>{entry.name}</strong>
+                )}
                 <span>
                   {entry.scenario.requestsPerSecond} req/s ·{" "}
                   {entry.scenario.database}
@@ -75,6 +120,26 @@ export function ExperimentLibrary({
                     aria-label={`Load ${entry.name}`}
                   >
                     Load
+                  </button>
+                  <button
+                    onClick={() => {
+                      setEditing(entry.id);
+                      setEditName(entry.name);
+                    }}
+                    aria-label={`Rename ${entry.name}`}
+                  >
+                    Rename
+                  </button>
+                  <button
+                    onClick={() => {
+                      save(updateExperiment(entries, entry.id, scenario));
+                      setMessage(
+                        `${entry.name} updated with the current setup.`,
+                      );
+                    }}
+                    aria-label={`Update ${entry.name} with current setup`}
+                  >
+                    Update setup
                   </button>
                   <button
                     onClick={() =>

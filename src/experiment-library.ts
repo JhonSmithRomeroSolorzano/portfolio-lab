@@ -40,3 +40,28 @@ export function loadLibrary(): SavedExperiment[] {
     return [];
   }
 }
+
+export function renameExperiment(
+  entries: readonly SavedExperiment[],
+  id: string,
+  name: string,
+): SavedExperiment[] {
+  const trimmed = name.trim();
+  if (!trimmed || trimmed.length > 40)
+    throw new Error("Use a name from 1 to 40 characters.");
+  if (!entries.some((e) => e.id === id))
+    throw new Error("This experiment no longer exists.");
+  return entries.map((e) => (e.id === id ? { ...e, name: trimmed } : e));
+}
+export function updateExperiment(
+  entries: readonly SavedExperiment[],
+  id: string,
+  scenario: Scenario,
+): SavedExperiment[] {
+  if (!validScenario(scenario)) throw new Error("This setup is invalid.");
+  if (!entries.some((e) => e.id === id))
+    throw new Error("This experiment no longer exists.");
+  return entries.map((e) =>
+    e.id === id ? { ...e, scenario: { ...scenario } } : e,
+  );
+}
