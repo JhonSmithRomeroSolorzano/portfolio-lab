@@ -166,7 +166,9 @@ Next: inspect individual request wait and service times.
 
 - [x] Added a deterministic FIFO request scheduler with configurable workers, service time, bounded waiting, and per-request arrival/start/finish/wait evidence. Completion and queued work precede same-instant arrivals. Overflow is explicit and every request has an outcome.
 
-Next: model deadlines and cancellation in the scheduler.
+- [x] Optional deadlines include queue wait and service, expire waiting requests, and cancel running work to release workers. Exact-boundary completion wins; tests cover expiry/arrival ties and every outcome.
+
+Next: demonstrate bounded retries and backoff.
 
 ## Next useful milestones
 

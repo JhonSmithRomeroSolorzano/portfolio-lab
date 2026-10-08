@@ -2,13 +2,14 @@ export interface SchedulerOptions {
   concurrency: number;
   serviceMs: number;
   buffer: number;
+  deadlineMs?: number;
 }
 export interface ScheduledRequest {
   id: number;
   arrivedAt: number;
   startedAt: number | null;
   finishedAt: number;
-  outcome: "served" | "rejected";
+  outcome: "served" | "rejected" | "timed-out";
 }
 export const SCHEDULER_ARRIVALS = [
   0, 0, 0, 0, 50, 50, 100, 100, 100, 100, 150, 200, 200, 250, 300, 300,
@@ -18,7 +19,7 @@ export function scheduleRequests(
   options: SchedulerOptions,
   arrivals: readonly number[] = SCHEDULER_ARRIVALS,
 ): ScheduledRequest[] {
-  const { concurrency, serviceMs, buffer } = options;
+  const { concurrency, serviceMs, buffer, deadlineMs } = options;
   if (
     !Number.isInteger(concurrency) ||
     concurrency < 1 ||
@@ -33,6 +34,11 @@ export function scheduleRequests(
     throw new RangeError(
       "Use 1–8 workers, 10–1,000 ms service, and a 0–40 request buffer.",
     );
+  if (
+    deadlineMs !== undefined &&
+    (!Number.isInteger(deadlineMs) || deadlineMs < 1 || deadlineMs > 10_000)
+  )
+    throw new RangeError("Deadline must be 1–10,000 ms from arrival.");
   if (
     arrivals.length > 120 ||
     arrivals.some(
@@ -54,16 +60,34 @@ export function scheduleRequests(
     active.push({
       ...request,
       startedAt: at,
-      finishedAt: at + serviceMs,
-      outcome: "served",
+      finishedAt: Math.min(
+        at + serviceMs,
+        request.arrivedAt + (deadlineMs ?? Infinity),
+      ),
+      outcome:
+        at + serviceMs <= request.arrivedAt + (deadlineMs ?? Infinity)
+          ? "served"
+          : "timed-out",
     });
   while (index < arrivals.length || active.length || waiting.length) {
     const now = Math.min(
       arrivals[index] ?? Infinity,
       ...active.map((r) => r.finishedAt),
+      ...waiting.map((r) => r.arrivedAt + (deadlineMs ?? Infinity)),
     );
     completed.push(...active.filter((r) => r.finishedAt === now));
     active = active.filter((r) => r.finishedAt > now);
+    for (let i = waiting.length - 1; i >= 0; i--) {
+      if (waiting[i].arrivedAt + (deadlineMs ?? Infinity) <= now) {
+        const [request] = waiting.splice(i, 1);
+        completed.push({
+          ...request,
+          startedAt: null,
+          finishedAt: now,
+          outcome: "timed-out",
+        });
+      }
+    }
     while (waiting.length && active.length < concurrency)
       start(waiting.shift()!, now);
     while (index < arrivals.length && arrivals[index] === now) {

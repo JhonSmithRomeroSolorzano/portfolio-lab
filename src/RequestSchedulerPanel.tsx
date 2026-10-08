@@ -4,7 +4,14 @@ export function RequestSchedulerPanel() {
   const [concurrency, setConcurrency] = useState(2),
     [serviceMs, setServiceMs] = useState(100),
     [buffer, setBuffer] = useState(8);
-  const rows = scheduleRequests({ concurrency, serviceMs, buffer });
+  const [deadlineEnabled, setDeadlineEnabled] = useState(false),
+    [deadlineMs, setDeadlineMs] = useState(250);
+  const rows = scheduleRequests({
+    concurrency,
+    serviceMs,
+    buffer,
+    ...(deadlineEnabled ? { deadlineMs } : {}),
+  });
   const served = rows.filter((r) => r.outcome === "served");
   const meanWait = served.length
     ? served.reduce((n, r) => n + r.startedAt! - r.arrivedAt, 0) / served.length
@@ -54,6 +61,36 @@ export function RequestSchedulerPanel() {
           value={buffer}
           onChange={(e) => setBuffer(Number(e.target.value))}
         />
+        <label className="tool-actions">
+          <input
+            type="checkbox"
+            checked={deadlineEnabled}
+            onChange={(e) => setDeadlineEnabled(e.target.checked)}
+          />{" "}
+          Enforce a deadline from arrival
+        </label>
+        {deadlineEnabled && (
+          <>
+            <label htmlFor="scheduler-deadline">
+              Deadline: {deadlineMs} ms
+            </label>
+            <input
+              id="scheduler-deadline"
+              className="tool-range"
+              type="range"
+              min="10"
+              max="1000"
+              step="10"
+              value={deadlineMs}
+              onChange={(e) => setDeadlineMs(Number(e.target.value))}
+            />
+            <p>
+              A deadline includes queue wait and service. Timed-out running work
+              is cancelled and releases its worker; waiting work expires before
+              dispatch. Completion exactly at the deadline succeeds.
+            </p>
+          </>
+        )}
         <div className="tool-metrics" aria-live="polite">
           <div>
             <span>Completed</span>
@@ -61,7 +98,15 @@ export function RequestSchedulerPanel() {
           </div>
           <div>
             <span>Rejected</span>
-            <strong>{rows.length - served.length}</strong>
+            <strong>
+              {rows.filter((r) => r.outcome === "rejected").length}
+            </strong>
+          </div>
+          <div>
+            <span>Timed out</span>
+            <strong>
+              {rows.filter((r) => r.outcome === "timed-out").length}
+            </strong>
           </div>
           <div>
             <span>Mean wait, served only</span>
@@ -70,7 +115,9 @@ export function RequestSchedulerPanel() {
         </div>
         <div className="table-scroll">
           <table className="tool-table">
-            <caption>Every request through completion or rejection</caption>
+            <caption>
+              Every request through completion, rejection, or timeout
+            </caption>
             <thead>
               <tr>
                 {[

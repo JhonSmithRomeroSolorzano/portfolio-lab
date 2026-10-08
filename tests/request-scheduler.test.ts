@@ -41,3 +41,36 @@ test("scheduler conserves requests and never overlaps more than the configured w
     scheduleRequests({ concurrency: 1, serviceMs: 10, buffer: 0 }, [10, 0]),
   );
 });
+
+test("deadlines cancel queued and running work while exact-boundary completion succeeds", () => {
+  const rows = scheduleRequests(
+    { concurrency: 1, serviceMs: 100, buffer: 1, deadlineMs: 50 },
+    [0, 0, 50],
+  );
+  assert.deepEqual(
+    rows.map((r) => [r.startedAt, r.finishedAt, r.outcome]),
+    [
+      [0, 50, "timed-out"],
+      [null, 50, "timed-out"],
+      [50, 100, "timed-out"],
+    ],
+  );
+  const exact = scheduleRequests(
+    { concurrency: 1, serviceMs: 100, buffer: 1, deadlineMs: 100 },
+    [0, 100],
+  );
+  assert.ok(exact.every((r) => r.outcome === "served"));
+});
+test("deadlines conserve requests and never finish after their cutoff", () => {
+  for (const deadlineMs of [1, 100, 500]) {
+    const rows = scheduleRequests({
+      concurrency: 2,
+      serviceMs: 100,
+      buffer: 8,
+      deadlineMs,
+    });
+    assert.equal(rows.length, 16);
+    assert.equal(new Set(rows.map((r) => r.id)).size, 16);
+    assert.ok(rows.every((r) => r.finishedAt <= r.arrivedAt + deadlineMs));
+  }
+});
