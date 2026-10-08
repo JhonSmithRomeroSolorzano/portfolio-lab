@@ -134,7 +134,9 @@ Next: persist and restore comparison baselines, then add readable reports and sh
 
 - [x] Capture, persist, restore, and clear a validated comparison baseline. Corrupt or unavailable storage leaves the current visit usable and shows an honest persistence message.
 
-Next: export a readable comparison report.
+- [x] Export a readable Markdown comparison with both configurations, recalculated metrics, signed differences, and explicit model limitations. A copyable view remains available when downloads are blocked.
+
+Next: portable comparison snapshots and links.
 
 ## Next useful milestones
 

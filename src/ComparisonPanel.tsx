@@ -1,3 +1,5 @@
+import { TextExport } from "./TextExport";
+import { comparisonReport } from "./comparison-report";
 import { loadBaseline, saveBaseline } from "./comparison-storage";
 import { useState } from "react";
 import { compareScenarios, signed } from "./comparison";
@@ -84,6 +86,12 @@ export function Comparison({
                 <small>Lower is less pressure</small>
               </div>
             </div>
+            <TextExport
+              text={comparisonReport(baseline, scenario)}
+              filename="signal-lab-comparison.md"
+              kind="comparison report"
+              type="text/markdown;charset=utf-8"
+            />
           </>
         )}
       </div>
