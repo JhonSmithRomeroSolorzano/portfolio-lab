@@ -1,7 +1,7 @@
 import { LABS } from "./lab-catalog";
 import type { LabId } from "./lab-catalog";
 import { LabNavigation } from "./LabNavigation";
-import { baselineFromSearch } from "./comparison-link";
+import { labFromSearch, labUrl } from "./lab-navigation";
 import "./labs.css";
 import { RetryExperiment } from "./RetryExperiment";
 import { ServiceClientPanel } from "./ServiceClientPanel";
@@ -72,8 +72,26 @@ function Arrow({ diagonal = false }: { diagonal?: boolean }) {
 
 function SignalLab() {
   const [activeLab, setActiveLab] = useState<LabId>(() =>
-    baselineFromSearch(window.location.search) ? "compare" : "traffic",
+    labFromSearch(window.location.search),
   );
+  const viewportRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const restore = () => setActiveLab(labFromSearch(window.location.search));
+    window.addEventListener("popstate", restore);
+    return () => window.removeEventListener("popstate", restore);
+  }, []);
+  useEffect(() => {
+    if (viewportRef.current) viewportRef.current.scrollTop = 0;
+  }, [activeLab]);
+  function chooseLab(id: LabId) {
+    if (id === activeLab) return;
+    window.history.pushState(
+      window.history.state,
+      "",
+      labUrl(window.location.href, id),
+    );
+    setActiveLab(id);
+  }
   const selectedLab = LABS.find((lab) => lab.id === activeLab)!;
   const [scenario, setScenario] = useState<Scenario>(() =>
     scenarioFromSearch(window.location.search),
@@ -120,8 +138,13 @@ function SignalLab() {
         </span>
         <span className="simulation-tag">INTERACTIVE SIMULATION</span>
       </div>
-      <LabNavigation active={activeLab} onSelect={setActiveLab} />
+      <LabNavigation
+        active={activeLab}
+        onSelect={chooseLab}
+        scenario={scenario}
+      />
       <div
+        ref={viewportRef}
         className="lab-viewport"
         role="region"
         aria-label="Experiment workspace"

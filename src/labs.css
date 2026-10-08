@@ -168,3 +168,30 @@
     gap: 16px;
   }
 }
+.lab-navigation {
+  flex-wrap: wrap;
+}
+.lab-navigation > p {
+  flex: 1;
+}
+.lab-entry-link {
+  flex-basis: 100%;
+  font-size: 11px;
+}
+.lab-entry-link summary {
+  cursor: pointer;
+  color: var(--signal);
+}
+.lab-entry-link input {
+  width: 100%;
+  background: var(--lab-surface);
+  border: 1px solid var(--lab-outline);
+  color: var(--lab-text);
+  padding: 10px;
+  border-radius: 4px;
+}
+.lab-entry-link small {
+  display: block;
+  margin-top: 8px;
+  color: var(--lab-muted);
+}

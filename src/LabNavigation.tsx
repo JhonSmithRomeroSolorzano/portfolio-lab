@@ -1,10 +1,14 @@
+import { labEntryUrl } from "./lab-navigation";
+import type { Scenario } from "./simulation";
 import { LABS, LAB_AREAS } from "./lab-catalog";
 import type { LabId } from "./lab-catalog";
 export function LabNavigation({
   active,
   onSelect,
+  scenario,
 }: {
   active: LabId;
+  scenario: Scenario;
   onSelect: (id: LabId) => void;
 }) {
   const selected = LABS.find((lab) => lab.id === active)!;
@@ -32,6 +36,20 @@ export function LabNavigation({
         <span>{selected.area}</span>
         {selected.detail}
       </p>
+      <details className="lab-entry-link">
+        <summary>Link to this lab</summary>
+        <label htmlFor="lab-entry-url">Lab entry link</label>
+        <input
+          id="lab-entry-url"
+          value={labEntryUrl(window.location.href, active, scenario)}
+          readOnly
+          onFocus={(e) => e.currentTarget.select()}
+        />
+        <small>
+          Opens this lab with the shared traffic setup. Independent lab settings
+          use their defaults.
+        </small>
+      </details>
     </div>
   );
 }

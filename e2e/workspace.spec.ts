@@ -43,3 +43,18 @@ test("only the selected experiment is visible and the workspace stays bounded", 
     page.getByLabel("Exact request rate", { exact: true }),
   ).toBeVisible();
 });
+
+test("selected labs survive reload and browser history restores the previous lab", async ({
+  page,
+}) => {
+  await page.goto("/?lab=cache#lab");
+  const picker = page.getByLabel("Choose a lab", { exact: true });
+  await expect(picker).toHaveValue("cache");
+  await picker.selectOption("queue");
+  await page.reload();
+  await expect(picker).toHaveValue("queue");
+  await page.goBack();
+  await expect(picker).toHaveValue("cache");
+  await page.goForward();
+  await expect(picker).toHaveValue("queue");
+});
