@@ -3,7 +3,7 @@ import { ToolPanel } from "../ToolPanel";
 import { LabRange } from "./LabControls";
 import { EventInspector } from "./EventInspector";
 import { circuitBreaker } from "./circuit-breaker";
-export function CircuitBreakerLab() {
+export function CircuitBreakerLab({ active }: { active: boolean }) {
   const [{ threshold, cooldown, recovery }, update] =
     useIndependentLab("circuit");
   const run = circuitBreaker(threshold, cooldown, recovery);
@@ -68,6 +68,7 @@ export function CircuitBreakerLab() {
           </p>
         </div>
         <EventInspector
+          active={active}
           events={run.rows.map((r) => ({
             at: r.at,
             title: `${r.before} → ${r.after}`,

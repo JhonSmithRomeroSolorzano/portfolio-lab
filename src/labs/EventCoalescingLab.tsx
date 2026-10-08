@@ -3,7 +3,7 @@ import { ToolPanel } from "../ToolPanel";
 import { LabRange, LabChoice } from "./LabControls";
 import { EventInspector } from "./EventInspector";
 import { coalesceInputs } from "./event-coalescing";
-export function EventCoalescingLab() {
+export function EventCoalescingLab({ active }: { active: boolean }) {
   const [{ pattern, delay, policy }, update] = useIndependentLab("events");
   const run = coalesceInputs(pattern, delay, policy);
   return (
@@ -67,6 +67,7 @@ export function EventCoalescingLab() {
           ))}
         </div>
         <EventInspector
+          active={active}
           events={run.emissions.map((e) => ({
             at: e.at,
             title: `Input ${e.index + 1} delivered`,

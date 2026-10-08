@@ -171,3 +171,77 @@ test("lab discovery filters results, restores focus, and keeps the workspace com
     page.getByRole("button", { name: "Browse experiments", exact: true }),
   ).toBeFocused();
 });
+
+test("event playback advances on demand, stops on lab change, and honors reduced motion", async ({
+  page,
+}) => {
+  await page.clock.install();
+  await page.goto("/?lab=search#lab");
+  const visible = page.locator(".experiment-tools > div:not([hidden])");
+  await visible
+    .getByRole("button", { name: "Play events", exact: true })
+    .click();
+  await expect(
+    visible.getByRole("slider", { name: "Inspect event", exact: false }),
+  ).toHaveValue("0");
+  await page.clock.runFor(1000);
+  await expect(
+    visible.getByRole("slider", { name: "Inspect event", exact: false }),
+  ).toHaveValue("1");
+  await page
+    .getByLabel("Choose a lab", { exact: true })
+    .selectOption("eviction");
+  await page.clock.runFor(3000);
+  await page.getByLabel("Choose a lab", { exact: true }).selectOption("search");
+  await expect(
+    visible.getByRole("button", { name: "Play events", exact: true }),
+  ).toBeVisible();
+  await expect(
+    visible.getByRole("slider", { name: "Inspect event", exact: false }),
+  ).toHaveValue("1");
+  await visible
+    .getByRole("button", { name: "Play events", exact: true })
+    .click();
+  await page.clock.runFor(5000);
+  await expect(
+    visible.getByRole("slider", { name: "Inspect event", exact: false }),
+  ).toHaveValue("5");
+  await expect(
+    visible.getByRole("button", { name: "Play events", exact: true }),
+  ).toBeVisible();
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(
+    visible.getByRole("button", { name: "Play events", exact: true }),
+  ).toBeDisabled();
+  await visible
+    .getByRole("button", { name: "First event", exact: true })
+    .click();
+  await expect(
+    visible.getByRole("slider", { name: "Inspect event", exact: false }),
+  ).toHaveValue("0");
+});
+
+test("timing charts expose request durations and exact retry window counts", async ({
+  page,
+}) => {
+  await page.goto("/?lab=requests#lab");
+  await page.getByLabel("Inspect request", { exact: true }).selectOption("4");
+  await expect(
+    page.getByText(
+      "Request 4: arrived at 0 ms, waited 100 ms, worked for 100 ms. Completed at 200 ms.",
+      { exact: true },
+    ),
+  ).toBeVisible();
+  await page
+    .getByLabel("Choose a lab", { exact: true })
+    .selectOption("retries");
+  await expect(
+    page.getByRole("img", { name: "Attempt distribution.", exact: false }),
+  ).toBeVisible();
+  await page
+    .getByRole("slider", { name: "Inspect 100 ms window:", exact: false })
+    .fill("1");
+  await expect(page.locator('.retry-distribution [role="status"]')).toHaveText(
+    /8 attempts without jitter/,
+  );
+});

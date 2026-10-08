@@ -492,22 +492,22 @@ function SignalLab() {
         </div>
         <div className="experiment-tools">
           <div hidden={activeLab !== "writes"}>
-            <ConcurrentWritesLab />
+            <ConcurrentWritesLab active={activeLab === "writes"} />
           </div>
           <div hidden={activeLab !== "eviction"}>
-            <CacheEvictionLab />
+            <CacheEvictionLab active={activeLab === "eviction"} />
           </div>
           <div hidden={activeLab !== "rate-limit"}>
-            <RateLimitLab />
+            <RateLimitLab active={activeLab === "rate-limit"} />
           </div>
           <div hidden={activeLab !== "circuit"}>
-            <CircuitBreakerLab />
+            <CircuitBreakerLab active={activeLab === "circuit"} />
           </div>
           <div hidden={activeLab !== "events"}>
-            <EventCoalescingLab />
+            <EventCoalescingLab active={activeLab === "events"} />
           </div>
           <div hidden={activeLab !== "search"}>
-            <AsyncSearchLab />
+            <AsyncSearchLab active={activeLab === "search"} />
           </div>
           <div hidden={activeLab !== "presets"}>
             <Presets onSelect={selectScenario} />

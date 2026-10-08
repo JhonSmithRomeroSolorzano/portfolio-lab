@@ -42,6 +42,8 @@ The six independent frontend/reliability/data experiments also preserve their ow
 
 Open **Follow an investigation** for three guided paths: keep an async interface correct, protect a recovering service, or resolve competing writes. Each step loads a known setup, asks a question, and offers optional evidence. These paths connect engineering decisions; their independent models do not simulate one combined production system.
 
+Use **Browse experiments** to search by behavior and filter by area. The six event-based labs offer explicit playback, pause, pace selection, and manual event stepping. Playback stops when leaving the lab, changing inputs, hiding the tab, reaching the end, or enabling reduced motion. Playback is a reading aid; its pace does not represent simulated time. Nothing starts automatically.
+
 ### Explore the tools
 
 - Compare a captured baseline with your current setup.

@@ -3,7 +3,7 @@ import { ToolPanel } from "../ToolPanel";
 import { LabRange, LabChoice } from "./LabControls";
 import { EventInspector } from "./EventInspector";
 import { concurrentWrites } from "./concurrent-writes";
-export function ConcurrentWritesLab() {
+export function ConcurrentWritesLab({ active }: { active: boolean }) {
   const [{ firstDelta, secondDelta, policy }, update] =
     useIndependentLab("writes");
   const run = concurrentWrites(firstDelta, secondDelta, policy);
@@ -59,6 +59,7 @@ export function ConcurrentWritesLab() {
           </p>
         </div>
         <EventInspector
+          active={active}
           events={run.rows.map((r) => ({
             at: r.at,
             title: r.title,

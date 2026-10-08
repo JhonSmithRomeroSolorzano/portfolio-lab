@@ -3,7 +3,7 @@ import { ToolPanel } from "../ToolPanel";
 import { LabRange, LabChoice } from "./LabControls";
 import { EventInspector } from "./EventInspector";
 import { searchResponses } from "./async-search";
-export function AsyncSearchLab() {
+export function AsyncSearchLab({ active }: { active: boolean }) {
   const [{ oldDelay, newestDelay, policy }, update] =
     useIndependentLab("search");
   const run = searchResponses(oldDelay, newestDelay, policy);
@@ -55,6 +55,7 @@ export function AsyncSearchLab() {
           </p>
         </div>
         <EventInspector
+          active={active}
           events={run.rows.map((r) => ({
             at: r.at,
             title:

@@ -275,10 +275,10 @@ Read README.md, CASE_STUDY.md, and AGENTS.md before continuing. Update this road
 
 - [x] Place Experience before the lab and keep the lab as the final main section, after contact. Match menu order and send the introductory link to experience.
 - [x] Replace the stack of open disclosures with one selected experiment in a compact workspace, capped at 680px with independent experiment and table scrolling. Keep shared traffic controls only where they apply.
-- [ ] Organize related experiments across frontend behavior, backend reliability, and data; keep modeled assumptions visible.
-- [ ] Preserve shared setups, keyboard navigation, mobile access, and the existing Sites audience.
+- [x] Organize related experiments across frontend behavior, backend reliability, and data; keep modeled assumptions visible.
+- [x] Preserve shared setups and keyboard navigation; retain mobile access and the existing Sites audience during publication.
 
-Next: build the compact workspace around the existing experiments. This feedback authorizes the new lab direction and supersedes the earlier request to confirm a next milestone.
+The requested compact workspace is implemented. This feedback authorizes the new lab direction and supersedes the earlier request to confirm a next milestone.
 
 - [x] Link directly to a selected lab with validated URL state and browser back/forward support. Preserve legacy comparison links, strip unrelated parameters from copied entry URLs, and reset only the workspace scroll when switching experiments.
 
@@ -305,3 +305,7 @@ Next: build the compact workspace around the existing experiments. This feedback
 - [x] Connect selected experiments with three compact guided investigations: async UI correctness, service recovery, and write conflicts. Each explicit step loads a reproducible setup, offers optional evidence, and leaves room to explore.
 
 - [x] Add a bounded lab browser with area filters, purpose-based search, result counts, empty-state recovery, and keyboard focus restoration. The native selector remains available for quick switching.
+
+- [x] Add explicit event playback, pause, pace, and manual stepping across the six new labs. Stop playback when switching experiments, changing inputs, hiding the tab, reaching the end, or enabling reduced motion; never autoplay.
+
+Manual review covers the compact and expanded workspaces, dark/light themes, responsive 320px layout without page overflow, lab discovery focus, and Escape restoration. Browser regression is run in Chromium and WebKit through CI before publication. Further career additions still need verified details; additional lab expansion should start with a concrete user need.

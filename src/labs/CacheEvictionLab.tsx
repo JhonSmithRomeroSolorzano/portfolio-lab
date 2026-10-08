@@ -3,7 +3,7 @@ import { ToolPanel } from "../ToolPanel";
 import { LabRange, LabChoice } from "./LabControls";
 import { EventInspector } from "./EventInspector";
 import { evictCache, CACHE_KEYS } from "./cache-eviction";
-export function CacheEvictionLab() {
+export function CacheEvictionLab({ active }: { active: boolean }) {
   const [{ capacity, policy }, update] = useIndependentLab("eviction");
   const run = evictCache(capacity, policy);
   return (
@@ -57,6 +57,7 @@ export function CacheEvictionLab() {
           </div>
         </div>
         <EventInspector
+          active={active}
           unit="read"
           events={run.rows.map((r) => ({
             at: r.index + 1,

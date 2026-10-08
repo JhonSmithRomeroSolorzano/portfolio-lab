@@ -3,7 +3,7 @@ import { ToolPanel } from "../ToolPanel";
 import { LabRange, LabChoice } from "./LabControls";
 import { EventInspector } from "./EventInspector";
 import { limitArrivals } from "./rate-limiting";
-export function RateLimitLab() {
+export function RateLimitLab({ active }: { active: boolean }) {
   const [{ limit, policy }, update] = useIndependentLab("rate-limit");
   const run = limitArrivals(limit, policy);
   return (
@@ -57,6 +57,7 @@ export function RateLimitLab() {
           </div>
         </div>
         <EventInspector
+          active={active}
           events={run.rows.map((r) => ({
             at: r.at,
             title: r.accepted ? "Request accepted" : "Request rejected",

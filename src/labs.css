@@ -646,3 +646,60 @@
     grid-template-columns: 1fr;
   }
 }
+
+.event-playback {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+.event-playback button,
+.event-playback select {
+  border: 1px solid var(--lab-outline);
+  color: var(--signal);
+  background: var(--lab-surface);
+  border-radius: 4px;
+  min-height: 36px;
+  padding: 8px 10px;
+  font-size: 11px;
+}
+.event-playback button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.event-playback label {
+  color: var(--lab-muted);
+  font-size: 10px;
+  margin-left: 8px;
+}
+.playback-note {
+  font-size: 10px !important;
+}
+/* Keep navigation tools together so the results retain most of the workspace. */
+.lab-navigation {
+  gap: 14px 24px;
+}
+.lab-navigation > .lab-browser {
+  flex: 0 0 auto;
+}
+.lab-navigation > .lab-browser:has(.lab-browser-panel) {
+  flex-basis: 100%;
+}
+.lab-entry-link {
+  flex: 0 0 auto;
+}
+.lab-entry-link[open] {
+  flex: 1 0 100%;
+}
+.lab-navigation > p {
+  min-width: 200px;
+}
+@media (max-width: 700px) {
+  .lab-entry-link {
+    margin-top: 14px;
+  }
+  .lab-navigation > p {
+    min-width: 0;
+  }
+}

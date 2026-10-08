@@ -81,6 +81,25 @@ Browser checks cover precise traffic input, baseline comparison, saved-library p
 
 The browser suite now also covers comparison restoration, saved-library edits, cross-tab changes, deadline outcomes, cache accounting, and keyboard table scrolling. Unit tests check exact event ordering, conservation, retry budgets, reproducibility, and invalid imports. The local development client now checks explicitly requested scenarios through the Node service. A same-origin development proxy avoids enabling CORS. Replies are bounded and checked against the echoed scenario, model version, and all calculated fields. Cancellation and input changes invalidate pending replies. HTTP round-trip time remains separate from modeled latency; published builds never contact localhost.
 
+## Compact investigations across the stack
+
+The portfolio puts professional experience before the lab. The lab presents one experiment at a time in a bounded workspace, with an optional expanded view, instead of growing the page as tools are opened. Its searchable catalog separates frontend, backend, data, and workspace tools. Guided investigations ask a question, load a reproducible configuration, and reveal evidence on demand.
+
+Six additional pure models expose specific decisions:
+
+| Experiment | Decision | Limits |
+| --- | --- | --- |
+| Async search | Render every response or only the latest request | Three fixed input times; ignoring a result does not cancel backend work |
+| Debounce / throttle | Emit every event, after a quiet period, or on a leading interval | Fixed finite streams; leading throttle has no trailing flush |
+| Circuit breaker | Open after failures and probe after a cooldown | Sequential instantaneous calls, with no rolling window or concurrent probes |
+| Rate limiting | Reset fixed windows or refill a bounded token bucket | Fixed arrivals; admission only, without service time or retries |
+| Cache eviction | Evict oldest insertion or least recent use | Equal-size items, successful origin reads, no expiration or value changes |
+| Concurrent writes | Overwrite, reject stale versions, or reread and retry a delta | Atomic version comparison and known rejection; no lost acknowledgments |
+
+These are independent illustrations, not measurements or claims about a combined service. Each keeps its assumptions visible. The scheduler chart separates queue wait from worker time, including expiration before dispatch. The retry chart compares seeded jitter with synchronized attempts on the same axes and includes exact per-window counts.
+
+Versioned configuration links validate all fields before applying them and always recompute results. Event playback is manual to start, stops when its context changes, and gives way to manual stepping under reduced motion. The timeline, selectors, event log, and raw tables preserve access without depending on color or animation.
+
 ## Review path
 
 - [`src/simulation.ts`](src/simulation.ts): formulas and core assumptions.
