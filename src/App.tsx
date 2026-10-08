@@ -1,3 +1,8 @@
+import { LABS } from "./lab-catalog";
+import type { LabId } from "./lab-catalog";
+import { LabNavigation } from "./LabNavigation";
+import { baselineFromSearch } from "./comparison-link";
+import "./labs.css";
 import { RetryExperiment } from "./RetryExperiment";
 import { ServiceClientPanel } from "./ServiceClientPanel";
 import { ResultAnnouncement } from "./ResultAnnouncement";
@@ -66,6 +71,10 @@ function Arrow({ diagonal = false }: { diagonal?: boolean }) {
 }
 
 function SignalLab() {
+  const [activeLab, setActiveLab] = useState<LabId>(() =>
+    baselineFromSearch(window.location.search) ? "compare" : "traffic",
+  );
+  const selectedLab = LABS.find((lab) => lab.id === activeLab)!;
   const [scenario, setScenario] = useState<Scenario>(() =>
     scenarioFromSearch(window.location.search),
   );
@@ -111,342 +120,384 @@ function SignalLab() {
         </span>
         <span className="simulation-tag">INTERACTIVE SIMULATION</span>
       </div>
-      <div className="lab-body">
-        <div className="lab-display">
-          <div className="display-heading">
-            <div>
-              <span className="eyebrow dark-label">REQUEST FLOW</span>
-              <h3>A small system. Real trade-offs.</h3>
-            </div>
-            <span className={`status ${statusClass}`}>
-              <i />
-              {labels[result.status]}
-            </span>
-          </div>
-          <div
-            className="flow"
-            aria-label="Architecture: a browser sends requests to an API, which reads from a cache or database."
-          >
-            <div className="flow-node">
-              <span className="node-icon">⌘</span>
-              <strong>Browser</strong>
-              <small>React client</small>
-            </div>
-            <div className="flow-wire" aria-hidden="true">
-              <span />
-            </div>
-            <div className="flow-node">
-              <span className="node-icon">{`{ }`}</span>
-              <strong>API</strong>
-              <small>Node.js concept</small>
-            </div>
-            <div className="flow-branch" aria-hidden="true">
-              <span />
-            </div>
-            <div className="flow-stack">
-              <div
-                className={`flow-node compact ${scenario.cacheEnabled ? "cache-active" : "muted-node"}`}
-              >
-                <span className="compact-icon">↯</span>
-                <span>
-                  <strong>Cache</strong>
-                  <small>
-                    {scenario.cacheEnabled
-                      ? `${scenario.cacheHitPercent ?? 80}% warm-cache hits`
-                      : "Bypassed"}
-                  </small>
-                </span>
-                <i />
+      <LabNavigation active={activeLab} onSelect={setActiveLab} />
+      <div
+        className="lab-viewport"
+        role="region"
+        aria-label="Experiment workspace"
+        tabIndex={0}
+      >
+        <div
+          className={`lab-body ${activeLab === "traffic" ? "" : "tool-mode"}`}
+          hidden={!selectedLab.shared}
+        >
+          <div className="lab-display" hidden={activeLab !== "traffic"}>
+            <div className="display-heading">
+              <div>
+                <span className="eyebrow dark-label">REQUEST FLOW</span>
+                <h3>A small system. Real trade-offs.</h3>
               </div>
-              <div
-                className={`flow-node compact ${scenario.database === "offline" ? "database-offline" : ""}`}
-              >
-                <span className="compact-icon">▤</span>
-                <span>
-                  <strong>Database</strong>
-                  <small>
-                    {scenario.database === "offline"
-                      ? "Offline"
-                      : `${scenario.database === "slow" ? "400" : "80"} ms · ${scenario.databaseConnections ?? 8} connections`}
-                  </small>
-                </span>
+              <span className={`status ${statusClass}`}>
                 <i />
-              </div>
-            </div>
-          </div>
-          <div className="metrics">
-            <div>
-              <span>Mean response</span>
-              <strong>
-                {Math.round(result.meanLatencyMs)}
-                <small> ms</small>
-              </strong>
-            </div>
-            <div>
-              <span>Successful requests</span>
-              <strong>
-                {Math.round(result.successPercent)}
-                <small> %</small>
-              </strong>
-            </div>
-            <div>
-              <span>Database demand</span>
-              <strong>
-                {Math.round(result.databaseDemand)}
-                <small> /s</small>
-              </strong>
-            </div>
-          </div>
-          <ResultAnnouncement
-            message={`${labels[result.status]}. At ${scenario.requestsPerSecond} requests per second: mean response ${Math.round(result.meanLatencyMs)} milliseconds, ${Math.round(result.successPercent)} percent successful, database demand ${Math.round(result.databaseDemand)} per second.`}
-          />
-          <div className="request-budget">
-            <div className="budget-label">
-              <span>Where the requests go</span>
-              <span>{scenario.requestsPerSecond} req/s</span>
+                {labels[result.status]}
+              </span>
             </div>
             <div
-              className="budget-bar"
-              aria-label={`${Math.round(result.cacheHits)} cached, ${Math.round(result.databaseServed)} database, ${Math.round(result.failed)} timed out requests per second`}
+              className="flow"
+              aria-label="Architecture: a browser sends requests to an API, which reads from a cache or database."
             >
-              <span
-                className="cached"
-                style={{
-                  width: `${(result.cacheHits / result.offered) * 100}%`,
-                }}
-              />
-              <span
-                className="served"
-                style={{
-                  width: `${(result.databaseServed / result.offered) * 100}%`,
-                }}
-              />
-              <span
-                className="failed"
-                style={{ width: `${(result.failed / result.offered) * 100}%` }}
-              />
-            </div>
-            <div className="legend">
-              <span>
-                <i className="cached" />
-                Cache
-              </span>
-              <span>
-                <i className="served" />
-                Database
-              </span>
-              <span>
-                <i className="failed" />
-                Timeout
-              </span>
-            </div>
-          </div>
-          <p className="insight">
-            <span aria-hidden="true">↳</span>
-            {explanations[result.status]}
-          </p>
-        </div>
-        <div className="lab-controls">
-          <span className="eyebrow dark-label">YOU’RE AT THE CONTROLS</span>
-          <div className="control-block">
-            <label htmlFor="traffic">
-              Incoming traffic{" "}
-              <output htmlFor="traffic" aria-live="off">
-                {scenario.requestsPerSecond}
-                <small> req/s</small>
-              </output>
-            </label>
-            <input
-              id="traffic"
-              type="range"
-              min="1"
-              max="600"
-              step="1"
-              value={scenario.requestsPerSecond}
-              onChange={(event) =>
-                update({ requestsPerSecond: Number(event.target.value) })
-              }
-            />
-            <div className="range-labels">
-              <span>Quiet morning</span>
-              <span>Rush hour</span>
-            </div>
-            <RequestRateInput
-              value={scenario.requestsPerSecond}
-              onChange={(requestsPerSecond) => update({ requestsPerSecond })}
-            />
-          </div>
-          <div className="control-block switch-row">
-            <div>
-              <span id="cache-label">Read cache</span>
-              <small>Serve repeated reads faster</small>
-            </div>
-            <button
-              className={`switch ${scenario.cacheEnabled ? "on" : ""}`}
-              type="button"
-              role="switch"
-              aria-checked={scenario.cacheEnabled}
-              aria-labelledby="cache-label"
-              onClick={() => update({ cacheEnabled: !scenario.cacheEnabled })}
-            >
-              <span />
-            </button>
-          </div>
-          <fieldset className="control-block">
-            <legend>Database condition</legend>
-            <div className="segmented">
-              {(["normal", "slow", "offline"] as DatabaseMode[]).map((mode) => (
-                <button
-                  key={mode}
-                  type="button"
-                  aria-pressed={scenario.database === mode}
-                  onClick={() => update({ database: mode })}
+              <div className="flow-node">
+                <span className="node-icon">⌘</span>
+                <strong>Browser</strong>
+                <small>React client</small>
+              </div>
+              <div className="flow-wire" aria-hidden="true">
+                <span />
+              </div>
+              <div className="flow-node">
+                <span className="node-icon">{`{ }`}</span>
+                <strong>API</strong>
+                <small>Node.js concept</small>
+              </div>
+              <div className="flow-branch" aria-hidden="true">
+                <span />
+              </div>
+              <div className="flow-stack">
+                <div
+                  className={`flow-node compact ${scenario.cacheEnabled ? "cache-active" : "muted-node"}`}
                 >
-                  {mode === "normal"
-                    ? "Normal"
-                    : mode === "slow"
-                      ? "Slow"
-                      : "Offline"}
-                </button>
-              ))}
-            </div>
-          </fieldset>
-          <details className="advanced-controls">
-            <summary>
-              More workload settings
-              <small>
-                {scenario.cacheHitPercent ?? 80}% read hits ·{" "}
-                {scenario.databaseConnections ?? 8} connections ·{" "}
-                {scenario.writePercent ?? 0}% writes
-              </small>
-            </summary>
-            <div className="advanced-body">
-              <div className="control-block">
-                <label htmlFor="cache-rate">
-                  Cache hit rate{" "}
-                  <output htmlFor="cache-rate" aria-live="off">
-                    {scenario.cacheHitPercent ?? 80}%
-                  </output>
-                </label>
-                <input
-                  id="cache-rate"
-                  type="range"
-                  min="0"
-                  max="100"
-                  step="5"
-                  disabled={!scenario.cacheEnabled}
-                  value={scenario.cacheHitPercent ?? 80}
-                  onChange={(event) =>
-                    update({ cacheHitPercent: Number(event.target.value) })
-                  }
-                />
-              </div>
-              <div className="control-block">
-                <label htmlFor="pool-size">
-                  Database pool{" "}
-                  <output htmlFor="pool-size" aria-live="off">
-                    {scenario.databaseConnections ?? 8} connections
-                  </output>
-                </label>
-                <input
-                  id="pool-size"
-                  type="range"
-                  min="1"
-                  max="32"
-                  step="1"
-                  value={scenario.databaseConnections ?? 8}
-                  disabled={scenario.database === "offline"}
-                  onChange={(event) =>
-                    update({ databaseConnections: Number(event.target.value) })
-                  }
-                />
-              </div>
-              <div className="control-block">
-                <label htmlFor="write-share">
-                  Write requests{" "}
-                  <output htmlFor="write-share" aria-live="off">
-                    {scenario.writePercent ?? 0}%
-                  </output>
-                </label>
-                <input
-                  id="write-share"
-                  type="range"
-                  min="0"
-                  max="100"
-                  step="5"
-                  value={scenario.writePercent ?? 0}
-                  onChange={(event) =>
-                    update({ writePercent: Number(event.target.value) })
-                  }
-                />
-                <small>Writes always bypass the read cache.</small>
+                  <span className="compact-icon">↯</span>
+                  <span>
+                    <strong>Cache</strong>
+                    <small>
+                      {scenario.cacheEnabled
+                        ? `${scenario.cacheHitPercent ?? 80}% warm-cache hits`
+                        : "Bypassed"}
+                    </small>
+                  </span>
+                  <i />
+                </div>
+                <div
+                  className={`flow-node compact ${scenario.database === "offline" ? "database-offline" : ""}`}
+                >
+                  <span className="compact-icon">▤</span>
+                  <span>
+                    <strong>Database</strong>
+                    <small>
+                      {scenario.database === "offline"
+                        ? "Offline"
+                        : `${scenario.database === "slow" ? "400" : "80"} ms · ${scenario.databaseConnections ?? 8} connections`}
+                    </small>
+                  </span>
+                  <i />
+                </div>
               </div>
             </div>
-          </details>
-          <ShareExperiment key={JSON.stringify(scenario)} scenario={scenario} />
+            <div className="metrics">
+              <div>
+                <span>Mean response</span>
+                <strong>
+                  {Math.round(result.meanLatencyMs)}
+                  <small> ms</small>
+                </strong>
+              </div>
+              <div>
+                <span>Successful requests</span>
+                <strong>
+                  {Math.round(result.successPercent)}
+                  <small> %</small>
+                </strong>
+              </div>
+              <div>
+                <span>Database demand</span>
+                <strong>
+                  {Math.round(result.databaseDemand)}
+                  <small> /s</small>
+                </strong>
+              </div>
+            </div>
+            <ResultAnnouncement
+              message={`${labels[result.status]}. At ${scenario.requestsPerSecond} requests per second: mean response ${Math.round(result.meanLatencyMs)} milliseconds, ${Math.round(result.successPercent)} percent successful, database demand ${Math.round(result.databaseDemand)} per second.`}
+            />
+            <div className="request-budget">
+              <div className="budget-label">
+                <span>Where the requests go</span>
+                <span>{scenario.requestsPerSecond} req/s</span>
+              </div>
+              <div
+                className="budget-bar"
+                aria-label={`${Math.round(result.cacheHits)} cached, ${Math.round(result.databaseServed)} database, ${Math.round(result.failed)} timed out requests per second`}
+              >
+                <span
+                  className="cached"
+                  style={{
+                    width: `${(result.cacheHits / result.offered) * 100}%`,
+                  }}
+                />
+                <span
+                  className="served"
+                  style={{
+                    width: `${(result.databaseServed / result.offered) * 100}%`,
+                  }}
+                />
+                <span
+                  className="failed"
+                  style={{
+                    width: `${(result.failed / result.offered) * 100}%`,
+                  }}
+                />
+              </div>
+              <div className="legend">
+                <span>
+                  <i className="cached" />
+                  Cache
+                </span>
+                <span>
+                  <i className="served" />
+                  Database
+                </span>
+                <span>
+                  <i className="failed" />
+                  Timeout
+                </span>
+              </div>
+            </div>
+            <p className="insight">
+              <span aria-hidden="true">↳</span>
+              {explanations[result.status]}
+            </p>
+          </div>
+          <div className="lab-controls">
+            <span className="eyebrow dark-label">YOU’RE AT THE CONTROLS</span>
+            <div className="control-block">
+              <label htmlFor="traffic">
+                Incoming traffic{" "}
+                <output htmlFor="traffic" aria-live="off">
+                  {scenario.requestsPerSecond}
+                  <small> req/s</small>
+                </output>
+              </label>
+              <input
+                id="traffic"
+                type="range"
+                min="1"
+                max="600"
+                step="1"
+                value={scenario.requestsPerSecond}
+                onChange={(event) =>
+                  update({ requestsPerSecond: Number(event.target.value) })
+                }
+              />
+              <div className="range-labels">
+                <span>Quiet morning</span>
+                <span>Rush hour</span>
+              </div>
+              <RequestRateInput
+                value={scenario.requestsPerSecond}
+                onChange={(requestsPerSecond) => update({ requestsPerSecond })}
+              />
+            </div>
+            <div className="control-block switch-row">
+              <div>
+                <span id="cache-label">Read cache</span>
+                <small>Serve repeated reads faster</small>
+              </div>
+              <button
+                className={`switch ${scenario.cacheEnabled ? "on" : ""}`}
+                type="button"
+                role="switch"
+                aria-checked={scenario.cacheEnabled}
+                aria-labelledby="cache-label"
+                onClick={() => update({ cacheEnabled: !scenario.cacheEnabled })}
+              >
+                <span />
+              </button>
+            </div>
+            <fieldset className="control-block">
+              <legend>Database condition</legend>
+              <div className="segmented">
+                {(["normal", "slow", "offline"] as DatabaseMode[]).map(
+                  (mode) => (
+                    <button
+                      key={mode}
+                      type="button"
+                      aria-pressed={scenario.database === mode}
+                      onClick={() => update({ database: mode })}
+                    >
+                      {mode === "normal"
+                        ? "Normal"
+                        : mode === "slow"
+                          ? "Slow"
+                          : "Offline"}
+                    </button>
+                  ),
+                )}
+              </div>
+            </fieldset>
+            <details className="advanced-controls">
+              <summary>
+                More workload settings
+                <small>
+                  {scenario.cacheHitPercent ?? 80}% read hits ·{" "}
+                  {scenario.databaseConnections ?? 8} connections ·{" "}
+                  {scenario.writePercent ?? 0}% writes
+                </small>
+              </summary>
+              <div className="advanced-body">
+                <div className="control-block">
+                  <label htmlFor="cache-rate">
+                    Cache hit rate{" "}
+                    <output htmlFor="cache-rate" aria-live="off">
+                      {scenario.cacheHitPercent ?? 80}%
+                    </output>
+                  </label>
+                  <input
+                    id="cache-rate"
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="5"
+                    disabled={!scenario.cacheEnabled}
+                    value={scenario.cacheHitPercent ?? 80}
+                    onChange={(event) =>
+                      update({ cacheHitPercent: Number(event.target.value) })
+                    }
+                  />
+                </div>
+                <div className="control-block">
+                  <label htmlFor="pool-size">
+                    Database pool{" "}
+                    <output htmlFor="pool-size" aria-live="off">
+                      {scenario.databaseConnections ?? 8} connections
+                    </output>
+                  </label>
+                  <input
+                    id="pool-size"
+                    type="range"
+                    min="1"
+                    max="32"
+                    step="1"
+                    value={scenario.databaseConnections ?? 8}
+                    disabled={scenario.database === "offline"}
+                    onChange={(event) =>
+                      update({
+                        databaseConnections: Number(event.target.value),
+                      })
+                    }
+                  />
+                </div>
+                <div className="control-block">
+                  <label htmlFor="write-share">
+                    Write requests{" "}
+                    <output htmlFor="write-share" aria-live="off">
+                      {scenario.writePercent ?? 0}%
+                    </output>
+                  </label>
+                  <input
+                    id="write-share"
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="5"
+                    value={scenario.writePercent ?? 0}
+                    onChange={(event) =>
+                      update({ writePercent: Number(event.target.value) })
+                    }
+                  />
+                  <small>Writes always bypass the read cache.</small>
+                </div>
+              </div>
+            </details>
+            <ShareExperiment
+              key={JSON.stringify(scenario)}
+              scenario={scenario}
+            />
+            <button
+              className="reset-button"
+              type="button"
+              onClick={() => selectScenario({ ...DEFAULT_SCENARIO })}
+            >
+              ↺ Reset the experiment
+            </button>
+            <p className="model-note">
+              A browser-only model with explicit assumptions. No live services
+              or production measurements.
+            </p>
+          </div>
+        </div>
+        <div className="experiment-tools">
+          <div hidden={activeLab !== "presets"}>
+            <Presets onSelect={selectScenario} />
+          </div>
+          <div hidden={activeLab !== "compare"}>
+            <Comparison scenario={scenario} onSelect={selectScenario} />
+          </div>
+          <div hidden={activeLab !== "sweep"}>
+            <CapacitySweepPanel scenario={scenario} />
+          </div>
+          <div hidden={activeLab !== "cache"}>
+            <CacheExpiryPanel />
+          </div>
+          <div hidden={activeLab !== "queue"}>
+            <QueueExperiment />
+          </div>
+          <div hidden={activeLab !== "requests"}>
+            <RequestSchedulerPanel />
+          </div>
+          <div hidden={activeLab !== "retries"}>
+            <RetryExperiment />
+          </div>
+          <div hidden={activeLab !== "trace"}>
+            <RequestTrace key={JSON.stringify(scenario)} scenario={scenario} />
+          </div>
+          <div hidden={activeLab !== "library"}>
+            <ExperimentLibrary scenario={scenario} onSelect={selectScenario} />
+          </div>
+          <div hidden={activeLab !== "files"}>
+            <ExperimentFiles scenario={scenario} onSelect={selectScenario} />
+          </div>
+          <div hidden={activeLab !== "api"}>
+            <ServiceClientPanel scenario={scenario} />
+          </div>
+        </div>
+        <div className="lab-bottom" hidden={activeLab !== "traffic"}>
           <button
-            className="reset-button"
             type="button"
-            onClick={() => selectScenario({ ...DEFAULT_SCENARIO })}
+            aria-expanded={showModel}
+            aria-controls="model-details"
+            onClick={() => setShowModel(!showModel)}
           >
-            ↺ Reset the experiment
+            {showModel ? "−" : "+"} Under the hood
           </button>
-          <p className="model-note">
-            A browser-only model with explicit assumptions. No live services or
-            production measurements.
-          </p>
+          <a
+            href={`${REPO}/blob/main/src/simulation.ts`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Explore the model <Arrow diagonal />
+          </a>
         </div>
+        {showModel && activeLab === "traffic" && (
+          <div id="model-details" className="model-details">
+            <p>
+              Each request adds 12 ms of API overhead. With caching enabled,{" "}
+              {scenario.cacheHitPercent ?? 80}% of reads hit a warm cache in 8
+              ms. Uncached reads and all writes share{" "}
+              {scenario.databaseConnections ?? 8} database connections: 80 ms
+              per read normally, 400 ms when slow. Reads and writes have the
+              same modeled database cost. Database capacity is connections ×
+              1,000 ÷ latency. Requests above that capacity, or to an offline
+              database, time out after 1,000 ms.
+            </p>
+            <p>
+              The mean includes successes and timeouts. This steady-state model
+              has no queue, retries, cache expiry, or network variance. Its
+              purpose is to make the trade-offs visible; it does not predict
+              production performance.
+            </p>
+          </div>
+        )}
       </div>
-      <div className="experiment-tools">
-        <Presets onSelect={selectScenario} />
-        <Comparison scenario={scenario} onSelect={selectScenario} />
-        <CapacitySweepPanel scenario={scenario} />
-        <CacheExpiryPanel />
-        <QueueExperiment />
-        <RequestSchedulerPanel />
-        <RetryExperiment />
-        <RequestTrace key={JSON.stringify(scenario)} scenario={scenario} />
-        <ExperimentLibrary scenario={scenario} onSelect={selectScenario} />
-        <ExperimentFiles scenario={scenario} onSelect={selectScenario} />
-        <ServiceClientPanel scenario={scenario} />
-      </div>
-      <div className="lab-bottom">
-        <button
-          type="button"
-          aria-expanded={showModel}
-          aria-controls="model-details"
-          onClick={() => setShowModel(!showModel)}
-        >
-          {showModel ? "−" : "+"} Under the hood
-        </button>
-        <a
-          href={`${REPO}/blob/main/src/simulation.ts`}
-          target="_blank"
-          rel="noreferrer"
-        >
-          Explore the model <Arrow diagonal />
-        </a>
-      </div>
-      {showModel && (
-        <div id="model-details" className="model-details">
-          <p>
-            Each request adds 12 ms of API overhead. With caching enabled,{" "}
-            {scenario.cacheHitPercent ?? 80}% of reads hit a warm cache in 8 ms.
-            Uncached reads and all writes share{" "}
-            {scenario.databaseConnections ?? 8} database connections: 80 ms per
-            read normally, 400 ms when slow. Reads and writes have the same
-            modeled database cost. Database capacity is connections × 1,000 ÷
-            latency. Requests above that capacity, or to an offline database,
-            time out after 1,000 ms.
-          </p>
-          <p>
-            The mean includes successes and timeouts. This steady-state model
-            has no queue, retries, cache expiry, or network variance. Its
-            purpose is to make the trade-offs visible; it does not predict
-            production performance.
-          </p>
-        </div>
-      )}
     </div>
   );
 }
@@ -659,8 +710,8 @@ export function App() {
                   </h2>
                 </div>
                 <p>
-                  Change the traffic, cache, or database. Inspect how a small
-                  system responds, then read the decisions behind the model.
+                  Choose an experiment. Adjust a few inputs, inspect the result,
+                  and explore the decisions behind the behavior.
                 </p>
               </div>
               <SignalLab />

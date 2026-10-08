@@ -1,3 +1,4 @@
+import { ToolPanel } from "./ToolPanel";
 import { PRESETS } from "./presets";
 import type { Scenario } from "./simulation";
 export function Presets({
@@ -6,8 +7,7 @@ export function Presets({
   onSelect: (scenario: Scenario) => void;
 }) {
   return (
-    <details className="tool-panel">
-      <summary>Try a guided experiment</summary>
+    <ToolPanel title="Try a guided experiment">
       <div className="tool-content preset-grid">
         {PRESETS.map((preset) => (
           <article key={preset.name}>
@@ -22,6 +22,6 @@ export function Presets({
           </article>
         ))}
       </div>
-    </details>
+    </ToolPanel>
   );
 }

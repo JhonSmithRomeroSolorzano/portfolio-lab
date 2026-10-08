@@ -1,3 +1,4 @@
+import { ToolPanel } from "./ToolPanel";
 import { useEffect, useRef, useState } from "react";
 import {
   runServiceScenario,
@@ -64,8 +65,7 @@ export function ServiceClientPanel({ scenario }: { scenario: Scenario }) {
   }
   const stale = reply && !sameScenario(reply.scenario, scenario);
   return (
-    <details className="tool-panel">
-      <summary>Verify with the local API</summary>
+    <ToolPanel title="Verify with the local API">
       <div className="tool-content service-client">
         <p>
           Send a setup through the Node HTTP service and verify that its result
@@ -202,6 +202,6 @@ export function ServiceClientPanel({ scenario }: { scenario: Scenario }) {
           Local setup and API contract ↗
         </a>
       </div>
-    </details>
+    </ToolPanel>
   );
 }

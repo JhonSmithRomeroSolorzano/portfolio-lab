@@ -9,9 +9,7 @@ test("unavailable downloads open and focus the exact copyable export", async ({
     };
   });
   await page.goto("/?traffic=321#lab");
-  await page
-    .getByText("Import or export an experiment", { exact: true })
-    .click();
+  await page.getByLabel("Choose a lab", { exact: true }).selectOption("files");
   await page
     .getByRole("button", { name: "Download experiment JSON", exact: true })
     .click();
@@ -42,7 +40,9 @@ test("export fallback remains usable when a browser refuses the download click",
     };
   });
   await page.goto("/#lab");
-  await page.getByText("Compare two setups", { exact: true }).click();
+  await page
+    .getByLabel("Choose a lab", { exact: true })
+    .selectOption("compare");
   await page
     .getByRole("button", { name: "Capture baseline", exact: true })
     .click();

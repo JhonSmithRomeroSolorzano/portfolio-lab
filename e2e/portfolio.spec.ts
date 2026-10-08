@@ -53,9 +53,7 @@ test("an imported scenario changes controls and survives a URL reload", async ({
   page,
 }) => {
   await page.goto("/#lab");
-  await page
-    .getByText("Import or export an experiment", { exact: true })
-    .click();
+  await page.getByLabel("Choose a lab", { exact: true }).selectOption("files");
   await page.getByLabel("Import experiment JSON (up to 100 KB)").setInputFiles({
     name: "scenario.json",
     mimeType: "application/json",

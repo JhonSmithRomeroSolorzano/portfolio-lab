@@ -1,3 +1,4 @@
+import { ToolPanel } from "./ToolPanel";
 import { useState } from "react";
 import { retryExperiment } from "./retry-model";
 export function RetryExperiment() {
@@ -21,8 +22,7 @@ export function RetryExperiment() {
     buckets.set(b, (buckets.get(b) ?? 0) + 1);
   }
   return (
-    <details className="tool-panel">
-      <summary>Explore retries, backoff, and jitter</summary>
+    <ToolPanel title="Explore retries, backoff, and jitter">
       <div className="tool-content">
         <p>
           Eight requests start together. Attempts fail instantly until the
@@ -142,6 +142,6 @@ export function RetryExperiment() {
           </table>
         </div>
       </div>
-    </details>
+    </ToolPanel>
   );
 }

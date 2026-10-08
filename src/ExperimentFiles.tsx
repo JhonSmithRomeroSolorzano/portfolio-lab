@@ -1,3 +1,4 @@
+import { ToolPanel } from "./ToolPanel";
 import { TextExport } from "./TextExport";
 import { useId, useRef, useState } from "react";
 import { exportExperiment, importExperiment } from "./experiment-file";
@@ -15,8 +16,7 @@ export function ExperimentFiles({
     "Export a reproducible snapshot or import one from another browser. Results are recalculated on import.",
   );
   return (
-    <details className="tool-panel">
-      <summary>Import or export an experiment</summary>
+    <ToolPanel title="Import or export an experiment">
       <div className="tool-content">
         <p role="status">{message}</p>
         <TextExport
@@ -56,6 +56,6 @@ export function ExperimentFiles({
           }}
         />
       </div>
-    </details>
+    </ToolPanel>
   );
 }

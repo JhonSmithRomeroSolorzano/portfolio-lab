@@ -1,3 +1,4 @@
+import { ToolPanel } from "./ToolPanel";
 import { baselineFromSearch, clearComparisonUrl } from "./comparison-link";
 import { ShareComparison } from "./ShareComparison";
 import { ComparisonFiles } from "./ComparisonFiles";
@@ -46,8 +47,7 @@ export function Comparison({
   }
   const delta = baseline ? compareScenarios(baseline, scenario) : null;
   return (
-    <details className="tool-panel" open={shared !== null}>
-      <summary>Compare two setups</summary>
+    <ToolPanel title="Compare two setups">
       <div className="tool-content">
         <p>
           Capture a baseline, then change the controls above. Differences below
@@ -126,6 +126,6 @@ export function Comparison({
           </>
         )}
       </div>
-    </details>
+    </ToolPanel>
   );
 }

@@ -3,7 +3,9 @@ test("saved experiments can be renamed, removed, restored, and reloaded", async 
   page,
 }) => {
   await page.goto("/#lab");
-  await page.getByText("Your experiment library", { exact: true }).click();
+  await page
+    .getByLabel("Choose a lab", { exact: true })
+    .selectOption("library");
   await page
     .getByLabel("Name this setup", { exact: true })
     .fill("Review setup");
@@ -27,7 +29,9 @@ test("saved experiments can be renamed, removed, restored, and reloaded", async 
     .getByRole("button", { name: "Undo last removal", exact: true })
     .click();
   await page.reload();
-  await page.getByText("Your experiment library", { exact: true }).click();
+  await page
+    .getByLabel("Choose a lab", { exact: true })
+    .selectOption("library");
   await expect(
     page.getByRole("button", { name: "Load Renamed setup", exact: true }),
   ).toBeVisible();
@@ -38,10 +42,14 @@ test("another tab sees new experiments without a reload", async ({
   context,
 }) => {
   await page.goto("/#lab");
-  await page.getByText("Your experiment library", { exact: true }).click();
+  await page
+    .getByLabel("Choose a lab", { exact: true })
+    .selectOption("library");
   const other = await context.newPage();
   await other.goto("/#lab");
-  await other.getByText("Your experiment library", { exact: true }).click();
+  await other
+    .getByLabel("Choose a lab", { exact: true })
+    .selectOption("library");
   await page
     .getByLabel("Name this setup", { exact: true })
     .fill("Shared browser save");
@@ -61,7 +69,9 @@ test("saving and rename save, cancel, and Escape retain keyboard focus", async (
   page,
 }) => {
   await page.goto("/#lab");
-  await page.getByText("Your experiment library", { exact: true }).click();
+  await page
+    .getByLabel("Choose a lab", { exact: true })
+    .selectOption("library");
   await page.getByLabel("Name this setup", { exact: true }).fill("Focus check");
   await page
     .getByRole("button", { name: "Save experiment", exact: true })
@@ -94,7 +104,9 @@ test("clearing the comparison returns keyboard focus to capture", async ({
   page,
 }) => {
   await page.goto("/#lab");
-  await page.getByText("Compare two setups", { exact: true }).click();
+  await page
+    .getByLabel("Choose a lab", { exact: true })
+    .selectOption("compare");
   await page
     .getByRole("button", { name: "Capture baseline", exact: true })
     .click();
@@ -111,7 +123,9 @@ test("a cross-tab update recovers focus from a removed rename editor", async ({
   context,
 }) => {
   await page.goto("/#lab");
-  await page.getByText("Your experiment library", { exact: true }).click();
+  await page
+    .getByLabel("Choose a lab", { exact: true })
+    .selectOption("library");
   await page
     .getByLabel("Name this setup", { exact: true })
     .fill("Concurrent edit");
@@ -120,7 +134,9 @@ test("a cross-tab update recovers focus from a removed rename editor", async ({
     .click();
   const other = await context.newPage();
   await other.goto("/#lab");
-  await other.getByText("Your experiment library", { exact: true }).click();
+  await other
+    .getByLabel("Choose a lab", { exact: true })
+    .selectOption("library");
   await page
     .getByRole("button", { name: "Rename Concurrent edit", exact: true })
     .click();
@@ -147,7 +163,9 @@ test("storage failure remains visible after updating a saved experiment", async 
     };
   });
   await page.goto("/#lab");
-  await page.getByText("Your experiment library", { exact: true }).click();
+  await page
+    .getByLabel("Choose a lab", { exact: true })
+    .selectOption("library");
   await page.getByLabel("Name this setup", { exact: true }).fill("Visit only");
   await page
     .getByRole("button", { name: "Save experiment", exact: true })
@@ -186,7 +204,9 @@ test("storage failure remains visible after updating a saved experiment", async 
     page.getByLabel("library JSON contents", { exact: true }),
   ).toContainText('"requestsPerSecond": 333');
   await page.reload();
-  await page.getByText("Your experiment library", { exact: true }).click();
+  await page
+    .getByLabel("Choose a lab", { exact: true })
+    .selectOption("library");
   await expect(
     page.getByText("No saved experiments yet.", { exact: true }),
   ).toBeVisible();

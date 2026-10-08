@@ -1,3 +1,4 @@
+import { ToolPanel } from "./ToolPanel";
 import { TextExport } from "./TextExport";
 import { cacheTimelineCsv } from "./cache-export";
 import { useState } from "react";
@@ -11,8 +12,7 @@ export function CacheExpiryPanel() {
   const visible = rows.slice(0, step + 1);
   const current = rows[step];
   return (
-    <details className="tool-panel">
-      <summary>Explore cache expiry and stale reads</summary>
+    <ToolPanel title="Explore cache expiry and stale reads">
       <div className="tool-content">
         <p>
           A separate single-key experiment: one read per second for 21 seconds.
@@ -171,6 +171,6 @@ export function CacheExpiryPanel() {
           </table>
         </div>
       </div>
-    </details>
+    </ToolPanel>
   );
 }

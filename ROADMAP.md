@@ -274,7 +274,7 @@ Read README.md, CASE_STUDY.md, and AGENTS.md before continuing. Update this road
 ## Recruiter-first page and compact labs — October 8 feedback
 
 - [x] Place Experience before the lab and keep the lab as the final main section, after contact. Match menu order and send the introductory link to experience.
-- [ ] Replace the stack of open disclosures with one selected experiment in a compact workspace.
+- [x] Replace the stack of open disclosures with one selected experiment in a compact workspace, capped at 680px with independent experiment and table scrolling. Keep shared traffic controls only where they apply.
 - [ ] Organize related experiments across frontend behavior, backend reliability, and data; keep modeled assumptions visible.
 - [ ] Preserve shared setups, keyboard navigation, mobile access, and the existing Sites audience.
 

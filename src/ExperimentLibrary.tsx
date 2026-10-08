@@ -1,3 +1,4 @@
+import { ToolPanel } from "./ToolPanel";
 import { LibraryFiles } from "./LibraryFiles";
 import { mergeLibrary } from "./library-file";
 import { useEffect, useId, useRef, useState } from "react";
@@ -76,8 +77,7 @@ export function ExperimentLibrary({
     renameRefs.current.get(entryId)?.focus();
   }
   return (
-    <details className="tool-panel">
-      <summary>Your experiment library</summary>
+    <ToolPanel title="Your experiment library">
       <div className="tool-content">
         <label htmlFor={id}>Name this setup</label>
         <div className="tool-actions">
@@ -253,6 +253,6 @@ export function ExperimentLibrary({
           </ul>
         )}
       </div>
-    </details>
+    </ToolPanel>
   );
 }

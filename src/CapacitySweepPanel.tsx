@@ -1,3 +1,4 @@
+import { ToolPanel } from "./ToolPanel";
 import { capacityHeadroom } from "./capacity-headroom";
 import type { Scenario } from "./simulation";
 import { capacitySweep, sweepCsv } from "./capacity-sweep";
@@ -12,8 +13,7 @@ export function CapacitySweepPanel({ scenario }: { scenario: Scenario }) {
     )
     .join(" ");
   return (
-    <details className="tool-panel">
-      <summary>Sweep traffic and find capacity</summary>
+    <ToolPanel title="Sweep traffic and find capacity">
       <div className="tool-content">
         <p>
           Hold your cache and database settings fixed while increasing traffic
@@ -116,6 +116,6 @@ export function CapacitySweepPanel({ scenario }: { scenario: Scenario }) {
           </div>
         </details>
       </div>
-    </details>
+    </ToolPanel>
   );
 }

@@ -1,3 +1,4 @@
+import { ToolPanel } from "./ToolPanel";
 import { useState } from "react";
 import { queueTimeline, queueRecovery, QUEUE_PROFILES } from "./queue-model";
 export function QueueExperiment() {
@@ -13,8 +14,7 @@ export function QueueExperiment() {
   const end = rows[rows.length - 1];
   const unbuffered = queueTimeline(capacity, 0, arrivals).at(-1)!;
   return (
-    <details className="tool-panel">
-      <summary>Absorb a burst with a bounded queue</summary>
+    <ToolPanel title="Absorb a burst with a bounded queue">
       <div className="tool-content">
         <p>
           A separate eight-second experiment. Each workload offers 64 requests,
@@ -130,6 +130,6 @@ export function QueueExperiment() {
           </table>
         </div>
       </div>
-    </details>
+    </ToolPanel>
   );
 }

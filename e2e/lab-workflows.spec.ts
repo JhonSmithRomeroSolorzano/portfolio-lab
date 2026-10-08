@@ -3,7 +3,9 @@ test("a comparison link restores both setups and can restore the baseline", asyn
   page,
 }) => {
   await page.goto("/#lab");
-  await page.getByText("Compare two setups", { exact: true }).click();
+  await page
+    .getByLabel("Choose a lab", { exact: true })
+    .selectOption("compare");
   await page
     .getByRole("button", { name: "Capture baseline", exact: true })
     .click();
@@ -49,8 +51,8 @@ test("mobile data tables can be scrolled with the keyboard", async ({
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/#lab");
   await page
-    .getByText("Inspect request wait and service times", { exact: true })
-    .click();
+    .getByLabel("Choose a lab", { exact: true })
+    .selectOption("requests");
   const region = page.getByRole("region", {
     name: "Request timing",
     exact: true,
@@ -71,9 +73,7 @@ test("cache strategies and request deadlines expose their different outcomes", a
   page,
 }) => {
   await page.goto("/#lab");
-  await page
-    .getByText("Explore cache expiry and stale reads", { exact: true })
-    .click();
+  await page.getByLabel("Choose a lab", { exact: true }).selectOption("cache");
   await page.getByLabel("Cache strategy", { exact: true }).selectOption("swr");
   const row = page
     .getByRole("region", { name: "Cache strategy comparison", exact: true })
@@ -81,8 +81,8 @@ test("cache strategies and request deadlines expose their different outcomes", a
     .filter({ hasText: "Stale-while-revalidate" });
   await expect(row.locator("td")).toHaveText(["3", "1", "4"]);
   await page
-    .getByText("Inspect request wait and service times", { exact: true })
-    .click();
+    .getByLabel("Choose a lab", { exact: true })
+    .selectOption("requests");
   await page
     .getByLabel("Enforce a deadline from arrival", { exact: true })
     .check();

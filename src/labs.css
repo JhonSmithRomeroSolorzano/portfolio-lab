@@ -1,0 +1,170 @@
+[hidden] {
+  display: none !important;
+}
+.lab-navigation {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: 18px 26px;
+  border-bottom: 1px solid var(--lab-line);
+}
+.lab-navigation > div {
+  flex: 0 0 230px;
+}
+.lab-navigation label {
+  display: block;
+  font: 10px var(--mono);
+  text-transform: uppercase;
+  color: var(--lab-muted);
+  margin-bottom: 8px;
+}
+.lab-navigation select {
+  width: 100%;
+  min-height: 42px;
+  padding: 8px 30px 8px 12px;
+  border: 1px solid var(--lab-outline);
+  border-radius: 5px;
+  background: var(--lab-surface);
+  color: var(--lab-text);
+  font: inherit;
+}
+.lab-navigation p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--lab-muted);
+}
+.lab-navigation p span {
+  display: block;
+  color: var(--signal);
+  font: 10px var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+}
+.lab-viewport {
+  max-height: 680px;
+  overflow: auto;
+  scrollbar-gutter: stable;
+  overscroll-behavior: auto;
+}
+.lab-viewport:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: -3px;
+}
+.lab-viewport .table-scroll {
+  max-height: 340px;
+  overflow: auto;
+}
+.lab-viewport .tool-table thead {
+  position: sticky;
+  top: 0;
+  background: var(--lab-surface);
+  z-index: 1;
+}
+.lab-viewport .lab-display {
+  padding: 24px;
+}
+.lab-viewport .lab-controls {
+  padding: 24px;
+}
+.lab-viewport .flow {
+  margin-block: 20px;
+}
+.lab-viewport .lab-body {
+  min-height: 0;
+}
+.tool-title {
+  margin: 0;
+  padding: 22px 0 0;
+  font: 500 19px var(--display);
+}
+.lab-viewport .experiment-tools:has(> div:not([hidden])) {
+  padding: 0 26px 24px;
+}
+.lab-viewport .experiment-tools:not(:has(> div:not([hidden]))) {
+  display: none;
+}
+.lab-viewport .tool-panel {
+  border: 0;
+}
+.lab-viewport .tool-content {
+  padding-top: 8px;
+}
+.lab-body.tool-mode {
+  display: block;
+}
+.tool-mode .lab-controls {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  border-left: 0;
+  border-bottom: 1px solid var(--lab-line);
+  padding: 18px 26px;
+}
+.tool-mode .lab-controls > .eyebrow,
+.tool-mode .range-labels,
+.tool-mode .share-experiment,
+.tool-mode .model-note,
+.tool-mode .control-block > input[type="range"] {
+  display: none;
+}
+.tool-mode .control-block {
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+.tool-mode .control-block > label[for="traffic"] {
+  display: none;
+}
+.tool-mode .exact-rate {
+  margin: 0;
+}
+.tool-mode .exact-rate small {
+  display: none;
+}
+.tool-mode .switch-row {
+  gap: 10px;
+}
+.tool-mode .switch-row small {
+  display: none;
+}
+.tool-mode .advanced-controls {
+  grid-column: 1/-1;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+.tool-mode .advanced-body {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+.tool-mode .reset-button {
+  grid-column: 1/-1;
+  justify-self: start;
+  margin: 0;
+}
+@media (max-width: 700px) {
+  .lab-navigation {
+    display: block;
+    padding: 16px;
+  }
+  .lab-navigation p {
+    margin-top: 12px;
+  }
+  .lab-viewport {
+    max-height: 660px;
+  }
+  .lab-viewport .experiment-tools:has(> div:not([hidden])) {
+    padding-inline: 16px;
+  }
+  .tool-mode .lab-controls {
+    padding: 16px;
+    grid-template-columns: 1fr;
+  }
+  .tool-mode .advanced-body {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}

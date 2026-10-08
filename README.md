@@ -36,6 +36,8 @@ Change incoming traffic, toggle a warm read cache, and slow down or disconnect t
 
 This is an original, browser-only simulation, not a connection to live infrastructure. Every number follows the documented model in [`src/simulation.ts`](src/simulation.ts). The diagram shows a conceptual architecture; the public demo does not run an API, Redis, or a database. An optional [local Node HTTP API](server/README.md) exposes the same model with input validation and integration tests.
 
+The lab shows one experiment at a time. Use **Choose a lab** to switch between backend, data, and workspace tools; settings remain available during the visit. Shared traffic controls appear only for tools that use that workload. The workspace and long tables have bounded, keyboard-scrollable viewports.
+
 ### Explore the tools
 
 - Compare a captured baseline with your current setup.

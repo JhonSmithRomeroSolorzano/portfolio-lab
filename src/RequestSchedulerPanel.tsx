@@ -1,3 +1,4 @@
+import { ToolPanel } from "./ToolPanel";
 import { useState } from "react";
 import { scheduleRequests, SCHEDULER_ARRIVALS } from "./request-scheduler";
 export function RequestSchedulerPanel() {
@@ -17,8 +18,7 @@ export function RequestSchedulerPanel() {
     ? served.reduce((n, r) => n + r.startedAt! - r.arrivedAt, 0) / served.length
     : 0;
   return (
-    <details className="tool-panel">
-      <summary>Inspect request wait and service times</summary>
+    <ToolPanel title="Inspect request wait and service times">
       <div className="tool-content">
         <p>
           A separate FIFO scheduler for {rows.length} requests arriving at{" "}
@@ -158,6 +158,6 @@ export function RequestSchedulerPanel() {
           </table>
         </div>
       </div>
-    </details>
+    </ToolPanel>
   );
 }

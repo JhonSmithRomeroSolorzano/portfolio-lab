@@ -1,3 +1,4 @@
+import { ToolPanel } from "./ToolPanel";
 import { useState } from "react";
 import { availableRoutes, requestTrace } from "./request-trace";
 import type { TraceRoute } from "./request-trace";
@@ -8,8 +9,7 @@ export function RequestTrace({ scenario }: { scenario: Scenario }) {
   const [count, setCount] = useState(1);
   const steps = requestTrace(scenario, route);
   return (
-    <details className="tool-panel">
-      <summary>Follow one request</summary>
+    <ToolPanel title="Follow one request">
       <div className="tool-content">
         <p>
           A step-by-step illustration of an available outcome. This is a modeled
@@ -46,6 +46,6 @@ export function RequestTrace({ scenario }: { scenario: Scenario }) {
           <button onClick={() => setCount(1)}>Restart trace</button>
         </div>
       </div>
-    </details>
+    </ToolPanel>
   );
 }

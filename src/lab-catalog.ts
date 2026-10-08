@@ -1,0 +1,88 @@
+export const LABS = [
+  {
+    id: "traffic",
+    name: "Traffic & capacity",
+    area: "Backend",
+    detail: "Trace the load through a cache and database.",
+    shared: true,
+  },
+  {
+    id: "presets",
+    name: "Guided setups",
+    area: "Backend",
+    detail: "Start with a reproducible systems question.",
+    shared: true,
+  },
+  {
+    id: "compare",
+    name: "Compare setups",
+    area: "Workspace",
+    detail: "Inspect the difference between two workloads.",
+    shared: true,
+  },
+  {
+    id: "sweep",
+    name: "Capacity sweep",
+    area: "Backend",
+    detail: "Find the boundary between capacity and overload.",
+    shared: true,
+  },
+  {
+    id: "cache",
+    name: "Cache freshness",
+    area: "Data",
+    detail: "Balance origin work against stale reads.",
+    shared: false,
+  },
+  {
+    id: "queue",
+    name: "Burst queues",
+    area: "Backend",
+    detail: "Watch a bounded buffer absorb or reject a burst.",
+    shared: false,
+  },
+  {
+    id: "requests",
+    name: "Request deadlines",
+    area: "Backend",
+    detail: "Inspect wait, service, and cancellation for each request.",
+    shared: false,
+  },
+  {
+    id: "retries",
+    name: "Retry storms",
+    area: "Backend",
+    detail: "Explore retries, backoff, and a shared retry budget.",
+    shared: false,
+  },
+  {
+    id: "trace",
+    name: "Request trace",
+    area: "Backend",
+    detail: "Step through one possible request outcome.",
+    shared: true,
+  },
+  {
+    id: "library",
+    name: "Saved setups",
+    area: "Workspace",
+    detail: "Keep, rename, and back up your traffic experiments.",
+    shared: true,
+  },
+  {
+    id: "files",
+    name: "Import / export",
+    area: "Workspace",
+    detail: "Move a traffic setup between browsers.",
+    shared: true,
+  },
+  {
+    id: "api",
+    name: "Local API",
+    area: "Workspace",
+    detail: "Verify the browser model through the local HTTP service.",
+    shared: true,
+  },
+] as const;
+export type LabId = (typeof LABS)[number]["id"];
+export const LAB_AREAS = ["Frontend", "Backend", "Data", "Workspace"] as const;
