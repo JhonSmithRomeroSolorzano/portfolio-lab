@@ -133,3 +133,55 @@ test("optional hints describe one move without playing it and support keyboard f
   await page.getByLabel("Choose a puzzle").selectOption("2");
   await expect(page.locator(".route-hint [role=status]")).toBeEmpty();
 });
+
+test("puzzle progress survives reload and switching without resetting another board", async ({
+  page,
+}) => {
+  await page.goto("/#connection-game");
+  const tiles = page
+    .getByRole("group", { name: "Connection puzzle", exact: true })
+    .getByRole("button");
+  await tiles.nth(0).click();
+  const changed = await tiles.nth(0).getAttribute("aria-label");
+  await page.reload();
+  await expect(tiles.nth(0)).toHaveAttribute("aria-label", changed!);
+  await expect(page.locator(".route-score")).toContainText("1 turn");
+  await expect(
+    page.getByRole("button", { name: "Undo turn", exact: true }),
+  ).toBeDisabled();
+  await page.getByLabel("Choose a puzzle").selectOption("1");
+  await tiles.nth(4).click();
+  const second = await tiles.nth(4).getAttribute("aria-label");
+  await page.reload();
+  await expect(page.getByLabel("Choose a puzzle")).toHaveValue("1");
+  await expect(tiles.nth(4)).toHaveAttribute("aria-label", second!);
+  await page.getByLabel("Choose a puzzle").selectOption("0");
+  await expect(tiles.nth(0)).toHaveAttribute("aria-label", changed!);
+  await page.getByRole("button", { name: "Start again", exact: true }).click();
+  await page.reload();
+  await expect(page.locator(".route-score")).toContainText("0 turns");
+  await page.getByLabel("Choose a puzzle").selectOption("1");
+  await expect(tiles.nth(4)).toHaveAttribute("aria-label", second!);
+});
+
+test("a failed puzzle save gives honest feedback without breaking play or undo", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    const original = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (key, value) {
+      if (key === "jsr-connection-progress-v1")
+        throw new DOMException("Quota exceeded", "QuotaExceededError");
+      original.call(this, key, value);
+    };
+  });
+  await page.goto("/#connection-game");
+  const tile = page.getByRole("button", { name: /Row 1, column 1:/ });
+  const original = await tile.getAttribute("aria-label");
+  await tile.click();
+  await expect(page.locator(".route-save")).toContainText("this visit only");
+  await expect(page.locator(".route-score")).toContainText("1 turn");
+  await page.getByRole("button", { name: "Undo turn", exact: true }).click();
+  await expect(tile).toHaveAttribute("aria-label", original!);
+  await expect(tile).toBeFocused();
+});

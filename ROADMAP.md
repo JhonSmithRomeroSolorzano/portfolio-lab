@@ -344,3 +344,7 @@ Next: optional puzzle guidance and a clear next-puzzle action, then browser-loca
 - [x] Add optional one-tile puzzle hints, a keyboard jump to the highlighted tile, explicit inlet/outlet instructions, and a next-puzzle action after a successful connection. Hints leave turns unchanged, clear after board edits, and accept valid alternate routes. Verify hint-led solutions for all boards and browser completion/focus behavior.
 
 Next: preserve each puzzle's progress in this browser, with safe handling for unavailable or invalid storage.
+
+- [x] Save each puzzle's board/turns and the selected puzzle immediately to browser storage. Switching puzzles retains progress and visit-local undo; reset changes only the selected board. Validate version, size, counters, and allowed rotations atomically, recompute connections, and show honest recovery/unavailable-storage feedback. Cover round trips, corrupt saves, denied writes, immediate reload, and independent resets.
+
+Next: compare a selected motion curve against a steady baseline with simultaneous playback and a reduced-motion end state.

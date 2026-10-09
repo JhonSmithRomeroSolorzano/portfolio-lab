@@ -12,39 +12,69 @@ import {
   traceRoute,
 } from "./route-puzzle";
 
+import {
+  loadProgress,
+  saveProgress,
+  type PuzzleBoard,
+  type RouteProgress,
+} from "./route-progress";
+
 export function RoutePuzzle() {
-  const [level, setLevel] = useState(0);
-  const [tiles, setTiles] = useState(() => startingBoard(0));
-  const [moves, setMoves] = useState(0);
-  const [history, setHistory] = useState<{ tiles: number[]; moves: number }[]>(
-    [],
+  const [saved, setSaved] = useState(() => loadProgress());
+  const { progress, status } = saved;
+  const level = progress.level;
+  const { tiles, moves } = progress.boards[level];
+  const [history, setHistory] = useState<PuzzleBoard[][]>(() =>
+    PUZZLES.map(() => []),
   );
   const [hint, setHint] = useState<ReturnType<typeof routeHint>>(null);
   const [focused, setFocused] = useState(0);
   const buttons = useRef<(HTMLButtonElement | null)[]>([]);
   const route = traceRoute(tiles);
-  function reset(next = level) {
-    setLevel(next);
-    setTiles(startingBoard(next));
-    setMoves(0);
-    setHistory([]);
+  function save(next: RouteProgress) {
+    // Persist in the interaction itself so an immediate reload keeps this turn.
+    const stored = saveProgress(next);
+    setSaved({ progress: next, status: stored ? "saved" : "unavailable" });
+  }
+  function updateBoard(board: PuzzleBoard) {
+    save({
+      ...progress,
+      boards: progress.boards.map((previous, i) =>
+        i === level ? board : previous,
+      ),
+    });
+  }
+  function select(next: number) {
+    setHint(null);
+    save({ ...progress, level: next });
+  }
+  function reset() {
+    updateBoard({ tiles: startingBoard(level), moves: 0 });
+    setHistory((current) =>
+      current.map((turns, i) => (i === level ? [] : turns)),
+    );
     setHint(null);
   }
   function turn(index: number) {
     setHint(null);
-    setHistory((current) => [...current.slice(-99), { tiles, moves }]);
-    setTiles((current) =>
-      current.map((tile, i) => (i === index ? rotateTile(tile) : tile)),
+    setHistory((current) =>
+      current.map((turns, i) =>
+        i === level ? [...turns.slice(-99), { tiles, moves }] : turns,
+      ),
     );
-    setMoves((current) => current + 1);
+    updateBoard({
+      tiles: tiles.map((tile, i) => (i === index ? rotateTile(tile) : tile)),
+      moves: moves + 1,
+    });
   }
   function undo() {
-    const previous = history.at(-1);
+    const previous = history[level].at(-1);
     if (!previous) return;
     setHint(null);
-    setTiles(previous.tiles);
-    setMoves(previous.moves);
-    setHistory((current) => current.slice(0, -1));
+    updateBoard(previous);
+    setHistory((current) =>
+      current.map((turns, i) => (i === level ? turns.slice(0, -1) : turns)),
+    );
     buttons.current[focused]?.focus();
   }
   return (
@@ -68,17 +98,18 @@ export function RoutePuzzle() {
           <select
             id="route-level"
             value={level}
-            onChange={(e) => reset(Number(e.target.value))}
+            onChange={(e) => select(Number(e.target.value))}
           >
             {PUZZLES.map((p, i) => (
               <option key={p.name} value={i}>
                 {p.name}
+                {traceRoute(progress.boards[i].tiles).won ? " — connected" : ""}
               </option>
             ))}
           </select>
         </label>
         <div className="play-actions">
-          <button onClick={undo} disabled={!history.length}>
+          <button onClick={undo} disabled={!history[level].length}>
             Undo turn
           </button>
           <button onClick={() => reset()}>Start again</button>
@@ -184,16 +215,25 @@ export function RoutePuzzle() {
           <button
             className="route-next"
             onClick={() => {
-              reset((level + 1) % PUZZLES.length);
+              select((level + 1) % PUZZLES.length);
               buttons.current[0]?.focus();
             }}
           >
             {level === PUZZLES.length - 1
-              ? "Play first puzzle again"
+              ? "Return to first puzzle"
               : "Next puzzle"}{" "}
             →
           </button>
         )}
+        <p className="route-save" role="status">
+          {status === "saved"
+            ? "Progress saved in this browser. Undo is available for this visit."
+            : status === "unavailable"
+              ? "Progress is available for this visit only; browser storage is unavailable."
+              : status === "invalid"
+                ? "Saved progress could not be read. Your next move will start a fresh save."
+                : "Your first move saves progress in this browser. No account needed."}
+        </p>
         <span className="route-footnote">
           A browser puzzle, made for a small pause.
         </span>

@@ -169,7 +169,7 @@
   margin-bottom: 18px;
 }
 .route-tile.is-hinted {
-  outline: 3px dashed #704019;
+  outline: 3px dashed var(--route-ink);
   outline-offset: -6px;
 }
 .route-console {
@@ -255,6 +255,12 @@
   font-size: 13px;
   line-height: 1.6;
   font-weight: 500;
+}
+.route-save {
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--route-muted);
+  margin: 0 0 16px;
 }
 .route-footnote {
   font-size: 11px;
