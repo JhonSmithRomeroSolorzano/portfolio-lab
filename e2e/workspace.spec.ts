@@ -175,7 +175,7 @@ test("the portfolio starts with one demo and preserves it when extra tools are h
   expect(bounds.workspaceTop).toBeGreaterThanOrEqual(bounds.toolbarBottom - 1);
   await page
     .getByRole("button", {
-      name: "Explore infrastructure experience",
+      name: "Infrastructure Containers + delivery",
       exact: true,
     })
     .click();

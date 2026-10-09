@@ -85,7 +85,7 @@ export function ThemeSwitcher() {
           </>
         )}
       </svg>
-      <span>{theme === "light" ? "Dark mode" : "Light mode"}</span>
+      <span>{theme === "light" ? "Dark theme" : "Light theme"}</span>
     </button>
   );
 }

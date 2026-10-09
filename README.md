@@ -96,7 +96,7 @@ The main steady-state model excludes queues, retries, expiry, and network variab
 
 ## Run locally
 
-Use Node.js 22.12+ (Node 24 LTS recommended).
+Use Node.js 22.19+ (Node 24 LTS recommended).
 
 ```sh
 npm ci
@@ -156,3 +156,15 @@ node --import tsx scripts/replay.ts examples/scenarios.ndjson > results.ndjson
 ```
 
 The CLI accepts a file path or stdin, with one scenario per line and a 1 MiB input limit. It emits one JSON result per nonblank line, preserving source line numbers. Invalid rows produce structured errors while later rows continue. Exit codes: 0 all valid, 1 invalid scenarios, 2 input/read errors. A human-readable summary goes to stderr.
+
+### Portfolio audits and sharing
+
+The public recruiter URL is <https://jhonsmithromerosolorzano.github.io/portfolio-lab/>. Static canonical, Open Graph, and large-card metadata point to that address. `public/social-preview.svg` is the editable source for the 1200×630 JPEG sharing image. The Sites preview keeps its existing audience.
+
+The optional Signal Lab, connection puzzle, and Motion Studio use separate JavaScript bundles. They load near the viewport, on direct anchor entry, or through the explicit load control. A failed download keeps the career content available and offers a reload that preserves the experiment's query state.
+
+`npm run test:browser` includes axe accessibility scans for both themes, keyboard journeys, 320px reflow, 200% default text-size checks, direct links, and failed-download recovery. Automated scans and accessibility-tree inspection do not replace a human screen-reader assessment.
+
+For a repeatable Lighthouse report, build the site, start `npm run preview -- --port 4175`, then run `npm run audit:performance -- http://127.0.0.1:4175/`. The script uses the installed Playwright Chromium browser (or `CHROME_PATH` when provided) and writes HTML/JSON reports under ignored `artifacts/`. It uses Lighthouse's mobile simulation defaults. Run it without concurrent browser tests; local lab scores are not real-user measurements or guarantees for the hosted site.
+
+The IBM Plex Latin font files are served locally from `public/fonts/` under the included SIL Open Font License. They are the same Google Fonts distributions used by the original stylesheet; local delivery removes the external stylesheet from the first render path.

@@ -120,6 +120,33 @@ export function RequestSchedulerPanel() {
           role="region"
           aria-label="Request timing"
           tabIndex={0}
+          onKeyDown={(event) => {
+            if (
+              event.target !== event.currentTarget ||
+              event.altKey ||
+              event.ctrlKey ||
+              event.metaKey ||
+              event.shiftKey
+            )
+              return;
+            const direction =
+              event.key === "ArrowRight"
+                ? 1
+                : event.key === "ArrowLeft"
+                  ? -1
+                  : 0;
+            if (
+              direction &&
+              event.currentTarget.scrollWidth > event.currentTarget.clientWidth
+            ) {
+              // WebKit can otherwise send the arrow to the outer workspace scroller.
+              event.preventDefault();
+              event.currentTarget.scrollBy({
+                left: direction * 40,
+                behavior: "instant",
+              });
+            }
+          }}
         >
           <table className="tool-table">
             <caption>

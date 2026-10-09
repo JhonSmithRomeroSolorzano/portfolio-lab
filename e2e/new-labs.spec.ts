@@ -197,10 +197,13 @@ test("event playback advances on demand, stops on lab change, and honors reduced
   await visible
     .getByRole("button", { name: "Play events", exact: true })
     .click();
-  await page.clock.runFor(5000);
-  await expect(
-    visible.getByRole("slider", { name: "Inspect event", exact: false }),
-  ).toHaveValue("5");
+  // Give React a render/effect turn between ticks before advancing the fake clock.
+  for (let step = 2; step <= 5; step++) {
+    await page.clock.runFor(1000);
+    await expect(
+      visible.getByRole("slider", { name: "Inspect event", exact: false }),
+    ).toHaveValue(String(step));
+  }
   await expect(
     visible.getByRole("button", { name: "Play events", exact: true }),
   ).toBeVisible();

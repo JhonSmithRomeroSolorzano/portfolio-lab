@@ -44,7 +44,7 @@ test("theme selection survives reload and a small viewport stays usable", async 
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBeTruthy();
-  await page.getByRole("button", { name: "Explore data experience" }).click();
+  await page.getByRole("button", { name: "Data Databases + cache" }).click();
   await expect(
     page.getByRole("region", { name: "Selected stack experience" }),
   ).toContainText("Strongest in NoSQL");
@@ -158,4 +158,22 @@ test("mobile overview prioritizes the stack and uses a balanced menu", async ({
       .first()
       .evaluate((node) => parseFloat(getComputedStyle(node).fontSize)),
   ).toBeGreaterThanOrEqual(16);
+});
+
+test("sharing metadata is available without JavaScript and uses the public portfolio", async ({
+  request,
+}) => {
+  const response = await request.get("/");
+  const html = await response.text();
+  const publicUrl = "https://jhonsmithromerosolorzano.github.io/portfolio-lab/";
+  expect(html.match(/<link\b[^>]*rel="canonical"[^>]*>/)?.[0]).toContain(
+    `href="${publicUrl}"`,
+  );
+  expect(html).toContain('property="og:title"');
+  expect(html).toContain('name="twitter:card" content="summary_large_image"');
+  expect(html).toContain(`${publicUrl}social-preview.jpg`);
+  const image = await request.get("/social-preview.jpg");
+  expect(image.ok()).toBeTruthy();
+  expect(image.headers()["content-type"]).toContain("image/jpeg");
+  expect((await image.body()).subarray(0, 3).toString("hex")).toBe("ffd8ff");
 });

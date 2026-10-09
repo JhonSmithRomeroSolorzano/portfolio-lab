@@ -185,6 +185,7 @@
   margin: -2px 0 16px;
 }
 .stack-map {
+  container-type: inline-size;
   display: grid;
   grid-template-columns: minmax(0, 1.7fr) minmax(240px, 0.9fr);
   border: 1px solid var(--line);
@@ -254,6 +255,7 @@
   border-radius: 4px;
   box-shadow: 5px 5px 0 color-mix(in srgb, var(--electric) 8%, transparent);
   text-align: left;
+  overflow-wrap: anywhere;
   transition:
     background 0.15s,
     box-shadow 0.15s;
@@ -970,5 +972,21 @@ h2 {
   .stack-languages,
   .stack-testing {
     padding-block: 10px;
+  }
+}
+
+.lab-controls .dark-label {
+  color: var(--lab-muted);
+}
+/* At enlarged default text sizes, let the diagram become a readable list. */
+@container (max-width: 12rem) {
+  .stack-drawing {
+    grid-template-columns: 1fr;
+  }
+  .map-wires {
+    display: none;
+  }
+  .stack-facts {
+    grid-template-columns: 1fr;
   }
 }

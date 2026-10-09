@@ -69,7 +69,6 @@ export function StackMap() {
             key={item.id}
             type="button"
             className={`stack-node stack-node-${item.id}`}
-            aria-label={`Explore ${item.name.toLowerCase()} experience`}
             aria-pressed={selected === item.id}
             aria-controls="stack-detail"
             onClick={() => setSelected(item.id)}
