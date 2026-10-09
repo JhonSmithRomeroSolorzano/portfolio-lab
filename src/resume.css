@@ -22,56 +22,26 @@
   color: var(--accent);
 }
 .resume-layout {
-  display: grid;
-  grid-template-columns: minmax(250px, 0.85fr) minmax(0, 1.6fr);
-  gap: 80px;
-}
-.resume-card {
-  padding: 28px;
-  border-radius: 8px;
-  background: var(--soft);
-}
-.resume-card h3 {
-  font: 400 30px/1.2 var(--display);
-  margin: 20px 0 16px;
-}
-.resume-card p {
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.8;
-}
-.resume-card .resume-location {
-  color: var(--ink);
-  margin-block: 22px;
-}
-.resume-technologies {
-  display: grid;
-  gap: 18px;
-}
-.resume-technology-group h4 {
-  margin: 0 0 8px;
-  font: 500 10px/1.5 var(--mono);
-  color: var(--accent);
-}
-.resume-technology-group .tags {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-.resume-technology-group .tags li {
   min-width: 0;
-  max-width: 100%;
-  border: 1px solid var(--line);
-  border-radius: 2px;
-  padding: 5px 8px;
-  font: 10px/1.5 var(--mono);
 }
-.resume-technology-group .tags span {
-  display: block;
-  overflow-wrap: anywhere;
+.experience-list > li > article {
+  display: grid;
+  grid-template-columns: minmax(190px, 0.8fr) minmax(0, 1.7fr);
+  gap: 36px;
 }
-.resume-study {
-  margin-top: 32px;
+.experience-contributions {
+  min-width: 0;
+}
+.experience-contributions > :first-child {
+  margin-top: 0;
+}
+.resume-education {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  margin-top: 54px;
+  padding-top: 32px;
+  border-top: 1px solid var(--line);
 }
 .resume-study h3,
 .resume-list-title {
@@ -206,38 +176,24 @@
   border: 0;
 }
 @media (max-width: 1050px) {
-  .resume-layout {
-    gap: 40px;
+  .experience-list > li > article {
+    grid-template-columns: 1fr;
+    gap: 8px;
   }
 }
 @media (max-width: 760px) {
   .resume-section {
     padding-block: 38px 55px;
   }
-  .resume-layout {
-    grid-template-columns: 1fr;
-    gap: 36px;
-  }
-  .resume-experience {
-    grid-row: 1;
-  }
-  .resume-overview {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+  .resume-education {
     gap: 24px;
-  }
-  .resume-card {
-    grid-column: 1 / -1;
-  }
-  .resume-study {
-    margin-top: 0;
   }
   .experience-list > li {
     padding-left: 22px;
   }
 }
-@media (max-width: 450px) {
-  .resume-overview {
+@media (max-width: 480px) {
+  .resume-education {
     grid-template-columns: 1fr;
   }
 }

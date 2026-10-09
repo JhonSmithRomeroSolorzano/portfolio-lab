@@ -334,3 +334,9 @@ The user requested a collection of distinct interactive labs and games, separate
 - [x] Review 320px and 1440px layouts and both themes. The production build and 123 unit/integration checks pass; the affected Chromium/WebKit journeys pass after fixing the modal Tab cycle and making layout assertions independent of late font loading and scrolling.
 
 Next: refine these three pieces from user feedback before adding another. Specific professional feature examples and direct contact details still require verified information; the previous review's broader résumé layout suggestions remain proposals.
+
+## Focused refinements — October 9
+
+- [x] Consolidate technology details in the interactive stack map, retaining languages and testing upfront. Give experience the full content width, with role identity beside contributions on wide screens and education/certifications below. Preserve all verified profile data and résumé downloads.
+
+Next: optional puzzle guidance and a clear next-puzzle action, then browser-local puzzle progress and simultaneous motion comparison. Keep these as complete improvements with behavior tests; do not add sections for contribution counts.
