@@ -50,6 +50,7 @@ test("motion studio is explicit, replayable, and honors live reduced-motion chan
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/#motion-studio");
   const runner = page.locator(".motion-runner");
+  await expect(runner).toHaveCount(2);
   expect(
     await runner.evaluateAll((nodes) =>
       nodes.map((el) => el.getAnimations().length),
@@ -127,7 +128,7 @@ test("optional hints describe one move without playing it and support keyboard f
     name: "Give me a hint",
     exact: true,
   });
-  await hint.click();
+  await hint.press("Enter");
   await expect(page.locator(".route-hint")).toContainText("row 1, column 1");
   await expect(page.locator(".route-score")).toContainText("0 turns");
   await page
@@ -138,7 +139,7 @@ test("optional hints describe one move without playing it and support keyboard f
   await tile.press("Space");
   await expect(page.locator(".route-score")).toContainText("1 turn");
   await expect(page.locator(".route-hint [role=status]")).toBeEmpty();
-  await hint.click();
+  await hint.press("Enter");
   await expect(page.locator(".route-hint")).toContainText("row 1, column 2");
   await page.getByLabel("Choose a puzzle").selectOption("2");
   await expect(page.locator(".route-hint [role=status]")).toBeEmpty();

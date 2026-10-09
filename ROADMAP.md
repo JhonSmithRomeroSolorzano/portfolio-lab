@@ -360,3 +360,7 @@ Next: gather feedback on the more focused recruiter layout and the three interac
 - [x] Verify the recruiter journey, résumé downloads, narrow layout, both themes, and legacy links in Chromium and WebKit (12 checks); all 128 unit/integration checks and the production build pass. At 390px the experience section begins around 1,415px down, versus roughly 1,630px before the changes.
 
 Next: load the secondary interactive pieces on demand, add a branded public sharing preview, and audit accessibility/performance. Specific project problems, decisions, and outcomes plus a direct email address still require verified user details.
+
+- [x] Load Signal Lab, the connection puzzle, and Motion Studio in separate on-demand bundles. Preserve explicit anchors, settings, keyboard focus, and retry recovery without blocking the résumé. The initial JavaScript drops from 361.2 KB to 253.2 KB (110.4 KB to 78.9 KB gzipped). Browser coverage checks initial request isolation, direct entries, and failed-download recovery in Chromium and WebKit.
+
+Next: complete the review's accessibility/performance audit and branded public sharing metadata. User-supplied project examples and a contact address remain pending.

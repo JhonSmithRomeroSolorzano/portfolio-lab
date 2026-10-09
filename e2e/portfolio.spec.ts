@@ -95,6 +95,10 @@ test("legacy About links still select Overview without losing query state", asyn
     "location",
   );
   await expect(page.locator("#about")).toBeInViewport();
+  await page
+    .getByRole("navigation", { name: "Main navigation" })
+    .getByRole("link", { name: "Labs & play" })
+    .click();
   await expect(
     page.getByRole("spinbutton", { name: "Exact request rate" }),
   ).toHaveValue("250");
