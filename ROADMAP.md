@@ -321,3 +321,16 @@ Next: refine the existing presentation from user feedback. Keep the portfolio fo
 - [x] Give the two-row mobile toolbar its natural height with sufficient CSS specificity; verify that actions stay inside the header above the demo.
 
 - [x] Update both two-tab library journeys to open the secondary tools in each tab before choosing the saved-setup library.
+
+## Distinct labs and play — October 9 feedback
+
+The user requested a collection of distinct interactive labs and games, separated by space, while keeping the existing scroll progress and active menu. This expands the earlier single-demo presentation without changing the experience-first page order.
+
+- [x] Introduce Labs & play with a compact anchor index and three individually styled pieces: Signal Lab, a connection puzzle, and Motion Studio.
+- [x] Add three solvable tile-routing puzzles, reciprocal-connection tracing, a turn count, undo/reset, visible signal state, and keyboard movement/rotation without a timer.
+- [x] Add an explicitly played motion experiment with four timing curves, duration control, replay, cancellation, and a static reduced-motion alternative.
+- [x] Extend expanded-workspace isolation to the new collection, preserving the existing lab settings and focus restoration.
+- [x] Cover puzzle solutions and invalid connections in unit tests; add browser journeys for solving, undo, keyboard movement, live reduced motion, narrow layout, and modal isolation.
+- [x] Review 320px and 1440px layouts and both themes. The production build and 123 unit/integration checks pass; the affected Chromium/WebKit journeys pass after fixing the modal Tab cycle and making layout assertions independent of late font loading and scrolling.
+
+Next: refine these three pieces from user feedback before adding another. Specific professional feature examples and direct contact details still require verified information; the previous review's broader résumé layout suggestions remain proposals.

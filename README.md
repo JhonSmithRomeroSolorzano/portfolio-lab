@@ -12,7 +12,7 @@ I directly confirmed the descriptions of my current Antecursor role and my Athle
 
 The portfolio uses a custom workspace composition: a compact identity rail and a connected stack map with selectable Frontend, Backend, Data, and Infrastructure layers. The map explains verified experience and leads to the lab and résumé contributions. It is authored in React, CSS, and SVG for this project.
 
-The public page has four sections: Workbench, Résumé, Contact, and Signal Lab. Development status and roadmap promotion stay in the repository. Experience and contact precede the lab in document and menu order; the introduction links directly to experience. Signal Lab is the final main section.
+The public page has four sections: Workbench, Résumé, Contact, and Labs & play. Development status and roadmap promotion stay in the repository. Experience and contact precede the collection in document and menu order; the introduction links directly to experience.
 
 Workbench combines my introduction, engineering background, LinkedIn portrait, prominent senior full-stack role, and organized technology overview. The former About section and its repeated skill cards have been merged into this opening section; existing `#about` links still reach the introduction. Languages and testing span the stack; the four areas distinguish UI libraries, components and styling, frameworks and Figma design handoff, APIs and real-time communication, databases and caching, containers, CI/CD, and cloud platforms. The overview, map, and categorized résumé tags share `src/technology-stack.ts` to keep descriptions consistent. Next.js is labeled as some experience.
 
@@ -30,7 +30,16 @@ Navigation has a sliding section indicator that follows reading position and poi
 
 Anchor destinations accept focus without entering the Tab order. Keyboard navigation uses an immediate scroll so WebKit's focus adjustment cannot interrupt a smooth anchor journey; pointer navigation retains smooth scrolling. Both paths keep the animated menu and arrival feedback unless reduced motion is preferred.
 
-## Signal Lab
+## Labs & play
+
+The final section is a collection of three independent interactive pieces, with direct anchors and generous space between them. Signal Lab keeps its navy systems workspace. The connection puzzle uses a warm board-game style; Motion Studio has a violet canvas. The main scroll indicator and reading progress continue to follow the collection as one section. Existing `#lab` links and Signal Lab query settings still work.
+
+- **Connection puzzle** (`#connection-game`): rotate a 4×4 board to carry a signal from the top-left inlet to the bottom-right outlet. Three authored puzzles have verified solutions. Click or Space rotates; arrow keys move around the board. Undo retains the latest 100 turns, reset restores the current puzzle, and there is no clock or persistent score.
+- **Motion Studio** (`#motion-studio`): compare four timing curves with a duration control and explicit playback. Nothing starts automatically. Changing controls cancels playback; a hidden tab or live reduced-motion change cancels it too. Reduced motion shows the end state without animation.
+
+Expanded Signal Lab makes every surrounding collection piece inert while retaining its focus trap and Escape restoration. New pieces keep their state only for the current visit and do not change existing experiment links.
+
+### Signal Lab
 
 Change incoming traffic, toggle a warm read cache, and slow down or disconnect the database. The interface shows how these choices affect successful requests, database demand, and mean response time.
 

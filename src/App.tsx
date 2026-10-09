@@ -46,6 +46,8 @@ import { ResumeSection } from "./ResumeSection";
 import { LINKEDIN } from "./profile";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { BrandMark } from "./BrandMark";
+import { RoutePuzzle } from "./play/RoutePuzzle";
+import { MotionStudio } from "./play/MotionStudio";
 
 import { RequestRateInput } from "./RequestRateInput";
 
@@ -655,7 +657,7 @@ export function App() {
               <span aria-hidden="true">@</span> Contact
             </a>
             <a href="#lab">
-              <span aria-hidden="true">↯</span> Signal Lab
+              <span aria-hidden="true">↯</span> Labs & play
             </a>
           </nav>
           <div className="rail-bottom">
@@ -753,7 +755,7 @@ export function App() {
               </p>
             </section>
             <section
-              className="lab-section wrap"
+              className="lab-section lab-collection wrap"
               id="lab"
               tabIndex={-1}
               aria-labelledby="lab-title"
@@ -761,19 +763,68 @@ export function App() {
               <span className="section-signal" aria-hidden="true" />
               <div className="section-heading" data-reveal="0">
                 <div>
-                  <span className="eyebrow">INTERACTIVE PROJECT</span>
+                  <span className="eyebrow">A PLACE TO EXPLORE</span>
                   <h2 id="lab-title">
-                    Signal Lab<span className="heading-dot">.</span>
+                    Labs & play<span className="heading-dot">.</span>
                   </h2>
                 </div>
                 <p>
-                  A hands-on look at how an application responds to traffic,
-                  caching, and failure.
+                  Try an idea. Follow your curiosity. A few small things I’ve
+                  built for you to get your hands on.
                 </p>
               </div>
-              <LabSettingsProvider>
-                <SignalLab />
-              </LabSettingsProvider>
+              <nav
+                className="collection-index"
+                aria-label="Explore the collection"
+              >
+                <a href="#signal-lab">
+                  <span>01</span> Signal Lab <span aria-hidden="true">↘</span>
+                </a>
+                <a href="#connection-game">
+                  <span>02</span> Connection puzzle{" "}
+                  <span aria-hidden="true">↘</span>
+                </a>
+                <a href="#motion-studio">
+                  <span>03</span> Motion studio{" "}
+                  <span aria-hidden="true">↘</span>
+                </a>
+              </nav>
+              <article
+                className="signal-exhibit"
+                id="signal-lab"
+                tabIndex={-1}
+                aria-labelledby="signal-title"
+              >
+                <div className="exhibit-caption">
+                  <div>
+                    <span className="play-kicker">01 / UNDER THE SURFACE</span>
+                    <h3 id="signal-title">Signal Lab</h3>
+                  </div>
+                  <p>
+                    Turn up the traffic. Break the database. See what keeps a
+                    system moving.
+                  </p>
+                </div>
+                <LabSettingsProvider>
+                  <SignalLab />
+                </LabSettingsProvider>
+              </article>
+              <article
+                className="play-exhibit"
+                id="connection-game"
+                tabIndex={-1}
+                aria-labelledby="route-title"
+              >
+                <RoutePuzzle />
+              </article>
+              <article
+                className="play-exhibit"
+                id="motion-studio"
+                tabIndex={-1}
+                aria-labelledby="motion-title"
+              >
+                <MotionStudio />
+              </article>
             </section>
           </main>
           <footer className="site-footer wrap">

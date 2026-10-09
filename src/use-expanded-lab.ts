@@ -8,11 +8,20 @@ export function useExpandedLab() {
     if (!expanded || !shell.current) return;
     const container = shell.current;
     const previousOverflow = document.body.style.overflow;
-    const background = [
-      ...document.querySelectorAll<HTMLElement>(
-        ".identity-rail, main > section:not(#lab), .site-footer, .skip-link",
-      ),
-    ];
+    // Inert every branch outside the dialog, including other collection pieces.
+    const background: HTMLElement[] = [];
+    let branch: HTMLElement = container;
+    while (branch.parentElement) {
+      const parent = branch.parentElement;
+      background.push(
+        ...Array.from(parent.children).filter(
+          (node): node is HTMLElement =>
+            node instanceof HTMLElement && node !== branch,
+        ),
+      );
+      if (parent === document.body) break;
+      branch = parent;
+    }
     const previousInert = background.map((node) => node.inert);
     background.forEach((node) => {
       node.inert = true;
@@ -32,23 +41,18 @@ export function useExpandedLab() {
       ].filter(
         (node) => node.getClientRects().length > 0 && !node.closest("[hidden]"),
       );
-      const first = items[0],
-        last = items.at(-1);
-      if (
-        event.shiftKey &&
-        (document.activeElement === first ||
-          !container.contains(document.activeElement))
-      ) {
-        event.preventDefault();
-        last?.focus();
-      } else if (
-        !event.shiftKey &&
-        (document.activeElement === last ||
-          !container.contains(document.activeElement))
-      ) {
-        event.preventDefault();
-        first?.focus();
-      }
+      // WebKit may skip buttons with the host's default keyboard preference.
+      // Own every Tab step so the modal has the same complete cycle on all hosts.
+      event.preventDefault();
+      if (!items.length) return;
+      const index = items.indexOf(document.activeElement as HTMLElement);
+      const next =
+        index < 0
+          ? event.shiftKey
+            ? items.length - 1
+            : 0
+          : (index + (event.shiftKey ? -1 : 1) + items.length) % items.length;
+      items[next].focus();
     };
     container.addEventListener("keydown", onKey);
     return () => {

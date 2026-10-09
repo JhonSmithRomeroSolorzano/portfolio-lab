@@ -1,6 +1,11 @@
 import { chooseLab } from "./lab-tools";
 import { test, expect } from "@playwright/test";
 
+test.beforeEach(async ({ page }) => {
+  await page.route("https://fonts.googleapis.com/**", (route) => route.abort());
+  await page.route("https://fonts.gstatic.com/**", (route) => route.abort());
+});
+
 test("only the selected experiment is visible and the workspace stays bounded", async ({
   page,
 }) => {
@@ -82,6 +87,17 @@ test("expanded workspace retains settings, traps focus, and returns with Escape"
   expect(
     await dialog.evaluate((el) => el.contains(document.activeElement)),
   ).toBeTruthy();
+  await expect(
+    page.getByRole("button", { name: "Hide extra tools", exact: true }),
+  ).toBeFocused();
+  await page.keyboard.press("Shift+Tab");
+  expect(
+    await dialog.evaluate((el) => el.contains(document.activeElement)),
+  ).toBeTruthy();
+  await page.keyboard.press("Tab");
+  await expect(
+    page.getByRole("button", { name: "Hide extra tools", exact: true }),
+  ).toBeFocused();
   await page.keyboard.press("Escape");
   await expect(dialog).toHaveCount(0);
   await expect(
@@ -139,15 +155,24 @@ test("the portfolio starts with one demo and preserves it when extra tools are h
     "latest",
   );
   await page.setViewportSize({ width: 320, height: 800 });
-  const toolbar = await page.locator(".lab-topbar").boundingBox();
-  const actions = await page.locator(".lab-toolbar-actions").boundingBox();
-  expect(actions!.y + actions!.height).toBeLessThanOrEqual(
-    toolbar!.y + toolbar!.height,
-  );
-  const workspace = await page
-    .getByRole("region", { name: "Experiment workspace", exact: true })
-    .boundingBox();
-  expect(workspace!.y).toBeGreaterThanOrEqual(toolbar!.y + toolbar!.height - 1);
+  // Read related bounds in one frame: native anchor scrolling may still settle
+  // after resizing, so separately awaited viewport coordinates are incomparable.
+  const bounds = await page.locator(".lab-shell").evaluate((shell) => {
+    const toolbar = shell.querySelector(".lab-topbar")!.getBoundingClientRect();
+    const actions = shell
+      .querySelector(".lab-toolbar-actions")!
+      .getBoundingClientRect();
+    const workspace = shell
+      .querySelector(".lab-viewport")!
+      .getBoundingClientRect();
+    return {
+      toolbarBottom: toolbar.bottom,
+      actionsBottom: actions.bottom,
+      workspaceTop: workspace.top,
+    };
+  });
+  expect(bounds.actionsBottom).toBeLessThanOrEqual(bounds.toolbarBottom);
+  expect(bounds.workspaceTop).toBeGreaterThanOrEqual(bounds.toolbarBottom - 1);
   await page
     .getByRole("button", {
       name: "Explore infrastructure experience",
