@@ -86,7 +86,7 @@ test("an imported scenario changes controls and survives a URL reload", async ({
   ).toHaveAttribute("aria-pressed", "true");
 });
 
-test("legacy About links still select Workbench without losing query state", async ({
+test("legacy About links still select Overview without losing query state", async ({
   page,
 }) => {
   await page.goto("/?traffic=250#about");
@@ -119,4 +119,39 @@ test("experience and contact precede the lab in document and menu order", async 
     .getByRole("link", { name: "Explore my experience", exact: false })
     .press("Enter");
   await expect(page.locator("#resume")).toBeInViewport();
+});
+
+test("mobile overview prioritizes the stack and uses a balanced menu", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/#workbench");
+  await expect(page.getByLabel("Core technologies")).toHaveText(
+    "React · TypeScript · Node.js · Azure",
+  );
+  const links = page
+    .getByRole("navigation", { name: "Main navigation" })
+    .getByRole("link");
+  await expect(links.first()).toHaveText("⌘ Overview");
+  const rects = await links.evaluateAll((nodes) =>
+    nodes.map((node) => {
+      const r = node.getBoundingClientRect();
+      return { y: r.y, height: r.height };
+    }),
+  );
+  expect(rects[0].y).toBe(rects[1].y);
+  expect(rects[2].y).toBe(rects[3].y);
+  expect(rects.every((rect) => rect.height >= 44)).toBeTruthy();
+  await page.evaluate(() => document.fonts.ready);
+  expect(
+    await page
+      .locator("#resume")
+      .evaluate((node) => node.getBoundingClientRect().top + scrollY),
+  ).toBeLessThan(1500);
+  expect(
+    await page
+      .locator(".experience-project li")
+      .first()
+      .evaluate((node) => parseFloat(getComputedStyle(node).fontSize)),
+  ).toBeGreaterThanOrEqual(16);
 });

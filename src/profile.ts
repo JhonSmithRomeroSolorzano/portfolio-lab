@@ -50,7 +50,7 @@ export const experience: readonly ExperienceEntry[] = [
         description: "Healthcare facility automation platform.",
         url: "https://nimrod.io/",
         contributions: [
-          "Participate in feature design and implement changes across database models, backend services, and frontend interfaces.",
+          "Take features from design through implementation across database models, backend services, and frontend interfaces.",
           "Build features with React and Mithril.js, connected to Node.js services and NoSQL databases.",
           "Work with Azure and GitHub Actions for cloud delivery and CI/CD.",
         ],
@@ -92,7 +92,7 @@ export const experience: readonly ExperienceEntry[] = [
         url: "https://nimrod.io/",
         contributions: [
           "Built responsive interfaces with React and Mithril.js, connected to Node.js services and NoSQL data.",
-          "Developed features, maintained the application, and refactored code through agile iterations.",
+          "Developed product features, maintained existing workflows, and refactored code through agile iterations.",
         ],
       },
     ],

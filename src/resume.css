@@ -12,7 +12,7 @@
   gap: 12px 18px;
 }
 .resume-actions .text-link {
-  font-size: 12px;
+  font-size: 0.875rem;
   white-space: nowrap;
 }
 .resume-actions .resume-download {
@@ -53,20 +53,20 @@
   padding-block: 18px;
 }
 .resume-study h4 {
-  font-size: 14px;
+  font-size: 0.9375rem;
   line-height: 1.5;
   font-weight: 500;
   margin: 8px 0;
 }
 .resume-study p {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 0.875rem;
   line-height: 1.6;
   margin: 6px 0;
 }
 .resume-period,
 .resume-study .resume-period {
-  font: 10px/1.6 var(--mono);
+  font: 0.8125rem/1.6 var(--mono);
   color: var(--muted);
   margin: 0;
 }
@@ -101,32 +101,32 @@
   gap: 14px;
 }
 .current-role {
-  font: 9px var(--mono);
+  font: 0.6875rem var(--mono);
   padding: 4px 8px;
   border-radius: 20px;
   background: var(--soft);
   color: var(--accent);
 }
 .experience-list h4 {
-  font-size: 21px;
+  font-size: 1.3125rem;
   line-height: 1.4;
   font-weight: 500;
   margin: 10px 0 3px;
 }
 .experience-employer {
-  font-size: 14px;
+  font-size: 0.9375rem;
   margin: 0;
   line-height: 1.6;
 }
 .experience-context {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 0.8125rem;
   line-height: 1.7;
   margin: 6px 0 14px;
 }
 .experience-list ul {
   padding-left: 18px;
-  font-size: 13px;
+  font-size: 1rem;
   color: var(--muted);
   line-height: 1.8;
 }
@@ -141,11 +141,11 @@
   background: var(--soft);
 }
 .experience-project .eyebrow {
-  font-size: 9px;
+  font-size: 0.6875rem;
 }
 .experience-project h5 {
   margin: 8px 0;
-  font-size: 15px;
+  font-size: 1.0625rem;
   line-height: 1.5;
   font-weight: 500;
 }
@@ -156,7 +156,7 @@
 }
 .experience-project p {
   margin: 8px 0 0;
-  font-size: 12px;
+  font-size: 0.875rem;
   line-height: 1.8;
   color: var(--muted);
 }

@@ -648,7 +648,7 @@ export function App() {
           <nav aria-label="Main navigation" ref={navRef}>
             <span className="nav-cursor" aria-hidden="true" />
             <a href="#workbench">
-              <span aria-hidden="true">⌘</span> Workbench
+              <span aria-hidden="true">⌘</span> Overview
             </a>
             <a href="#resume">
               <span aria-hidden="true">↗</span> Résumé
@@ -699,15 +699,13 @@ export function App() {
                     Jhon Smith Romero<span>.</span>
                   </h1>
                   <p className="intro-role">Senior Full-stack Engineer</p>
-                  <p>
-                    I turn ideas into web experiences that feel simple to use.
-                    Behind the screen, I build the systems that bring them to
-                    life.
+                  <p className="intro-stack" aria-label="Core technologies">
+                    React · TypeScript · Node.js · Azure
                   </p>
-                  <p className="intro-background">
-                    I’m a systems and telecommunications engineer with 7+ years
-                    in software development, working across frontend and backend
-                    with JavaScript and TypeScript.
+                  <p>
+                    7+ years connecting thoughtful interfaces with the services
+                    and data behind them. From feature design to full-stack
+                    implementation and cloud delivery.
                   </p>
                 </div>
                 <img
@@ -829,7 +827,7 @@ export function App() {
           </main>
           <footer className="site-footer wrap">
             <span>© 2026 Jhon Smith Romero</span>
-            <a href="#workbench">Back to the workbench ↑</a>
+            <a href="#workbench">Back to overview ↑</a>
             <a href={REPO} target="_blank" rel="noreferrer">
               View source <Arrow diagonal />
             </a>

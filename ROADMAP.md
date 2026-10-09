@@ -352,3 +352,11 @@ Next: compare a selected motion curve against a steady baseline with simultaneou
 - [x] Compare a chosen timing curve against a steady reference in two labeled lanes with matching distance, duration, and start time. Distinguish the markers by fill/outline and the curve graph by solid/dashed strokes. Cancel both lanes on control changes, hidden tabs, or reduced-motion changes; show both end states without movement when reduced motion is enabled.
 
 Next: gather feedback on the more focused recruiter layout and the three interactive pieces. Further professional examples and direct contact details require user confirmation; add another lab only for a concrete new idea.
+
+## Recruiter and frontend review — October 9
+
+- [x] Rename the visible Workbench navigation to Overview while retaining existing anchors. Surface React, TypeScript, Node.js, and Azure beside the full-stack role, shorten the introduction, balance the mobile menu, and retain the portrait and interactive stack diagram.
+- [x] Increase experience reading text to 16px, supporting dates/context to readable sizes, and make the diagram's cards grow with text. Clarify the current Antecursor design-to-delivery scope against earlier implementation and maintenance work using verified responsibilities.
+- [x] Verify the recruiter journey, résumé downloads, narrow layout, both themes, and legacy links in Chromium and WebKit (12 checks); all 128 unit/integration checks and the production build pass. At 390px the experience section begins around 1,415px down, versus roughly 1,630px before the changes.
+
+Next: load the secondary interactive pieces on demand, add a branded public sharing preview, and audit accessibility/performance. Specific project problems, decisions, and outcomes plus a direct email address still require verified user details.
