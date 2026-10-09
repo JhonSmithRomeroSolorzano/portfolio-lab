@@ -316,17 +316,40 @@
   letter-spacing: 1px;
   color: #c8bfd7;
 }
+.motion-lane-label {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 22px;
+}
+.motion-lane-label strong {
+  font-size: 13px;
+  font-weight: 500;
+}
+.motion-lane-label > span {
+  font: 9px/1.6 var(--mono);
+  color: #c8bfd7;
+}
+.motion-lane.is-reference .motion-runner {
+  background: transparent;
+  border: 2px solid #e1d8ec;
+  box-shadow: none;
+}
+.motion-lane.is-reference .motion-runner span {
+  border-color: #e1d8ec;
+}
 .motion-track {
   position: relative;
-  height: 100px;
-  margin: 20px 24px 24px 0;
+  height: 68px;
+  margin: 0 24px 8px 0;
 }
 .motion-track::before {
   content: "";
   position: absolute;
   left: 0;
   right: 0;
-  top: 48px;
+  top: 34px;
   border-top: 1px dashed #8b78a3;
 }
 .motion-runner {
@@ -335,7 +358,7 @@
   background: #d1b7ff;
   position: absolute;
   left: 0;
-  top: 26px;
+  top: 12px;
   display: grid;
   place-items: center;
   border-radius: 12px;
@@ -366,6 +389,11 @@
   fill: none;
   stroke: #d1b7ff;
   stroke-width: 2.5;
+}
+.motion-curve-note .curve-reference {
+  stroke: #e1d8ec;
+  stroke-width: 1.5;
+  stroke-dasharray: 5 4;
 }
 .motion-curve-note .curve-guide {
   stroke: #8b78a3;

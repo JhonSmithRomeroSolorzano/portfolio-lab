@@ -348,3 +348,7 @@ Next: preserve each puzzle's progress in this browser, with safe handling for un
 - [x] Save each puzzle's board/turns and the selected puzzle immediately to browser storage. Switching puzzles retains progress and visit-local undo; reset changes only the selected board. Validate version, size, counters, and allowed rotations atomically, recompute connections, and show honest recovery/unavailable-storage feedback. Cover round trips, corrupt saves, denied writes, immediate reload, and independent resets.
 
 Next: compare a selected motion curve against a steady baseline with simultaneous playback and a reduced-motion end state.
+
+- [x] Compare a chosen timing curve against a steady reference in two labeled lanes with matching distance, duration, and start time. Distinguish the markers by fill/outline and the curve graph by solid/dashed strokes. Cancel both lanes on control changes, hidden tabs, or reduced-motion changes; show both end states without movement when reduced motion is enabled.
+
+Next: gather feedback on the more focused recruiter layout and the three interactive pieces. Further professional examples and direct contact details require user confirmation; add another lab only for a concrete new idea.

@@ -54,6 +54,7 @@ test("mobile data tables can be scrolled with the keyboard", async ({
     name: "Request timing",
     exact: true,
   });
+  await region.scrollIntoViewIfNeeded();
   await region.focus();
   await expect(region).toBeFocused();
   await region.press("ArrowRight");

@@ -36,10 +36,11 @@ export function MotionStudio() {
     () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
   );
   const runner = useRef<HTMLDivElement>(null);
-  const animation = useRef<Animation | null>(null);
+  const baseline = useRef<HTMLDivElement>(null);
+  const animations = useRef<Animation[]>([]);
   function cancel() {
-    animation.current?.cancel();
-    animation.current = null;
+    animations.current.forEach((animation) => animation.cancel());
+    animations.current = [];
     setPlaying(false);
   }
   useEffect(() => {
@@ -60,7 +61,7 @@ export function MotionStudio() {
     return () => {
       media.removeEventListener("change", change);
       document.removeEventListener("visibilitychange", visibility);
-      animation.current?.cancel();
+      animations.current.forEach((animation) => animation.cancel());
     };
   }, []);
   useEffect(() => {
@@ -70,31 +71,45 @@ export function MotionStudio() {
   function play() {
     cancel();
     setArrived(false);
-    if (reduced || !runner.current?.animate) {
+    const nodes = [runner.current, baseline.current];
+    if (reduced || nodes.some((node) => !node?.animate)) {
       setArrived(true);
       return;
     }
-    const current = runner.current.animate(
-      [
-        { left: "0%", transform: "rotate(0deg)" },
-        { left: "calc(100% - 44px)", transform: "rotate(180deg)" },
-      ],
-      { duration, easing: CURVES[curve].easing, fill: "forwards" },
+    const current = nodes.map((node, index) =>
+      node!.animate(
+        [
+          { left: "0%", transform: "rotate(0deg)" },
+          { left: "calc(100% - 44px)", transform: "rotate(180deg)" },
+        ],
+        {
+          duration,
+          easing: index === 0 ? CURVES[curve].easing : "linear",
+          fill: "forwards",
+        },
+      ),
     );
-    animation.current = current;
+    // Both lanes share the same document clock, distance, and duration.
+    const start = document.timeline.currentTime;
+    if (typeof start === "number")
+      current.forEach((animation) => {
+        animation.startTime = start;
+      });
+    animations.current = current;
     setPlaying(true);
-    current.finished.then(
+    Promise.all(current.map((animation) => animation.finished)).then(
       () => {
-        if (animation.current === current) {
+        if (animations.current === current) {
           setArrived(true);
           setPlaying(false);
-          current.cancel();
-          animation.current = null;
+          current.forEach((animation) => animation.cancel());
+          animations.current = [];
         }
       },
       () => {},
     );
   }
+
   return (
     <div className="motion-studio">
       <div className="motion-intro">
@@ -105,8 +120,8 @@ export function MotionStudio() {
           <em>Different feeling.</em>
         </h3>
         <p>
-          A small change in timing can change an entire interaction. Pick a
-          curve, press play, and feel it.
+          Pick a curve and watch it beside a steady reference. Same distance,
+          same duration. Only the feeling changes.
         </p>
       </div>
       <div className="motion-workspace">
@@ -115,18 +130,33 @@ export function MotionStudio() {
             <span>START</span>
             <span>ARRIVE</span>
           </div>
-          <div className="motion-track">
+          {[
+            { name: CURVES[curve].name, label: "YOUR CURVE", ref: runner },
+            { name: "Steady", label: "REFERENCE", ref: baseline },
+          ].map((lane, index) => (
             <div
-              ref={runner}
-              className={`motion-runner ${arrived ? "has-arrived" : ""}`}
-              aria-hidden="true"
+              className={`motion-lane ${index === 1 ? "is-reference" : ""}`}
+              key={index}
             >
-              <span />
+              <div className="motion-lane-label">
+                <strong>{lane.name}</strong>
+                <span>{lane.label}</span>
+              </div>
+              <div className="motion-track">
+                <div
+                  ref={lane.ref}
+                  className={`motion-runner ${arrived ? "has-arrived" : ""}`}
+                  aria-hidden="true"
+                >
+                  <span />
+                </div>
+              </div>
             </div>
-          </div>
+          ))}
           <div className="motion-curve-note">
             <svg viewBox="-5 -30 110 140" aria-hidden="true">
               <path className="curve-guide" d="M0 0V100H100" />
+              <path className="curve-reference" d={CURVES[0].path} />
               <path d={CURVES[curve].path} />
             </svg>
             <div>
@@ -172,12 +202,12 @@ export function MotionStudio() {
           </button>
           <p className="motion-feedback" role="status">
             {reduced
-              ? "Reduced motion is on. Previewing the end state without animation."
+              ? "Reduced motion is on. Show both end states without animation."
               : playing
-                ? "In motion…"
+                ? "Comparing both curves…"
                 : arrived
-                  ? "Arrived. Try another feeling."
-                  : "Ready when you are."}
+                  ? "Both arrived together. Try another curve."
+                  : "Two paths. One shared duration. Ready when you are."}
           </p>
         </div>
       </div>
