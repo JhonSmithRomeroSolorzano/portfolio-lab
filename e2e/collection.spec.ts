@@ -31,6 +31,10 @@ test("connection puzzle works with keyboard input, undo, reset, and a complete s
   await expect(page.locator(".route-feedback")).toContainText(
     "Connection made",
   );
+  await page.getByRole("button", { name: "Next puzzle", exact: false }).click();
+  await expect(page.getByLabel("Choose a puzzle")).toHaveValue("1");
+  await expect(tiles.nth(0)).toBeFocused();
+  await tiles.nth(0).press("Space");
   await page.getByRole("button", { name: "Start again", exact: true }).click();
   await expect(page.locator(".route-feedback")).not.toContainText(
     "Connection made",
@@ -103,4 +107,29 @@ test("collection keeps navigation and expanded-workspace isolation on a narrow s
   await expect(
     page.getByLabel("Exact request rate", { exact: true }),
   ).toHaveValue("600");
+});
+
+test("optional hints describe one move without playing it and support keyboard follow-through", async ({
+  page,
+}) => {
+  await page.goto("/#connection-game");
+  const hint = page.getByRole("button", {
+    name: "Give me a hint",
+    exact: true,
+  });
+  await hint.click();
+  await expect(page.locator(".route-hint")).toContainText("row 1, column 1");
+  await expect(page.locator(".route-score")).toContainText("0 turns");
+  await page
+    .getByRole("button", { name: "Go to hinted tile", exact: false })
+    .press("Enter");
+  const tile = page.getByRole("button", { name: /Row 1, column 1:/ });
+  await expect(tile).toBeFocused();
+  await tile.press("Space");
+  await expect(page.locator(".route-score")).toContainText("1 turn");
+  await expect(page.locator(".route-hint [role=status]")).toBeEmpty();
+  await hint.click();
+  await expect(page.locator(".route-hint")).toContainText("row 1, column 2");
+  await page.getByLabel("Choose a puzzle").selectOption("2");
+  await expect(page.locator(".route-hint [role=status]")).toBeEmpty();
 });

@@ -148,6 +148,30 @@
   opacity: 0.5;
   cursor: default;
 }
+.route-hint p {
+  font-size: 12px;
+  margin: 10px 0;
+}
+.route-hint button,
+.route-next {
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid var(--route-ink);
+  border-radius: 6px;
+  color: var(--route-ink);
+  background: transparent;
+  font-size: 12px;
+  line-height: 1.6;
+  font-weight: 500;
+}
+.route-next {
+  display: block;
+  margin-bottom: 18px;
+}
+.route-tile.is-hinted {
+  outline: 3px dashed #704019;
+  outline-offset: -6px;
+}
 .route-console {
   min-width: 0;
   width: 100%;

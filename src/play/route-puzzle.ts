@@ -80,3 +80,13 @@ export function portNames(tile: number) {
     .map(([, name]) => name)
     .join(" and ");
 }
+
+// Offer one step along an authored solution; other valid routes are welcome.
+export function routeHint(board: readonly number[], level: number) {
+  if (traceRoute(board).won) return null;
+  const solution = solvedBoard(level);
+  const index = PUZZLES[level].path.find(
+    (cell) => board[cell] !== solution[cell],
+  );
+  return index === undefined ? null : { index, ports: solution[index] };
+}

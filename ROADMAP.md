@@ -340,3 +340,7 @@ Next: refine these three pieces from user feedback before adding another. Specif
 - [x] Consolidate technology details in the interactive stack map, retaining languages and testing upfront. Give experience the full content width, with role identity beside contributions on wide screens and education/certifications below. Preserve all verified profile data and résumé downloads.
 
 Next: optional puzzle guidance and a clear next-puzzle action, then browser-local puzzle progress and simultaneous motion comparison. Keep these as complete improvements with behavior tests; do not add sections for contribution counts.
+
+- [x] Add optional one-tile puzzle hints, a keyboard jump to the highlighted tile, explicit inlet/outlet instructions, and a next-puzzle action after a successful connection. Hints leave turns unchanged, clear after board edits, and accept valid alternate routes. Verify hint-led solutions for all boards and browser completion/focus behavior.
+
+Next: preserve each puzzle's progress in this browser, with safe handling for unavailable or invalid storage.

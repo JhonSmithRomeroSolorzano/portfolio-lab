@@ -7,6 +7,7 @@ import {
   PUZZLES,
   portNames,
   rotateTile,
+  routeHint,
   startingBoard,
   traceRoute,
 } from "./route-puzzle";
@@ -18,6 +19,7 @@ export function RoutePuzzle() {
   const [history, setHistory] = useState<{ tiles: number[]; moves: number }[]>(
     [],
   );
+  const [hint, setHint] = useState<ReturnType<typeof routeHint>>(null);
   const [focused, setFocused] = useState(0);
   const buttons = useRef<(HTMLButtonElement | null)[]>([]);
   const route = traceRoute(tiles);
@@ -26,8 +28,10 @@ export function RoutePuzzle() {
     setTiles(startingBoard(next));
     setMoves(0);
     setHistory([]);
+    setHint(null);
   }
   function turn(index: number) {
+    setHint(null);
     setHistory((current) => [...current.slice(-99), { tiles, moves }]);
     setTiles((current) =>
       current.map((tile, i) => (i === index ? rotateTile(tile) : tile)),
@@ -37,6 +41,7 @@ export function RoutePuzzle() {
   function undo() {
     const previous = history.at(-1);
     if (!previous) return;
+    setHint(null);
     setTiles(previous.tiles);
     setMoves(previous.moves);
     setHistory((current) => current.slice(0, -1));
@@ -51,7 +56,8 @@ export function RoutePuzzle() {
           <em>connection.</em>
         </h3>
         <p>
-          One signal. A tangle of paths. Rotate the tiles to connect IN to OUT.
+          One signal. A tangle of paths. Connect the left edge of the top-left
+          tile to the right edge of the bottom-right tile.
         </p>
         <p className="play-help" id="route-help">
           Click or press Space to turn a tile. Arrow keys move between tiles. No
@@ -76,6 +82,23 @@ export function RoutePuzzle() {
             Undo turn
           </button>
           <button onClick={() => reset()}>Start again</button>
+          <button
+            onClick={() => setHint(routeHint(tiles, level))}
+            disabled={route.won}
+          >
+            Give me a hint
+          </button>
+        </div>
+        <div className="route-hint">
+          <p role="status" aria-atomic="true">
+            {hint &&
+              `One possible path: turn row ${Math.floor(hint.index / 4) + 1}, column ${(hint.index % 4) + 1} until it connects ${portNames(hint.ports)}.`}
+          </p>
+          {hint && (
+            <button onClick={() => buttons.current[hint.index]?.focus()}>
+              Go to hinted tile →
+            </button>
+          )}
         </div>
       </div>
       <div className="route-console">
@@ -125,8 +148,8 @@ export function RoutePuzzle() {
                   buttons.current[next]?.focus();
                 }
               }}
-              className={`route-tile ${route.cells.includes(i) ? "has-signal" : ""}`}
-              aria-label={`Row ${Math.floor(i / 4) + 1}, column ${(i % 4) + 1}: ${portNames(tile)}${route.cells.includes(i) ? ", signal connected" : ""}. Rotate clockwise.`}
+              className={`route-tile ${route.cells.includes(i) ? "has-signal" : ""} ${hint?.index === i ? "is-hinted" : ""}`}
+              aria-label={`Row ${Math.floor(i / 4) + 1}, column ${(i % 4) + 1}: ${portNames(tile)}${hint?.index === i ? ", hinted tile" : ""}${route.cells.includes(i) ? ", signal connected" : ""}. Rotate clockwise.`}
             >
               <svg viewBox="0 0 64 64" aria-hidden="true">
                 {[
@@ -154,9 +177,23 @@ export function RoutePuzzle() {
           aria-atomic="true"
         >
           {route.won
-            ? `Connection made in ${moves} turns. Try another puzzle?`
+            ? `Connection made in ${moves} ${moves === 1 ? "turn" : "turns"}. IN and OUT are connected.`
             : `${route.cells.length} of 16 tiles carry the signal. Find a path to OUT.`}
         </p>
+        {route.won && (
+          <button
+            className="route-next"
+            onClick={() => {
+              reset((level + 1) % PUZZLES.length);
+              buttons.current[0]?.focus();
+            }}
+          >
+            {level === PUZZLES.length - 1
+              ? "Play first puzzle again"
+              : "Next puzzle"}{" "}
+            →
+          </button>
+        )}
         <span className="route-footnote">
           A browser puzzle, made for a small pause.
         </span>

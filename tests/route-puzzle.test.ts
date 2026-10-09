@@ -7,6 +7,7 @@ import {
   SOUTH,
   PUZZLES,
   rotateTile,
+  routeHint,
   solvedBoard,
   startingBoard,
   traceRoute,
@@ -46,4 +47,38 @@ test("the destination must have an outlet, and broken routes stop at the last co
   assert.equal(traceRoute(board).won, false);
   board[5] = NORTH | EAST;
   assert.deepEqual(traceRoute(board), { cells: [0, 1, 5], won: false });
+});
+
+test("hints never mutate the board and lead to a connection for every puzzle", () => {
+  PUZZLES.forEach((_, level) => {
+    const board = startingBoard(level);
+    for (let step = 0; step < 16 && !traceRoute(board).won; step++) {
+      const before = [...board];
+      const hint = routeHint(board, level);
+      assert.deepEqual(board, before);
+      assert.deepEqual(routeHint(board, level), hint);
+      assert.ok(hint);
+      for (
+        let turns = 0;
+        board[hint.index] !== hint.ports && turns < 4;
+        turns++
+      ) {
+        board[hint.index] = rotateTile(board[hint.index]);
+      }
+      assert.equal(board[hint.index], hint.ports);
+    }
+    assert.ok(traceRoute(board).won);
+    assert.equal(routeHint(board, level), null);
+  });
+});
+
+test("a valid alternate route needs no hint, even when it differs from the authored solution", () => {
+  const board = solvedBoard(0);
+  // Shorter route: 0 → 1 → 5 → 9 → 10 → 11 → 15.
+  board[5] = NORTH | SOUTH;
+  board[9] = NORTH | EAST;
+  board[10] = WEST | EAST;
+  board[11] = WEST | SOUTH;
+  assert.ok(traceRoute(board).won);
+  assert.equal(routeHint(board, 0), null);
 });
