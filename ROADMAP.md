@@ -380,3 +380,5 @@ The user requested interactive labs inspired by visual coding videos. Keep the e
 - [x] Keep the workspace bounded, preserve all three collection pieces, and include a direct entry from the default demo. Verify the model and affected browser journeys, narrow-screen layout, and both themes before publication.
 
 Next: gather feedback on Cache Rescue's visual explanation, then consider Algorithm Garden as the next distinct interactive concept. Verified career examples and a direct contact email remain pending user input. Do not split an individual feature to create activity.
+
+- [x] Fix the WebKit failed-download recovery regression found by full CI: load the small Cache Rescue stylesheet with existing portfolio styles while keeping its JavaScript on demand. Cover both aborted requests and temporary HTTP 503 responses; preserve the scenario and recovery destination.

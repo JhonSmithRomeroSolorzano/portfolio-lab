@@ -8,7 +8,6 @@ import {
   rescueEvents,
 } from "./cache-rescue";
 import type { RescueRequest, RescueState } from "./cache-rescue";
-import "./cache-rescue.css";
 
 const ROWS: { state: RescueState; label: string; y: number }[] = [
   { state: "pending", label: "Not arrived yet", y: 22 },

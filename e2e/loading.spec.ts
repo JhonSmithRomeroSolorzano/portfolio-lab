@@ -47,28 +47,41 @@ for (const [hash, control] of [
   });
 }
 
-test("a failed lab download leaves the resume usable with a clear recovery action", async ({
-  page,
-}) => {
-  await page.route("**/SignalLab-*.js", (route) => route.abort());
-  await page.goto("/?traffic=237#lab");
-  await expect(
-    page.getByRole("status").filter({ hasText: "Signal Lab couldn’t load" }),
-  ).toBeVisible();
-  await expect(page.getByRole("button", { name: "Reload page" })).toBeVisible();
-  await page
-    .getByRole("navigation", { name: "Main navigation" })
-    .getByRole("link", { name: "Résumé", exact: true })
-    .press("Enter");
-  await expect(
-    page.getByRole("link", { name: "Download PDF", exact: true }),
-  ).toBeVisible();
-  await page.unroute("**/SignalLab-*.js");
-  await page.getByRole("button", { name: "Reload page" }).click();
-  await expect(
-    page.getByRole("spinbutton", { name: "Exact request rate" }),
-  ).toHaveValue("237");
-});
+for (const failure of ["aborted", "unavailable"] as const) {
+  test(`an ${failure} lab download leaves the resume usable with a clear recovery action`, async ({
+    page,
+  }) => {
+    await page.route("**/SignalLab-*.js", (route) =>
+      failure === "aborted"
+        ? route.abort()
+        : route.fulfill({
+            status: 503,
+            contentType: "text/javascript",
+            body: "temporarily unavailable",
+            headers: { "cache-control": "no-store" },
+          }),
+    );
+    await page.goto("/?traffic=237#lab");
+    await expect(
+      page.getByRole("status").filter({ hasText: "Signal Lab couldn’t load" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Reload page" }),
+    ).toBeVisible();
+    await page
+      .getByRole("navigation", { name: "Main navigation" })
+      .getByRole("link", { name: "Résumé", exact: true })
+      .press("Enter");
+    await expect(
+      page.getByRole("link", { name: "Download PDF", exact: true }),
+    ).toBeVisible();
+    await page.unroute("**/SignalLab-*.js");
+    await page.getByRole("button", { name: "Reload page" }).click();
+    await expect(
+      page.getByRole("spinbutton", { name: "Exact request rate" }),
+    ).toHaveValue("237");
+  });
+}
 
 test("a delayed experiment does not pull the visitor back after navigating away", async ({
   page,
