@@ -382,3 +382,9 @@ The user requested interactive labs inspired by visual coding videos. Keep the e
 Next: gather feedback on Cache Rescue's visual explanation, then consider Algorithm Garden as the next distinct interactive concept. Verified career examples and a direct contact email remain pending user input. Do not split an individual feature to create activity.
 
 - [x] Fix the WebKit failed-download recovery regression found by full CI: load the small Cache Rescue stylesheet with existing portfolio styles while keeping its JavaScript on demand. Cover both aborted requests and temporary HTTP 503 responses; preserve the scenario and recovery destination.
+
+## Focused playground — October 10 feedback
+
+- [x] Keep the stack map at a consistent intrinsic height across Frontend, Backend, Data, and Infrastructure. Overlapping grid panels reserve the tallest content while inactive panels stay hidden and inert. Verify wide screens, mobile, enlarged text, and a single accessible detail panel.
+
+Next: replace the sprawling Signal Lab dashboard with four equally prominent, playful experiences and visual entry cards.

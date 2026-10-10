@@ -292,12 +292,22 @@
   font: 9px var(--mono);
   color: var(--muted);
 }
+.stack-details {
+  display: grid;
+  min-width: 0;
+}
+/* All panels size the same grid cell. Hidden panels reserve intrinsic space
+   without exposing duplicate content or focus targets to assistive technology. */
 .stack-detail {
+  grid-area: 1 / 1;
   display: flex;
   flex-direction: column;
   padding: 28px 25px;
   border-left: 1px solid var(--line);
   min-width: 0;
+}
+.stack-detail[aria-hidden="true"] {
+  visibility: hidden;
 }
 .stack-detail-label {
   font: 10px var(--mono);

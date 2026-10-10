@@ -42,7 +42,6 @@ function LayerIcon({ kind }: { kind: string }) {
 export function StackMap() {
   const [selected, setSelected] =
     useState<(typeof stackLayers)[number]["id"]>("frontend");
-  const layer = stackLayers.find((item) => item.id === selected)!;
   return (
     <div className="stack-map">
       <div className="stack-drawing" role="group" aria-label="Explore my stack">
@@ -83,27 +82,36 @@ export function StackMap() {
         </p>
       </div>
       <div
-        className="stack-detail"
+        className="stack-details"
         id="stack-detail"
         role="region"
         aria-label="Selected stack experience"
         aria-live="polite"
         aria-atomic="true"
       >
-        <span className="stack-detail-label">{layer.name}</span>
-        <h2>{layer.title}</h2>
-        <p>{layer.description}</p>
-        <dl className="stack-facts" aria-label="Technology categories">
-          {layer.groups.map((group) => (
-            <div key={group.label}>
-              <dt>{group.label}</dt>
-              <dd>{group.items.join(" · ")}</dd>
-            </div>
-          ))}
-        </dl>
-        <a href={layer.destination}>
-          {layer.action} <span aria-hidden="true">↗</span>
-        </a>
+        {stackLayers.map((layer) => (
+          <div
+            key={layer.id}
+            className="stack-detail"
+            aria-hidden={selected !== layer.id}
+            inert={selected !== layer.id}
+          >
+            <span className="stack-detail-label">{layer.name}</span>
+            <h2>{layer.title}</h2>
+            <p>{layer.description}</p>
+            <dl className="stack-facts" aria-label="Technology categories">
+              {layer.groups.map((group) => (
+                <div key={group.label}>
+                  <dt>{group.label}</dt>
+                  <dd>{group.items.join(" · ")}</dd>
+                </div>
+              ))}
+            </dl>
+            <a href={layer.destination}>
+              {layer.action} <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        ))}
       </div>
     </div>
   );
