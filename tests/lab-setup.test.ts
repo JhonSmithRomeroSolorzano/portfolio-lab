@@ -7,7 +7,7 @@ import {
   setupUrl,
 } from "../src/labs/lab-setup.ts";
 import type { SetupId } from "../src/labs/lab-setup.ts";
-test("all six independent setups round trip without serializing results", () => {
+test("all independent setups round trip without serializing results", () => {
   for (const lab of Object.keys(DEFAULT_LAB_SETTINGS) as SetupId[]) {
     const url = new URL(
       setupUrl(

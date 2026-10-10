@@ -1,4 +1,5 @@
 import { InvestigationGuide } from "./labs/InvestigationGuide";
+import { CacheRescueLab } from "./labs/CacheRescueLab";
 import type { LabSetup } from "./labs/lab-setup";
 import {
   LabSettingsProvider,
@@ -327,6 +328,19 @@ function SignalLab() {
               <span aria-hidden="true">↳</span>
               {explanations[result.status]}
             </p>
+            <button
+              className="rescue-entry"
+              onClick={() => {
+                chooseLab("rescue");
+                requestAnimationFrame(() =>
+                  document
+                    .getElementById("rescue-title")
+                    ?.focus({ preventScroll: true }),
+                );
+              }}
+            >
+              Try Cache Rescue → What happens when everyone misses at once?
+            </button>
           </div>
           <div className="lab-controls">
             <span className="eyebrow dark-label">YOU’RE AT THE CONTROLS</span>
@@ -487,6 +501,9 @@ function SignalLab() {
           </div>
         </div>
         <div className="experiment-tools">
+          <div hidden={activeLab !== "rescue"}>
+            <CacheRescueLab active={activeLab === "rescue"} />
+          </div>
           <div hidden={activeLab !== "writes"}>
             <ConcurrentWritesLab active={activeLab === "writes"} />
           </div>

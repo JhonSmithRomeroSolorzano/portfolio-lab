@@ -1,5 +1,12 @@
 export const LABS = [
   {
+    id: "rescue",
+    name: "Cache Rescue",
+    area: "Data",
+    detail: "Expire one popular key and rescue a burst with shared fetching.",
+    shared: false,
+  },
+  {
     id: "writes",
     name: "Concurrent writes",
     area: "Data",

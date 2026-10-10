@@ -1,5 +1,6 @@
 import type { LabId } from "../lab-catalog";
 export interface LabSettings {
+  rescue: { requests: number; originMs: number; spacingMs: number };
   search: { oldDelay: number; newestDelay: number; policy: "every" | "latest" };
   events: {
     pattern: "burst" | "steady";
@@ -20,6 +21,7 @@ export type LabSetup = {
   [K in SetupId]: { version: 1; lab: K; settings: LabSettings[K] };
 }[SetupId];
 export const DEFAULT_LAB_SETTINGS: LabSettings = {
+  rescue: { requests: 24, originMs: 400, spacingMs: 25 },
   search: { oldDelay: 800, newestDelay: 100, policy: "every" },
   events: { pattern: "burst", delay: 200, policy: "debounce" },
   circuit: { threshold: 3, cooldown: 500, recovery: 800 },
@@ -32,6 +34,11 @@ export function hasSetup(id: LabId): id is SetupId {
 }
 type Rule = readonly string[] | { min: number; max: number; step?: number };
 const schema: { [K in SetupId]: Record<keyof LabSettings[K], Rule> } = {
+  rescue: {
+    requests: { min: 6, max: 36, step: 6 },
+    originMs: { min: 100, max: 800, step: 100 },
+    spacingMs: { min: 0, max: 75, step: 25 },
+  },
   search: {
     oldDelay: { min: 50, max: 1000, step: 50 },
     newestDelay: { min: 50, max: 1000, step: 50 },

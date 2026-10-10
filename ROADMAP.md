@@ -370,3 +370,13 @@ Next: complete the review's accessibility/performance audit and branded public s
 - [x] Serve the licensed IBM Plex fonts locally and preload the main font. Add a reproducible Lighthouse command. The October 9 local production mobile simulation scored 99 performance, 100 accessibility, 100 best practices, and 100 SEO, with 2.0s LCP, zero blocking time, and zero layout shift. These are lab measurements, not hosted real-user metrics. All 128 unit/integration checks and the production build pass; the corrected loading/game journeys pass in both browsers.
 
 Next: add a direct contact email and concise, concrete Nimrod/Athletify feature examples when the user supplies the problem, personal contribution, decision, and outcome. Do not invent results or turn these pending facts into public placeholders. Further technical work should follow observed issues or new user feedback.
+
+## Visual coding inspiration — October 10
+
+The user requested interactive labs inspired by visual coding videos. Keep the experience-first layout and the compact Signal Lab. Cache Rescue is the first bounded implementation; Algorithm Garden and a sorting playground remain candidate milestones rather than additional page sections.
+
+- [x] Add Cache Rescue inside Signal Lab, with original paired request diagrams comparing independent cache-miss fetches against single-flight sharing. Keep each result tied to the same deterministic workload, including refill/arrival ties and already-started duplicate work.
+- [x] Provide explicit play/pause/reset, event stepping, time inspection, adjustable burst size/fetch time/arrival spacing, and validated shareable settings. Stop playback on navigation, hidden tabs, input changes, and reduced motion; provide a static alternative.
+- [x] Keep the workspace bounded, preserve all three collection pieces, and include a direct entry from the default demo. Verify the model and affected browser journeys, narrow-screen layout, and both themes before publication.
+
+Next: gather feedback on Cache Rescue's visual explanation, then consider Algorithm Garden as the next distinct interactive concept. Verified career examples and a direct contact email remain pending user input. Do not split an individual feature to create activity.
