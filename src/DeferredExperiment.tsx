@@ -34,7 +34,7 @@ export function DeferredExperiment({ id, title, titleId, load }: Props) {
   useEffect(() => {
     const enter = () => {
       const hash = window.location.hash;
-      if (hash === `#${id}` || (id === "signal-lab" && hash === "#lab")) {
+      if (hash === `#${id}` || (id === "cache-rescue" && hash === "#lab")) {
         request();
       }
     };

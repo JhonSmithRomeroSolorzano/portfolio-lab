@@ -1,5 +1,7 @@
 # Signal Lab: making system trade-offs inspectable
 
+> Historical engineering reference: this describes the original systems dashboard, retired from the public page on October 10. Its models, local API, and CLI remain available in source. The current portfolio presents four independent games and interactive pieces.
+
 **[Try the browser lab](https://jhonsmithromerosolorzano.github.io/portfolio-lab/#lab)** · [Run the local API](server/README.md) · [Read the model](src/simulation.ts)
 
 Signal Lab is an original portfolio project by Jhon Smith Romero. It turns a familiar engineering conversation—traffic, caching, database capacity, and failure—into a small experiment a reviewer can reproduce. It is not a production benchmark or a claim about a previous employer's systems.

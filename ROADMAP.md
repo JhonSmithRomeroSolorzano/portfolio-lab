@@ -388,3 +388,10 @@ Next: gather feedback on Cache Rescue's visual explanation, then consider Algori
 - [x] Keep the stack map at a consistent intrinsic height across Frontend, Backend, Data, and Infrastructure. Overlapping grid panels reserve the tallest content while inactive panels stay hidden and inert. Verify wide screens, mobile, enlarged text, and a single accessible detail panel.
 
 Next: replace the sprawling Signal Lab dashboard with four equally prominent, playful experiences and visual entry cards.
+
+- [x] Replace the public Signal Lab dashboard and its large dropdown catalog with four peer experiences: Cache Rescue, Connection puzzle, Motion Studio, and Algorithm Garden. Use visual entry cards, independent anchors, distinct treatments, and lazy loading. Old Signal Lab anchors reach the collection; former dashboard settings no longer configure it.
+- [x] Rework Cache Rescue into three short strategy challenges with animated requests, a one-read objective, clear outcomes, replay, pause, and static reduced-motion results. Explain the sparse-arrival case as well as the savings from shared fetches.
+- [x] Add Algorithm Garden with breadth-first and pre-order depth-first play, hints, recoverable mistakes, numbered visits, keyboard operation, and a visible traversal trail.
+- [x] Replace retired dashboard browser journeys with coverage for the four current pieces, retaining the earlier model/API/CLI unit tests. Check responsive layouts, both themes, reduced motion, direct links, download recovery, and map stability in Chromium and WebKit.
+
+Next: refine these four pieces from user feedback rather than growing another large catalog. A direct contact email and specific professional project outcomes still require verified user details; do not invent them. A human screen-reader assessment remains a separate audit task.

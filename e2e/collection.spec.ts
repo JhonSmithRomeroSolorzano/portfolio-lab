@@ -81,45 +81,6 @@ test("motion studio is explicit, replayable, and honors live reduced-motion chan
   await expect(runner).toHaveClass([/has-arrived/, /has-arrived/]);
 });
 
-test("collection keeps navigation and expanded-workspace isolation on a narrow screen", async ({
-  page,
-}) => {
-  await page.emulateMedia({ reducedMotion: "reduce", colorScheme: "dark" });
-  await page.setViewportSize({ width: 320, height: 800 });
-  await page.goto("/?traffic=600#lab");
-  await page
-    .getByRole("link", { name: "02 Connection puzzle", exact: false })
-    .press("Enter");
-  await expect(
-    page.locator('nav[aria-label="Main navigation"] a[href="#lab"]'),
-  ).toHaveAttribute("aria-current", "location");
-  await expect(page.locator("#connection-game")).toBeInViewport();
-  expect(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth <= innerWidth,
-    ),
-  ).toBeTruthy();
-  await page
-    .getByRole("button", { name: "Expand workspace", exact: true })
-    .click();
-  expect(
-    await page.locator("#connection-game").evaluate((el) => el.inert),
-  ).toBe(true);
-  expect(await page.locator("#motion-studio").evaluate((el) => el.inert)).toBe(
-    true,
-  );
-  await page.keyboard.press("Escape");
-  expect(
-    await page.locator("#connection-game").evaluate((el) => el.inert),
-  ).toBe(false);
-  await expect(
-    page.getByRole("button", { name: "Expand workspace", exact: true }),
-  ).toBeFocused();
-  await expect(
-    page.getByLabel("Exact request rate", { exact: true }),
-  ).toHaveValue("600");
-});
-
 test("optional hints describe one move without playing it and support keyboard follow-through", async ({
   page,
 }) => {
@@ -204,7 +165,7 @@ test("motion comparison shares a clock and duration, and control changes cancel 
   // Enter through the page so initial hash restoration cannot steal focus mid-click.
   await page.goto("/");
   await page
-    .getByRole("link", { name: "03 Motion studio", exact: false })
+    .getByRole("link", { name: /Motion studio/, exact: false })
     .press("Enter");
   await expect(page.locator("#motion-studio")).toBeFocused();
   const duration = page.getByRole("slider", { name: /Duration/ });
@@ -248,4 +209,37 @@ test("motion comparison shares a clock and duration, and control changes cancel 
     "Both arrived together",
   );
   await expect(page.locator(".motion-runner.has-arrived")).toHaveCount(2);
+});
+
+test("four peer experiences replace the dropdown and old Signal Lab anchor reaches the collection", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/?lab=api#signal-lab");
+  await expect(page).toHaveURL(/#lab$/);
+  await expect(page.getByLabel("Choose a lab", { exact: true })).toHaveCount(0);
+  const links = page
+    .getByRole("navigation", { name: "Explore the collection" })
+    .getByRole("link");
+  await expect(links).toHaveCount(4);
+  await expect(page.locator("#lab > article")).toHaveCount(4);
+  for (const [index, id] of [
+    "cache-rescue",
+    "connection-game",
+    "motion-studio",
+    "algorithm-garden",
+  ].entries()) {
+    await links.nth(index).press("Enter");
+    await expect(page.locator(`#${id}`)).toBeFocused();
+    await expect(page.locator(`#${id}`)).toBeInViewport();
+    await expect(
+      page.locator('nav[aria-label="Main navigation"] a[href="#lab"]'),
+    ).toHaveAttribute("aria-current", "location");
+  }
+  await expect(page.getByText("WORK IN PROGRESS", { exact: true })).toHaveCount(
+    0,
+  );
+  await expect(
+    page.getByRole("link", { name: "See the roadmap", exact: false }),
+  ).toHaveCount(0);
 });

@@ -1,0 +1,546 @@
+.collection-index {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin: 32px 0 48px;
+}
+.collection-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  color: var(--ink);
+  transition:
+    transform 180ms,
+    border-color 180ms;
+}
+.collection-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+}
+.collection-mini {
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border-radius: 8px;
+  font: 30px var(--mono);
+  margin-bottom: 10px;
+}
+.collection-mini b {
+  font-weight: 400;
+}
+.mini-rescue {
+  background: #152b50;
+  color: #ffd59a;
+}
+.mini-route {
+  background: #f1e1ca;
+  color: #9e351b;
+}
+.mini-motion {
+  background: #e8ddfa;
+  color: #6238a5;
+}
+.mini-garden {
+  background: #ffeac4;
+  color: #73410a;
+}
+.collection-number {
+  font: 0.5625rem/1.6 var(--mono);
+  color: var(--muted);
+  letter-spacing: 0.5px;
+}
+.collection-card strong {
+  font: 500 1.125rem/1.3 var(--display);
+}
+.collection-description {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.collection-go {
+  font-size: 0.6875rem;
+  margin-top: auto;
+  padding-top: 12px;
+  color: var(--accent);
+}
+.collection-index + .play-exhibit {
+  margin-top: 0;
+}
+.cache-game,
+.algorithm-garden {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 42px;
+  padding: 42px;
+  align-items: center;
+  border-radius: 24px;
+  min-width: 0;
+}
+.cache-game {
+  --focus: #ffdaa2;
+  background: #112440;
+  color: #f3f5fa;
+  border: 1px solid #385071;
+  color-scheme: dark;
+}
+.cache-intro h3,
+.garden-intro h3 {
+  font: 500 clamp(30px, 3.7vw, 46px)/1.12 var(--display);
+  letter-spacing: -1.5px;
+  margin: 24px 0 20px;
+}
+.cache-intro h3 em,
+.garden-intro h3 em {
+  font:
+    italic 400 1em Georgia,
+    serif;
+}
+.cache-intro h3 em {
+  color: #ffcf96;
+}
+.cache-intro p,
+.garden-intro p {
+  font-size: 0.875rem;
+  line-height: 1.8;
+  max-width: 340px;
+}
+.cache-intro > p {
+  color: #c3cfe1;
+}
+.cache-intro h4 {
+  margin: 18px 0 0;
+  font-size: 1rem;
+  font-weight: 500;
+}
+.cache-intro .cache-mission {
+  margin-top: 8px;
+  font-size: 0.8125rem;
+}
+.cache-rounds {
+  display: flex;
+  gap: 8px;
+  margin-top: 24px;
+}
+.cache-rounds button {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid #8096b5;
+  background: transparent;
+  color: #dce5f2;
+  font: 0.75rem var(--mono);
+}
+.cache-rounds button[aria-pressed="true"] {
+  background: #ffcf96;
+  border-color: #ffcf96;
+  color: #17253c;
+}
+.cache-strategies {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 24px;
+}
+.cache-strategies button {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 10px;
+  text-align: left;
+  background: #1b3557;
+  color: #f3f5fa;
+  border: 1px solid #718baa;
+  border-radius: 10px;
+}
+.cache-strategies button > span {
+  font-size: 1.125rem;
+  letter-spacing: 2px;
+}
+.cache-strategies strong {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.cache-strategies small {
+  font-size: 0.625rem;
+  line-height: 1.6;
+}
+.cache-strategies button[aria-pressed="true"] {
+  background: #d8e8ff;
+  color: #122441;
+  border-color: #d8e8ff;
+  box-shadow: inset 0 -3px #8cafec;
+}
+.cache-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+.cache-launch,
+.cache-next {
+  border: 0;
+  border-radius: 7px;
+  padding: 13px 18px;
+  background: #ffcf96;
+  color: #17253c;
+  min-height: 44px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.cache-reset {
+  border: 0;
+  background: transparent;
+  color: #d8e8ff;
+  min-height: 44px;
+  text-decoration: underline;
+  font-size: 0.75rem;
+}
+.cache-console {
+  min-width: 0;
+  border: 1px solid #4d6687;
+  border-radius: 18px;
+  background: #0d1d34;
+  padding: 22px 18px;
+}
+.cache-caption,
+.garden-caption {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  font: 0.5625rem/1.6 var(--mono);
+  letter-spacing: 0.7px;
+}
+.cache-caption {
+  color: #bfd0e8;
+}
+.cache-stage {
+  height: 333px;
+  position: relative;
+  margin-top: 18px;
+  background: radial-gradient(#334661 1px, transparent 1px) 0 0 / 16px 16px;
+}
+.cache-station {
+  position: absolute;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.cache-station > span {
+  font: 0.5625rem/1.5 var(--mono);
+  color: #bccce3;
+}
+.cache-station strong {
+  font-size: 1rem;
+  font-weight: 500;
+}
+.cache-station small {
+  font-size: 0.6875rem;
+  font-weight: 400;
+}
+.cache-arrivals {
+  top: 6px;
+  left: 0;
+  right: 0;
+}
+.cache-database {
+  top: 122px;
+  left: 0;
+  width: 45%;
+}
+.cache-wait {
+  top: 122px;
+  right: 0;
+  width: 45%;
+}
+.cache-replies {
+  top: 232px;
+  left: 0;
+  right: 0;
+}
+.cache-person {
+  width: 8px;
+  height: 8px;
+  position: absolute;
+  border-radius: 50%;
+  background: #a6bddd;
+}
+.cache-person.is-querying {
+  background: #ffcf96;
+  box-shadow: 0 0 0 2px #ffcf9645;
+}
+.cache-person.is-waiting {
+  background: #b4aaff;
+}
+.cache-person.is-done {
+  background: #8fcaff;
+}
+.cache-game.is-playing .cache-person {
+  transition:
+    top 200ms ease,
+    left 200ms ease,
+    background 150ms;
+}
+.cache-progress {
+  height: 4px;
+  background: #3a4c64;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.cache-progress span {
+  display: block;
+  height: 100%;
+  background: #8fcaff;
+}
+.cache-feedback {
+  min-height: 5.2em;
+  color: #e1ebfa;
+  font-size: 0.8125rem;
+  line-height: 1.7;
+  margin: 18px 0 12px;
+}
+.cache-next {
+  font-size: 0.75rem;
+  background: #d8e8ff;
+  width: 100%;
+  margin-bottom: 14px;
+}
+.cache-how {
+  border-top: 1px solid #4d6687;
+  padding-top: 8px;
+  font-size: 0.6875rem;
+  line-height: 1.8;
+  color: #c3cfe1;
+}
+.cache-how summary {
+  cursor: pointer;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cache-how summary::before {
+  content: "+";
+  font-size: 1rem;
+}
+.cache-how[open] summary::before {
+  content: "−";
+}
+.algorithm-garden {
+  background: #fff0d5;
+  color: #53370f;
+  border: 1px solid #d8bb87;
+  color-scheme: light;
+  --focus: #74420b;
+}
+.garden-intro h3 em {
+  color: #915216;
+}
+.garden-modes {
+  display: grid;
+  gap: 8px;
+  margin-top: 24px;
+}
+.garden-modes button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  text-align: left;
+  gap: 8px;
+  padding: 14px 12px;
+  min-height: 48px;
+  background: transparent;
+  color: #53370f;
+  border: 1px solid #b29670;
+  border-radius: 8px;
+}
+.garden-modes strong {
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+.garden-modes span {
+  font: 0.625rem var(--mono);
+}
+.garden-modes button[aria-pressed="true"] {
+  background: #704616;
+  color: #fff4dc;
+  border-color: #704616;
+}
+.garden-intro .garden-rule {
+  font-size: 0.8125rem;
+  min-height: 5em;
+}
+.garden-workspace {
+  min-width: 0;
+  background: #ffe7b9;
+  padding: 22px 16px;
+  border-radius: 180px 180px 20px 20px;
+  border: 1px solid #d5ad72;
+}
+.garden-caption {
+  justify-content: center;
+  margin: 18px 0;
+  color: #79521c;
+}
+.garden-tree {
+  height: 280px;
+  position: relative;
+}
+.garden-tree svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.garden-tree path {
+  fill: none;
+  stroke: #b89766;
+  stroke-width: 2px;
+  vector-effect: non-scaling-stroke;
+  transition: stroke 160ms;
+}
+.garden-tree path.is-lit {
+  stroke: #704616;
+  stroke-width: 3px;
+}
+.garden-node {
+  position: absolute;
+  width: 46px;
+  height: 46px;
+  transform: translate(-50%, -50%);
+  background: #fff7e6;
+  border: 1px solid #95764d;
+  border-radius: 50%;
+  color: #53370f;
+  font: 1rem var(--mono);
+  transition:
+    background 160ms,
+    box-shadow 160ms;
+}
+.garden-node:hover {
+  box-shadow: 0 0 0 5px #ae771e25;
+}
+.garden-node.is-lit {
+  background: #704616;
+  color: #fff4dc;
+  border-color: #704616;
+  box-shadow: 0 0 0 5px #d5ad7240;
+}
+.garden-node small {
+  position: absolute;
+  right: -4px;
+  bottom: -5px;
+  border: 1px solid #95764d;
+  color: #53370f;
+  background: #fff7e6;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  font-size: 0.625rem;
+  display: grid;
+  place-items: center;
+}
+.garden-node.is-hinted {
+  outline: 2px dashed #704616;
+  outline-offset: 5px;
+}
+.garden-trail {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+.garden-trail span {
+  width: 28px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-bottom: 1px solid #b29670;
+  font: 0.8125rem var(--mono);
+}
+.garden-feedback {
+  min-height: 5.2em;
+  padding-inline: 8px;
+  margin: 22px 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.7;
+  text-align: center;
+}
+@media (max-width: 1100px) {
+  .collection-index {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .cache-game,
+  .algorithm-garden {
+    gap: 24px;
+    padding: 30px;
+  }
+}
+@media (max-width: 760px) {
+  .cache-game,
+  .algorithm-garden {
+    grid-template-columns: 1fr;
+  }
+  .cache-intro > p,
+  .garden-intro > p {
+    max-width: none;
+  }
+  .cache-console,
+  .garden-workspace {
+    width: 100%;
+    max-width: 480px;
+    justify-self: center;
+    box-sizing: border-box;
+  }
+}
+@media (max-width: 600px) {
+  .collection-index {
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+  .collection-card {
+    padding: 12px 10px;
+  }
+  .collection-card strong {
+    font-size: 0.9375rem;
+  }
+  .collection-mini {
+    height: 52px;
+    gap: 6px;
+    font-size: 23px;
+  }
+  .collection-description {
+    font-size: 0.75rem;
+  }
+  .collection-go {
+    font-size: 0.625rem;
+  }
+  .cache-game,
+  .algorithm-garden {
+    padding: 24px 18px;
+  }
+  .cache-console {
+    padding: 18px 10px;
+  }
+  .garden-workspace {
+    padding-inline: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .collection-card,
+  .cache-game.is-playing .cache-person,
+  .garden-node,
+  .garden-tree path {
+    transition: none;
+  }
+  .collection-card:hover {
+    transform: none;
+  }
+}

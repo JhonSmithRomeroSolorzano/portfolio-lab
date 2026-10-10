@@ -11,7 +11,10 @@ import { ThemeSwitcher } from "./ThemeSwitcher";
 import { BrandMark } from "./BrandMark";
 
 const REPO = `${GITHUB}/portfolio-lab`;
-const loadSignal = () => import("./SignalLab").then((module) => module.default);
+const loadRescue = () =>
+  import("./play/CacheRescue").then((module) => module.CacheRescue);
+const loadGarden = () =>
+  import("./play/AlgorithmGarden").then((module) => module.AlgorithmGarden);
 const loadPuzzle = () =>
   import("./play/RoutePuzzle").then((module) => module.RoutePuzzle);
 const loadMotion = () =>
@@ -21,6 +24,13 @@ export function App() {
   const mainRef = useRef<HTMLElement>(null);
   const navRef = useRef<HTMLElement>(null);
   useLayoutEffect(() => {
+    if (window.location.hash === "#signal-lab") {
+      history.replaceState(
+        null,
+        "",
+        `${location.pathname}${location.search}#lab`,
+      );
+    }
     // A client-rendered anchor may not exist during the browser's first hash lookup.
     const target = document.getElementById(window.location.hash.slice(1));
     if (target && mainRef.current?.contains(target)) {
@@ -192,38 +202,91 @@ export function App() {
                 className="collection-index"
                 aria-label="Explore the collection"
               >
-                <a href="#signal-lab">
-                  <span>01</span> Signal Lab <span aria-hidden="true">↘</span>
+                <a href="#cache-rescue" className="collection-card card-rescue">
+                  <span
+                    className="collection-mini mini-rescue"
+                    aria-hidden="true"
+                  >
+                    ···<b>↘</b>●
+                  </span>
+                  <span className="collection-number">01 / STRATEGY</span>
+                  <strong>Cache Rescue</strong>
+                  <span className="collection-description">
+                    Beat the rush. Share the work.
+                  </span>
+                  <span className="collection-go" aria-hidden="true">
+                    Play with requests ↗
+                  </span>
                 </a>
-                <a href="#connection-game">
-                  <span>02</span> Connection puzzle{" "}
-                  <span aria-hidden="true">↘</span>
+                <a
+                  href="#connection-game"
+                  className="collection-card card-route"
+                >
+                  <span
+                    className="collection-mini mini-route"
+                    aria-hidden="true"
+                  >
+                    ┌<b>┘</b>─
+                  </span>
+                  <span className="collection-number">02 / LOGIC</span>
+                  <strong>Connection puzzle</strong>
+                  <span className="collection-description">
+                    A few turns. One bright idea.
+                  </span>
+                  <span className="collection-go" aria-hidden="true">
+                    Find a path ↗
+                  </span>
                 </a>
-                <a href="#motion-studio">
-                  <span>03</span> Motion studio{" "}
-                  <span aria-hidden="true">↘</span>
+                <a
+                  href="#motion-studio"
+                  className="collection-card card-motion"
+                >
+                  <span
+                    className="collection-mini mini-motion"
+                    aria-hidden="true"
+                  >
+                    ○<b>↝</b>●
+                  </span>
+                  <span className="collection-number">03 / FEEL</span>
+                  <strong>Motion studio</strong>
+                  <span className="collection-description">
+                    Same journey. Different feeling.
+                  </span>
+                  <span className="collection-go" aria-hidden="true">
+                    Make it move ↗
+                  </span>
+                </a>
+                <a
+                  href="#algorithm-garden"
+                  className="collection-card card-garden"
+                >
+                  <span
+                    className="collection-mini mini-garden"
+                    aria-hidden="true"
+                  >
+                    ●<b>⋏</b>●
+                  </span>
+                  <span className="collection-number">04 / DISCOVERY</span>
+                  <strong>Algorithm Garden</strong>
+                  <span className="collection-description">
+                    Light up a different way to think.
+                  </span>
+                  <span className="collection-go" aria-hidden="true">
+                    Explore the tree ↗
+                  </span>
                 </a>
               </nav>
               <article
-                className="signal-exhibit"
-                id="signal-lab"
+                className="play-exhibit"
+                id="cache-rescue"
                 tabIndex={-1}
-                aria-labelledby="signal-title"
+                aria-labelledby="rescue-title"
               >
-                <div className="exhibit-caption">
-                  <div>
-                    <span className="play-kicker">01 / UNDER THE SURFACE</span>
-                    <h3 id="signal-title">Signal Lab</h3>
-                  </div>
-                  <p>
-                    Turn up the traffic. Break the database. See what keeps a
-                    system moving.
-                  </p>
-                </div>
                 <DeferredExperiment
-                  id="signal-lab"
-                  title="Signal Lab"
-                  load={loadSignal}
+                  id="cache-rescue"
+                  title="Cache Rescue"
+                  titleId="rescue-title"
+                  load={loadRescue}
                 />
               </article>
               <article
@@ -250,6 +313,19 @@ export function App() {
                   title="Motion studio"
                   titleId="motion-title"
                   load={loadMotion}
+                />
+              </article>
+              <article
+                className="play-exhibit"
+                id="algorithm-garden"
+                tabIndex={-1}
+                aria-labelledby="garden-title"
+              >
+                <DeferredExperiment
+                  id="algorithm-garden"
+                  title="Algorithm Garden"
+                  titleId="garden-title"
+                  load={loadGarden}
                 />
               </article>
             </section>

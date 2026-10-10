@@ -37,7 +37,7 @@ export const stackLayers = [
       { label: "Communication", items: ["REST APIs", "WebSockets"] },
     ],
     destination: "#lab",
-    action: "Open Signal Lab",
+    action: "Explore Labs & play",
   },
   {
     id: "data",

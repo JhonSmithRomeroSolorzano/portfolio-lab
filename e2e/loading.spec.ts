@@ -6,7 +6,11 @@ test("career content loads without downloading the optional experiments", async 
   await page.setViewportSize({ width: 1440, height: 900 });
   const chunks: string[] = [];
   page.on("request", (request) => {
-    if (/\/(SignalLab|RoutePuzzle|MotionStudio)-.*\.js/.test(request.url()))
+    if (
+      /\/(CacheRescue|RoutePuzzle|MotionStudio|AlgorithmGarden)-.*\.js/.test(
+        request.url(),
+      )
+    )
       chunks.push(request.url());
   });
   await page.goto("/");
@@ -22,9 +26,9 @@ test("career content loads without downloading the optional experiments", async 
     .getByRole("link", { name: "Labs & play" })
     .press("Enter");
   await expect(
-    page.getByRole("spinbutton", { name: "Exact request rate" }),
+    page.getByRole("button", { name: "Send the crowd", exact: false }),
   ).toBeVisible();
-  expect(chunks.some((url) => url.includes("SignalLab-"))).toBeTruthy();
+  expect(chunks.some((url) => url.includes("CacheRescue-"))).toBeTruthy();
 });
 
 for (const [hash, control] of [
@@ -51,7 +55,7 @@ for (const failure of ["aborted", "unavailable"] as const) {
   test(`an ${failure} lab download leaves the resume usable with a clear recovery action`, async ({
     page,
   }) => {
-    await page.route("**/SignalLab-*.js", (route) =>
+    await page.route("**/CacheRescue-*.js", (route) =>
       failure === "aborted"
         ? route.abort()
         : route.fulfill({
@@ -63,7 +67,9 @@ for (const failure of ["aborted", "unavailable"] as const) {
     );
     await page.goto("/?traffic=237#lab");
     await expect(
-      page.getByRole("status").filter({ hasText: "Signal Lab couldn’t load" }),
+      page
+        .getByRole("status")
+        .filter({ hasText: "Cache Rescue couldn’t load" }),
     ).toBeVisible();
     await expect(
       page.getByRole("button", { name: "Reload page" }),
@@ -75,11 +81,11 @@ for (const failure of ["aborted", "unavailable"] as const) {
     await expect(
       page.getByRole("link", { name: "Download PDF", exact: true }),
     ).toBeVisible();
-    await page.unroute("**/SignalLab-*.js");
+    await page.unroute("**/CacheRescue-*.js");
     await page.getByRole("button", { name: "Reload page" }).click();
     await expect(
-      page.getByRole("spinbutton", { name: "Exact request rate" }),
-    ).toHaveValue("237");
+      page.getByRole("button", { name: "Send the crowd", exact: false }),
+    ).toBeVisible();
   });
 }
 

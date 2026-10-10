@@ -1,4 +1,3 @@
-import { chooseLab } from "./lab-tools";
 import { test, expect } from "@playwright/test";
 
 test.beforeEach(async ({ page }) => {
@@ -50,42 +49,6 @@ test("theme selection survives reload and a small viewport stays usable", async 
   ).toContainText("Strongest in NoSQL");
 });
 
-test("an imported scenario changes controls and survives a URL reload", async ({
-  page,
-}) => {
-  await page.goto("/#lab");
-  await chooseLab(page, "files");
-  await page.getByLabel("Import experiment JSON (up to 100 KB)").setInputFiles({
-    name: "scenario.json",
-    mimeType: "application/json",
-    buffer: Buffer.from(
-      JSON.stringify({
-        format: "signal-lab",
-        version: 1,
-        scenario: {
-          requestsPerSecond: 237,
-          cacheEnabled: false,
-          database: "slow",
-          writePercent: 40,
-        },
-      }),
-    ),
-  });
-  await expect(
-    page.getByRole("spinbutton", { name: "Exact request rate" }),
-  ).toHaveValue("237");
-  await expect(
-    page.getByRole("switch", { name: "Read cache" }),
-  ).not.toBeChecked();
-  await page.reload();
-  await expect(
-    page.getByRole("spinbutton", { name: "Exact request rate" }),
-  ).toHaveValue("237");
-  await expect(
-    page.getByRole("button", { name: "Slow", exact: true }),
-  ).toHaveAttribute("aria-pressed", "true");
-});
-
 test("legacy About links still select Overview without losing query state", async ({
   page,
 }) => {
@@ -100,8 +63,8 @@ test("legacy About links still select Overview without losing query state", asyn
     .getByRole("link", { name: "Labs & play" })
     .click();
   await expect(
-    page.getByRole("spinbutton", { name: "Exact request rate" }),
-  ).toHaveValue("250");
+    page.getByRole("button", { name: "Send the crowd", exact: false }),
+  ).toBeVisible();
 });
 
 test("experience and contact precede the lab in document and menu order", async ({

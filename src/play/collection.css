@@ -4,31 +4,6 @@
 .lab-collection .section-heading {
   align-items: end;
 }
-.collection-index {
-  display: flex;
-  flex-wrap: wrap;
-  border-block: 1px solid var(--line);
-  margin: 30px 0 48px;
-}
-.collection-index a {
-  flex: 1 1 200px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 18px 16px;
-  font-size: 13px;
-}
-.collection-index a:hover {
-  background: var(--soft);
-}
-.collection-index a > span:first-child {
-  font: 10px var(--mono);
-  color: var(--muted);
-}
-.collection-index a > span:last-child {
-  margin-left: auto;
-  color: var(--accent);
-}
 .signal-exhibit,
 .play-exhibit {
   scroll-margin-top: 32px;
@@ -533,16 +508,6 @@
 @media (max-width: 600px) {
   .play-exhibit {
     margin-top: 48px;
-  }
-  .collection-index {
-    display: grid;
-    margin-bottom: 32px;
-  }
-  .collection-index a {
-    padding-inline: 4px;
-  }
-  .collection-index a + a {
-    border-top: 1px solid var(--line);
   }
   .exhibit-caption {
     display: block;

@@ -20,20 +20,23 @@ for (const theme of ["light", "dark"] as const) {
       "workbench",
       "resume",
       "contact",
-      "signal-lab",
+      "cache-rescue",
       "connection-game",
       "motion-studio",
+      "algorithm-garden",
     ]) {
       if (hash !== "workbench")
         await page.locator(`a[href="#${hash}"]`).first().press("Enter");
       const ready =
-        hash === "signal-lab"
-          ? page.getByRole("button", { name: "Expand workspace" })
+        hash === "cache-rescue"
+          ? page.getByRole("button", { name: "Send & see the result" })
           : hash === "connection-game"
             ? page.getByRole("button", { name: "Give me a hint" })
             : hash === "motion-studio"
               ? page.locator(".motion-play")
-              : page.locator(`#${hash}`);
+              : hash === "algorithm-garden"
+                ? page.getByRole("button", { name: "Hint the next node" })
+                : page.locator(`#${hash}`);
       await expect(ready).toBeVisible();
       const result = await new AxeBuilder({ page })
         .include(`#${hash}`)
