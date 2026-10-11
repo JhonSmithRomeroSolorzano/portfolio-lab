@@ -11,7 +11,7 @@ import {
   solvedBoard,
   startingBoard,
   traceRoute,
-} from "../src/play/route-puzzle";
+} from "../src/domain/playground/route-puzzle";
 
 test("every puzzle starts disconnected and can be solved by rotating its tiles", () => {
   PUZZLES.forEach((puzzle, level) => {

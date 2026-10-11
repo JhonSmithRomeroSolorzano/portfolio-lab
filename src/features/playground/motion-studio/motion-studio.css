@@ -1,0 +1,247 @@
+.motion-intro h3 {
+  font: 500 clamp(30px, 3.7vw, 46px)/1.12 var(--display);
+  letter-spacing: -1.5px;
+  margin: 24px 0 20px;
+}
+.motion-intro p {
+  font-size: 14px;
+  line-height: 1.8;
+  max-width: 330px;
+}
+.motion-studio {
+  --focus: #d8c8ff;
+  background: #241f37;
+  color: #f4efff;
+  border-radius: 4px 32px 4px 32px;
+  padding: 42px;
+  border: 1px solid #504563;
+  color-scheme: dark;
+}
+.motion-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 40px;
+  align-items: end;
+}
+.motion-intro .play-kicker {
+  grid-column: 1 / -1;
+  color: #d0bcf5;
+}
+.motion-intro h3 {
+  margin: 24px 0 28px;
+}
+.motion-intro h3 em {
+  color: #d1b7ff;
+  font-style: normal;
+}
+.motion-intro p {
+  margin: 0 0 28px;
+  color: #c8bfd7;
+}
+.motion-workspace {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  border-top: 1px solid #635575;
+}
+.motion-stage {
+  padding: 30px 36px 14px 0;
+  min-width: 0;
+}
+.motion-stage-label {
+  display: flex;
+  justify-content: space-between;
+  font: 9px var(--mono);
+  letter-spacing: 1px;
+  color: #c8bfd7;
+}
+.motion-lane-label {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 22px;
+}
+.motion-lane-label strong {
+  font-size: 13px;
+  font-weight: 500;
+}
+.motion-lane-label > span {
+  font: 9px/1.6 var(--mono);
+  color: #c8bfd7;
+}
+.motion-lane.is-reference .motion-runner {
+  background: transparent;
+  border: 2px solid #e1d8ec;
+  box-shadow: none;
+}
+.motion-lane.is-reference .motion-runner span {
+  border-color: #e1d8ec;
+}
+.motion-track {
+  position: relative;
+  height: 68px;
+  margin: 0 24px 8px 0;
+}
+.motion-track::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 34px;
+  border-top: 1px dashed #8b78a3;
+}
+.motion-runner {
+  width: 44px;
+  height: 44px;
+  background: #d1b7ff;
+  position: absolute;
+  left: 0;
+  top: 12px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  box-shadow: 0 0 28px #d1b7ff20;
+}
+.motion-runner span {
+  width: 12px;
+  height: 12px;
+  border: 2px solid #352744;
+  border-radius: 50%;
+}
+.motion-runner.has-arrived {
+  left: calc(100% - 44px);
+  transform: rotate(180deg);
+}
+.motion-curve-note {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.motion-curve-note svg {
+  width: 90px;
+  height: 100px;
+  flex-shrink: 0;
+  overflow: visible;
+}
+.motion-curve-note path {
+  fill: none;
+  stroke: #d1b7ff;
+  stroke-width: 2.5;
+}
+.motion-curve-note .curve-reference {
+  stroke: #e1d8ec;
+  stroke-width: 1.5;
+  stroke-dasharray: 5 4;
+}
+.motion-curve-note .curve-guide {
+  stroke: #8b78a3;
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+.motion-curve-note strong {
+  font-size: 14px;
+  font-weight: 500;
+}
+.motion-curve-note p {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.7;
+  color: #c8bfd7;
+}
+.motion-controls {
+  padding: 30px 0 0 30px;
+  border-left: 1px solid #635575;
+}
+.motion-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.motion-options button {
+  min-height: 44px;
+  padding: 9px;
+  font-size: 11px;
+  border: 1px solid #8b78a3;
+  background: transparent;
+  border-radius: 5px;
+  color: #f4efff;
+}
+.motion-options button[aria-pressed="true"] {
+  background: #d1b7ff;
+  color: #241f37;
+  border-color: #d1b7ff;
+}
+.motion-duration {
+  margin-block: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12px;
+}
+.motion-duration input {
+  flex-basis: 100%;
+  width: 100%;
+  accent-color: #d1b7ff;
+}
+.motion-play {
+  min-height: 44px;
+  width: 100%;
+  border: none;
+  background: #f4efff;
+  color: #241f37;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.motion-feedback {
+  font-size: 11px;
+  line-height: 1.6;
+  color: #c8bfd7;
+  min-height: 36px;
+  margin: 12px 0 0;
+}
+@media (max-width: 1180px) {
+  .motion-studio {
+    padding: 30px;
+  }
+  .motion-intro h3 {
+    font-size: 36px;
+  }
+}
+@media (max-width: 1000px) {
+  .motion-intro,
+  .motion-workspace {
+    grid-template-columns: 1fr;
+  }
+  .motion-intro p {
+    max-width: 500px;
+  }
+  .motion-stage {
+    padding-right: 0;
+  }
+  .motion-controls {
+    border-left: none;
+    border-top: 1px solid #635575;
+    padding: 24px 0 0;
+  }
+}
+@media (max-width: 600px) {
+  .motion-studio {
+    padding: 24px 18px;
+  }
+  .motion-intro h3 {
+    font-size: 32px;
+  }
+  .motion-curve-note {
+    gap: 16px;
+  }
+  .motion-curve-note svg {
+    width: 64px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .motion-options button {
+    transition: none;
+  }
+}

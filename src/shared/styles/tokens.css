@@ -1,0 +1,39 @@
+/* Shared light/dark palette, typography, and brand tokens. */
+:root {
+  --paper: #f4f3ec;
+  --ink: #1f3450;
+  --muted: #58697e;
+  --line: #ced5df;
+  --accent: #295da0;
+  --emphasis: #4c6e98;
+  --focus: #2868b8;
+  --soft: #e3e9f0;
+  --display: "IBM Plex Sans", sans-serif;
+  --mono: "IBM Plex Mono", monospace;
+  --electric: #255ad5;
+  --board: #e8edf5;
+  --node: #f9fbff;
+  --rail: #eaece8;
+  --map-grid: #295da013;
+  --brand-tile: #132339;
+  --brand-ink: #e7eef8;
+  --brand-rule: #9bcbff;
+}
+:root[data-theme="dark"] {
+  --paper: #0e1b2d;
+  --ink: #e7eef8;
+  --muted: #b3c2d6;
+  --line: #344c69;
+  --accent: #a1caff;
+  --emphasis: #8fb6eb;
+  --focus: #9bcbff;
+  --soft: #1a2d45;
+  --electric: #9bcbff;
+  --board: #12243c;
+  --node: #1c3351;
+  --rail: #0b1727;
+  --map-grid: #9bcbff13;
+  --brand-tile: #e7eef8;
+  --brand-ink: #132339;
+  --brand-rule: #255ad5;
+}

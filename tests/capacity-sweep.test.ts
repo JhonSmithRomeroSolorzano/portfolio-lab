@@ -1,7 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { DEFAULT_SCENARIO } from "../src/simulation.ts";
-import { capacitySweep, sweepCsv } from "../src/capacity-sweep.ts";
+import { DEFAULT_SCENARIO } from "../src/domain/simulation/simulation.ts";
+import {
+  capacitySweep,
+  sweepCsv,
+} from "../src/domain/simulation/capacity-sweep.ts";
 test("sweep locates saturation while preserving current configuration", () => {
   const scenario = {
     ...DEFAULT_SCENARIO,

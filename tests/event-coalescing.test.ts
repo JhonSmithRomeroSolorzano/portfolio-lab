@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { coalesceInputs } from "../src/labs/event-coalescing.ts";
+import { coalesceInputs } from "../src/domain/simulation/event-coalescing.ts";
 test("debounce delivers the latest value after quiet intervals and flushes the final input", () => {
   const r = coalesceInputs("burst", 200, "debounce");
   assert.deepEqual(

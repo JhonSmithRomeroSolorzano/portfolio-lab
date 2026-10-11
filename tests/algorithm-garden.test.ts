@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { TREE, gardenOrder } from "../src/play/algorithm-garden";
+import { TREE, gardenOrder } from "../src/domain/playground/algorithm-garden";
 
 test("garden traversals visit every node once, preserve parent precedence and differ meaningfully", () => {
   assert.deepEqual(gardenOrder("breadth"), ["A", "B", "C", "D", "E", "F", "G"]);

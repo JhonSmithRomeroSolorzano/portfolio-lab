@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { searchResponses } from "../src/labs/async-search.ts";
+import { searchResponses } from "../src/domain/simulation/async-search.ts";
 test("latest-request guard prevents an older slow response from overwriting results", () => {
   const unguarded = searchResponses(800, 100, "every"),
     guarded = searchResponses(800, 100, "latest");

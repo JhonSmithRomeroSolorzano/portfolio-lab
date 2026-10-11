@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { scheduleRequests } from "../src/request-scheduler.ts";
+import { scheduleRequests } from "../src/domain/simulation/request-scheduler.ts";
 test("scheduler reserves bounded waiting and reuses a worker at exact completion", () => {
   const rows = scheduleRequests(
     { concurrency: 1, serviceMs: 100, buffer: 1 },

@@ -4,9 +4,9 @@ import {
   shareComparisonUrl,
   baselineFromSearch,
   clearComparisonUrl,
-} from "../src/comparison-link.ts";
-import { scenarioFromSearch } from "../src/scenario-url.ts";
-import { DEFAULT_SCENARIO } from "../src/simulation.ts";
+} from "../archive/signal-lab/comparison-link.ts";
+import { scenarioFromSearch } from "../archive/signal-lab/scenario-url.ts";
+import { DEFAULT_SCENARIO } from "../src/domain/simulation/simulation.ts";
 test("comparison links round trip both setups and omit unrelated URL data", () => {
   const current = {
     ...DEFAULT_SCENARIO,

@@ -1,7 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { compareScenarios, signed } from "../src/comparison.ts";
-import { DEFAULT_SCENARIO } from "../src/simulation.ts";
+import {
+  compareScenarios,
+  signed,
+} from "../src/domain/simulation/comparison.ts";
+import { DEFAULT_SCENARIO } from "../src/domain/simulation/simulation.ts";
 
 test("comparison shows the direction of a cache improvement", () => {
   const delta = compareScenarios(

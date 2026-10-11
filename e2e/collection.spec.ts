@@ -3,7 +3,7 @@ import {
   solvedBoard,
   startingBoard,
   rotateTile,
-} from "../src/play/route-puzzle";
+} from "../src/domain/playground/route-puzzle";
 
 test("connection puzzle works with keyboard input, undo, reset, and a complete solution", async ({
   page,

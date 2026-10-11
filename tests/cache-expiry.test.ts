@@ -1,6 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { cacheTimeline, compareCachePolicies } from "../src/cache-expiry.ts";
+import {
+  cacheTimeline,
+  compareCachePolicies,
+} from "../src/domain/simulation/cache-expiry.ts";
 test("a long TTL trades database reads for temporarily stale responses", () => {
   const rows = cacheTimeline(8);
   assert.deepEqual(

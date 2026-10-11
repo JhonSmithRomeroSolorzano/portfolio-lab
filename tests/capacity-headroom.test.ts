@@ -1,7 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { capacityHeadroom } from "../src/capacity-headroom.ts";
-import { DEFAULT_SCENARIO, simulate } from "../src/simulation.ts";
+import { capacityHeadroom } from "../src/domain/simulation/capacity-headroom.ts";
+import {
+  DEFAULT_SCENARIO,
+  simulate,
+} from "../src/domain/simulation/simulation.ts";
 test("analytical capacity agrees with the exact failure boundary", () => {
   for (const database of ["normal", "slow"] as const)
     for (const cacheEnabled of [false, true])

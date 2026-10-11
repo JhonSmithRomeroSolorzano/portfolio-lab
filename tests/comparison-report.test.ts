@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { comparisonReport } from "../src/comparison-report.ts";
-import { DEFAULT_SCENARIO } from "../src/simulation.ts";
+import { comparisonReport } from "../archive/signal-lab/comparison-report.ts";
+import { DEFAULT_SCENARIO } from "../src/domain/simulation/simulation.ts";
 test("reports reproduce both inputs and explain differences without suggesting measured data", () => {
   const report = comparisonReport(
     { ...DEFAULT_SCENARIO, cacheEnabled: false },

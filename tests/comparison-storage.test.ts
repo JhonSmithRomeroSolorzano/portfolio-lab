@@ -4,8 +4,8 @@ import {
   BASELINE_KEY,
   parseBaseline,
   saveBaseline,
-} from "../src/comparison-storage.ts";
-import { DEFAULT_SCENARIO } from "../src/simulation.ts";
+} from "../archive/signal-lab/comparison-storage.ts";
+import { DEFAULT_SCENARIO } from "../src/domain/simulation/simulation.ts";
 test("saved baselines round trip and can be cleared", () => {
   const values = new Map<string, string>();
   const storage = {

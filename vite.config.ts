@@ -4,6 +4,9 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   base: "./",
+  // Native dynamic imports also recover in WebKit after a failed optional load.
+  // Preloading a game's shared dependencies can keep that failed module cached.
+  build: { modulePreload: false },
   server: {
     proxy: {
       "/local-api": {

@@ -4,7 +4,7 @@ import {
   QUEUE_PROFILES,
   queueTimeline,
   queueRecovery,
-} from "../src/queue-model.ts";
+} from "../src/domain/simulation/queue-model.ts";
 test("buffer absorbs a burst with explicit overflow and drains when capacity allows", () => {
   const rows = queueTimeline(8, 16);
   assert.equal(rows[3].rejected, 8);

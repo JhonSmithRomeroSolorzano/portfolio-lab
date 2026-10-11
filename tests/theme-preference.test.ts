@@ -9,7 +9,7 @@ import {
   resolvedTheme,
   saveTheme,
   themePreference,
-} from "../src/theme-preference.ts";
+} from "../src/shared/theme/theme-preference.ts";
 
 // Exercise the actual pre-paint script, not a separately copied implementation.
 const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");

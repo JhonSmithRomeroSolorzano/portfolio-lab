@@ -1,7 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { DEFAULT_SCENARIO } from "../src/simulation.ts";
-import { scenarioFromSearch, scenarioUrl } from "../src/scenario-url.ts";
+import { DEFAULT_SCENARIO } from "../src/domain/simulation/simulation.ts";
+import {
+  scenarioFromSearch,
+  scenarioUrl,
+} from "../archive/signal-lab/scenario-url.ts";
 
 test("empty and unrelated query strings use the default scenario", () => {
   assert.deepEqual(scenarioFromSearch(""), DEFAULT_SCENARIO);

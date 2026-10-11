@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { findLabs } from "../src/labs/find-labs.ts";
+import { findLabs } from "../archive/signal-lab/labs/find-labs.ts";
 test("lab discovery combines words with area filters and searches behavior descriptions", () => {
   assert.deepEqual(
     findLabs("  SLOW   RESPONSE ", "Frontend").map((lab) => lab.id),

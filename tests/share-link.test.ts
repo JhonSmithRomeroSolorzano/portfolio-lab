@@ -1,8 +1,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { copyLink, shareScenarioUrl } from "../src/share-link.ts";
-import { scenarioFromSearch } from "../src/scenario-url.ts";
-import { DEFAULT_SCENARIO } from "../src/simulation.ts";
+import {
+  copyLink,
+  shareScenarioUrl,
+} from "../archive/signal-lab/share-link.ts";
+import { scenarioFromSearch } from "../archive/signal-lab/scenario-url.ts";
+import { DEFAULT_SCENARIO } from "../src/domain/simulation/simulation.ts";
 
 test("shared links retain the exact experiment but discard unrelated query data", () => {
   const scenario = {

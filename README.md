@@ -6,7 +6,7 @@ Jhon Smith Romero’s engineering workspace: explore my stack, inspect a working
 
 ## Résumé and presentation
 
-The [résumé section](https://jhonsmithromerosolorzano.github.io/portfolio-lab/#resume) includes selected employment, education, and certifications verified against [my LinkedIn profile](https://www.linkedin.com/in/jhonsmithr) on October 6, 2026. Dates are preserved as listed, including overlapping roles; descriptions do not imply unverified employer relationships or outcomes. Public professional content lives in `src/profile.ts`.
+The [résumé section](https://jhonsmithromerosolorzano.github.io/portfolio-lab/#resume) includes selected employment, education, and certifications verified against [my LinkedIn profile](https://www.linkedin.com/in/jhonsmithr) on October 6, 2026. Dates are preserved as listed, including overlapping roles; descriptions do not imply unverified employer relationships or outcomes. Public professional content lives in `src/features/portfolio/data/profile.ts`.
 
 I directly confirmed the descriptions of my current Antecursor role and my Athletify work. At Antecursor, I participate in feature design and implementation across databases, backend services, and frontend interfaces, with Azure and GitHub Actions. At Athletify, my contribution focused on React/TypeScript interfaces, Figma implementation, and some Next.js work. Its [official company profile](https://www.linkedin.com/company/athletifyofficial) supplies the sports-management product context; it does not establish additional libraries or personal backend responsibilities.
 
@@ -14,11 +14,11 @@ The portfolio uses a custom workspace composition: a compact identity rail and a
 
 The public page has four sections: Overview, Résumé, Contact, and Labs & play. Development status and roadmap promotion stay in the repository. Experience and contact precede the collection in document and menu order; the introduction links directly to experience.
 
-Overview combines my introduction, engineering background, LinkedIn portrait, prominent senior full-stack role, and organized technology overview. The former About section and its repeated skill cards have been merged into this opening section; existing `#about` links still reach the introduction. Languages and testing span the stack; the four areas distinguish UI libraries, components and styling, frameworks and Figma design handoff, APIs and real-time communication, databases and caching, containers, CI/CD, and cloud platforms. The compact overview shows languages and testing; the interactive map holds the categorized technology details. Experience uses the full content width, with role details beside contributions and education underneath. Downloads retain the complete skills list from `src/technology-stack.ts`. Next.js is labeled as some experience.
+Overview combines my introduction, engineering background, LinkedIn portrait, prominent senior full-stack role, and organized technology overview. The former About section and its repeated skill cards have been merged into this opening section; existing `#about` links still reach the introduction. Languages and testing span the stack; the four areas distinguish UI libraries, components and styling, frameworks and Figma design handoff, APIs and real-time communication, databases and caching, containers, CI/CD, and cloud platforms. The compact overview shows languages and testing; the interactive map holds the categorized technology details. Experience uses the full content width, with role details beside contributions and education underneath. Downloads retain the complete skills list from `src/features/portfolio/data/technology-stack.ts`. Next.js is labeled as some experience.
 
 Technology details were confirmed directly by me on October 6, 2026. NoSQL is my strongest database experience, alongside SQL; cloud experience includes Azure and some AWS work. Testing lists Jest, Playwright, and Mocha, with integration and end-to-end testing. The portrait is stored locally in `public/jhon-smith-romero.jpg`, so it does not depend on an expiring LinkedIn image URL. Résumé and Contact are available in the main menu; duplicate links were removed from the introduction.
 
-Professional projects appear inside their corresponding Experience entries, with my contributions emphasized beneath a brief product description and public link. I confirmed [Nimrod](https://nimrod.io/) belongs to both Antecursor roles: the earlier entry describes interfaces, services, maintenance, and refactoring; the current entry covers feature design and implementation across the stack, Azure, and GitHub Actions. Athletify focuses on React/TypeScript frontend features and translating Figma designs into product interfaces. Next.js remains qualified as some experience. These contribution lists replace duplicate role bullets and use the responsibilities already verified for each period. Project data lives with each role in `src/profile.ts`; additional claims require confirmation.
+Professional projects appear inside their corresponding Experience entries, with my contributions emphasized beneath a brief product description and public link. I confirmed [Nimrod](https://nimrod.io/) belongs to both Antecursor roles: the earlier entry describes interfaces, services, maintenance, and refactoring; the current entry covers feature design and implementation across the stack, Azure, and GitHub Actions. Athletify focuses on React/TypeScript frontend features and translating Figma designs into product interfaces. Next.js remains qualified as some experience. These contribution lists replace duplicate role bullets and use the responsibilities already verified for each period. Project data lives with each role in `src/features/portfolio/data/profile.ts`; additional claims require confirmation.
 
 The portfolio uses uppercase JSR branding, a warm neutral light theme, and a navy dark theme. A single light/dark toggle follows the device until the visitor chooses an appearance, then remembers that choice. There is no separate System button; existing automatic preferences remain supported. Blocked browser storage leaves the control usable for the current visit.
 
@@ -39,11 +39,11 @@ The collection has **four peer experiences**, reached through illustrated cards 
 - **[Motion Studio](https://jhonsmithromerosolorzano.github.io/portfolio-lab/#motion-studio)**: compare four timing curves against a steady reference using the same distance, duration, and clock. Pick a curve, then explicitly play both lanes. Reduced motion shows the end states. Control changes, hidden tabs, and motion-preference changes cancel playback.
 - **[Algorithm Garden](https://jhonsmithromerosolorzano.github.io/portfolio-lab/#algorithm-garden)**: light up a seven-node tree in breadth-first or pre-order depth-first order. Try a node, recover from a wrong turn, or ask for a hint. Numbered nodes, a traversal trail, and announced feedback explain each move. It works with keyboard or pointer, without a timer. Progress lasts for the visit.
 
-The four pieces download independently as they approach the viewport or when followed directly. Failed downloads leave the résumé usable and offer reload recovery. Their styles load with the page to retain reliable recovery in WebKit. `#lab` reaches the collection; old `#signal-lab` anchors also reach it. Old dashboard query parameters no longer configure the public experiences.
+The four pieces download independently as they approach the viewport or when followed directly. Failed downloads offer reload recovery; runtime render/effect errors are isolated to the affected experience and offer a local retry. Both keep the résumé usable. Their styles load with the page. Native dynamic imports avoid a WebKit recovery issue triggered by module preloading shared optional dependencies. `#lab` reaches the collection; old `#signal-lab` anchors also reach it. Old dashboard query parameters no longer configure the public experiences.
 
 ### Earlier systems experiments
 
-The original Signal Lab dashboard is retired from the public portfolio. Its source modules, deterministic models, API, CLI, and unit/integration coverage remain in the repository as engineering reference. Browser tests now cover the four current experiences rather than the removed dashboard workflows. The [case study](CASE_STUDY.md) documents that earlier model and its assumptions; the [optional local Node API](server/README.md) and batch CLI can still run it.
+The original Signal Lab dashboard is retired from the public portfolio. Its presentation and browser adapters live in `archive/signal-lab/`; pure models remain in `src/domain/`. The optional API, CLI, and unit/integration coverage are retained. Browser tests now cover the four current experiences rather than the removed dashboard workflows. The [case study](CASE_STUDY.md) documents that earlier model and its assumptions; the [optional local Node API](server/README.md) and batch CLI can still run it.
 
 ## Run locally
 
@@ -55,8 +55,7 @@ npm run dev
 ```
 
 ```sh
-npm test       # behavior and boundary tests for the model
-npm run build # strict TypeScript check and production build
+npm run check # lint, format check, strict types, tests, and production build
 npm run preview
 # Optional local browser regression run after building:
 npx playwright install chromium webkit
@@ -72,13 +71,19 @@ The Experience section offers a two-page PDF and a plain-text résumé. Both are
 ## Project structure
 
 ```text
-src/App.tsx            Portfolio and interactive controls
-src/styles.css        Responsive layout and visual system
-src/simulation.ts     Pure, typed simulation model
-tests/                Model behavior tests
-public/               Static assets
-.github/workflows/    Validation and GitHub Pages deployment
+src/app/                  Page composition and navigation
+src/features/portfolio/   Career content and verified résumé data
+src/features/playground/  Four independently loaded experiences
+src/domain/               Pure models shared with the API/CLI
+src/shared/               UI primitives, browser hooks, theme, base styles
+archive/signal-lab/        Retired dashboard reference (not bundled)
+server/                   Optional local HTTP adapter
+scripts/                  Résumé generator and batch CLI
+tests/                   Unit/integration and architecture checks
+e2e/                     Chromium and WebKit journeys
 ```
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for dependency direction, responsibilities, styling ownership, and enforced boundaries.
 
 The app uses React, TypeScript, and Vite. Relative asset paths support both GitHub Pages project URLs and root hosting. It has keyboard-operable controls, a skip link, live metric announcements, and reduced-motion support. Typography is served locally with system fallbacks.
 

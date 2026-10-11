@@ -3,13 +3,16 @@ import assert from "node:assert/strict";
 import { once } from "node:events";
 import type { AddressInfo } from "node:net";
 import { createSimulationServer } from "../server/api.ts";
-import { DEFAULT_SCENARIO, simulate } from "../src/simulation.ts";
+import {
+  DEFAULT_SCENARIO,
+  simulate,
+} from "../src/domain/simulation/simulation.ts";
 import {
   runServiceScenario,
   sameScenario,
   ServiceError,
   validateServiceReply,
-} from "../src/service-client.ts";
+} from "../archive/signal-lab/service-client.ts";
 const scenario = DEFAULT_SCENARIO;
 const envelope = () => ({
   model: "signal-lab/1",

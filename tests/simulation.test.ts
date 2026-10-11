@@ -1,6 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { DEFAULT_SCENARIO, simulate } from "../src/simulation.ts";
+import {
+  DEFAULT_SCENARIO,
+  simulate,
+} from "../src/domain/simulation/simulation.ts";
 
 test("a warm cache keeps default demand below database capacity", () => {
   const result = simulate(DEFAULT_SCENARIO);

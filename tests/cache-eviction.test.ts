@@ -1,6 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { evictCache, CACHE_KEYS } from "../src/labs/cache-eviction.ts";
+import {
+  evictCache,
+  CACHE_KEYS,
+} from "../src/domain/simulation/cache-eviction.ts";
 test("LRU refreshes a hit while FIFO preserves insertion order", () => {
   const fifo = evictCache(3, "fifo"),
     lru = evictCache(3, "lru");

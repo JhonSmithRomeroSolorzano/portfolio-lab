@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { retryExperiment } from "../src/retry-model.ts";
-import { retryDistribution } from "../src/labs/retry-distribution.ts";
+import { retryExperiment } from "../src/domain/simulation/retry-model.ts";
+import { retryDistribution } from "../src/domain/simulation/retry-distribution.ts";
 test("retry chart conserves both runs on the same inclusive final bucket", () => {
   const o = {
     retries: 3,

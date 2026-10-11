@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { circuitBreaker } from "../src/labs/circuit-breaker.ts";
+import { circuitBreaker } from "../src/domain/simulation/circuit-breaker.ts";
 test("a circuit opens at the failure threshold and probes on the cooldown boundary", () => {
   const r = circuitBreaker(3, 500, 800);
   assert.equal(r.rows[4].after, "open");

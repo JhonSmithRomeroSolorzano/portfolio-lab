@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { concurrentWrites } from "../src/labs/concurrent-writes.ts";
+import { concurrentWrites } from "../src/domain/simulation/concurrent-writes.ts";
 test("blind overwrite loses a change while version checks prevent stale commits", () => {
   const overwrite = concurrentWrites(1, 5, "overwrite"),
     reject = concurrentWrites(1, 5, "reject"),

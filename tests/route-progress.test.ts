@@ -5,8 +5,8 @@ import {
   parseProgress,
   loadProgress,
   saveProgress,
-} from "../src/play/route-progress";
-import { rotateTile, traceRoute } from "../src/play/route-puzzle";
+} from "../src/features/playground/connection-puzzle/route-progress";
+import { rotateTile, traceRoute } from "../src/domain/playground/route-puzzle";
 
 test("progress restores distinct boards, turns, and selection without storing derived results", () => {
   const progress = freshProgress();

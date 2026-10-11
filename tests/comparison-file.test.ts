@@ -1,7 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { exportComparison, importComparison } from "../src/comparison-file.ts";
-import { DEFAULT_SCENARIO } from "../src/simulation.ts";
+import {
+  exportComparison,
+  importComparison,
+} from "../archive/signal-lab/comparison-file.ts";
+import { DEFAULT_SCENARIO } from "../src/domain/simulation/simulation.ts";
 test("comparison snapshots round trip both setups without trusting stored results", () => {
   const pair = {
     baseline: DEFAULT_SCENARIO,

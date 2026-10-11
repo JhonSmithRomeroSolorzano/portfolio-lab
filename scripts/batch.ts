@@ -1,6 +1,6 @@
-import type { Scenario } from "../src/simulation.ts";
-import { validStrictScenario } from "../src/scenario-validation.ts";
-import { simulate } from "../src/simulation.ts";
+import type { Scenario } from "../src/domain/simulation/simulation.ts";
+import { validStrictScenario } from "../src/domain/simulation/scenario-validation.ts";
+import { simulate } from "../src/domain/simulation/simulation.ts";
 export type BatchResult =
   | { line: number; ok: false; error: string }
   | {

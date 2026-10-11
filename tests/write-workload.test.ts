@@ -1,8 +1,14 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { DEFAULT_SCENARIO, simulate } from "../src/simulation.ts";
-import { scenarioFromSearch, scenarioUrl } from "../src/scenario-url.ts";
-import { validScenario } from "../src/experiment-library.ts";
+import {
+  DEFAULT_SCENARIO,
+  simulate,
+} from "../src/domain/simulation/simulation.ts";
+import {
+  scenarioFromSearch,
+  scenarioUrl,
+} from "../archive/signal-lab/scenario-url.ts";
+import { validScenario } from "../archive/signal-lab/experiment-library.ts";
 test("writes bypass a perfect cache and preserve the request budget", () => {
   const s = { ...DEFAULT_SCENARIO, cacheHitPercent: 100, writePercent: 25 };
   const r = simulate(s);

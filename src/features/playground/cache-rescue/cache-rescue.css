@@ -1,0 +1,289 @@
+.cache-game {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 42px;
+  padding: 42px;
+  align-items: center;
+  border-radius: 24px;
+  min-width: 0;
+}
+.cache-game {
+  --focus: #ffdaa2;
+  background: #112440;
+  color: #f3f5fa;
+  border: 1px solid #385071;
+  color-scheme: dark;
+}
+.cache-intro h3 {
+  font: 500 clamp(30px, 3.7vw, 46px)/1.12 var(--display);
+  letter-spacing: -1.5px;
+  margin: 24px 0 20px;
+}
+.cache-intro h3 em {
+  font:
+    italic 400 1em Georgia,
+    serif;
+}
+.cache-intro h3 em {
+  color: #ffcf96;
+}
+.cache-intro p {
+  font-size: 0.875rem;
+  line-height: 1.8;
+  max-width: 340px;
+}
+.cache-intro > p {
+  color: #c3cfe1;
+}
+.cache-intro h4 {
+  margin: 18px 0 0;
+  font-size: 1rem;
+  font-weight: 500;
+}
+.cache-intro .cache-mission {
+  margin-top: 8px;
+  font-size: 0.8125rem;
+}
+.cache-rounds {
+  display: flex;
+  gap: 8px;
+  margin-top: 24px;
+}
+.cache-rounds button {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid #8096b5;
+  background: transparent;
+  color: #dce5f2;
+  font: 0.75rem var(--mono);
+}
+.cache-rounds button[aria-pressed="true"] {
+  background: #ffcf96;
+  border-color: #ffcf96;
+  color: #17253c;
+}
+.cache-strategies {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 24px;
+}
+.cache-strategies button {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 10px;
+  text-align: left;
+  background: #1b3557;
+  color: #f3f5fa;
+  border: 1px solid #718baa;
+  border-radius: 10px;
+}
+.cache-strategies button > span {
+  font-size: 1.125rem;
+  letter-spacing: 2px;
+}
+.cache-strategies strong {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.cache-strategies small {
+  font-size: 0.625rem;
+  line-height: 1.6;
+}
+.cache-strategies button[aria-pressed="true"] {
+  background: #d8e8ff;
+  color: #122441;
+  border-color: #d8e8ff;
+  box-shadow: inset 0 -3px #8cafec;
+}
+.cache-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+.cache-launch,
+.cache-next {
+  border: 0;
+  border-radius: 7px;
+  padding: 13px 18px;
+  background: #ffcf96;
+  color: #17253c;
+  min-height: 44px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.cache-reset {
+  border: 0;
+  background: transparent;
+  color: #d8e8ff;
+  min-height: 44px;
+  text-decoration: underline;
+  font-size: 0.75rem;
+}
+.cache-console {
+  min-width: 0;
+  border: 1px solid #4d6687;
+  border-radius: 18px;
+  background: #0d1d34;
+  padding: 22px 18px;
+}
+.cache-caption {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  font: 0.5625rem/1.6 var(--mono);
+  letter-spacing: 0.7px;
+}
+.cache-caption {
+  color: #bfd0e8;
+}
+.cache-stage {
+  height: 333px;
+  position: relative;
+  margin-top: 18px;
+  background: radial-gradient(#334661 1px, transparent 1px) 0 0 / 16px 16px;
+}
+.cache-station {
+  position: absolute;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.cache-station > span {
+  font: 0.5625rem/1.5 var(--mono);
+  color: #bccce3;
+}
+.cache-station strong {
+  font-size: 1rem;
+  font-weight: 500;
+}
+.cache-station small {
+  font-size: 0.6875rem;
+  font-weight: 400;
+}
+.cache-arrivals {
+  top: 6px;
+  left: 0;
+  right: 0;
+}
+.cache-database {
+  top: 122px;
+  left: 0;
+  width: 45%;
+}
+.cache-wait {
+  top: 122px;
+  right: 0;
+  width: 45%;
+}
+.cache-replies {
+  top: 232px;
+  left: 0;
+  right: 0;
+}
+.cache-person {
+  width: 8px;
+  height: 8px;
+  position: absolute;
+  border-radius: 50%;
+  background: #a6bddd;
+}
+.cache-person.is-querying {
+  background: #ffcf96;
+  box-shadow: 0 0 0 2px #ffcf9645;
+}
+.cache-person.is-waiting {
+  background: #b4aaff;
+}
+.cache-person.is-done {
+  background: #8fcaff;
+}
+.cache-game.is-playing .cache-person {
+  transition:
+    top 200ms ease,
+    left 200ms ease,
+    background 150ms;
+}
+.cache-progress {
+  height: 4px;
+  background: #3a4c64;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.cache-progress span {
+  display: block;
+  height: 100%;
+  background: #8fcaff;
+}
+.cache-feedback {
+  min-height: 5.2em;
+  color: #e1ebfa;
+  font-size: 0.8125rem;
+  line-height: 1.7;
+  margin: 18px 0 12px;
+}
+.cache-next {
+  font-size: 0.75rem;
+  background: #d8e8ff;
+  width: 100%;
+  margin-bottom: 14px;
+}
+.cache-how {
+  border-top: 1px solid #4d6687;
+  padding-top: 8px;
+  font-size: 0.6875rem;
+  line-height: 1.8;
+  color: #c3cfe1;
+}
+.cache-how summary {
+  cursor: pointer;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cache-how summary::before {
+  content: "+";
+  font-size: 1rem;
+}
+.cache-how[open] summary::before {
+  content: "−";
+}
+@media (max-width: 1100px) {
+  .cache-game {
+    gap: 24px;
+    padding: 30px;
+  }
+}
+@media (max-width: 760px) {
+  .cache-game {
+    grid-template-columns: 1fr;
+  }
+  .cache-intro > p {
+    max-width: none;
+  }
+  .cache-console {
+    width: 100%;
+    max-width: 480px;
+    justify-self: center;
+    box-sizing: border-box;
+  }
+}
+@media (max-width: 600px) {
+  .cache-game {
+    padding: 24px 18px;
+  }
+  .cache-console {
+    padding: 18px 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cache-game.is-playing .cache-person {
+    transition: none;
+  }
+}

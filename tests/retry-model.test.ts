@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { retryExperiment } from "../src/retry-model.ts";
+import { retryExperiment } from "../src/domain/simulation/retry-model.ts";
 const base = {
   retries: 3,
   budget: 24,

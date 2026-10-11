@@ -7,8 +7,8 @@ import {
   restoreExperiment,
   renameExperiment,
   updateExperiment,
-} from "../src/experiment-library.ts";
-import { DEFAULT_SCENARIO } from "../src/simulation.ts";
+} from "../archive/signal-lab/experiment-library.ts";
+import { DEFAULT_SCENARIO } from "../src/domain/simulation/simulation.ts";
 test("corrupt browser storage is harmless and invalid entries are ignored", () => {
   assert.deepEqual(parseLibrary("{"), []);
   assert.deepEqual(parseLibrary("{}"), []);

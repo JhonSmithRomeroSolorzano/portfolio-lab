@@ -2,7 +2,10 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { replayBatch } from "../scripts/batch.ts";
-import { DEFAULT_SCENARIO, simulate } from "../src/simulation.ts";
+import {
+  DEFAULT_SCENARIO,
+  simulate,
+} from "../src/domain/simulation/simulation.ts";
 test("batch replay keeps line numbers, skips blanks, and continues after invalid rows", () => {
   const rows = replayBatch(`\n${JSON.stringify(DEFAULT_SCENARIO)}\r\n{\n{}\n`);
   assert.equal(rows.length, 3);

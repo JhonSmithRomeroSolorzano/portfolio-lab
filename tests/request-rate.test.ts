@@ -1,9 +1,15 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseRequestRate } from "../src/request-rate.ts";
-import { DEFAULT_SCENARIO, simulate } from "../src/simulation.ts";
-import { validStrictScenario } from "../src/scenario-validation.ts";
-import { scenarioFromSearch, scenarioUrl } from "../src/scenario-url.ts";
+import { parseRequestRate } from "../src/domain/simulation/request-rate.ts";
+import {
+  DEFAULT_SCENARIO,
+  simulate,
+} from "../src/domain/simulation/simulation.ts";
+import { validStrictScenario } from "../src/domain/simulation/scenario-validation.ts";
+import {
+  scenarioFromSearch,
+  scenarioUrl,
+} from "../archive/signal-lab/scenario-url.ts";
 test("fine-grained rates work consistently across input, URLs, and import validation", () => {
   for (const requestsPerSecond of [1, 21, 99, 100, 101, 599, 600]) {
     const s = { ...DEFAULT_SCENARIO, requestsPerSecond };

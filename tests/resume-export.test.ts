@@ -1,6 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { experience, education } from "../src/profile.ts";
+import {
+  experience,
+  education,
+} from "../src/features/portfolio/data/profile.ts";
 import {
   resumeGroups,
   resumePdf,

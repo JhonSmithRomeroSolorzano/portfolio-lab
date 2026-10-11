@@ -4,8 +4,8 @@ import type { BudgetOptions } from "./request-budget.ts";
 import { randomUUID } from "node:crypto";
 import { createServer } from "node:http";
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { simulate } from "../src/simulation.ts";
-import { validStrictScenario } from "../src/scenario-validation.ts";
+import { simulate } from "../src/domain/simulation/simulation.ts";
+import { validStrictScenario } from "../src/domain/simulation/scenario-validation.ts";
 const MAX_BODY = 16_384;
 class RequestError extends Error {
   constructor(

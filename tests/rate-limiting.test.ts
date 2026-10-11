@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { limitArrivals } from "../src/labs/rate-limiting.ts";
+import { limitArrivals } from "../src/domain/simulation/rate-limiting.ts";
 test("fixed windows reset exactly at the boundary and conserve admissions", () => {
   const r = limitArrivals(4, "fixed");
   assert.equal(r.rows.find((r) => r.at === 980)?.accepted, false);

@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { scheduleRequests } from "../src/request-scheduler.ts";
-import { requestTimeline } from "../src/labs/request-timeline.ts";
+import { scheduleRequests } from "../src/domain/simulation/request-scheduler.ts";
+import { requestTimeline } from "../src/domain/simulation/request-timeline.ts";
 
 test("timeline separates queued expiration, running timeout, and immediate rejection", () => {
   const { lanes, end } = requestTimeline(

@@ -4,7 +4,7 @@ import { once } from "node:events";
 import type { AddressInfo } from "node:net";
 import { createRequestBudget } from "../server/request-budget.ts";
 import { createSimulationServer } from "../server/api.ts";
-import { DEFAULT_SCENARIO } from "../src/simulation.ts";
+import { DEFAULT_SCENARIO } from "../src/domain/simulation/simulation.ts";
 test("fixed window rejects overflow and resets exactly at its boundary", () => {
   let time = 0;
   const consume = createRequestBudget({

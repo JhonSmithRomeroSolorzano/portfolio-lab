@@ -1,5 +1,5 @@
 import PDFDocument from "pdfkit";
-import { resumeData } from "../src/resume-data.ts";
+import { resumeData } from "../src/features/portfolio/data/resume-data.ts";
 
 type ResumeLine = {
   text: string;

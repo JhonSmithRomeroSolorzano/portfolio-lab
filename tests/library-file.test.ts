@@ -4,8 +4,8 @@ import {
   exportLibrary,
   importLibrary,
   mergeLibrary,
-} from "../src/library-file.ts";
-import { DEFAULT_SCENARIO } from "../src/simulation.ts";
+} from "../archive/signal-lab/library-file.ts";
+import { DEFAULT_SCENARIO } from "../src/domain/simulation/simulation.ts";
 const saved = {
   id: "local-only",
   name: "Baseline",

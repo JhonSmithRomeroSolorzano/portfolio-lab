@@ -1,6 +1,6 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
-import { resumeDownloads } from "../src/resume-data.ts";
+import { resumeDownloads } from "../src/features/portfolio/data/resume-data.ts";
 import { resumeGroups, resumePdf, resumeText } from "./resume-document.ts";
 
 const output = new URL("../public/resume/", import.meta.url);

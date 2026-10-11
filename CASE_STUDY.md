@@ -2,7 +2,7 @@
 
 > Historical engineering reference: this describes the original systems dashboard, retired from the public page on October 10. Its models, local API, and CLI remain available in source. The current portfolio presents four independent games and interactive pieces.
 
-**[Try the browser lab](https://jhonsmithromerosolorzano.github.io/portfolio-lab/#lab)** · [Run the local API](server/README.md) · [Read the model](src/simulation.ts)
+**[Try the browser lab](https://jhonsmithromerosolorzano.github.io/portfolio-lab/#lab)** · [Run the local API](server/README.md) · [Read the model](src/domain/simulation/simulation.ts)
 
 Signal Lab is an original portfolio project by Jhon Smith Romero. It turns a familiar engineering conversation—traffic, caching, database capacity, and failure—into a small experiment a reviewer can reproduce. It is not a production benchmark or a claim about a previous employer's systems.
 
@@ -89,14 +89,14 @@ The portfolio puts professional experience before the lab. The lab presents one 
 
 Six additional pure models expose specific decisions:
 
-| Experiment | Decision | Limits |
-| --- | --- | --- |
-| Async search | Render every response or only the latest request | Three fixed input times; ignoring a result does not cancel backend work |
-| Debounce / throttle | Emit every event, after a quiet period, or on a leading interval | Fixed finite streams; leading throttle has no trailing flush |
-| Circuit breaker | Open after failures and probe after a cooldown | Sequential instantaneous calls, with no rolling window or concurrent probes |
-| Rate limiting | Reset fixed windows or refill a bounded token bucket | Fixed arrivals; admission only, without service time or retries |
-| Cache eviction | Evict oldest insertion or least recent use | Equal-size items, successful origin reads, no expiration or value changes |
-| Concurrent writes | Overwrite, reject stale versions, or reread and retry a delta | Atomic version comparison and known rejection; no lost acknowledgments |
+| Experiment          | Decision                                                         | Limits                                                                      |
+| ------------------- | ---------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Async search        | Render every response or only the latest request                 | Three fixed input times; ignoring a result does not cancel backend work     |
+| Debounce / throttle | Emit every event, after a quiet period, or on a leading interval | Fixed finite streams; leading throttle has no trailing flush                |
+| Circuit breaker     | Open after failures and probe after a cooldown                   | Sequential instantaneous calls, with no rolling window or concurrent probes |
+| Rate limiting       | Reset fixed windows or refill a bounded token bucket             | Fixed arrivals; admission only, without service time or retries             |
+| Cache eviction      | Evict oldest insertion or least recent use                       | Equal-size items, successful origin reads, no expiration or value changes   |
+| Concurrent writes   | Overwrite, reject stale versions, or reread and retry a delta    | Atomic version comparison and known rejection; no lost acknowledgments      |
 
 These are independent illustrations, not measurements or claims about a combined service. Each keeps its assumptions visible. The scheduler chart separates queue wait from worker time, including expiration before dispatch. The retry chart compares seeded jitter with synchronized attempts on the same axes and includes exact per-window counts.
 
@@ -104,9 +104,9 @@ Versioned configuration links validate all fields before applying them and alway
 
 ## Review path
 
-- [`src/simulation.ts`](src/simulation.ts): formulas and core assumptions.
-- [`src/scenario-validation.ts`](src/scenario-validation.ts): shared input contract.
-- [`src/cache-expiry.ts`](src/cache-expiry.ts) and [`src/queue-model.ts`](src/queue-model.ts): time-based experiments.
+- [`src/domain/simulation/simulation.ts`](src/domain/simulation/simulation.ts): formulas and core assumptions.
+- [`src/domain/simulation/scenario-validation.ts`](src/domain/simulation/scenario-validation.ts): shared input contract.
+- [`src/domain/simulation/cache-expiry.ts`](src/domain/simulation/cache-expiry.ts) and [`src/domain/simulation/queue-model.ts`](src/domain/simulation/queue-model.ts): time-based experiments.
 - [`server/api.ts`](server/api.ts) and [`server/openapi.json`](server/openapi.json): HTTP boundary and contract.
 - [`scripts/replay.ts`](scripts/replay.ts): batch execution.
 - [`tests/`](tests/): behavior and boundary checks.

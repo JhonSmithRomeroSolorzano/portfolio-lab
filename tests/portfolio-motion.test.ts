@@ -4,7 +4,7 @@ import {
   isPlainNavigation,
   observePortfolioMotion,
   readingSection,
-} from "../src/portfolio-motion.ts";
+} from "../src/app/portfolio-motion.ts";
 
 const plainClick = {
   button: 0,
@@ -16,7 +16,7 @@ const plainClick = {
 };
 
 function fixture(reduced = false, starts = [0, 1000, 2000]) {
-  type Listener = (event?: any) => void;
+  type Listener = (event?: unknown) => void;
   function events() {
     const listeners = new Map<string, Listener>();
     return {

@@ -4,3 +4,6 @@ artifacts
 .sites-runtime
 package-lock.json
 *.tsbuildinfo
+test-results
+playwright-report
+public/resume

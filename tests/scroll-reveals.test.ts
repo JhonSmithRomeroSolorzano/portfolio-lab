@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { observeScrollReveals } from "../src/scroll-reveals.ts";
+import { observeScrollReveals } from "../src/app/scroll-reveals.ts";
 
 function fixture(reduced = false) {
   let enter: (entries: unknown[]) => void;

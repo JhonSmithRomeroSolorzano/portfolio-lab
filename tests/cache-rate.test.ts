@@ -1,8 +1,14 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { simulate, DEFAULT_SCENARIO } from "../src/simulation.ts";
-import { scenarioFromSearch, scenarioUrl } from "../src/scenario-url.ts";
-import { validScenario } from "../src/experiment-library.ts";
+import {
+  simulate,
+  DEFAULT_SCENARIO,
+} from "../src/domain/simulation/simulation.ts";
+import {
+  scenarioFromSearch,
+  scenarioUrl,
+} from "../archive/signal-lab/scenario-url.ts";
+import { validScenario } from "../archive/signal-lab/experiment-library.ts";
 test("cache hit boundaries route all requests correctly", () => {
   const none = simulate({ ...DEFAULT_SCENARIO, cacheHitPercent: 0 });
   const all = simulate({

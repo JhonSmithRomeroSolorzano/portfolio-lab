@@ -3,7 +3,10 @@ import assert from "node:assert/strict";
 import { once } from "node:events";
 import type { AddressInfo } from "node:net";
 import { createSimulationServer } from "../server/api.ts";
-import { DEFAULT_SCENARIO, simulate } from "../src/simulation.ts";
+import {
+  DEFAULT_SCENARIO,
+  simulate,
+} from "../src/domain/simulation/simulation.ts";
 test("HTTP service returns the shared model and validates its boundary", async (t) => {
   const server = createSimulationServer();
   server.listen(0, "127.0.0.1");

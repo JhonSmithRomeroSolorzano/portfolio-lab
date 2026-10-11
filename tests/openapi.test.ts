@@ -4,7 +4,7 @@ import { once } from "node:events";
 import type { AddressInfo } from "node:net";
 import spec from "../server/openapi.json" with { type: "json" };
 import { createSimulationServer } from "../server/api.ts";
-import { validStrictScenario } from "../src/scenario-validation.ts";
+import { validStrictScenario } from "../src/domain/simulation/scenario-validation.ts";
 test("published contract agrees with live responses and documented input boundaries", async (t) => {
   const server = createSimulationServer({ budget: { limit: 1 } });
   server.listen(0, "127.0.0.1");

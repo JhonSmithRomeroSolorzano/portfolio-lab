@@ -1,7 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { exportExperiment, importExperiment } from "../src/experiment-file.ts";
-import { DEFAULT_SCENARIO } from "../src/simulation.ts";
+import {
+  exportExperiment,
+  importExperiment,
+} from "../archive/signal-lab/experiment-file.ts";
+import { DEFAULT_SCENARIO } from "../src/domain/simulation/simulation.ts";
 test("experiment snapshots round trip without trusting stored result values", () => {
   const value = JSON.parse(exportExperiment(DEFAULT_SCENARIO));
   value.result.successPercent = 999;

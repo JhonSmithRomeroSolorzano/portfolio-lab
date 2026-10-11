@@ -1,8 +1,12 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { labFromSearch, labUrl, labEntryUrl } from "../src/lab-navigation.ts";
-import { DEFAULT_SCENARIO } from "../src/simulation.ts";
-import { shareComparisonUrl } from "../src/comparison-link.ts";
+import {
+  labFromSearch,
+  labUrl,
+  labEntryUrl,
+} from "../archive/signal-lab/lab-navigation.ts";
+import { DEFAULT_SCENARIO } from "../src/domain/simulation/simulation.ts";
+import { shareComparisonUrl } from "../archive/signal-lab/comparison-link.ts";
 test("lab navigation validates selections and keeps old comparison links compatible", () => {
   assert.equal(labFromSearch("?lab=cache"), "cache");
   assert.equal(labFromSearch("?lab=cache&lab=queue"), "traffic");

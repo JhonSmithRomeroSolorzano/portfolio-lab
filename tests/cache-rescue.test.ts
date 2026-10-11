@@ -5,13 +5,13 @@ import {
   rescueState,
   rescueSnapshot,
   rescueEvents,
-} from "../src/labs/cache-rescue.ts";
+} from "../src/domain/playground/cache-rescue.ts";
 import {
   parseLabSetup,
   setupFromSearch,
   setupUrl,
   DEFAULT_LAB_SETTINGS,
-} from "../src/labs/lab-setup.ts";
+} from "../archive/signal-lab/labs/lab-setup.ts";
 
 test("simultaneous misses share one fetch and receive the same answer together", () => {
   const settings = { requests: 24, originMs: 400, spacingMs: 0 };
