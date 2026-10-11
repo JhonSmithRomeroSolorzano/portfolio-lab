@@ -2,6 +2,10 @@
 
 The portfolio is a small React application with four optional games. Its architecture separates reasons to change without adding a framework, service container, or inheritance hierarchy.
 
+This document owns technical structure, dependency contracts, and design rationale. For agent workflow, verification commands, content safeguards, and delivery instructions, see [AGENTS.md](AGENTS.md).
+
+## Source map
+
 ```text
 src/
   main.tsx                         Browser entry and eager styles
@@ -28,8 +32,8 @@ src/
 archive/signal-lab/                 Retired dashboard UI and browser adapters
 server/                            Optional loopback HTTP adapter
 scripts/                           Résumé generation, batch CLI, performance audit
-tests/                            Unit, integration, dependency-direction checks
-e2e/                              Production Chromium and WebKit journeys
+tests/                             Unit, integration, dependency-direction checks
+e2e/                               Production Chromium and WebKit journeys
 ```
 
 ## Dependency direction
@@ -38,7 +42,7 @@ e2e/                              Production Chromium and WebKit journeys
 
 The Node API imports the simulation domain. The résumé generator imports verified `features/portfolio/data` without importing presentation components. The archive may use maintained modules, but maintained application/server/scripts code must never depend on the archive. Tests can import either side to retain coverage of historical portable formats and adapters.
 
-`tests/architecture.test.ts` checks static imports, re-exports, and literal lazy imports against those directions. `tsconfig.domain.json` independently prevents browser/server APIs from leaking into pure models. Strict TypeScript also checks tests, browser journeys, and retained reference source.
+[Dependency tests](tests/architecture.test.ts) check static imports, re-exports, and literal lazy imports against those directions. The [domain TypeScript configuration](tsconfig.domain.json) independently prevents browser/server APIs from leaking into pure models. The [main TypeScript configuration](tsconfig.json) also checks tests, browser journeys, and retained reference source. Archived UI is excluded from lint evolution, but remains type-checked and its behavioral tests run.
 
 ## Responsibilities and extension points
 
@@ -56,8 +60,10 @@ Intersection observation enhances loading/playback but is not required. Reduced 
 
 CSS belongs to the relevant feature, with global tokens/base elements and app layout kept separate. Retired dashboard styles are outside the public bundle. Game styles remain eager, while JavaScript stays lazy. Native dynamic imports are used without Vite module preloading: preloading a shared optional dependency caused failed-download recovery to remain broken in WebKit. Browser tests cover both aborted downloads and HTTP 503, plus runtime render/effect failures.
 
-## Quality gates
+## Runtime and build boundaries
 
-Run `npm run check` for ESLint (TypeScript and core React Hooks rules), read-only Prettier validation, strict app/test/domain type checks, unit/integration tests, résumé generation, and the production build. Run `npm run test:browser` after that build. GitHub Actions requires both before Pages deployment.
+[The browser entry](src/main.tsx) mounts [App](src/app/App.tsx), which composes the career content and optional experiences. The retired dashboard is outside this entry graph; its retained API and CLI use maintained domain models independently of the public page.
 
-`npm run format` explicitly rewrites formatting; `format:check` never changes files. Generated/build/test artifacts are ignored. Archived UI is excluded from lint evolution, but remains type-checked and its behavioral tests run. A human screen-reader audit and verified career outcomes remain separate follow-ups, not claims established by automated checks.
+[Profile data](src/features/portfolio/data/profile.ts) and [technology data](src/features/portfolio/data/technology-stack.ts) supply both the portfolio and [résumé generator](scripts/build-resume.ts). PDFKit is confined to generation scripts; generated downloads in `public/resume/` enter the static build without adding PDFKit to the browser bundle.
+
+[Vite](vite.config.ts) uses `base: "./"` so relative asset/download URLs work on both GitHub Pages project paths and root hosting. The [Pages workflow](.github/workflows/deploy.yml) and [Sites manifest](.openai/hosting.json) publish `dist/` only; neither deploys the Node API. The `/local-api` proxy exists only in Vite development, not in the built preview or hosted page. Optional API runtime details live in [server/README.md](server/README.md).
