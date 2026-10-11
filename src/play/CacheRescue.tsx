@@ -61,15 +61,19 @@ export function CacheRescue() {
     const navigate = () => {
       if (!["#cache-rescue", "#lab"].includes(location.hash)) setPlaying(false);
     };
-    const observer = new IntersectionObserver((entries) => {
-      if (!entries[0].isIntersecting) setPlaying(false);
-    });
-    if (arena.current) observer.observe(arena.current);
+    const observer =
+      typeof IntersectionObserver === "undefined"
+        ? undefined
+        : new IntersectionObserver((entries) => {
+            if (entries.some((entry) => !entry.isIntersecting))
+              setPlaying(false);
+          });
+    if (arena.current) observer?.observe(arena.current);
     media.addEventListener("change", motion);
     document.addEventListener("visibilitychange", visibility);
     window.addEventListener("hashchange", navigate);
     return () => {
-      observer.disconnect();
+      observer?.disconnect();
       media.removeEventListener("change", motion);
       document.removeEventListener("visibilitychange", visibility);
       window.removeEventListener("hashchange", navigate);

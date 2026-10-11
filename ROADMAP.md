@@ -395,3 +395,9 @@ Next: replace the sprawling Signal Lab dashboard with four equally prominent, pl
 - [x] Replace retired dashboard browser journeys with coverage for the four current pieces, retaining the earlier model/API/CLI unit tests. Check responsive layouts, both themes, reduced motion, direct links, download recovery, and map stability in Chromium and WebKit.
 
 Next: refine these four pieces from user feedback rather than growing another large catalog. A direct contact email and specific professional project outcomes still require verified user details; do not invent them. A human screen-reader assessment remains a separate audit task.
+
+## Architecture hardening — October 10
+
+- [x] Isolate each optional experience behind an error boundary with a local retry. Render/effect exceptions keep the résumé, navigation, and other games usable. Degrade safely when IntersectionObserver is unavailable; cover failures, recovery, and unsupported observation in Chromium and WebKit.
+
+Next: separate app composition, portfolio/playground features, shared browser utilities, pure models, and archived Signal Lab UI; remove retired styles from the public bundle and enforce quality boundaries in CI.

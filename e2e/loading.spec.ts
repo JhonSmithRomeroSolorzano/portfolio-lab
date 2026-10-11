@@ -116,3 +116,77 @@ test("a delayed experiment does not pull the visitor back after navigating away"
   await expect(page.locator("#workbench")).toBeFocused();
   await expect(page.locator("#workbench")).toBeInViewport();
 });
+
+for (const phase of ["render", "effect"] as const) {
+  test(`a game ${phase} exception stays inside its boundary and can be retried`, async ({
+    page,
+  }) => {
+    await page.route("**/CacheRescue-*.js", async (route) => {
+      const response = await route.fetch();
+      const source = await response.text();
+      // Use the built module's own React runtime for an authentic effect failure.
+      const reactImport = source.match(
+        /import\{([^}]+)\}from\s*["']([^"']+)["']/,
+      );
+      const effectAlias = reactImport?.[1].match(/(?:^|,)r as (\w+)/)?.[1];
+      expect(reactImport).toBeTruthy();
+      const fault =
+        phase === "render"
+          ? 'if (!window.__experienceRecovered) throw new Error("render failure");'
+          : `${effectAlias}.useEffect(() => { if (!window.__experienceRecovered) throw new Error("effect failure"); }, []);`;
+      await route.fulfill({
+        response,
+        contentType: "text/javascript",
+        body: source.replace(
+          /export\{[^}]+\};?\s*$/,
+          `export function CacheRescue() { ${fault} return "Recovered experience"; }`,
+        ),
+      });
+    });
+    await page.goto("/#cache-rescue");
+    await expect(page.getByRole("alert")).toContainText(
+      "Cache Rescue ran into a problem",
+    );
+    await expect(page.locator("#rescue-title")).toHaveText("Cache Rescue");
+    await page
+      .getByRole("navigation", { name: "Main navigation" })
+      .getByRole("link", { name: "Résumé", exact: true })
+      .press("Enter");
+    await expect(
+      page.getByRole("link", { name: "Download PDF", exact: true }),
+    ).toBeVisible();
+    await page.evaluate(() => {
+      Object.assign(window, { __experienceRecovered: true });
+    });
+    await page.getByRole("button", { name: "Try Cache Rescue again" }).click();
+    await expect(page.locator("#cache-rescue")).toContainText(
+      "Recovered experience",
+    );
+    await page.getByRole("link", { name: /Algorithm Garden/ }).click();
+    await expect(
+      page
+        .locator("#algorithm-garden")
+        .getByRole("button", { name: "Hint the next node" }),
+    ).toBeVisible();
+  });
+}
+
+test("unsupported intersection observation keeps the portfolio and games usable", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(window, "IntersectionObserver", { value: undefined });
+  });
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/#resume");
+  await expect(
+    page.getByRole("link", { name: "Download PDF", exact: true }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Send & see the result" }).click();
+  await expect(page.locator(".cache-feedback")).toContainText(
+    "24 replies delivered",
+  );
+  expect(errors).toEqual([]);
+});

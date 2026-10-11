@@ -5,6 +5,7 @@ import {
   useState,
   type ComponentType,
 } from "react";
+import { ExperimentBoundary } from "./ExperimentBoundary";
 
 type Props = {
   id: string;
@@ -99,7 +100,9 @@ export function DeferredExperiment({ id, title, titleId, load }: Props) {
   return (
     <div ref={container} className="deferred-experiment" data-experiment={id}>
       {Experiment ? (
-        <Experiment />
+        <ExperimentBoundary title={title} titleId={titleId}>
+          <Experiment />
+        </ExperimentBoundary>
       ) : (
         <div className="experiment-placeholder">
           {titleId && <h3 id={titleId}>{title}</h3>}
