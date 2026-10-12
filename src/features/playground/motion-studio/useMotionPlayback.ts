@@ -6,12 +6,15 @@ import {
 } from "../../../shared/hooks/usePlaybackInterruption";
 import { CURVES } from "./curves";
 
+const ACTIVE_HASHES = ["#motion-studio", "#lab"];
+
 export function useMotionPlayback() {
   const [curve, setCurve] = useState(1);
   const [duration, setDuration] = useState(1100);
   const [playing, setPlaying] = useState(false);
   const [arrived, setArrived] = useState(false);
   const reduced = useMediaQuery(REDUCED_MOTION);
+  const container = useRef<HTMLDivElement>(null);
   const runner = useRef<HTMLDivElement>(null);
   const baseline = useRef<HTMLDivElement>(null);
   const animations = useRef<Animation[]>([]);
@@ -24,7 +27,10 @@ export function useMotionPlayback() {
     cancel();
     setArrived(false);
   }, [cancel]);
-  usePlaybackInterruption(interrupt);
+  usePlaybackInterruption(interrupt, {
+    target: container,
+    activeHashes: ACTIVE_HASHES,
+  });
   useEffect(
     () => () => {
       animations.current.forEach((animation) => animation.cancel());
@@ -89,6 +95,7 @@ export function useMotionPlayback() {
     playing,
     arrived,
     reduced,
+    container,
     runner,
     baseline,
     chooseCurve,

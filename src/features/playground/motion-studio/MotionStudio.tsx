@@ -8,6 +8,7 @@ export function MotionStudio() {
     playing,
     arrived,
     reduced,
+    container,
     runner,
     baseline,
     chooseCurve,
@@ -16,7 +17,7 @@ export function MotionStudio() {
   } = useMotionPlayback();
 
   return (
-    <div className="motion-studio">
+    <div className="motion-studio" ref={container}>
       <div className="motion-intro">
         <span className="play-kicker">03 / FEEL THE DIFFERENCE</span>
         <h3 id="motion-title">

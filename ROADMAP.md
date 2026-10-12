@@ -415,4 +415,6 @@ Next: refine the four experiences from concrete visitor feedback. A human screen
 
 - [x] Preserve Algorithm Garden progress and hints, Cache Rescue results, and Motion Studio end states when visitors activate an already-selected option. Only a different selection or an explicit reset/replay starts over. Reproduce the accidental resets and cover the corrected keyboard interactions in Chromium and WebKit.
 
-Next: check playback interruption when leaving Motion Studio, while preserving explicit play and reduced-motion behavior. Verified career details and a human screen-reader assessment remain pending.
+- [x] Stop Motion Studio when visitors navigate away or scroll the experience out of view. Reuse the shared browser lifecycle hook and wait for explicit replay on return. Cover both paths at desktop/mobile sizes, including cancellation of both animation lanes and successful replay.
+
+Next: use visitor feedback to guide further refinements of the four experiences. A human screen-reader assessment is the next useful accessibility milestone; verified career examples and direct contact details remain pending. Do not expand the catalog or create cosmetic churn to meet contribution counts.
