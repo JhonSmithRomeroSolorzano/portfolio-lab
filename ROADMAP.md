@@ -418,3 +418,9 @@ Next: refine the four experiences from concrete visitor feedback. A human screen
 - [x] Stop Motion Studio when visitors navigate away or scroll the experience out of view. Reuse the shared browser lifecycle hook and wait for explicit replay on return. Cover both paths at desktop/mobile sizes, including cancellation of both animation lanes and successful replay.
 
 Next: use visitor feedback to guide further refinements of the four experiences. A human screen-reader assessment is the next useful accessibility milestone; verified career examples and direct contact details remain pending. Do not expand the catalog or create cosmetic churn to meet contribution counts.
+
+## Connection puzzle saved progress — October 12
+
+- [x] Reproduce a stale second tab overwriting another tab's saved moves. Extract a focused progress controller and reconcile validated saves on storage/focus changes and before writes, preserving each tab's selection and keyboard focus. Invalidate only changed-board Undo and hints; keep play usable after corrupt data or quota failures. Cover two-tab play, delayed notifications, cleared/corrupt saves, and continued play without storage in Chromium and WebKit.
+
+Next: collect visitor feedback on the four games and complete a human screen-reader assessment. Add concrete professional feature outcomes and direct contact information only when verified user details arrive; do not add games or split fixes to fill contribution counts.

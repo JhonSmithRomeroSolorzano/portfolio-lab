@@ -18,7 +18,7 @@ src/
       DeferredExperiment.tsx       Download/visibility/anchor lifecycle
       ExperimentBoundary.tsx       Per-experience runtime failure recovery
       cache-rescue/                Controller, arena, UI, challenge definitions, CSS
-      connection-puzzle/           UI, browser persistence adapter, CSS
+      connection-puzzle/           Progress controller, browser persistence adapter, UI, CSS
       motion-studio/               Playback controller, curves, UI, CSS
       algorithm-garden/            UI and CSS
   domain/
@@ -57,6 +57,8 @@ The Node API imports the simulation domain. The résumé generator imports verif
 Each game has an independent download placeholder and runtime error boundary. An import failure offers a reload; a render/effect failure offers a local remount. Navigation and career content remain usable. Error boundaries do not catch arbitrary event-handler or asynchronous callback errors; expected storage and Web Animation cancellation failures are handled where those operations run.
 
 Intersection observation enhances loading/playback but is not required. Reduced motion, page visibility, and (where appropriate) navigation/offscreen changes interrupt playback. Effects release listeners, observers, and animation frames on cleanup.
+
+The Connection puzzle's feature controller owns progress, visit-local Undo/hints, and reconciliation of validated browser saves. Storage/focus events refresh boards without changing the current selection; reads before writes guard against delayed notifications. The last observed save remains separate from unsaved play so quota failures do not reset the session. This is best-effort synchronization of localStorage snapshots, not an atomic transaction across simultaneous tabs; progress is never shared between hosting origins.
 
 CSS belongs to the relevant feature, with global tokens/base elements and app layout kept separate. Retired dashboard styles are outside the public bundle. Game styles remain eager, while JavaScript stays lazy. Native dynamic imports are used without Vite module preloading: preloading a shared optional dependency caused failed-download recovery to remain broken in WebKit. Browser tests cover both aborted downloads and HTTP 503, plus runtime render/effect failures.
 

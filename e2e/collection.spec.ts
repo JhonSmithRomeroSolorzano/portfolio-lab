@@ -171,6 +171,13 @@ test("a failed puzzle save gives honest feedback without breaking play or undo",
   await tile.click();
   await expect(page.locator(".route-save")).toContainText("this visit only");
   await expect(page.locator(".route-score")).toContainText("1 turn");
+  await tile.click();
+  await expect(page.locator(".route-score")).toContainText("2 turns");
+  await page.getByLabel("Choose a puzzle").selectOption("1");
+  await page.getByLabel("Choose a puzzle").selectOption("0");
+  await expect(page.locator(".route-score")).toContainText("2 turns");
+  await page.getByRole("button", { name: "Undo turn", exact: true }).click();
+  await expect(page.locator(".route-score")).toContainText("1 turn");
   await page.getByRole("button", { name: "Undo turn", exact: true }).click();
   await expect(tile).toHaveAttribute("aria-label", original!);
   await expect(tile).toBeFocused();

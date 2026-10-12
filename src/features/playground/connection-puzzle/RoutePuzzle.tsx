@@ -6,77 +6,29 @@ import {
   WEST,
   PUZZLES,
   portNames,
-  rotateTile,
-  routeHint,
-  startingBoard,
   traceRoute,
 } from "../../../domain/playground/route-puzzle";
 
-import {
-  loadProgress,
-  saveProgress,
-  type PuzzleBoard,
-  type RouteProgress,
-} from "./route-progress";
+import { useRouteProgress } from "./useRouteProgress";
 
 export function RoutePuzzle() {
-  const [saved, setSaved] = useState(() => loadProgress());
-  const { progress, status } = saved;
+  const {
+    progress,
+    status,
+    notice,
+    hint,
+    canUndo,
+    select,
+    reset,
+    turn,
+    undo,
+    giveHint,
+  } = useRouteProgress();
   const level = progress.level;
   const { tiles, moves } = progress.boards[level];
-  const [history, setHistory] = useState<PuzzleBoard[][]>(() =>
-    PUZZLES.map(() => []),
-  );
-  const [hint, setHint] = useState<ReturnType<typeof routeHint>>(null);
   const [focused, setFocused] = useState(0);
   const buttons = useRef<(HTMLButtonElement | null)[]>([]);
   const route = traceRoute(tiles);
-  function save(next: RouteProgress) {
-    // Persist in the interaction itself so an immediate reload keeps this turn.
-    const stored = saveProgress(next);
-    setSaved({ progress: next, status: stored ? "saved" : "unavailable" });
-  }
-  function updateBoard(board: PuzzleBoard) {
-    save({
-      ...progress,
-      boards: progress.boards.map((previous, i) =>
-        i === level ? board : previous,
-      ),
-    });
-  }
-  function select(next: number) {
-    setHint(null);
-    save({ ...progress, level: next });
-  }
-  function reset() {
-    updateBoard({ tiles: startingBoard(level), moves: 0 });
-    setHistory((current) =>
-      current.map((turns, i) => (i === level ? [] : turns)),
-    );
-    setHint(null);
-  }
-  function turn(index: number) {
-    setHint(null);
-    setHistory((current) =>
-      current.map((turns, i) =>
-        i === level ? [...turns.slice(-99), { tiles, moves }] : turns,
-      ),
-    );
-    updateBoard({
-      tiles: tiles.map((tile, i) => (i === index ? rotateTile(tile) : tile)),
-      moves: moves + 1,
-    });
-  }
-  function undo() {
-    const previous = history[level].at(-1);
-    if (!previous) return;
-    setHint(null);
-    updateBoard(previous);
-    setHistory((current) =>
-      current.map((turns, i) => (i === level ? turns.slice(0, -1) : turns)),
-    );
-    buttons.current[focused]?.focus();
-  }
   return (
     <div className="route-game">
       <div className="route-instructions">
@@ -109,14 +61,16 @@ export function RoutePuzzle() {
           </select>
         </label>
         <div className="play-actions">
-          <button onClick={undo} disabled={!history[level].length}>
+          <button
+            onClick={() => {
+              if (undo()) buttons.current[focused]?.focus();
+            }}
+            disabled={!canUndo}
+          >
             Undo turn
           </button>
           <button onClick={() => reset()}>Start again</button>
-          <button
-            onClick={() => setHint(routeHint(tiles, level))}
-            disabled={route.won}
-          >
+          <button onClick={giveHint} disabled={route.won}>
             Give me a hint
           </button>
         </div>
@@ -226,13 +180,14 @@ export function RoutePuzzle() {
           </button>
         )}
         <p className="route-save" role="status">
-          {status === "saved"
-            ? "Progress saved in this browser. Undo is available for this visit."
-            : status === "unavailable"
-              ? "Progress is available for this visit only; browser storage is unavailable."
-              : status === "invalid"
-                ? "Saved progress could not be read. Your next move will start a fresh save."
-                : "Your first move saves progress in this browser. No account needed."}
+          {notice ||
+            (status === "saved"
+              ? "Progress saved in this browser. Undo is available for this visit."
+              : status === "unavailable"
+                ? "Progress is available for this visit only; browser storage is unavailable."
+                : status === "invalid"
+                  ? "Saved progress could not be read. Your next move will start a fresh save."
+                  : "Your first move saves progress in this browser. No account needed.")}
         </p>
         <span className="route-footnote">
           A browser puzzle, made for a small pause.
