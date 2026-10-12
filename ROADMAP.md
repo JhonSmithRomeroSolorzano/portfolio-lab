@@ -410,3 +410,9 @@ Next: separate app composition, portfolio/playground features, shared browser ut
 - [x] Align AGENTS and ARCHITECTURE with distinct ownership: agent workflow, verification, and delivery in AGENTS; source structure, dependency contracts, and runtime/build rationale in ARCHITECTURE. Replace stale paths and check instructions, and cross-link the documents instead of duplicating technical rules.
 
 Next: refine the four experiences from concrete visitor feedback. A human screen-reader assessment and verified professional feature outcomes/contact details remain useful follow-ups; avoid expanding the catalog or adding abstractions without a demonstrated need.
+
+## Playground interaction review — October 11
+
+- [x] Preserve Algorithm Garden progress and hints, Cache Rescue results, and Motion Studio end states when visitors activate an already-selected option. Only a different selection or an explicit reset/replay starts over. Reproduce the accidental resets and cover the corrected keyboard interactions in Chromium and WebKit.
+
+Next: check playback interruption when leaving Motion Studio, while preserving explicit play and reduced-motion behavior. Verified career details and a human screen-reader assessment remain pending.

@@ -18,6 +18,9 @@ export function AlgorithmGarden() {
     setHint(false);
     setMessage("Start at A. Which node comes next?");
   }
+  function chooseMode(next: Walk) {
+    if (next !== mode) reset(next);
+  }
   function visit(id: string) {
     if (complete || visited.includes(id)) return;
     if (id !== order[visited.length]) {
@@ -53,14 +56,14 @@ export function AlgorithmGarden() {
         <div className="garden-modes" role="group" aria-label="Traversal style">
           <button
             aria-pressed={mode === "breadth"}
-            onClick={() => reset("breadth")}
+            onClick={() => chooseMode("breadth")}
           >
             <strong>Across the rows</strong>
             <span>Breadth-first</span>
           </button>
           <button
             aria-pressed={mode === "depth"}
-            onClick={() => reset("depth")}
+            onClick={() => chooseMode("depth")}
           >
             <strong>Down the branches</strong>
             <span>Depth-first</span>

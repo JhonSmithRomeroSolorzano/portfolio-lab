@@ -17,6 +17,8 @@ export function CacheRescue() {
     finished,
     unsharedReads,
     reset,
+    chooseRound,
+    chooseStrategy,
     togglePlayback,
   } = useCacheRescue();
   const launch = useRef<HTMLButtonElement>(null);
@@ -44,7 +46,7 @@ export function CacheRescue() {
               key={r.name}
               aria-label={`Challenge ${i + 1}: ${r.name}`}
               aria-pressed={i === round}
-              onClick={() => reset(i)}
+              onClick={() => chooseRound(i)}
             >
               {String(i + 1).padStart(2, "0")}
             </button>
@@ -57,12 +59,12 @@ export function CacheRescue() {
           role="group"
           aria-label="Choose a rescue strategy"
         >
-          <button aria-pressed={!shared} onClick={() => reset(round, false)}>
+          <button aria-pressed={!shared} onClick={() => chooseStrategy(false)}>
             <span aria-hidden="true">↗ ↗ ↗</span>
             <strong>Everyone fetches</strong>
             <small>Each miss starts a read</small>
           </button>
-          <button aria-pressed={shared} onClick={() => reset(round, true)}>
+          <button aria-pressed={shared} onClick={() => chooseStrategy(true)}>
             <span aria-hidden="true">↗ → ↘</span>
             <strong>Share one fetch</strong>
             <small>Wait for one answer</small>

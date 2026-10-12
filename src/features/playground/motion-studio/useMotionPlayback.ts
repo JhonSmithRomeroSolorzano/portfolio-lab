@@ -32,10 +32,12 @@ export function useMotionPlayback() {
     [],
   );
   function chooseCurve(next: number) {
+    if (next === curve) return;
     interrupt();
     setCurve(next);
   }
   function chooseDuration(next: number) {
+    if (next === duration) return;
     interrupt();
     setDuration(next);
   }

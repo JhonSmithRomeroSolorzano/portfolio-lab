@@ -1,5 +1,31 @@
 import { test, expect } from "@playwright/test";
 
+test("reselecting the current traversal preserves the garden and its hint", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/#algorithm-garden");
+  await page
+    .getByRole("button", { name: "Node A", exact: true })
+    .press("Enter");
+  await page.getByRole("button", { name: "Hint the next node" }).press("Enter");
+  await page.getByRole("button", { name: /Across the rows/ }).press("Enter");
+  await expect(page.locator(".garden-caption")).toContainText("1 / 7 LIT");
+  await expect(page.locator(".garden-feedback")).toHaveText("Try B next.");
+  await expect(
+    page.getByRole("button", { name: "Node B", exact: true }),
+  ).toHaveClass(/is-hinted/);
+  await page.getByRole("button", { name: /Down the branches/ }).press("Enter");
+  await expect(page.locator(".garden-caption")).toContainText("0 / 7 LIT");
+  await page
+    .getByRole("button", { name: "Node A", exact: true })
+    .press("Enter");
+  await page.getByRole("button", { name: /Down the branches/ }).press("Enter");
+  await expect(page.locator(".garden-caption")).toContainText("1 / 7 LIT");
+  await page.getByRole("button", { name: "Reset garden" }).press("Enter");
+  await expect(page.locator(".garden-caption")).toContainText("0 / 7 LIT");
+});
+
 test("garden teaches both traversals with hints, recoverable mistakes and keyboard play", async ({
   page,
 }) => {

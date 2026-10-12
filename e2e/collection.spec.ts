@@ -5,6 +5,24 @@ import {
   rotateTile,
 } from "../src/domain/playground/route-puzzle";
 
+test("reselecting the current curve preserves the completed motion comparison", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/#motion-studio");
+  await page
+    .getByRole("button", { name: "Show end state", exact: true })
+    .press("Enter");
+  await page
+    .getByRole("button", { name: "Soft landing", exact: true })
+    .press("Enter");
+  await expect(page.locator(".motion-runner.has-arrived")).toHaveCount(2);
+  await page
+    .getByRole("button", { name: "Steady", exact: true })
+    .press("Enter");
+  await expect(page.locator(".motion-runner.has-arrived")).toHaveCount(0);
+});
+
 test("connection puzzle works with keyboard input, undo, reset, and a complete solution", async ({
   page,
 }) => {

@@ -34,6 +34,12 @@ export function useCacheRescue() {
     setRound(next);
     setShared(nextShared);
   }
+  function chooseRound(next: number) {
+    if (next !== round) reset(next);
+  }
+  function chooseStrategy(next: boolean) {
+    if (next !== shared) reset(round, next);
+  }
   const pause = useCallback(() => setPlaying(false), []);
   usePlaybackInterruption(pause, {
     target: arena,
@@ -75,6 +81,8 @@ export function useCacheRescue() {
     finished,
     unsharedReads,
     reset,
+    chooseRound,
+    chooseStrategy,
     togglePlayback,
   };
 }

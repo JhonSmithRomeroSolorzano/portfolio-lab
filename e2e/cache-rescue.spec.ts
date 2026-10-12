@@ -1,6 +1,39 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
+test("reselecting the current challenge or strategy preserves the rescue result", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/#cache-rescue");
+  await page
+    .getByRole("button", { name: "Send & see the result" })
+    .press("Enter");
+  await page.getByRole("button", { name: /Challenge 1:/ }).press("Enter");
+  await expect(page.locator(".cache-feedback")).toContainText(
+    "24 database reads",
+  );
+  await page.getByRole("button", { name: /Everyone fetches/ }).press("Enter");
+  await expect(page.locator(".cache-feedback")).toContainText(
+    "24 database reads",
+  );
+  await page.getByRole("button", { name: /Share one fetch/ }).press("Enter");
+  await expect(page.locator(".cache-feedback")).toContainText(
+    "Choose a strategy",
+  );
+  await page
+    .getByRole("button", { name: "Send & see the result" })
+    .press("Enter");
+  await page.getByRole("button", { name: /Share one fetch/ }).press("Enter");
+  await expect(page.locator(".cache-feedback")).toContainText(
+    "Mission complete",
+  );
+  await page.getByRole("button", { name: "Reset", exact: true }).press("Enter");
+  await expect(page.locator(".cache-feedback")).toContainText(
+    "Choose a strategy",
+  );
+});
+
 test("cache rescue gives a playable result for each strategy and all three challenges", async ({
   page,
 }) => {
