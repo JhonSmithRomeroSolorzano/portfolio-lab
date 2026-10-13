@@ -198,6 +198,11 @@
   align-items: center;
   gap: 25px;
 }
+.contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
 .contact-section h2 {
   font-size: 47px;
   margin: 21px 0;

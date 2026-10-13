@@ -7,6 +7,16 @@
 // Keep the listed overlapping roles; do not infer a relationship between employers.
 export const LINKEDIN = "https://www.linkedin.com/in/jhonsmithr";
 export const GITHUB = "https://github.com/JhonSmithRomeroSolorzano";
+
+// Direct contact channels are intentionally empty until Jhon supplies verified
+// details. They never fall back to account metadata or placeholder values.
+export type VerifiedContactDetail = {
+  kind: "email" | "phone" | "calendar";
+  label: string;
+  href: string;
+};
+
+export const verifiedContactDetails: readonly VerifiedContactDetail[] = [];
 export const professionalProfile = {
   name: "Jhon Smith Romero",
   role: "Senior full-stack developer",

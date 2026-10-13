@@ -5,6 +5,7 @@ import {
   GITHUB,
   LINKEDIN,
   professionalProfile,
+  verifiedContactDetails,
 } from "./profile";
 import { languages, stackLayers, testing } from "./technology-stack";
 
@@ -21,6 +22,7 @@ export const resumeData = {
   ...professionalProfile,
   linkedin: LINKEDIN,
   github: GITHUB,
+  contactDetails: verifiedContactDetails,
   technologies: resumeTechnologyGroups,
   experience,
   education,

@@ -1,5 +1,5 @@
 import { Arrow } from "../../shared/ui/Arrow";
-import { LINKEDIN } from "./data/profile";
+import { LINKEDIN, verifiedContactDetails } from "./data/profile";
 
 export function ContactSection() {
   return (
@@ -14,14 +14,26 @@ export function ContactSection() {
       <span className="eyebrow">GET IN TOUCH</span>
       <div>
         <h2 id="contact-title">Let’s talk.</h2>
-        <a
-          className="primary-button"
-          href={LINKEDIN}
-          target="_blank"
-          rel="noreferrer"
-        >
-          Find me on LinkedIn <Arrow diagonal />
-        </a>
+        <div className="contact-actions">
+          {verifiedContactDetails.map((detail) => (
+            <a
+              key={detail.href}
+              className="primary-button"
+              href={detail.href}
+              rel="noreferrer"
+            >
+              {detail.label} <Arrow diagonal />
+            </a>
+          ))}
+          <a
+            className="primary-button"
+            href={LINKEDIN}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Find me on LinkedIn <Arrow diagonal />
+          </a>
+        </div>
       </div>
       <p>
         Open to full-stack opportunities with JavaScript, TypeScript, React, and

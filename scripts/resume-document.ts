@@ -31,7 +31,12 @@ export function resumeGroups(data = resumeData): ResumeGroup[] {
       { text: data.role, size: 13, color: blue, after: 6 },
       { text: data.location, color: muted, after: 8 },
       { text: data.summary, after: 9 },
-      ...[data.linkedin, data.github, data.portfolio].map((link) => ({
+      ...[
+        data.linkedin,
+        data.github,
+        data.portfolio,
+        ...data.contactDetails.map((detail) => detail.href),
+      ].map((link) => ({
         text: link,
         link,
         size: 9,
