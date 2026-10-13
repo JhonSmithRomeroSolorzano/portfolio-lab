@@ -10,7 +10,7 @@
     "predev": "npm run build:resume",
     "dev": "vite --host 127.0.0.1",
     "build:resume": "node --import tsx scripts/build-resume.ts",
-    "build": "npm run typecheck && npm run build:resume && vite build && node --import tsx scripts/prerender.ts",
+    "build": "npm run typecheck && npm run build:resume && vite build && node --import tsx scripts/prerender.ts && node --import tsx scripts/build-release.ts",
     "preview": "vite preview --host 127.0.0.1",
     "test": "node --import tsx --test tests/*.test.ts",
     "check": "npm run lint && npm run format:check && npm test && npm run build",
@@ -21,7 +21,8 @@
     "audit:performance": "node scripts/audit-performance.mjs",
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.domain.json",
     "lint": "eslint . --max-warnings 0",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "verify:deployment": "node --import tsx scripts/verify-deployment.ts"
   },
   "dependencies": {
     "react": "^19.1.0",

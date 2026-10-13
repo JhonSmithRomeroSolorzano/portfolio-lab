@@ -430,3 +430,7 @@ Next: collect visitor feedback on the four games and complete a human screen-rea
 - [x] Prerender career content with native résumé/contact navigation and hydrate the same components. Cover disabled/blocked JavaScript and theme hydration without duplicate content.
 
 Next: verify matching hosted releases, enforce performance budgets, add motion CSS export, varied garden trees and frontier explanations, cache predictions, puzzle achievements, and optional implementation notes.
+
+- [x] Add release manifests and an automated deployed-asset verifier. Gate the Pages deployment on its source/asset integrity and support comparing the existing private preview with credentials supplied only through stdin. Cover stale source, mismatched assets, malformed manifests, and credential-origin restrictions.
+
+Next: performance budgets and the seven remaining playground refinements.

@@ -126,3 +126,7 @@ For a repeatable Lighthouse report, build the site, start `npm run preview -- --
 The IBM Plex Latin font files are served locally from `public/fonts/` under the included SIL Open Font License. They are the same Google Fonts distributions used by the original stylesheet; local delivery removes the external stylesheet from the first render path.
 
 The build prerenders the same React page into HTML, then hydrates its controls in the browser. Career content, native section links, and résumé downloads remain available with JavaScript disabled or blocked. Optional games keep honest loading placeholders and do not download during prerendering.
+
+### Deployment integrity
+
+Every build writes `release.json` with its source commit and SHA-256 asset hashes. The Pages workflow verifies the served commit and every listed asset after deployment. Run `npm run verify:deployment -- <public-url> <private-preview-url> --private-stdin` to compare both hosts after publication; supply `{ "token": "..." }` through stdin only using the authorized Sites access token. The verifier scopes that header to the existing private preview and rejects redirects. Never put tokens in arguments, files, or logs. PDFs have variable generation metadata, so the manifest covers their shared plain-text source export instead. This check runs after both publishes; it does not automatically deploy the private preview or change its audience.
