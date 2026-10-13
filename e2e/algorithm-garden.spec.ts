@@ -91,3 +91,29 @@ test("tree choices offer distinct solvable boards without resetting the selected
     "Garden complete",
   );
 });
+
+test("optional frontier shows why breadth and depth choose different next nodes", async ({
+  page,
+}) => {
+  await page.goto("/#algorithm-garden");
+  await page
+    .getByText("See how this traversal works", { exact: true })
+    .press("Enter");
+  for (const id of ["A", "B"])
+    await page
+      .getByRole("button", { name: `Node ${id}`, exact: true })
+      .press("Space");
+  await expect(
+    page.getByRole("list", { name: "Queue, front first" }),
+  ).toHaveText("CDE");
+  await expect(page.locator(".garden-step")).toContainText("C is next");
+  await page.getByRole("button", { name: /Down the branches/ }).click();
+  for (const id of ["A", "B"])
+    await page
+      .getByRole("button", { name: `Node ${id}`, exact: true })
+      .press("Space");
+  await expect(page.getByRole("list", { name: "Stack, top first" })).toHaveText(
+    "DEC",
+  );
+  await expect(page.locator(".garden-step")).toContainText("D is next");
+});

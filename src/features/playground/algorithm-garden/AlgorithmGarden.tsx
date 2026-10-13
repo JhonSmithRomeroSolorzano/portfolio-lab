@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {
   GARDENS,
-  gardenOrder,
+  gardenSteps,
   type Walk,
 } from "../../../domain/playground/algorithm-garden";
 
@@ -12,7 +12,9 @@ export function AlgorithmGarden() {
   const [visited, setVisited] = useState<string[]>([]);
   const [hint, setHint] = useState(false);
   const [message, setMessage] = useState("Start at A. Which node comes next?");
-  const order = gardenOrder(mode, tree);
+  const steps = gardenSteps(mode, tree);
+  const order = steps.at(-1)!.visited;
+  const step = steps[visited.length];
   const complete = visited.length === order.length;
   function reset(next = mode) {
     setMode(next);
@@ -159,6 +161,31 @@ export function AlgorithmGarden() {
             <span key={i}>{visited[i] || "·"}</span>
           ))}
         </div>
+        <details className="garden-reasoning">
+          <summary>See how this traversal works</summary>
+          <p>
+            {mode === "breadth"
+              ? "A queue takes the oldest waiting node first. Children join the back."
+              : "A stack takes the newest waiting node first. Push right before left so the left child is visited next."}
+          </p>
+          <strong>
+            {mode === "breadth" ? "Queue · front first" : "Stack · top first"}
+          </strong>
+          <ol
+            aria-label={
+              mode === "breadth" ? "Queue, front first" : "Stack, top first"
+            }
+          >
+            {step.pending.map((id) => (
+              <li key={id}>{id}</li>
+            ))}
+          </ol>
+          <p className="garden-step">
+            {!step.current
+              ? "A is waiting. Visit it to add its children."
+              : `${step.current} visited. ${step.added.length ? `${step.added.join(", ")} added ${mode === "breadth" ? "to the back" : "on top, left child first"}.` : "No children to add."} ${step.pending.length ? `${step.pending[0]} is next.` : "Nothing waiting. Traversal complete."}`}
+          </p>
+        </details>
         <p className="garden-feedback" role="status" aria-atomic="true">
           {message}
         </p>

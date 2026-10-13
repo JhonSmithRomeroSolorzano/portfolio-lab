@@ -446,3 +446,7 @@ Next: garden variety and explanations, cache predictions, puzzle achievements, a
 - [x] Give Algorithm Garden three distinct authored trees with working breadth/depth traversal, hints, completion feedback, and stable re-selection. Validate all tree topologies and solve the new shapes by keyboard in both browsers.
 
 Next: optional traversal reasoning, cache predictions, puzzle achievements, and implementation notes.
+
+- [x] Add an optional queue/stack explanation to Algorithm Garden. Show the actual pending frontier, newly added children, and next node, derived from the same traversal steps as the game.
+
+Next: cache predictions, puzzle achievements, and implementation notes.

@@ -47,13 +47,23 @@ export const GARDENS: readonly {
 ];
 export const TREE = GARDENS[0].nodes;
 
-/** Left-to-right breadth-first or pre-order depth-first traversal of an authored tree. */
-export function gardenOrder(
+export type GardenStep = {
+  visited: string[];
+  pending: string[];
+  added: string[];
+  current: string | null;
+};
+
+/** The first pending entry is the queue front or stack top. */
+export function gardenSteps(
   mode: Walk,
   tree: readonly GardenNode[] = TREE,
-): string[] {
+): GardenStep[] {
   const pending: string[] = [tree[0].id];
   const visited: string[] = [];
+  const steps: GardenStep[] = [
+    { visited: [], pending: [...pending], added: [], current: null },
+  ];
   while (pending.length) {
     const next = pending.shift()!;
     visited.push(next);
@@ -62,6 +72,20 @@ export function gardenOrder(
       .map((node) => node.id);
     if (mode === "breadth") pending.push(...children);
     else pending.unshift(...children);
+    steps.push({
+      visited: [...visited],
+      pending: [...pending],
+      added: children,
+      current: next,
+    });
   }
-  return visited;
+  return steps;
+}
+
+/** Left-to-right breadth-first or pre-order depth-first traversal of an authored tree. */
+export function gardenOrder(
+  mode: Walk,
+  tree: readonly GardenNode[] = TREE,
+): string[] {
+  return gardenSteps(mode, tree).at(-1)!.visited;
 }

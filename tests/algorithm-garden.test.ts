@@ -4,6 +4,7 @@ import {
   TREE,
   GARDENS,
   gardenOrder,
+  gardenSteps,
 } from "../src/domain/playground/algorithm-garden";
 
 test("garden traversals visit every node once, preserve parent precedence and differ meaningfully", () => {
@@ -51,4 +52,24 @@ test("each authored garden is connected, has unique nodes, and offers a distinct
     "E",
     "F",
   ]);
+});
+
+test("frontier snapshots explain queue versus stack without exposing a contradictory next move", () => {
+  const breadth = gardenSteps("breadth");
+  const depth = gardenSteps("depth");
+  assert.deepEqual(breadth[2].pending, ["C", "D", "E"]);
+  assert.deepEqual(depth[2].pending, ["D", "E", "C"]);
+  for (const garden of GARDENS)
+    for (const mode of ["breadth", "depth"] as const) {
+      const steps = gardenSteps(mode, garden.nodes);
+      const order = gardenOrder(mode, garden.nodes);
+      for (let i = 0; i < order.length; i++) {
+        assert.equal(steps[i].pending[0], order[i]);
+        assert.deepEqual(steps[i].visited, order.slice(0, i));
+        assert.ok(
+          steps[i].pending.every((id) => !steps[i].visited.includes(id)),
+        );
+      }
+      assert.deepEqual(steps.at(-1)!.pending, []);
+    }
 });
