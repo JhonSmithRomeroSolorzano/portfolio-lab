@@ -449,4 +449,6 @@ Next: collect visitor feedback on the four games and complete a human screen-rea
 
 - [x] Correct the private deployment verifier's bearer authentication and canonical index request after observing Sites' 401/307 responses. Ignore only the recognized provider-injected Cloudflare challenge when hashing private HTML, with tests that still reject changed content/application scripts. Retain exact-origin scoping and redirect rejection. Configure the Linux Actions loopback audit's Chromium launch after its debugging port failed to open; hosted-URL audits keep the default sandbox.
 
+- [x] Clarify deployment integrity tests with explicit expected/mismatched responses and direct response variables.
+
 Next: refine the four experiences from visitor feedback and complete a human screen-reader assessment. Verified professional outcomes and direct contact details remain pending.

@@ -11,6 +11,7 @@ import {
 
 const source = "a".repeat(40);
 const entryHtml = "<html><body>portfolio</body></html>";
+const mismatchedHtml = entryHtml.replace("portfolio", "unexpected content");
 const good = {
   version: 1 as const,
   source,
@@ -27,16 +28,17 @@ test("release manifests reject path traversal, foreign URLs, empty or invalid fi
     assert.throws(() => parseRelease({ ...good, files }));
   assert.throws(() => parseRelease({ ...good, source: "bad" }));
 });
-test("deployment verification catches stale releases and mixed assets", async () => {
-  let stale = false,
-    damaged = false;
+test("deployment verification rejects source and content mismatches", async () => {
+  let responseSource = source;
+  let responseHtml = entryHtml;
   const server = createServer((req, res) => {
-    if (req.url === "/release.json")
-      res.end(
-        JSON.stringify({ ...good, source: stale ? "b".repeat(40) : source }),
-      );
-    else if (req.url === "/") res.end(damaged ? "old portfolio" : entryHtml);
-    else res.end("code");
+    if (req.url === "/release.json") {
+      res.end(JSON.stringify({ ...good, source: responseSource }));
+    } else if (req.url === "/") {
+      res.end(responseHtml);
+    } else {
+      res.end("code");
+    }
   }).listen(0, "127.0.0.1");
   await once(server, "listening");
   try {
@@ -44,10 +46,10 @@ test("deployment verification catches stale releases and mixed assets", async ()
     assert.ok(address && typeof address !== "string");
     const url = new URL(`http://127.0.0.1:${address.port}/`);
     assert.deepEqual(await verifyRelease(url, source), good);
-    stale = true;
+    responseSource = "b".repeat(40);
     await assert.rejects(verifyRelease(url, source), /different source commit/);
-    stale = false;
-    damaged = true;
+    responseSource = source;
+    responseHtml = mismatchedHtml;
     await assert.rejects(verifyRelease(url, source), /does not match/);
     await assert.rejects(
       verifyRelease(url, source, "private token"),
@@ -93,7 +95,7 @@ test("private verification authenticates assets and tolerates only the provider 
     /cannot be sent/,
   );
   assert.equal(requests.length, 3);
-  html = entryHtml.replace("portfolio", "outdated portfolio");
+  html = mismatchedHtml;
   await assert.rejects(
     verifyRelease(new URL(`${privatePreview}/`), source, "fixture-token"),
     /does not match release: index.html/,
