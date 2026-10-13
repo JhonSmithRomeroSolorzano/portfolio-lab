@@ -9,6 +9,23 @@ export const privatePreview =
   "https://jhon-romero-portfolio-lab.jhoninho09.chatgpt.site";
 export const digest = (data: string | Uint8Array) =>
   createHash("sha256").update(data).digest("hex");
+
+/** Sites adds this Cloudflare challenge immediately before the closing body. */
+function withoutSitesChallenge(data: Uint8Array): string {
+  return new TextDecoder()
+    .decode(data)
+    .replace(
+      /<script>((?:(?!<\/script>)[\s\S])*)<\/script>(?=\s*<\/body>)/,
+      (script: string, code: string) =>
+        code.startsWith("(function(){function c(){var b=a.contentDocument") &&
+        code.includes("window.__CF$cv$params=") &&
+        code.includes(
+          "a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';",
+        )
+          ? ""
+          : script,
+    );
+}
 export function parseRelease(value: unknown): Release {
   const data = value as Release;
   if (
@@ -49,13 +66,17 @@ export async function verifyRelease(
   if (!["https:", "http:"].includes(base.protocol))
     throw new Error("Expected an HTTP(S) deployment.");
   const headers: Record<string, string> = { "Cache-Control": "no-cache" };
-  if (token) headers["OAI-Sites-Authorization"] = token;
+  if (token) headers["OAI-Sites-Authorization"] = `Bearer ${token}`;
   async function read(path: string) {
-    const result = await fetch(new URL(path, base), {
-      headers,
-      redirect: "error",
-      signal: AbortSignal.timeout(15000),
-    });
+    // Verify the canonical entry route without following the host's index redirect.
+    const result = await fetch(
+      new URL(path === "index.html" ? "./" : path, base),
+      {
+        headers,
+        redirect: "error",
+        signal: AbortSignal.timeout(15000),
+      },
+    );
     if (!result.ok)
       throw new Error(`Deployment returned HTTP ${result.status} for ${path}.`);
     return new Uint8Array(await result.arrayBuffer());
@@ -68,7 +89,12 @@ export async function verifyRelease(
       `Deployment is serving a different source commit: ${manifest.source}.`,
     );
   for (const [path, expected] of Object.entries(manifest.files)) {
-    if (digest(await read(path)) !== expected)
+    const data = await read(path);
+    const content =
+      base.origin === privatePreview && path === "index.html"
+        ? withoutSitesChallenge(data)
+        : data;
+    if (digest(content) !== expected)
       throw new Error(`Deployed asset does not match release: ${path}.`);
   }
   return manifest;

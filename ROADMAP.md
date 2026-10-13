@@ -447,4 +447,6 @@ Next: collect visitor feedback on the four games and complete a human screen-rea
 
 - [x] Verify 144 unit/integration/architecture checks and 118 Chromium/WebKit journeys, including the expanded controls at 320px and 1440px in both themes. Review game screenshots and pass the mobile performance gates: median LCP 2.10s, CLS 0.0004, and TBT 0ms across three local runs.
 
-Next: publish this tested release to both hosts and compare their source and asset manifests. Further product changes should follow visitor feedback; a human screen-reader assessment and verified professional outcomes/contact details remain pending.
+- [x] Correct the private deployment verifier's bearer authentication and canonical index request after observing Sites' 401/307 responses. Ignore only the recognized provider-injected Cloudflare challenge when hashing private HTML, with tests that still reject changed content/application scripts. Retain exact-origin scoping and redirect rejection. Configure the Linux Actions loopback audit's Chromium launch after its debugging port failed to open; hosted-URL audits keep the default sandbox.
+
+Next: refine the four experiences from visitor feedback and complete a human screen-reader assessment. Verified professional outcomes and direct contact details remain pending.
