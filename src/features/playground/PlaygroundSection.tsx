@@ -1,3 +1,4 @@
+import { ImplementationNote } from "./ImplementationNote";
 import { experiences } from "./catalog";
 import { DeferredExperiment } from "./DeferredExperiment";
 
@@ -59,6 +60,7 @@ export function PlaygroundSection() {
           aria-labelledby={experience.titleId}
         >
           <DeferredExperiment {...experience} />
+          <ImplementationNote experience={experience} />
         </article>
       ))}
     </section>

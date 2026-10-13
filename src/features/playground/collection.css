@@ -207,3 +207,25 @@
     transform: none;
   }
 }
+
+.implementation-note {
+  margin: 12px 8px 0;
+  border-bottom: 1px solid var(--line);
+  padding: 4px 0 12px;
+  font-size: 0.8125rem;
+  line-height: 1.8;
+}
+.implementation-note summary {
+  cursor: pointer;
+  padding-block: 10px;
+  color: var(--ink);
+}
+.implementation-note > div {
+  max-width: 760px;
+  padding: 0 12px;
+}
+.implementation-note a {
+  display: inline-block;
+  padding: 10px 0;
+  margin-right: 24px;
+}

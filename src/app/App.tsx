@@ -10,7 +10,7 @@ import { GITHUB, LINKEDIN } from "../features/portfolio/data/profile";
 import { ThemeSwitcher } from "../shared/ui/ThemeSwitcher";
 import { BrandMark } from "../features/portfolio/BrandMark";
 
-const REPO = `${GITHUB}/portfolio-lab`;
+import { SOURCE_REPOSITORY } from "../shared/project";
 export function App() {
   const mainRef = useRef<HTMLElement>(null);
   const navRef = useRef<HTMLElement>(null);
@@ -105,7 +105,7 @@ export function App() {
           <footer className="site-footer wrap">
             <span>© 2026 Jhon Smith Romero</span>
             <a href="#workbench">Back to overview ↑</a>
-            <a href={REPO} target="_blank" rel="noreferrer">
+            <a href={SOURCE_REPOSITORY} target="_blank" rel="noreferrer">
               View source <Arrow diagonal />
             </a>
           </footer>

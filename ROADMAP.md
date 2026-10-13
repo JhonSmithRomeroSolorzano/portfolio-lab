@@ -429,32 +429,22 @@ Next: collect visitor feedback on the four games and complete a human screen-rea
 
 - [x] Prerender career content with native résumé/contact navigation and hydrate the same components. Cover disabled/blocked JavaScript and theme hydration without duplicate content.
 
-Next: verify matching hosted releases, enforce performance budgets, add motion CSS export, varied garden trees and frontier explanations, cache predictions, puzzle achievements, and optional implementation notes.
-
 - [x] Add release manifests and an automated deployed-asset verifier. Gate the Pages deployment on its source/asset integrity and support comparing the existing private preview with credentials supplied only through stdin. Cover stale source, mismatched assets, malformed manifests, and credential-origin restrictions.
-
-Next: performance budgets and the seven remaining playground refinements.
 
 - [x] Gate builds on explicit asset size budgets and CI on three-run median mobile loading metrics. Reject missing measurements and sustained regressions while tolerating one noisy measurement.
 
-Next: complete motion export, both garden improvements, cache predictions, puzzle achievements, and implementation notes.
-
 - [x] Add Motion Studio's reusable CSS recipe, matching its current curve and duration with a reduced-motion alternative and a selectable clipboard fallback.
-
-Next: garden variety and explanations, cache predictions, puzzle achievements, and implementation notes.
 
 - [x] Give Algorithm Garden three distinct authored trees with working breadth/depth traversal, hints, completion feedback, and stable re-selection. Validate all tree topologies and solve the new shapes by keyboard in both browsers.
 
-Next: optional traversal reasoning, cache predictions, puzzle achievements, and implementation notes.
-
 - [x] Add an optional queue/stack explanation to Algorithm Garden. Show the actual pending frontier, newly added children, and next node, derived from the same traversal steps as the game.
-
-Next: cache predictions, puzzle achievements, and implementation notes.
 
 - [x] Add optional Cache Rescue predictions with validated guesses, locked playback inputs, outcome explanations, and scenario/reset handling. Keep prediction-free play and reduced-motion results available.
 
-Next: puzzle achievements and optional implementation notes, then final visual/deployment verification.
-
 - [x] Record puzzle completions and separate personal bests with/without hints. Preserve assistance and rotation counts through Undo, reloads, and tab synchronization; retain records on reset and migrate old saves without inventing results.
 
-Next: implementation notes and final browser/performance/deployment verification.
+- [x] Add concise optional implementation notes to all four experiences, with concrete decisions, tradeoffs, test coverage, and source links. Keep the four-card collection and experience-first page order.
+
+- [x] Verify 144 unit/integration/architecture checks and 118 Chromium/WebKit journeys, including the expanded controls at 320px and 1440px in both themes. Review game screenshots and pass the mobile performance gates: median LCP 2.10s, CLS 0.0004, and TBT 0ms across three local runs.
+
+Next: publish this tested release to both hosts and compare their source and asset manifests. Further product changes should follow visitor feedback; a human screen-reader assessment and verified professional outcomes/contact details remain pending.
