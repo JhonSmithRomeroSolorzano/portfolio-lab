@@ -41,6 +41,7 @@ type ExperienceEntry = {
   end: string | null;
   endLabel: string;
   context: string;
+  summary: string;
   highlights?: readonly string[];
   projects?: readonly ExperienceProject[];
 };
@@ -54,6 +55,8 @@ export const experience: readonly ExperienceEntry[] = [
     end: null,
     endLabel: "Present",
     context: "Freelance · Remote · Orlando, United States",
+    summary:
+      "Full-stack feature design and implementation for Nimrod, from data models and backend services to interfaces and cloud delivery.",
     projects: [
       {
         name: "Nimrod",
@@ -75,6 +78,8 @@ export const experience: readonly ExperienceEntry[] = [
     end: "2024-11",
     endLabel: "Nov 2024",
     context: "Full-time · Remote · Utah, United States",
+    summary:
+      "Frontend-focused product development for a sports and recreation SaaS, taking Figma designs through implementation.",
     projects: [
       {
         name: "Athletify SaaS",
@@ -95,6 +100,8 @@ export const experience: readonly ExperienceEntry[] = [
     end: "2024-07",
     endLabel: "Jul 2024",
     context: "Full-time",
+    summary:
+      "Full-stack development and ongoing maintenance of Nimrod’s healthcare facility automation workflows.",
     projects: [
       {
         name: "Nimrod",
@@ -115,6 +122,8 @@ export const experience: readonly ExperienceEntry[] = [
     end: "2021-07",
     endLabel: "Jul 2021",
     context: "Full-time",
+    summary:
+      "Full-stack web development connecting JavaScript interfaces with backend services and NoSQL data.",
     highlights: [
       "Developed frontend and backend features with React, Mithril.js, Node.js, and NoSQL databases.",
     ],
@@ -127,6 +136,8 @@ export const experience: readonly ExperienceEntry[] = [
     end: "2020-08",
     endLabel: "Aug 2020",
     context: "Full-time · Pasto, Colombia",
+    summary:
+      "Web application development spanning user interfaces, backend logic, SQL data models, and application architecture.",
     highlights: [
       "Built web applications with HTML, CSS, JavaScript, jQuery, Node.js, and SQL.",
       "Worked on data models, application architecture, and code optimization.",

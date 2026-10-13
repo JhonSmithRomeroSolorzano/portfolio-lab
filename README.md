@@ -30,6 +30,8 @@ Navigation has a sliding section indicator that follows reading position and poi
 
 Anchor destinations accept focus without entering the Tab order. Keyboard navigation uses an immediate scroll so WebKit's focus adjustment cannot interrupt a smooth anchor journey; pointer navigation retains smooth scrolling. Both paths keep the animated menu and arrival feedback unless reduced motion is preferred.
 
+Each experience entry includes a short role summary alongside its detailed contributions. These summaries use the responsibilities already confirmed for that employer and period, and appear in both résumé downloads. They do not add unverified project outcomes or metrics. Optional direct contact fields remain unpublished until exact details are supplied; LinkedIn remains available.
+
 ## Labs & play
 
 The collection has **four peer experiences**, reached through illustrated cards and direct anchors. Each has its own visual identity and a short interaction. There is no multi-lab dropdown, expanded dashboard, or nested catalog. Experience and contact stay above the collection.

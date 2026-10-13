@@ -452,3 +452,11 @@ Next: collect visitor feedback on the four games and complete a human screen-rea
 - [x] Clarify deployment integrity tests with explicit expected/mismatched responses and direct response variables.
 
 Next: refine the four experiences from visitor feedback and complete a human screen-reader assessment. Verified professional outcomes and direct contact details remain pending.
+
+## Experience descriptions — October 13
+
+- [x] Complete all five experience entries with concise role summaries drawn from the existing verified responsibilities. Keep the detailed contributions and original employment periods, and include the summaries in the PDF and plain-text résumé.
+- [x] Retain OpenCode’s optional contact fields without adding unverified email, phone, or scheduling links; LinkedIn remains the published contact channel.
+- [x] Pass all 145 unit/integration checks, 118 Chromium/WebKit journeys, and the production build. Inspect responsive theme layouts and both pages of the generated résumé.
+
+Specific project outcomes and direct contact details still require verified facts; role summaries describe the work already confirmed.

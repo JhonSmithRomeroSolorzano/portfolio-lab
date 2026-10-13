@@ -63,6 +63,7 @@ export function resumeGroups(data = resumeData): ResumeGroup[] {
         color: muted,
         after: 7,
       },
+      { text: job.summary, after: 7 },
       ...(job.highlights ?? []).map((text) => ({
         text: `- ${text}`,
         indent: 8,

@@ -71,6 +71,7 @@ export function ResumeSection() {
                     <h4>{job.role}</h4>
                     <p className="experience-employer">{job.employer}</p>
                     <p className="experience-context">{job.context}</p>
+                    <p className="experience-summary">{job.summary}</p>
                   </header>
                   <div className="experience-contributions">
                     {job.highlights && job.highlights.length > 0 && (

@@ -14,6 +14,7 @@ test("resume exports preserve each period, its contributions, accents, and quali
   const text = resumeText();
   for (const role of experience) {
     assert.ok(text.includes(`${role.startLabel} - ${role.endLabel}`));
+    assert.ok(text.includes(role.summary));
     for (const highlight of role.highlights ?? [])
       assert.ok(text.includes(highlight));
     for (const project of role.projects ?? []) {
