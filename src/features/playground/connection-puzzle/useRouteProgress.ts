@@ -1,9 +1,11 @@
+import { recordCompletion } from "../../../domain/playground/puzzle-records";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   PUZZLES,
   rotateTile,
   routeHint,
   startingBoard,
+  traceRoute,
 } from "../../../domain/playground/route-puzzle";
 import {
   loadProgress,
@@ -16,6 +18,8 @@ import {
 function sameBoard(left: PuzzleBoard, right: PuzzleBoard) {
   return (
     left.moves === right.moves &&
+    left.assisted === right.assisted &&
+    left.rotations === right.rotations &&
     left.tiles.every((tile, i) => tile === right.tiles[i])
   );
 }
@@ -48,6 +52,11 @@ export function useRouteProgress() {
     if (
       incoming.progress.boards.every((board, i) =>
         sameBoard(board, knownSave.current.boards[i]),
+      ) &&
+      incoming.progress.records.every(
+        (record, i) =>
+          record.assisted === knownSave.current.records[i].assisted &&
+          record.unassisted === knownSave.current.records[i].unassisted,
       )
     )
       return false;
@@ -66,7 +75,9 @@ export function useRouteProgress() {
     setNotice(
       incoming.status === "new"
         ? "Saved progress was cleared in another tab. Start a new connection when you’re ready."
-        : "Progress updated from another tab. Undo was cleared for the changed puzzles.",
+        : changed.some(Boolean)
+          ? "Progress updated from another tab. Undo was cleared for the changed puzzles."
+          : "Puzzle records updated from another tab.",
     );
     return true;
   }, [progress]);
@@ -107,6 +118,13 @@ export function useRouteProgress() {
   function updateBoard(board: PuzzleBoard) {
     return save({
       ...progress,
+      records: traceRoute(board.tiles).won
+        ? progress.records.map((record, i) =>
+            i === level
+              ? recordCompletion(record, board.rotations, board.assisted)
+              : record,
+          )
+        : progress.records,
       boards: progress.boards.map((previous, i) =>
         i === level ? board : previous,
       ),
@@ -116,7 +134,15 @@ export function useRouteProgress() {
     if (save({ ...progress, level: next })) setHint(null);
   }
   function reset() {
-    if (!updateBoard({ tiles: startingBoard(level), moves: 0 })) return;
+    if (
+      !updateBoard({
+        tiles: startingBoard(level),
+        moves: 0,
+        assisted: false,
+        rotations: 0,
+      })
+    )
+      return;
     setHistory((current) =>
       current.map((turns, i) => (i === level ? [] : turns)),
     );
@@ -127,19 +153,32 @@ export function useRouteProgress() {
       !updateBoard({
         tiles: tiles.map((tile, i) => (i === index ? rotateTile(tile) : tile)),
         moves: moves + 1,
+        assisted: progress.boards[level].assisted,
+        rotations:
+          progress.boards[level].rotations === null
+            ? null
+            : progress.boards[level].rotations + 1,
       })
     )
       return;
     setHistory((current) =>
       current.map((turns, i) =>
-        i === level ? [...turns.slice(-99), { tiles, moves }] : turns,
+        i === level ? [...turns.slice(-99), progress.boards[level]] : turns,
       ),
     );
     setHint(null);
   }
   function undo() {
     const previous = history[level].at(-1);
-    if (!previous || !updateBoard(previous)) return false;
+    if (
+      !previous ||
+      !updateBoard({
+        ...previous,
+        assisted: progress.boards[level].assisted,
+        rotations: progress.boards[level].rotations,
+      })
+    )
+      return false;
     setHistory((current) =>
       current.map((turns, i) => (i === level ? turns.slice(0, -1) : turns)),
     );
@@ -156,6 +195,9 @@ export function useRouteProgress() {
     reset,
     turn,
     undo,
-    giveHint: () => setHint(routeHint(tiles, level)),
+    giveHint: () => {
+      if (updateBoard({ ...progress.boards[level], assisted: true }))
+        setHint(routeHint(tiles, level));
+    },
   };
 }

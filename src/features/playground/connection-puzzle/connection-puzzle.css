@@ -248,3 +248,27 @@
     transition: none;
   }
 }
+
+.route-records {
+  margin-top: 18px;
+  border-top: 1px solid currentColor;
+  padding-top: 12px;
+  font-size: 0.8125rem;
+  line-height: 1.7;
+}
+.route-records summary {
+  cursor: pointer;
+  padding-block: 8px;
+}
+.route-records dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.route-records dt {
+  font-size: 0.75rem;
+}
+.route-records dd {
+  margin: 6px 0;
+  font-weight: 500;
+}

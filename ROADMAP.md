@@ -454,3 +454,7 @@ Next: cache predictions, puzzle achievements, and implementation notes.
 - [x] Add optional Cache Rescue predictions with validated guesses, locked playback inputs, outcome explanations, and scenario/reset handling. Keep prediction-free play and reduced-motion results available.
 
 Next: puzzle achievements and optional implementation notes, then final visual/deployment verification.
+
+- [x] Record puzzle completions and separate personal bests with/without hints. Preserve assistance and rotation counts through Undo, reloads, and tab synchronization; retain records on reset and migrate old saves without inventing results.
+
+Next: implementation notes and final browser/performance/deployment verification.

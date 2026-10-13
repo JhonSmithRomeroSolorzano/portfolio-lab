@@ -13,8 +13,10 @@ test("progress restores distinct boards, turns, and selection without storing de
   progress.level = 2;
   progress.boards[0].tiles[0] = rotateTile(progress.boards[0].tiles[0]);
   progress.boards[0].moves = 1;
+  progress.boards[0].rotations = 1;
   progress.boards[2].tiles[4] = rotateTile(progress.boards[2].tiles[4]);
   progress.boards[2].moves = 3;
+  progress.boards[2].rotations = 3;
   let value: string | null = null;
   const storage = () => ({
     getItem: () => value,
@@ -34,7 +36,7 @@ test("corrupt, excessive, incompatible, and impossible saves are rejected atomic
   for (const raw of ["null", "{", "[]", " ".repeat(4097)])
     assert.equal(parseProgress(raw), null);
   const invalid = [
-    { ...freshProgress(), version: 2 },
+    { ...freshProgress(), version: 3 },
     { ...freshProgress(), level: -1 },
     { ...freshProgress(), level: 3 },
     { ...freshProgress(), level: 0.5 },
@@ -85,4 +87,31 @@ test("loading does not overwrite an unreadable save and denied storage keeps a p
     },
   });
   assert.equal(saveProgress(freshProgress(), quota), false);
+});
+
+test("legacy progress preserves boards without inventing personal records", () => {
+  const legacy = {
+    version: 1,
+    level: 1,
+    boards: freshProgress().boards.map(({ tiles, moves }) => ({
+      tiles,
+      moves,
+    })),
+  };
+  const migrated = parseProgress(JSON.stringify(legacy))!;
+  assert.equal(migrated.version, 2);
+  assert.equal(migrated.level, 1);
+  assert.equal(migrated.boards[0].rotations, null);
+  assert.deepEqual(migrated.records, freshProgress().records);
+});
+test("records and attempt history reject invalid storage values", () => {
+  for (const value of [-1, 0, 1.5, "3", false]) {
+    const data = freshProgress();
+    Object.assign(data.records[0], { unassisted: value });
+    assert.equal(parseProgress(JSON.stringify(data)), null);
+  }
+  const data = freshProgress();
+  data.boards[0].moves = 3;
+  data.boards[0].rotations = 2;
+  assert.equal(parseProgress(JSON.stringify(data)), null);
 });

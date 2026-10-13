@@ -11,6 +11,9 @@ import {
 
 import { useRouteProgress } from "./useRouteProgress";
 
+const rotationsLabel = (count: number) =>
+  `${count} ${count === 1 ? "rotation" : "rotations"}`;
+
 export function RoutePuzzle() {
   const {
     progress,
@@ -74,6 +77,45 @@ export function RoutePuzzle() {
             Give me a hint
           </button>
         </div>
+        <details className="route-records">
+          <summary>Your puzzle records</summary>
+          <p>
+            {
+              progress.records.filter(
+                (record) =>
+                  record.unassisted !== null || record.assisted !== null,
+              ).length
+            }{" "}
+            of {PUZZLES.length} puzzles completed with recorded attempts.
+          </p>
+          <dl>
+            <div>
+              <dt>Best unassisted</dt>
+              <dd>
+                {progress.records[level].unassisted === null
+                  ? "Not yet"
+                  : rotationsLabel(progress.records[level].unassisted)}
+              </dd>
+            </div>
+            <div>
+              <dt>Best with hints</dt>
+              <dd>
+                {progress.records[level].assisted === null
+                  ? "Not yet"
+                  : rotationsLabel(progress.records[level].assisted)}
+              </dd>
+            </div>
+          </dl>
+          <p>
+            {progress.boards[level].rotations === null
+              ? "This earlier save has no rotation history. Start again when you want to record a personal best."
+              : `This attempt: ${rotationsLabel(progress.boards[level].rotations!)} · ${progress.boards[level].assisted ? "with hints" : "unassisted"}.`}
+          </p>
+          <p>
+            Undo keeps your rotation count. A hint marks the whole attempt as
+            assisted. Records stay in this browser and survive Start again.
+          </p>
+        </details>
         <div className="route-hint">
           <p role="status" aria-atomic="true">
             {hint &&

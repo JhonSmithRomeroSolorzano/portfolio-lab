@@ -142,3 +142,5 @@ Algorithm Garden offers three authored trees: Balanced branches, Deep roots, and
 Garden's optional traversal explanation displays the live queue front or stack top, the last visited node, and its newly added children. The same pure step model drives play order and the explanation so they cannot drift apart.
 
 Cache Rescue includes an optional prediction before each round. A whole-number guess is locked when playback starts and compared with the model's actual database reads after completion. Resetting or changing the scenario clears the guess; playing without a prediction remains available.
+
+Connection puzzle records completed attempts and separate best rotation counts with and without hints. Rotation counts and hint assistance survive Undo, reloads, and tab synchronization; Start again resets the attempt while keeping records. Earlier saved boards migrate without losing moves, but cannot establish a best until restarted because their rotation/hint history was not recorded. Clearing browser storage removes records. No score is sent to a server.
