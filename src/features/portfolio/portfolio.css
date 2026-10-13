@@ -130,6 +130,12 @@
   color: var(--muted);
   line-height: 1.8;
 }
+.experience-summary {
+  color: var(--ink);
+  font-size: 1rem;
+  line-height: 1.7;
+  margin: 14px 0 0;
+}
 .experience-list ul li {
   margin-top: 6px;
 }
@@ -802,4 +808,11 @@
   .experience-list > li[data-traced="true"]::before {
     box-shadow: none;
   }
+}
+
+.experience-context,
+.experience-summary,
+.experience-project p,
+.contact-section p {
+  max-inline-size: 68ch;
 }

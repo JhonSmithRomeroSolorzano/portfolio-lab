@@ -56,6 +56,15 @@
 * {
   box-sizing: border-box;
 }
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  text-wrap: balance;
+}
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 24px;
@@ -109,6 +118,7 @@ svg {
   color: var(--paper);
   padding: 18px 23px;
   border-radius: 4px;
+  min-height: 44px;
   font-size: 13px;
   white-space: nowrap;
   transition:
@@ -241,7 +251,7 @@ h2 {
   margin-bottom: 27px;
 }
 .section-heading > p {
-  max-width: 350px;
+  max-inline-size: 65ch;
   font-size: 0.8125rem;
   margin: 0;
 }
