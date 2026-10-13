@@ -140,3 +140,5 @@ Motion Studio's “Take this motion with you” panel exports matching curve/dur
 Algorithm Garden offers three authored trees: Balanced branches, Deep roots, and Open canopy. Both traversal modes use the selected tree's topology; choosing a different tree starts a new walk, while reselecting the current tree preserves progress.
 
 Garden's optional traversal explanation displays the live queue front or stack top, the last visited node, and its newly added children. The same pure step model drives play order and the explanation so they cannot drift apart.
+
+Cache Rescue includes an optional prediction before each round. A whole-number guess is locked when playback starts and compared with the model's actual database reads after completion. Resetting or changing the scenario clears the guess; playing without a prediction remains available.

@@ -287,3 +287,36 @@
     transition: none;
   }
 }
+
+.cache-prediction {
+  border-top: 1px solid #607696;
+  margin-top: 20px;
+  padding-top: 12px;
+  font-size: 0.8125rem;
+  line-height: 1.7;
+}
+.cache-prediction summary {
+  cursor: pointer;
+  padding-block: 8px;
+}
+.cache-prediction label {
+  display: block;
+  margin: 8px 0;
+}
+.cache-prediction input {
+  width: 100%;
+  max-width: 140px;
+  min-height: 44px;
+  padding: 8px;
+  background: #101b2d;
+  color: #f1f4fd;
+  border: 1px solid #819bbd;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+.cache-prediction input:disabled {
+  opacity: 0.8;
+}
+.cache-prediction [role="alert"] {
+  color: #ffd1a2;
+}

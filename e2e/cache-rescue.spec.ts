@@ -143,3 +143,51 @@ for (const theme of ["light", "dark"] as const) {
     ).toEqual([]);
   });
 }
+
+test("optional predictions compare against actual results and reset with the challenge", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/#cache-rescue");
+  await page
+    .getByText("Predict before you play", { exact: true })
+    .press("Enter");
+  await page.getByLabel("How many database reads?").fill("1");
+  await page
+    .getByRole("button", { name: "Send & see the result", exact: true })
+    .press("Enter");
+  await expect(page.locator(".cache-prediction-result")).toContainText(
+    "You predicted 1; the model needed 24",
+  );
+  await expect(page.getByLabel("How many database reads?")).toBeDisabled();
+  await page.getByRole("button", { name: /Share one fetch/ }).click();
+  await expect(page.getByLabel("How many database reads?")).toHaveValue("");
+  await page.getByLabel("How many database reads?").fill("1");
+  await page
+    .getByRole("button", { name: "Send & see the result", exact: true })
+    .click();
+  await expect(page.locator(".cache-prediction-result")).toHaveText(
+    "You called it: 1 database read.",
+  );
+  await page
+    .getByRole("button", { name: "Challenge 3: Room to breathe" })
+    .click();
+  await expect(page.locator(".cache-prediction-result")).toBeEmpty();
+  await page.getByLabel("How many database reads?").fill("1.5");
+  await page
+    .getByRole("button", { name: "Send & see the result", exact: true })
+    .click();
+  await expect(page.getByRole("alert")).toContainText(
+    "whole number from 1 to 12",
+  );
+  await expect(page.locator(".cache-feedback")).toContainText(
+    "Choose a strategy",
+  );
+  await page.getByLabel("How many database reads?").fill("");
+  await page
+    .getByRole("button", { name: "Send & see the result", exact: true })
+    .click();
+  await expect(page.locator(".cache-feedback")).toContainText(
+    "Mission complete",
+  );
+});

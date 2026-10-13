@@ -5,6 +5,9 @@ import { useCacheRescue } from "./useCacheRescue";
 
 export function CacheRescue() {
   const {
+    prediction,
+    predictionError,
+    guess,
     round,
     shared,
     time,
@@ -70,6 +73,35 @@ export function CacheRescue() {
             <small>Wait for one answer</small>
           </button>
         </div>
+        <details className="cache-prediction">
+          <summary>Predict before you play</summary>
+          <label htmlFor="cache-prediction">How many database reads?</label>
+          <input
+            id="cache-prediction"
+            type="number"
+            inputMode="numeric"
+            min="1"
+            max={settings.requests}
+            step="1"
+            value={prediction}
+            disabled={time >= 0}
+            onChange={(event) => guess(event.target.value)}
+            aria-invalid={!!predictionError}
+            aria-describedby="cache-prediction-help"
+          />
+          <p id="cache-prediction-help">
+            Optional. Pick 1–{settings.requests}, then send the crowd. Reset or
+            change strategy to make another prediction.
+          </p>
+          {predictionError && <p role="alert">{predictionError}</p>}
+          <p className="cache-prediction-result" role="status">
+            {finished && prediction !== ""
+              ? Number(prediction) === counts.queries
+                ? `You called it: ${counts.queries} database ${counts.queries === 1 ? "read" : "reads"}.`
+                : `You predicted ${Number(prediction)}; the model needed ${counts.queries}. ${counts.queries === 1 ? "The first fetch fills the cache; later requests reuse the answer." : "Each request arriving before the refill starts its own database read."}`
+              : ""}
+          </p>
+        </details>
         <div className="cache-actions">
           <button
             ref={launch}

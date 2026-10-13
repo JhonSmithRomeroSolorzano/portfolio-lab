@@ -13,6 +13,8 @@ import { ROUNDS } from "./rounds";
 const ACTIVE_HASHES = ["#cache-rescue", "#lab"];
 
 export function useCacheRescue() {
+  const [prediction, setPrediction] = useState("");
+  const [predictionError, setPredictionError] = useState("");
   const [round, setRound] = useState(0);
   const [shared, setShared] = useState(false);
   const [time, setTime] = useState(-25);
@@ -30,6 +32,8 @@ export function useCacheRescue() {
   ).length;
   function reset(next = round, nextShared = shared) {
     setPlaying(false);
+    setPrediction("");
+    setPredictionError("");
     setTime(-25);
     setRound(next);
     setShared(nextShared);
@@ -58,7 +62,25 @@ export function useCacheRescue() {
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
   }, [playing, reduced, end]);
+  function guess(value: string) {
+    if (time >= 0) return;
+    setPrediction(value);
+    setPredictionError("");
+  }
   function togglePlayback() {
+    if (
+      time < 0 &&
+      prediction.trim() !== "" &&
+      (!Number.isInteger(Number(prediction)) ||
+        Number(prediction) < 1 ||
+        Number(prediction) > settings.requests)
+    ) {
+      setPredictionError(
+        `Use a whole number from 1 to ${settings.requests}, or clear your prediction.`,
+      );
+      return;
+    }
+
     if (reduced) {
       setPlaying(false);
       setTime(end);
@@ -69,6 +91,9 @@ export function useCacheRescue() {
     }
   }
   return {
+    prediction,
+    predictionError,
+    guess,
     round,
     shared,
     time,

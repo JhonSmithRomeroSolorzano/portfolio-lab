@@ -450,3 +450,7 @@ Next: optional traversal reasoning, cache predictions, puzzle achievements, and 
 - [x] Add an optional queue/stack explanation to Algorithm Garden. Show the actual pending frontier, newly added children, and next node, derived from the same traversal steps as the game.
 
 Next: cache predictions, puzzle achievements, and implementation notes.
+
+- [x] Add optional Cache Rescue predictions with validated guesses, locked playback inputs, outcome explanations, and scenario/reset handling. Keep prediction-free play and reduced-motion results available.
+
+Next: puzzle achievements and optional implementation notes, then final visual/deployment verification.
