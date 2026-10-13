@@ -19,6 +19,13 @@ This file owns instructions for agents working in this repository: preparation, 
 - For code or build changes, run the browser suite after building and inspect affected UI at desktop/mobile widths, in both themes, and with keyboard/reduced motion when browser tooling is available. For documentation-only changes, also verify links, paths, and commands; no new behavior tests or browser rerun are needed. Report what ran and any limitations accurately.
 - `npm run dev` generates résumé assets first. Profile edits during a running dev session need `npm run build:resume` to refresh downloads; see [README's résumé downloads](README.md#résumé-downloads).
 
+## UI/UX skill
+
+- For interface design, review, and fixes, load [UI UX Pro Max](.opencode/skills/ui-ux-pro-max/SKILL.md). In OpenCode, mention `@ui-ux-pro-max` to load it explicitly.
+- Run its Python searches from the repository root. Use focused `--domain ux` searches for interaction concerns and `--stack react` for this project's implementation. Keep the existing React/TypeScript/Vite, CSS, and SVG approach; use Context7 for version-specific library documentation.
+- Apply recommendations within the current product direction and content safeguards. Generate or persist a new design system only when the requested work needs one; installation alone does not authorize a redesign.
+- The bundled third-party files in `.opencode/skills/` are excluded from app linting and formatting so routine checks do not rewrite upstream resources. Setup and reinstall instructions are in [README](README.md#opencode-uiux-skill).
+
 ## Content safeguards
 
 - Career/contact additions need Jhon's verified details; do not invent email/phone, outcomes, metrics, or ownership. Preserve overlapping employment dates and qualifications such as “some Next.js/AWS experience.”

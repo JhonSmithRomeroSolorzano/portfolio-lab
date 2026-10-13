@@ -13,6 +13,7 @@ export default defineConfig(
       "playwright-report/**",
       "archive/**",
       "public/resume/**",
+      ".opencode/skills/**",
     ],
   },
   {
