@@ -130,3 +130,7 @@ The build prerenders the same React page into HTML, then hydrates its controls i
 ### Deployment integrity
 
 Every build writes `release.json` with its source commit and SHA-256 asset hashes. The Pages workflow verifies the served commit and every listed asset after deployment. Run `npm run verify:deployment -- <public-url> <private-preview-url> --private-stdin` to compare both hosts after publication; supply `{ "token": "..." }` through stdin only using the authorized Sites access token. The verifier scopes that header to the existing private preview and rejects redirects. Never put tokens in arguments, files, or logs. PDFs have variable generation metadata, so the manifest covers their shared plain-text source export instead. This check runs after both publishes; it does not automatically deploy the private preview or change its audience.
+
+### Performance gates
+
+Production builds enforce compressed entry JS (100 KiB), all JS (140 KiB), CSS (16 KiB), and HTML (20 KiB) limits, plus 90 KiB of fonts and a 40 KiB portrait. `npm run audit:ci` starts an isolated preview on port 4175 and takes three mobile Lighthouse samples sequentially; median LCP must stay within 4 seconds, CLS within 0.1, and total blocking time within 350 ms. CI runs it after browser tests to avoid competing browser load. Reports stay in ignored `artifacts/`; these are regression budgets for simulated conditions, not real-user speed guarantees.

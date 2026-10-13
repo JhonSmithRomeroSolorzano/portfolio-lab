@@ -434,3 +434,7 @@ Next: verify matching hosted releases, enforce performance budgets, add motion C
 - [x] Add release manifests and an automated deployed-asset verifier. Gate the Pages deployment on its source/asset integrity and support comparing the existing private preview with credentials supplied only through stdin. Cover stale source, mismatched assets, malformed manifests, and credential-origin restrictions.
 
 Next: performance budgets and the seven remaining playground refinements.
+
+- [x] Gate builds on explicit asset size budgets and CI on three-run median mobile loading metrics. Reject missing measurements and sustained regressions while tolerating one noisy measurement.
+
+Next: complete motion export, both garden improvements, cache predictions, puzzle achievements, and implementation notes.
