@@ -438,3 +438,7 @@ Next: performance budgets and the seven remaining playground refinements.
 - [x] Gate builds on explicit asset size budgets and CI on three-run median mobile loading metrics. Reject missing measurements and sustained regressions while tolerating one noisy measurement.
 
 Next: complete motion export, both garden improvements, cache predictions, puzzle achievements, and implementation notes.
+
+- [x] Add Motion Studio's reusable CSS recipe, matching its current curve and duration with a reduced-motion alternative and a selectable clipboard fallback.
+
+Next: garden variety and explanations, cache predictions, puzzle achievements, and implementation notes.

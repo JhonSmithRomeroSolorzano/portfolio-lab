@@ -245,3 +245,44 @@
     transition: none;
   }
 }
+
+.motion-recipe {
+  border-top: 1px solid #81739e;
+  margin-top: 18px;
+  padding-top: 16px;
+  min-width: 0;
+  font-size: 0.8125rem;
+  line-height: 1.7;
+}
+.motion-recipe summary {
+  cursor: pointer;
+  padding-block: 8px;
+}
+.motion-recipe textarea {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 8px 0 12px;
+  padding: 12px;
+  border: 1px solid #81739e;
+  border-radius: 8px;
+  background: #17132a;
+  color: #eee7ff;
+  font: 0.75rem/1.6 var(--mono);
+  resize: vertical;
+}
+.motion-recipe pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 0.75rem;
+}
+.motion-recipe button {
+  padding: 10px 16px;
+  background: #eee7ff;
+  color: #302341;
+  border: 1px solid #81739e;
+  border-radius: 8px;
+}
+.motion-recipe [role="status"] {
+  min-height: 1.7em;
+}
