@@ -205,3 +205,23 @@
     transition: none;
   }
 }
+
+.garden-shapes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+.garden-shapes button {
+  background: transparent;
+  color: inherit;
+  border: 1px solid #95764d;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 0.75rem;
+  min-height: 44px;
+}
+.garden-shapes button[aria-pressed="true"] {
+  background: #704616;
+  color: #fff4dc;
+}

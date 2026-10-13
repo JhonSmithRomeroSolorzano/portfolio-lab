@@ -62,3 +62,32 @@ test("garden teaches both traversals with hints, recoverable mistakes and keyboa
   await page.getByRole("button", { name: "Reset garden" }).press("Enter");
   await expect(page.locator(".garden-caption")).toContainText("0 / 7 LIT");
 });
+
+test("tree choices offer distinct solvable boards without resetting the selected tree", async ({
+  page,
+}) => {
+  await page.goto("/#algorithm-garden");
+  await page.getByRole("button", { name: "Deep roots", exact: true }).click();
+  await page.getByRole("button", { name: /Down the branches/ }).click();
+  await page
+    .getByRole("button", { name: "Node A", exact: true })
+    .press("Space");
+  await page.getByRole("button", { name: "Deep roots", exact: true }).click();
+  await expect(page.locator(".garden-caption")).toContainText("1 / 7");
+  for (const id of ["B", "D", "F", "G", "E", "C"])
+    await page
+      .getByRole("button", { name: `Node ${id}`, exact: true })
+      .press("Space");
+  await expect(page.locator(".garden-feedback")).toContainText(
+    "Garden complete",
+  );
+  await page.getByRole("button", { name: "Open canopy", exact: true }).click();
+  await expect(page.locator(".garden-caption")).toContainText("0 / 6");
+  for (const id of ["A", "B", "D", "C", "E", "F"])
+    await page
+      .getByRole("button", { name: `Node ${id}`, exact: true })
+      .press("Space");
+  await expect(page.locator(".garden-feedback")).toContainText(
+    "Garden complete",
+  );
+});

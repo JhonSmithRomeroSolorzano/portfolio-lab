@@ -136,3 +136,5 @@ Every build writes `release.json` with its source commit and SHA-256 asset hashe
 Production builds enforce compressed entry JS (100 KiB), all JS (140 KiB), CSS (16 KiB), and HTML (20 KiB) limits, plus 90 KiB of fonts and a 40 KiB portrait. `npm run audit:ci` starts an isolated preview on port 4175 and takes three mobile Lighthouse samples sequentially; median LCP must stay within 4 seconds, CLS within 0.1, and total blocking time within 350 ms. CI runs it after browser tests to avoid competing browser load. Reports stay in ignored `artifacts/`; these are regression budgets for simulated conditions, not real-user speed guarantees.
 
 Motion Studio's “Take this motion with you” panel exports matching curve/duration CSS and example markup, including a reduced-motion end state. Clipboard denial selects the visible CSS for manual copying; changing the settings clears obsolete copy feedback.
+
+Algorithm Garden offers three authored trees: Balanced branches, Deep roots, and Open canopy. Both traversal modes use the selected tree's topology; choosing a different tree starts a new walk, while reselecting the current tree preserves progress.

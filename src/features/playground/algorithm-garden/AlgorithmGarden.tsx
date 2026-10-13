@@ -1,16 +1,18 @@
 import { useState } from "react";
 import {
-  TREE,
+  GARDENS,
   gardenOrder,
   type Walk,
 } from "../../../domain/playground/algorithm-garden";
 
 export function AlgorithmGarden() {
+  const [shape, setShape] = useState(0);
+  const tree = GARDENS[shape].nodes;
   const [mode, setMode] = useState<Walk>("breadth");
   const [visited, setVisited] = useState<string[]>([]);
   const [hint, setHint] = useState(false);
   const [message, setMessage] = useState("Start at A. Which node comes next?");
-  const order = gardenOrder(mode);
+  const order = gardenOrder(mode, tree);
   const complete = visited.length === order.length;
   function reset(next = mode) {
     setMode(next);
@@ -53,6 +55,22 @@ export function AlgorithmGarden() {
           Light up the tree, one node at a time. Two ways to explore the same
           world. Can you find the next step?
         </p>
+        <div className="garden-shapes" role="group" aria-label="Choose a tree">
+          {GARDENS.map((garden, index) => (
+            <button
+              key={garden.name}
+              aria-pressed={shape === index}
+              onClick={() => {
+                if (shape !== index) {
+                  setShape(index);
+                  reset();
+                }
+              }}
+            >
+              {garden.name}
+            </button>
+          ))}
+        </div>
         <div className="garden-modes" role="group" aria-label="Traversal style">
           <button
             aria-pressed={mode === "breadth"}
@@ -90,7 +108,9 @@ export function AlgorithmGarden() {
       <div className="garden-workspace">
         <div className="garden-caption">
           <span>ALGORITHM GARDEN</span>
-          <span>{visited.length} / 7 LIT</span>
+          <span>
+            {visited.length} / {tree.length} LIT
+          </span>
         </div>
         <div
           className={`garden-tree ${complete ? "is-complete" : ""}`}
@@ -103,18 +123,22 @@ export function AlgorithmGarden() {
             preserveAspectRatio="none"
             aria-hidden="true"
           >
-            {TREE.filter((node) => node.parent).map((node) => {
-              const parent = TREE.find((parent) => parent.id === node.parent)!;
-              return (
-                <path
-                  key={node.id}
-                  className={visited.includes(node.id) ? "is-lit" : ""}
-                  d={`M${parent.x} ${parent.y} C${parent.x} ${node.y - 16} ${node.x} ${parent.y + 16} ${node.x} ${node.y}`}
-                />
-              );
-            })}
+            {tree
+              .filter((node) => node.parent)
+              .map((node) => {
+                const parent = tree.find(
+                  (parent) => parent.id === node.parent,
+                )!;
+                return (
+                  <path
+                    key={node.id}
+                    className={visited.includes(node.id) ? "is-lit" : ""}
+                    d={`M${parent.x} ${parent.y} C${parent.x} ${node.y - 16} ${node.x} ${parent.y + 16} ${node.x} ${node.y}`}
+                  />
+                );
+              })}
           </svg>
-          {TREE.map((node) => (
+          {tree.map((node) => (
             <button
               key={node.id}
               className={`garden-node ${visited.includes(node.id) ? "is-lit" : ""} ${hint && order[visited.length] === node.id ? "is-hinted" : ""}`}

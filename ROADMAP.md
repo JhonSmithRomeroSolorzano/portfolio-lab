@@ -442,3 +442,7 @@ Next: complete motion export, both garden improvements, cache predictions, puzzl
 - [x] Add Motion Studio's reusable CSS recipe, matching its current curve and duration with a reduced-motion alternative and a selectable clipboard fallback.
 
 Next: garden variety and explanations, cache predictions, puzzle achievements, and implementation notes.
+
+- [x] Give Algorithm Garden three distinct authored trees with working breadth/depth traversal, hints, completion feedback, and stable re-selection. Validate all tree topologies and solve the new shapes by keyboard in both browsers.
+
+Next: optional traversal reasoning, cache predictions, puzzle achievements, and implementation notes.
