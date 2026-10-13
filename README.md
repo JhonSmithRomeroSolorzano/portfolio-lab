@@ -124,3 +124,5 @@ Cache Rescue, the connection puzzle, Motion Studio, and Algorithm Garden use sep
 For a repeatable Lighthouse report, build the site, start `npm run preview -- --port 4175`, then run `npm run audit:performance -- http://127.0.0.1:4175/`. The script uses the installed Playwright Chromium browser (or `CHROME_PATH` when provided) and writes HTML/JSON reports under ignored `artifacts/`. It uses Lighthouse's mobile simulation defaults. Run it without concurrent browser tests; local lab scores are not real-user measurements or guarantees for the hosted site.
 
 The IBM Plex Latin font files are served locally from `public/fonts/` under the included SIL Open Font License. They are the same Google Fonts distributions used by the original stylesheet; local delivery removes the external stylesheet from the first render path.
+
+The build prerenders the same React page into HTML, then hydrates its controls in the browser. Career content, native section links, and résumé downloads remain available with JavaScript disabled or blocked. Optional games keep honest loading placeholders and do not download during prerendering.

@@ -1,3 +1,4 @@
+import { useClientReady } from "../hooks/useClientReady";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 import { useEffect, useLayoutEffect, useState } from "react";
 import {
@@ -11,6 +12,7 @@ import {
 import type { ThemePreference } from "../theme/theme-preference";
 
 export function ThemeSwitcher() {
+  const ready = useClientReady();
   const [preference, setPreference] = useState<ThemePreference>(() => {
     try {
       return readTheme(window.localStorage);
@@ -31,6 +33,7 @@ export function ThemeSwitcher() {
   }, []);
   const theme = resolvedTheme(preference, systemDark);
   useLayoutEffect(() => {
+    if (!ready) return;
     document.documentElement.dataset.theme = theme;
     document
       .querySelector('link[rel="icon"]')
@@ -41,7 +44,7 @@ export function ThemeSwitcher() {
     document
       .querySelector('meta[name="theme-color"]')
       ?.setAttribute("content", theme === "dark" ? "#0e1b2d" : "#f4f3ec");
-  }, [theme]);
+  }, [theme, ready]);
   function toggle() {
     const next = nextTheme(preference, systemDark);
     setPreference(next);
@@ -57,8 +60,9 @@ export function ThemeSwitcher() {
     <button
       className="theme-toggle"
       type="button"
-      aria-label={label}
-      title={label}
+      disabled={!ready}
+      aria-label={ready ? label : "Theme control loading"}
+      title={ready ? label : "Theme control loading"}
       onClick={toggle}
     >
       <svg
@@ -70,7 +74,7 @@ export function ThemeSwitcher() {
         strokeWidth="1.6"
         aria-hidden="true"
       >
-        {theme === "light" ? (
+        {!ready || theme === "light" ? (
           <path d="M20 15.5A8.5 8.5 0 0 1 8.5 4a8.5 8.5 0 1 0 11.5 11.5Z" />
         ) : (
           <>
@@ -79,7 +83,9 @@ export function ThemeSwitcher() {
           </>
         )}
       </svg>
-      <span>{theme === "light" ? "Dark theme" : "Light theme"}</span>
+      <span>
+        {!ready ? "Theme" : theme === "light" ? "Dark theme" : "Light theme"}
+      </span>
     </button>
   );
 }

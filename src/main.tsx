@@ -13,8 +13,11 @@ import "./features/playground/connection-puzzle/connection-puzzle.css";
 import "./features/playground/motion-studio/motion-studio.css";
 import "./features/playground/algorithm-garden/algorithm-garden.css";
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
+const root = document.getElementById("root")!;
+const application = (
   <React.StrictMode>
     <App />
-  </React.StrictMode>,
+  </React.StrictMode>
 );
+if (root.hasChildNodes()) ReactDOM.hydrateRoot(root, application);
+else ReactDOM.createRoot(root).render(application);

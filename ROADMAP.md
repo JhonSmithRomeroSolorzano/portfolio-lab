@@ -424,3 +424,9 @@ Next: use visitor feedback to guide further refinements of the four experiences.
 - [x] Reproduce a stale second tab overwriting another tab's saved moves. Extract a focused progress controller and reconcile validated saves on storage/focus changes and before writes, preserving each tab's selection and keyboard focus. Invalidate only changed-board Undo and hints; keep play usable after corrupt data or quota failures. Cover two-tab play, delayed notifications, cleared/corrupt saves, and continued play without storage in Chromium and WebKit.
 
 Next: collect visitor feedback on the four games and complete a human screen-reader assessment. Add concrete professional feature outcomes and direct contact information only when verified user details arrive; do not add games or split fixes to fill contribution counts.
+
+## Portfolio improvement milestone — October 13
+
+- [x] Prerender career content with native résumé/contact navigation and hydrate the same components. Cover disabled/blocked JavaScript and theme hydration without duplicate content.
+
+Next: verify matching hosted releases, enforce performance budgets, add motion CSS export, varied garden trees and frontier explanations, cache predictions, puzzle achievements, and optional implementation notes.

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useClientReady } from "../../shared/hooks/useClientReady";
 
 import { stackLayers } from "./data/technology-stack";
 
@@ -40,6 +41,7 @@ function LayerIcon({ kind }: { kind: string }) {
 }
 
 export function StackMap() {
+  const ready = useClientReady();
   const [selected, setSelected] =
     useState<(typeof stackLayers)[number]["id"]>("frontend");
   return (
@@ -67,6 +69,7 @@ export function StackMap() {
           <button
             key={item.id}
             type="button"
+            disabled={!ready}
             className={`stack-node stack-node-${item.id}`}
             aria-pressed={selected === item.id}
             aria-controls="stack-detail"

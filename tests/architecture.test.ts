@@ -55,7 +55,9 @@ test("maintained modules respect layer direction and never depend on retired UI"
                     target.startsWith(prefix),
                   )
                 : from.startsWith("scripts/")
-                  ? [
+                  ? (from === "scripts/prerender.ts" &&
+                      target === "src/app/prerender") ||
+                    [
                       "scripts/",
                       "src/domain/",
                       "src/features/portfolio/data/",

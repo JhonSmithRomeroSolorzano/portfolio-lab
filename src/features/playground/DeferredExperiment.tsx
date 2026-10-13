@@ -6,6 +6,7 @@ import {
   useState,
   type ComponentType,
 } from "react";
+import { useClientReady } from "../../shared/hooks/useClientReady";
 import { ExperimentBoundary } from "./ExperimentBoundary";
 
 type Props = {
@@ -26,6 +27,7 @@ export function DeferredExperiment({
   load,
   entryAliases = NO_ALIASES,
 }: Props) {
+  const ready = useClientReady();
   const container = useRef<HTMLDivElement>(null);
   const [requested, setRequested] = useState(false);
   const started = useRef(false);
@@ -121,7 +123,9 @@ export function DeferredExperiment({
               ? `${title} couldn’t load. Check your connection and reload to try again.`
               : requested
                 ? `Loading ${title}…`
-                : `${title} is ready to explore.`}
+                : !ready
+                  ? `${title} becomes interactive when JavaScript loads. Your résumé and contact links are ready above.`
+                  : `${title} is ready to explore.`}
           </p>
           {failed ? (
             <button
@@ -134,7 +138,8 @@ export function DeferredExperiment({
               Reload page
             </button>
           ) : (
-            !requested && (
+            !requested &&
+            ready && (
               <button type="button" onClick={request}>
                 Load {title}
               </button>

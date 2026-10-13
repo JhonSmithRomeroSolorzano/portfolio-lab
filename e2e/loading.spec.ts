@@ -190,3 +190,59 @@ test("unsupported intersection observation keeps the portfolio and games usable"
   );
   expect(errors).toEqual([]);
 });
+
+for (const failure of ["disabled", "blocked"] as const) {
+  test(`career content stays readable when JavaScript is ${failure}`, async ({
+    browser,
+  }) => {
+    const context = await browser.newContext({
+      javaScriptEnabled: failure !== "disabled",
+    });
+    const page = await context.newPage();
+    if (failure === "blocked")
+      await page.route("**/assets/*.js", (route) => route.abort());
+    await page.goto("/#resume");
+    await expect(
+      page.getByRole("heading", { name: "Experience.", exact: true }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "Download PDF", exact: true }),
+    ).toBeVisible();
+    await page
+      .getByRole("navigation", { name: "Main navigation" })
+      .getByRole("link", { name: "Contact", exact: true })
+      .click();
+    await expect(
+      page.getByRole("link", { name: "Find me on LinkedIn" }),
+    ).toBeInViewport();
+    await expect(
+      page.getByRole("button", { name: "Theme control loading" }),
+    ).toBeDisabled();
+    await context.close();
+  });
+}
+
+test("prerendered markup hydrates in both themes without replacing career content", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  page.on("console", (message) => {
+    if (message.type() === "error") errors.push(message.text());
+  });
+  for (const theme of ["dark", "light"]) {
+    await page.addInitScript(
+      (value) => localStorage.setItem("portfolio-theme", value),
+      theme,
+    );
+    await page.goto("/");
+    await expect(
+      page.getByRole("button", {
+        name:
+          theme === "dark" ? "Switch to light theme" : "Switch to dark theme",
+      }),
+    ).toBeEnabled();
+    await expect(page.locator("#intro-title")).toHaveCount(1);
+  }
+  expect(errors).toEqual([]);
+});
