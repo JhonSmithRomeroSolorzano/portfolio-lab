@@ -470,3 +470,14 @@ Specific project outcomes and direct contact details still require verified fact
 - [x] Inspect desktop and 320px layouts in both themes. Extend checks to actual canvas-pixel changes and pause stability, hidden-document recovery, static fallback, native collection links, and 200% default text. Add wrap-safe headings, collection labels, and contribution text after the 320px enlarged-text check exposed overflow.
 
 Verification: `npm run check` passes with 147 unit/integration/architecture tests and all asset budgets. All 136 Chromium/WebKit journeys pass, including the 18 focused sculpture checks. Reviewed paused and rotating monograms at desktop and 320px widths in both themes. The three-run mobile Lighthouse gate passes with median LCP 2.03s, CLS 0.0004, and TBT 0ms; these are local simulated measurements, not real-user results.
+
+## Gravity Loom — October 14
+
+- [x] Add the requested sixth experience with glowing trail histories, Orbit and counter-rotating Weave fields, adjustable strength, and up to four numbered attractors. Retain the existing five experiences and recruiter-first page order.
+- [x] Support direct field taps and equivalent named-position controls for keyboard/touch users. Keep explicit play, pause/resume, field reset, and bounded attractor removal; changing the field starts a fresh pattern. Use one feedback announcement and expose the slider's percentage through its accessible value.
+- [x] Keep field motion in a pure, deterministic domain model with softened forces, smooth edge steering, capped speeds, and safety boundaries. Use a feature-local canvas renderer with fixed steps, capped catch-up, bounded trails, and fewer mobile threads; add no graphics dependency.
+- [x] Retain static finished artwork for reduced motion and a selectable SVG fallback when canvas is unavailable. Stop playback on navigation, hidden documents, motion changes, and offscreen changes, without autoplay on return.
+- [x] Verify 150 unit/integration/architecture tests and all asset budgets through `npm run check`. Run all 154 Chromium/WebKit journeys: 153 passed in the full run; one unchanged WebKit accessibility scan timed out and passed its isolated rerun. Stabilize Signal Sculpture's functional test by keeping its arena and controls visible together, while preserving separate offscreen tests.
+- [x] Review desktop/mobile layouts in both themes, static and playing, keyboard actions, touch placement, and 200% text reflow. Pass the three-run mobile Lighthouse gate with median LCP 1.99s, CLS 0.0004, and TBT 0ms. These are local simulated measurements, not hosted real-user results.
+
+Next: gather feedback on the two visual art experiences rather than expanding the collection again. Human screen-reader listening and further verified professional/contact details remain separate follow-ups.

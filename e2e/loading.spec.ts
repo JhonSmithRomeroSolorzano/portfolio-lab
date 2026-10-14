@@ -7,7 +7,7 @@ test("career content loads without downloading the optional experiments", async 
   const chunks: string[] = [];
   page.on("request", (request) => {
     if (
-      /\/(CacheRescue|RoutePuzzle|MotionStudio|AlgorithmGarden|SignalSculpture)-.*\.js/.test(
+      /\/(CacheRescue|RoutePuzzle|MotionStudio|AlgorithmGarden|SignalSculpture|GravityLoom)-.*\.js/.test(
         request.url(),
       )
     )

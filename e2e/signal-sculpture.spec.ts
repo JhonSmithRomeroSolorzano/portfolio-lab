@@ -4,6 +4,9 @@ import AxeBuilder from "@axe-core/playwright";
 test("sculpture is explicit, transforms without resetting playback, pulses, pauses and resets", async ({
   page,
 }) => {
+  // Keep the arena and controls visible together; offscreen interruption is
+  // exercised separately rather than racing a control's automatic focus scroll.
+  await page.setViewportSize({ width: 1280, height: 1100 });
   await page.goto("/#signal-sculpture");
   const exhibit = page.locator("#signal-sculpture");
   const stage = exhibit.locator(".sculpture-stage");

@@ -135,4 +135,25 @@ export const experiences: readonly Experience[] = [
         (module) => module.SignalSculpture,
       ),
   },
+  {
+    id: "gravity-loom",
+    title: "Gravity Loom",
+    titleId: "loom-title",
+    category: "KINETIC ART",
+    description: "Place a pull. Weave the light.",
+    action: "Shape the current ↗",
+    artwork: ["∿", "⊙", "∿"],
+    style: "loom",
+    engineering: {
+      decision:
+        "A deterministic attraction-and-swirl field advances at fixed steps. The canvas renderer keeps bounded trail histories; React handles controls and feedback.",
+      tradeoff:
+        "This is kinetic artwork, not orbital physics. Four attractors and fewer mobile threads bound the work. Placement controls replace pointer-only interaction, and static drawings support reduced motion and unavailable canvas.",
+      verification:
+        "bounded trajectories, deterministic previews, attractor limits, keyboard and touch placement, actual pause stability, motion interruption, and reflow in both themes.",
+      source: "src/features/playground/gravity-loom",
+    },
+    load: () =>
+      import("./gravity-loom/GravityLoom").then((module) => module.GravityLoom),
+  },
 ];

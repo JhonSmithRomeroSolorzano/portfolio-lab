@@ -13,6 +13,7 @@ import "./features/playground/connection-puzzle/connection-puzzle.css";
 import "./features/playground/motion-studio/motion-studio.css";
 import "./features/playground/algorithm-garden/algorithm-garden.css";
 import "./features/playground/signal-sculpture/signal-sculpture.css";
+import "./features/playground/gravity-loom/gravity-loom.css";
 
 const root = document.getElementById("root")!;
 const application = (
