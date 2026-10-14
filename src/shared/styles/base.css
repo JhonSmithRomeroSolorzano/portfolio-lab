@@ -208,6 +208,13 @@ h2 {
   gap: 40px;
   margin-bottom: 30px;
 }
+.section-heading > div {
+  min-width: 0;
+  max-width: 100%;
+}
+.section-heading h2 {
+  overflow-wrap: anywhere;
+}
 .section-heading > p {
   font-size: 14px;
   line-height: 1.8;

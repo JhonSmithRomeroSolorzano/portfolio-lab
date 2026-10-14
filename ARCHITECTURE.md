@@ -1,6 +1,6 @@
 # Architecture
 
-The portfolio is a small React application with four optional games. Its architecture separates reasons to change without adding a framework, service container, or inheritance hierarchy.
+The portfolio is a small React application with five optional experiences. Its architecture separates reasons to change without adding a framework, service container, or inheritance hierarchy.
 
 This document owns technical structure, dependency contracts, and design rationale. For agent workflow, verification commands, content safeguards, and delivery instructions, see [AGENTS.md](AGENTS.md).
 
@@ -21,6 +21,7 @@ src/
       connection-puzzle/           Progress controller, browser persistence adapter, UI, CSS
       motion-studio/               Playback controller, curves, UI, CSS
       algorithm-garden/            UI and CSS
+      signal-sculpture/            Controls, canvas renderer, CSS
   domain/
     playground/                    Pure cache/puzzle/traversal models
     simulation/                    Maintained systems models used by API and CLI
@@ -73,3 +74,5 @@ CSS belongs to the relevant feature, with global tokens/base elements and app la
 The build-only `src/app/prerender.tsx` entry renders App through React DOM's server renderer. `scripts/prerender.ts` is the explicit script-to-app exception enforced by the dependency test. It fills the built HTML root; the browser hydrates it (or uses a new root in development). Browser-only controls use a shared hydration readiness snapshot, and the pre-paint theme bootstrap remains authoritative until hydration. The server renderer never enters the client bundle.
 
 Connection progress uses schema version 2 under the existing storage key, preserving version 1 boards through migration. Attempt rotations are monotonic across Undo, hint assistance is sticky until reset, and best scores are updated by a pure domain function on connection completion. Migrated attempts have unknown rotation history and cannot create a record. Personal records use the same best-effort cross-tab synchronization as boards.
+
+Signal Sculpture's pure domain geometry supplies stable particle identities and deterministic morphing. Its feature-local canvas renderer owns projection and an imperative animation clock; React owns controls and announcements, not per-frame state. Drawing resolution is capped at 2× device pixel ratio and the point count is chosen at mount (720 for small screens, 1,800 otherwise). Resize and theme changes redraw paused artwork. A static SVG replaces unavailable canvas. The shared playback interruption hook cancels motion, while reduced motion also settles the current form without pointer influence. No graphics library or build configuration change is needed.

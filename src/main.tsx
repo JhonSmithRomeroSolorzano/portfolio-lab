@@ -12,6 +12,7 @@ import "./features/playground/cache-rescue/cache-rescue.css";
 import "./features/playground/connection-puzzle/connection-puzzle.css";
 import "./features/playground/motion-studio/motion-studio.css";
 import "./features/playground/algorithm-garden/algorithm-garden.css";
+import "./features/playground/signal-sculpture/signal-sculpture.css";
 
 const root = document.getElementById("root")!;
 const application = (

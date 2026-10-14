@@ -236,7 +236,7 @@ test("motion comparison shares a clock and duration, and control changes cancel 
   await expect(page.locator(".motion-runner.has-arrived")).toHaveCount(2);
 });
 
-test("four peer experiences replace the dropdown and old Signal Lab anchor reaches the collection", async ({
+test("five peer experiences keep native anchors and the old Signal Lab anchor reaches the collection", async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
@@ -246,13 +246,14 @@ test("four peer experiences replace the dropdown and old Signal Lab anchor reach
   const links = page
     .getByRole("navigation", { name: "Explore the collection" })
     .getByRole("link");
-  await expect(links).toHaveCount(4);
-  await expect(page.locator("#lab > article")).toHaveCount(4);
+  await expect(links).toHaveCount(5);
+  await expect(page.locator("#lab > article")).toHaveCount(5);
   for (const [index, id] of [
     "cache-rescue",
     "connection-game",
     "motion-studio",
     "algorithm-garden",
+    "signal-sculpture",
   ].entries()) {
     await links.nth(index).press("Enter");
     await expect(page.locator(`#${id}`)).toBeFocused();

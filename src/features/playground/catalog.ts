@@ -112,4 +112,27 @@ export const experiences: readonly Experience[] = [
         (module) => module.AlgorithmGarden,
       ),
   },
+  {
+    id: "signal-sculpture",
+    title: "Signal Sculpture",
+    titleId: "sculpture-title",
+    category: "GENERATIVE ART",
+    description: "A thousand signals. One living form.",
+    action: "Shape the signals ↗",
+    artwork: ["·", "JSR", "·"],
+    style: "sculpture",
+    engineering: {
+      decision:
+        "Pure point geometry defines three forms. A canvas renderer handles perspective and interpolation without updating React on every frame.",
+      tradeoff:
+        "Projected points suggest depth without a graphics dependency. Mobile uses fewer points; animation starts only on request and static forms remain available with reduced motion or without canvas.",
+      verification:
+        "deterministic geometry, morph endpoints, keyboard controls, motion interruption, static fallback, and mobile reflow in both themes.",
+      source: "src/features/playground/signal-sculpture",
+    },
+    load: () =>
+      import("./signal-sculpture/SignalSculpture").then(
+        (module) => module.SignalSculpture,
+      ),
+  },
 ];

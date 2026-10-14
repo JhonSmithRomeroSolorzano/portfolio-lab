@@ -125,6 +125,7 @@
   margin: 6px 0 14px;
 }
 .experience-list ul {
+  overflow-wrap: anywhere;
   padding-left: 18px;
   font-size: 1rem;
   color: var(--muted);

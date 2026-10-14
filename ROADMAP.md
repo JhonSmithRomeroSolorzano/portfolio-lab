@@ -460,3 +460,13 @@ Next: refine the four experiences from visitor feedback and complete a human scr
 - [x] Pass all 145 unit/integration checks, 118 Chromium/WebKit journeys, and the production build. Inspect responsive theme layouts and both pages of the generated résumé.
 
 Specific project outcomes and direct contact details still require verified facts; role summaries describe the work already confirmed.
+
+## Signal Sculpture — approved fifth experience
+
+- [x] Add a lazy-loaded particle sculpture with authored JSR, ribbon, and orbit forms, dissolving transitions, depth projection, optional mouse perspective, and a pulse wave. Keep the original four experiences and recruiter-first page order.
+- [x] Give the monogram a slow full rotation, rather than a nearly imperceptible rocking motion, following user feedback. Use the existing pausable clock and keep reduced-motion forms static.
+- [x] Provide explicit Play/Pause, Pulse, and Reset controls, keyboard/touch operation, static reduced-motion compositions, and a canvas-unavailable SVG fallback. Stop playback on navigation, offscreen changes, hidden tabs, and motion-preference changes; returning waits for Play.
+- [x] Separate deterministic domain geometry from the feature-local canvas renderer and React controls. Limit small-screen particle counts and drawing resolution without adding a graphics dependency or changing build policy.
+- [x] Inspect desktop and 320px layouts in both themes. Extend checks to actual canvas-pixel changes and pause stability, hidden-document recovery, static fallback, native collection links, and 200% default text. Add wrap-safe headings, collection labels, and contribution text after the 320px enlarged-text check exposed overflow.
+
+Verification: `npm run check` passes with 147 unit/integration/architecture tests and all asset budgets. All 136 Chromium/WebKit journeys pass, including the 18 focused sculpture checks. Reviewed paused and rotating monograms at desktop and 320px widths in both themes. The three-run mobile Lighthouse gate passes with median LCP 2.03s, CLS 0.0004, and TBT 0ms; these are local simulated measurements, not real-user results.

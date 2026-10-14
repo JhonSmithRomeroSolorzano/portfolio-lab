@@ -84,6 +84,7 @@
 }
 .experiment-placeholder h3 {
   font-size: 1.5rem;
+  overflow-wrap: anywhere;
 }
 .experiment-placeholder p {
   font-size: 1rem;
@@ -100,12 +101,13 @@
 }
 .collection-index {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
   margin: 32px 0 48px;
 }
 .collection-card {
   display: flex;
+  overflow-wrap: anywhere;
   flex-direction: column;
   gap: 10px;
   padding: 20px 16px;
