@@ -22,6 +22,7 @@ import {
   usePlaybackInterruption,
 } from "../../../shared/hooks/usePlaybackInterruption";
 import { createLoomRenderer } from "./renderer";
+import { loomViewport, projectLoomPoint, unprojectLoomPoint } from "./viewport";
 
 const activeHashes = ["#gravity-loom", "#lab"];
 
@@ -46,6 +47,9 @@ export function GravityLoom() {
   const [placement, setPlacement] = useState("0");
   const [playing, setPlaying] = useState(false);
   const [available, setAvailable] = useState(true);
+  const [fallbackViewport, setFallbackViewport] = useState(() =>
+    loomViewport(320, 320),
+  );
   const [feedback, setFeedback] = useState(
     "Grab a glowing point and drag. The threads follow your pull.",
   );
@@ -79,6 +83,23 @@ export function GravityLoom() {
   useEffect(() => {
     renderer.current?.select(selected);
   }, [selected]);
+  useEffect(() => {
+    if (available || !stage.current) return;
+    const node = stage.current;
+    const update = () =>
+      setFallbackViewport(loomViewport(node.clientWidth, node.clientHeight));
+    update();
+    const observer =
+      typeof ResizeObserver === "undefined"
+        ? undefined
+        : new ResizeObserver(update);
+    observer?.observe(node);
+    window.addEventListener("resize", update);
+    return () => {
+      observer?.disconnect();
+      window.removeEventListener("resize", update);
+    };
+  }, [available]);
   const staticTrails = useMemo(
     () => (available ? [] : loomPreview(attractors, flow, strength / 100, 36)),
     [available, attractors, flow, strength],
@@ -108,11 +129,14 @@ export function GravityLoom() {
 
   function pointerPosition(event: PointerEvent<HTMLDivElement>): LoomPoint {
     const box = event.currentTarget.getBoundingClientRect();
-    const scale = Math.max(1, Math.min(box.width, box.height) * 0.38);
-    return {
-      x: (event.clientX - box.left - box.width / 2) / scale,
-      y: (event.clientY - box.top - box.height / 2) / scale,
-    };
+    const node = event.currentTarget;
+    return unprojectLoomPoint(
+      {
+        x: event.clientX - box.left - node.clientLeft,
+        y: event.clientY - box.top - node.clientTop,
+      },
+      loomViewport(node.clientWidth, node.clientHeight),
+    );
   }
 
   function move(index: number, point: LoomPoint, commit: boolean) {
@@ -184,13 +208,18 @@ export function GravityLoom() {
             liveAttractors.current = points;
             setAttractors(points);
           }
-          const box = event.currentTarget.getBoundingClientRect();
-          const scale = Math.max(1, Math.min(box.width, box.height) * 0.38);
+          const viewport = loomViewport(
+            event.currentTarget.clientWidth,
+            event.currentTarget.clientHeight,
+          );
           let index = Math.min(selected, points.length - 1);
-          let distance = 32 / scale;
+          let distance = 32;
           let offset = { x: 0, y: 0 };
           points.forEach((p, i) => {
-            const d = Math.hypot(p.x - point.x, p.y - point.y);
+            const d = Math.hypot(
+              (p.x - point.x) * viewport.scaleX,
+              (p.y - point.y) * viewport.scaleY,
+            );
             if (d < distance) {
               index = i;
               distance = d;
@@ -253,25 +282,33 @@ export function GravityLoom() {
         </span>
         <canvas ref={canvas} aria-hidden="true" hidden={!available} />
         {!available && (
-          <svg viewBox="-1.3 -1.3 2.6 2.6" aria-hidden="true">
+          <svg
+            viewBox={`0 0 ${fallbackViewport.width} ${fallbackViewport.height}`}
+            aria-hidden="true"
+          >
             {staticTrails.map((trail, i) => (
               <polyline
                 key={i}
-                points={trail.map((p) => `${p.x},${p.y}`).join(" ")}
+                points={trail
+                  .map((p) => {
+                    const projected = projectLoomPoint(p, fallbackViewport);
+                    return `${projected.x},${projected.y}`;
+                  })
+                  .join(" ")}
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="0.005"
+                strokeWidth="1"
               />
             ))}
             {attractors.map((p, i) => (
               <circle
                 key={i}
-                cx={p.x}
-                cy={p.y}
-                r="0.035"
+                cx={projectLoomPoint(p, fallbackViewport).x}
+                cy={projectLoomPoint(p, fallbackViewport).y}
+                r={i === selected ? 14 : 10}
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="0.006"
+                strokeWidth="1"
               />
             ))}
           </svg>

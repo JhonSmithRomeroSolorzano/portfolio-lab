@@ -500,3 +500,10 @@ Next: gather feedback on the two visual art experiences rather than expanding th
 - [x] Inspect Experience, résumé resources, and Contact at desktop/mobile sizes in both themes, plus landscape Gravity Loom and the existing reduced-motion journeys. Add a [human review guide](docs/USABILITY_REVIEW.md) linked from contributor instructions.
 - [ ] Observe a willing first-time visitor attempting neutral tasks without coaching. No new visitor session was conducted by the agent.
 - [ ] Complete physical-phone touch review and a human screen-reader listening session. Emulation, axe, and semantic/focus checks are not substitutes.
+
+## Gravity Loom full-field dragging — October 15 feedback
+
+- [x] Replace the shortest-side-square projection with a shared rectangular viewport mapping for canvas, pointer hit testing, and SVG fallback. Allow points to reach every side/corner with a 24px handle margin and preserve normalized positions when resizing.
+- [x] Expand the model's valid coordinates and safety bounds to ±1 and move soft frame steering toward the outer edge, so trails can follow a held point beyond the former central restriction. Retain speed caps, fixed steps, grab offsets, and reduced-motion behavior.
+- [x] Verify forward/inverse projection, bounded moving fields, and a held corner pull in unit tests. Browser checks inspect painted marker pixels at all four corners in both themes at 320px/1440px, and verify SVG edge placement through portrait/desktop/landscape resizing. The full-field cases pass three repeated runs in Chromium and WebKit.
+- [x] Pass `npm run check` with 154 unit/integration/architecture tests and production asset budgets. Complete the full browser coverage across the restart: 92 Chromium passes, then 91 WebKit passes with the existing Chromium-only touch-injection skip. Inspect live mouse and native Chromium touch drags toward the outer edge in both themes at desktop/mobile sizes.

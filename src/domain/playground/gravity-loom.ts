@@ -24,8 +24,8 @@ export function addLoomAttractor(
   return [
     ...points,
     {
-      x: Math.max(-0.8, Math.min(0.8, point.x)),
-      y: Math.max(-0.8, Math.min(0.8, point.y)),
+      x: Math.max(-1, Math.min(1, point.x)),
+      y: Math.max(-1, Math.min(1, point.y)),
     },
   ];
 }
@@ -73,8 +73,8 @@ export function stepLoom(
       (p) =>
         !Number.isFinite(p.x) ||
         !Number.isFinite(p.y) ||
-        Math.abs(p.x) > 0.8 ||
-        Math.abs(p.y) > 0.8,
+        Math.abs(p.x) > 1 ||
+        Math.abs(p.y) > 1,
     )
   )
     throw new Error("Invalid attractor field.");
@@ -82,7 +82,7 @@ export function stepLoom(
     // A soft frame turns threads before the safety boundary, avoiding hard
     // corners in the artwork while keeping extreme user fields contained.
     const edgeForce = (value: number) =>
-      Math.sign(value) * Math.max(0, Math.abs(value) - 0.62) ** 2 * 75;
+      Math.sign(value) * Math.max(0, Math.abs(value) - 0.88) ** 2 * 75;
     let ax = -p.x * 0.12 - edgeForce(p.x);
     let ay = -p.y * 0.12 - edgeForce(p.y);
     attractors.forEach((center, i) => {
@@ -105,12 +105,12 @@ export function stepLoom(
     let x = p.x + vx / 60;
     let y = p.y + vy / 60;
     // Reflect at the frame instead of teleporting and drawing cross-frame trails.
-    if (Math.abs(x) > 0.94) {
-      x = Math.sign(x) * 0.94;
+    if (Math.abs(x) > 1) {
+      x = Math.sign(x);
       vx *= -0.8;
     }
-    if (Math.abs(y) > 0.94) {
-      y = Math.sign(y) * 0.94;
+    if (Math.abs(y) > 1) {
+      y = Math.sign(y);
       vy *= -0.8;
     }
     return { x, y, vx, vy };

@@ -9,6 +9,11 @@ import {
   moveLoomAttractor,
   createLoomScene,
 } from "../src/domain/playground/gravity-loom.ts";
+import {
+  loomViewport,
+  projectLoomPoint,
+  unprojectLoomPoint,
+} from "../src/features/playground/gravity-loom/viewport.ts";
 
 test("loom seeding and previews are deterministic and different flows weave different trails", () => {
   assert.deepEqual(seedLoom(48), seedLoom(48));
@@ -23,7 +28,7 @@ test("loom seeding and previews are deterministic and different flows weave diff
 test("moving a point preserves its identity, count and other points, and clamps safely", () => {
   const moved = moveLoomAttractor(defaultAttractors, 0, { x: 4, y: -4 });
   assert.equal(moved.length, 2);
-  assert.deepEqual(moved[0], { x: 0.8, y: -0.8 });
+  assert.deepEqual(moved[0], { x: 1, y: -1 });
   assert.deepEqual(moved[1], defaultAttractors[1]);
   assert.equal(defaultAttractors[0].x, -0.36);
   assert.deepEqual(
@@ -47,10 +52,10 @@ test("preview endpoints and velocities form a continuous live scene; held points
   assert.ok(held.vx > normal.vx * 5);
   let current = seedLoom(48);
   for (let i = 0; i < 1200; i++) {
-    const moving = [{ x: Math.sin(i / 30) * 0.8, y: Math.cos(i / 20) * 0.8 }];
+    const moving = [{ x: Math.sin(i / 30), y: Math.cos(i / 20) }];
     current = stepLoom(current, moving, "weave", 1.5, 0);
     for (const p of current) {
-      assert.ok(Math.abs(p.x) <= 0.94 && Math.abs(p.y) <= 0.94);
+      assert.ok(Math.abs(p.x) <= 1 && Math.abs(p.y) <= 1);
       assert.ok(Math.hypot(p.vx, p.vy) <= 1.2 + 1e-10);
     }
   }
@@ -65,8 +70,8 @@ test("long loom runs remain finite, bounded, and independent of input mutation",
         [
           { x: 0, y: 0 },
           { x: 0, y: 0 },
-          { x: 0.8, y: 0.8 },
-          { x: -0.8, y: -0.8 },
+          { x: 1, y: 1 },
+          { x: -1, y: -1 },
         ],
       ]) {
         const seeded = seedLoom(48);
@@ -76,7 +81,7 @@ test("long loom runs remain finite, bounded, and independent of input mutation",
         assert.deepEqual(seeded, seedLoom(48));
         for (const p of particles) {
           for (const v of Object.values(p)) assert.ok(Number.isFinite(v));
-          assert.ok(Math.abs(p.x) <= 0.94 && Math.abs(p.y) <= 0.94);
+          assert.ok(Math.abs(p.x) <= 1 && Math.abs(p.y) <= 1);
           assert.ok(Math.hypot(p.vx, p.vy) <= 1.2 + 1e-10);
         }
       }
@@ -84,7 +89,7 @@ test("long loom runs remain finite, bounded, and independent of input mutation",
 
 test("attractors clamp to the field, respect the four-point cap, and reject invalid forces", () => {
   const added = addLoomAttractor(defaultAttractors, { x: 5, y: -5 });
-  assert.deepEqual(added[2], { x: 0.8, y: -0.8 });
+  assert.deepEqual(added[2], { x: 1, y: -1 });
   assert.equal(defaultAttractors.length, 2);
   const full = addLoomAttractor(added, { x: 0, y: 0 });
   assert.deepEqual(addLoomAttractor(full, { x: 0, y: 0 }), full);
@@ -94,4 +99,46 @@ test("attractors clamp to the field, respect the four-point cap, and reject inva
   assert.throws(() =>
     stepLoom(seedLoom(1), [{ x: Infinity, y: 0 }], "orbit", 1),
   );
+});
+
+test("viewport mapping reaches every rectangle edge and inverts pointer coordinates", () => {
+  for (const [width, height] of [
+    [1000, 600],
+    [254, 254],
+    [600, 320],
+    [320, 600],
+  ]) {
+    const viewport = loomViewport(width, height);
+    assert.deepEqual(projectLoomPoint({ x: -1, y: -1 }, viewport), {
+      x: 24,
+      y: 24,
+    });
+    assert.deepEqual(projectLoomPoint({ x: 1, y: 1 }, viewport), {
+      x: width - 24,
+      y: height - 24,
+    });
+    for (const point of [
+      { x: 0, y: 0 },
+      { x: 0.75, y: -0.9 },
+      { x: -1, y: 1 },
+    ]) {
+      const result = unprojectLoomPoint(
+        projectLoomPoint(point, viewport),
+        viewport,
+      );
+      assert.ok(Math.abs(result.x - point.x) < 1e-12);
+      assert.ok(Math.abs(result.y - point.y) < 1e-12);
+    }
+  }
+});
+
+test("a held corner attractor pulls particles beyond the former central boundary", () => {
+  let particles = [{ x: 0.72, y: 0.72, vx: 0, vy: 0 }];
+  let furthest = 0;
+  for (let i = 0; i < 600; i++) {
+    particles = stepLoom(particles, [{ x: 1, y: 1 }], "orbit", 1, 0);
+    furthest = Math.max(furthest, Math.min(particles[0].x, particles[0].y));
+    assert.ok(Math.abs(particles[0].x) <= 1 && Math.abs(particles[0].y) <= 1);
+  }
+  assert.ok(furthest > 0.9);
 });

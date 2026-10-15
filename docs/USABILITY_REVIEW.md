@@ -27,6 +27,7 @@ Use a small phone in light/dark themes, portrait/landscape, and with larger text
 
 - Grab the edge of a glowing point: it should not jump before the finger moves.
 - Drag it, release, select another, and use the non-drag controls. Verify movement, selection, and retained trails.
+- Move a point to every side/corner of the field in portrait and landscape. It should reach the visible edge margin rather than stop inside a central square; repeat after rotating/resizing.
 - Drag inside the field: the drawing should respond without moving the page. Swipe the surrounding page: scrolling should remain available. Inspect short landscape screens as well as portrait.
 - Interrupt a drag by switching tabs/apps or changing motion preferences. Return without unexpected playback or a stuck grab.
 - Enable reduced motion: move points and use native controls without continuous animation.

@@ -1,5 +1,9 @@
 import { test, expect } from "@playwright/test";
 import { LINKEDIN } from "../src/features/portfolio/data/profile";
+import {
+  loomViewport,
+  projectLoomPoint,
+} from "../src/features/playground/gravity-loom/viewport";
 
 test("releasing a point removed by a keyboard command gives safe feedback", async ({
   page,
@@ -15,11 +19,11 @@ test("releasing a point removed by a keyboard command gives safe feedback", asyn
   await expect(field).toBeVisible();
   const box = await field.boundingBox();
   if (!box) throw new Error("Missing gravity field");
-  const scale = Math.min(box.width, box.height) * 0.38;
-  await page.mouse.move(
-    box.x + box.width / 2 + 0.36 * scale,
-    box.y + box.height / 2,
+  const point = projectLoomPoint(
+    { x: 0.36, y: 0 },
+    loomViewport(box.width - 2, box.height - 2),
   );
+  await page.mouse.move(box.x + 1 + point.x, box.y + 1 + point.y);
   await page.mouse.down();
   await expect(field).toHaveAttribute("data-dragging", "true");
   await exhibit
@@ -46,11 +50,11 @@ test.describe("narrow touch review", () => {
     await page.evaluate(() => document.fonts.ready);
     const box = await field.boundingBox();
     if (!box) throw new Error("Missing gravity field");
-    const scale = Math.min(box.width, box.height) * 0.38;
-    await page.touchscreen.tap(
-      box.x + box.width / 2 - 0.36 * scale + 12,
-      box.y + box.height / 2,
+    const point = projectLoomPoint(
+      { x: -0.36, y: 0 },
+      loomViewport(box.width - 2, box.height - 2),
     );
+    await page.touchscreen.tap(box.x + 1 + point.x + 12, box.y + 1 + point.y);
     await expect(exhibit.locator(".loom-fine-controls p")).toContainText(
       "horizontal -36%",
     );
@@ -126,9 +130,10 @@ test("grabbing the edge of a point keeps its position and secondary cancellation
   await page.evaluate(() => document.fonts.ready);
   const box = await field.boundingBox();
   if (!box) throw new Error("Missing gravity field");
-  const scale = Math.min(box.width, box.height) * 0.38;
-  const x = box.x + box.width / 2 - 0.36 * scale + 15;
-  const y = box.y + box.height / 2;
+  const viewport = loomViewport(box.width - 2, box.height - 2);
+  const point = projectLoomPoint({ x: -0.36, y: 0 }, viewport);
+  const x = box.x + 1 + point.x + 15;
+  const y = box.y + 1 + point.y;
   await page.mouse.move(x, y);
   await page.mouse.down();
   await expect(field).toHaveAttribute("data-dragging", "true");
@@ -142,7 +147,7 @@ test("grabbing the edge of a point keeps its position and secondary cancellation
     "horizontal -36%",
   );
   await page.mouse.down();
-  await page.mouse.move(x + scale * 0.1, y, { steps: 8 });
+  await page.mouse.move(x + viewport.scaleX * 0.1, y, { steps: 8 });
   await page.mouse.up();
   await expect(exhibit.locator(".loom-fine-controls p")).toContainText(
     "horizontal -26%",

@@ -5,6 +5,7 @@ import {
   type LoomFlow,
   type LoomPoint,
 } from "../../../domain/playground/gravity-loom";
+import { loomViewport, projectLoomPoint } from "./viewport";
 
 /** Bounded histories retain the woven trails without persistent canvas overdraw. */
 export function createLoomRenderer(canvas: HTMLCanvasElement) {
@@ -32,7 +33,7 @@ export function createLoomRenderer(canvas: HTMLCanvasElement) {
     if (!ctx) return;
     ctx.clearRect(0, 0, width, height);
     const dark = document.documentElement.dataset.theme === "dark";
-    const scale = Math.min(width, height) * 0.38;
+    const viewport = loomViewport(width, height);
     const colors = dark
       ? ["#ffcc8a", "#9ac8ff", "#7edaca"]
       : ["#975014", "#245da0", "#18756c"];
@@ -40,8 +41,7 @@ export function createLoomRenderer(canvas: HTMLCanvasElement) {
       const trace = () => {
         ctx.beginPath();
         trail.forEach((p, j) => {
-          const x = width / 2 + p.x * scale;
-          const y = height / 2 + p.y * scale;
+          const { x, y } = projectLoomPoint(p, viewport);
           if (j === 0) ctx.moveTo(x, y);
           else ctx.lineTo(x, y);
         });
@@ -61,20 +61,14 @@ export function createLoomRenderer(canvas: HTMLCanvasElement) {
         ctx.globalAlpha = 0.9;
         ctx.fillStyle = colors[i % 3];
         ctx.beginPath();
-        ctx.arc(
-          width / 2 + head.x * scale,
-          height / 2 + head.y * scale,
-          1.5,
-          0,
-          Math.PI * 2,
-        );
+        const projected = projectLoomPoint(head, viewport);
+        ctx.arc(projected.x, projected.y, 1.5, 0, Math.PI * 2);
         ctx.fill();
       }
     });
     ctx.globalAlpha = 1;
     attractors.forEach((p, i) => {
-      const x = width / 2 + p.x * scale;
-      const y = height / 2 + p.y * scale;
+      const { x, y } = projectLoomPoint(p, viewport);
       ctx.strokeStyle = dark ? "#ffcc8a" : "#975014";
       if (i === selected) {
         ctx.fillStyle = ctx.strokeStyle;
