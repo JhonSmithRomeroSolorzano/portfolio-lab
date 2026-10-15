@@ -1,10 +1,18 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type PointerEvent,
+} from "react";
 import {
   MAX_ATTRACTORS,
   addLoomAttractor,
   defaultAttractors,
   loomPlacements,
   loomPreview,
+  moveLoomAttractor,
   type LoomFlow,
   type LoomPoint,
 } from "../../../domain/playground/gravity-loom";
@@ -21,6 +29,12 @@ export function GravityLoom() {
   const canvas = useRef<HTMLCanvasElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const renderer = useRef<ReturnType<typeof createLoomRenderer>>(undefined);
+  const liveAttractors = useRef<readonly LoomPoint[]>(defaultAttractors);
+  const gesture = useRef<{ pointerId: number; index: number } | undefined>(
+    undefined,
+  );
+  const [selected, setSelected] = useState(0);
+  const [dragging, setDragging] = useState(false);
   const [attractors, setAttractors] =
     useState<readonly LoomPoint[]>(defaultAttractors);
   const [flow, setFlow] = useState<LoomFlow>("orbit");
@@ -29,11 +43,18 @@ export function GravityLoom() {
   const [playing, setPlaying] = useState(false);
   const [available, setAvailable] = useState(true);
   const [feedback, setFeedback] = useState(
-    "Two attractors ready. Choose a flow or place another pull.",
+    "Grab a glowing point and drag. The threads follow your pull.",
   );
   const reduced = useMediaQuery(REDUCED_MOTION);
   const stop = useCallback(() => {
+    const pointer = gesture.current?.pointerId;
+    gesture.current = undefined;
+    if (pointer !== undefined && stage.current?.hasPointerCapture(pointer))
+      stage.current.releasePointerCapture(pointer);
+    setAttractors(liveAttractors.current);
+    renderer.current?.release();
     renderer.current?.pause();
+    setDragging(false);
     setPlaying(false);
     setFeedback("Playback stopped. The field is still.");
   }, []);
@@ -48,8 +69,12 @@ export function GravityLoom() {
     };
   }, []);
   useEffect(() => {
-    renderer.current?.configure(attractors, flow, strength / 100);
+    liveAttractors.current = attractors;
+    renderer.current?.configure(attractors, flow, strength / 100, reduced);
   }, [attractors, flow, strength, reduced]);
+  useEffect(() => {
+    renderer.current?.select(selected);
+  }, [selected]);
   const staticTrails = useMemo(
     () => (available ? [] : loomPreview(attractors, flow, strength / 100, 36)),
     [available, attractors, flow, strength],
@@ -62,9 +87,59 @@ export function GravityLoom() {
       );
       return;
     }
-    setAttractors(addLoomAttractor(attractors, point));
+    const next = addLoomAttractor(liveAttractors.current, point);
+    liveAttractors.current = next;
+    setAttractors(next);
+    setSelected(next.length - 1);
     setFeedback(
       `Attractor ${attractors.length + 1} added. The field has ${attractors.length + 1} attractors.`,
+    );
+  }
+
+  function begin() {
+    if (reduced || !available) return;
+    renderer.current?.play();
+    setPlaying(true);
+  }
+
+  function pointerPosition(event: PointerEvent<HTMLDivElement>): LoomPoint {
+    const box = event.currentTarget.getBoundingClientRect();
+    const scale = Math.max(1, Math.min(box.width, box.height) * 0.38);
+    return {
+      x: (event.clientX - box.left - box.width / 2) / scale,
+      y: (event.clientY - box.top - box.height / 2) / scale,
+    };
+  }
+
+  function move(index: number, point: LoomPoint, commit: boolean) {
+    const next = moveLoomAttractor(liveAttractors.current, index, point);
+    liveAttractors.current = next;
+    renderer.current?.move(next, reduced);
+    // Keep high-frequency dragging out of React's control tree. Commit on release;
+    // the canvas-free fallback instead needs a new static SVG for each input.
+    if (commit || !available) setAttractors(next);
+  }
+
+  function finish(event: PointerEvent<HTMLDivElement>) {
+    if (gesture.current?.pointerId !== event.pointerId) return;
+    const index = gesture.current.index;
+    gesture.current = undefined;
+    renderer.current?.release();
+    setAttractors(liveAttractors.current);
+    setDragging(false);
+    if (event.currentTarget.hasPointerCapture(event.pointerId))
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    setFeedback(`Point ${index + 1} moved. Drag again to steer the threads.`);
+  }
+
+  function nudge(dx: number, dy: number) {
+    const point = liveAttractors.current[selected];
+    if (!point) return;
+    move(selected, { x: point.x + dx, y: point.y + dy }, true);
+    renderer.current?.nudge(selected);
+    begin();
+    setFeedback(
+      `Point ${selected + 1} moved. The existing threads follow its new position.`,
     );
   }
   return (
@@ -77,8 +152,8 @@ export function GravityLoom() {
           </h3>
         </div>
         <p>
-          Place a pull. Change the current. Watch light weave around the
-          invisible.
+          Grab a glowing point. Pull it around. You’re moving the current—not
+          just watching it.
         </p>
       </header>
       <div
@@ -86,13 +161,70 @@ export function GravityLoom() {
         ref={stage}
         data-playing={playing && !reduced}
         data-flow={flow}
-        onClick={(event) => {
+        data-dragging={dragging}
+        tabIndex={0}
+        role="group"
+        aria-label="Interactive gravity field"
+        aria-describedby="loom-instructions"
+        onPointerDown={(event) => {
+          if (event.button !== 0 || !event.isPrimary || gesture.current) return;
+          const point = pointerPosition(event);
+          let points = liveAttractors.current;
+          if (points.length === 0) {
+            points = addLoomAttractor([], point);
+            liveAttractors.current = points;
+            setAttractors(points);
+          }
           const box = event.currentTarget.getBoundingClientRect();
-          const scale = Math.min(box.width, box.height) * 0.38;
-          add({
-            x: (event.clientX - box.left - box.width / 2) / scale,
-            y: (event.clientY - box.top - box.height / 2) / scale,
+          const scale = Math.max(1, Math.min(box.width, box.height) * 0.38);
+          let index = Math.min(selected, points.length - 1);
+          let distance = 32 / scale;
+          points.forEach((p, i) => {
+            const d = Math.hypot(p.x - point.x, p.y - point.y);
+            if (d < distance) {
+              index = i;
+              distance = d;
+            }
           });
+          gesture.current = { pointerId: event.pointerId, index };
+          event.currentTarget.setPointerCapture(event.pointerId);
+          event.currentTarget.focus({ preventScroll: true });
+          setSelected(index);
+          renderer.current?.select(index);
+          setDragging(true);
+          move(index, point, false);
+          if (!reduced) renderer.current?.grab(index);
+          begin();
+          setFeedback(
+            `Pulling point ${index + 1}. Move your hand to bend the threads.`,
+          );
+        }}
+        onPointerMove={(event) => {
+          if (gesture.current?.pointerId === event.pointerId)
+            move(gesture.current.index, pointerPosition(event), false);
+        }}
+        onPointerUp={finish}
+        onLostPointerCapture={finish}
+        onPointerCancel={() => stop()}
+        onKeyDown={(event) => {
+          if (event.altKey || event.ctrlKey || event.metaKey) return;
+          const directions: Record<string, [number, number]> = {
+            ArrowLeft: [-0.08, 0],
+            ArrowRight: [0.08, 0],
+            ArrowUp: [0, -0.08],
+            ArrowDown: [0, 0.08],
+          };
+          if (directions[event.key]) {
+            event.preventDefault();
+            nudge(...directions[event.key]);
+          } else if (event.key === "Escape") {
+            event.preventDefault();
+            stop();
+          } else if (event.key === " ") {
+            event.preventDefault();
+            if (playing) stop();
+            else begin();
+          }
         }}
       >
         <span className="loom-stage-label" aria-hidden="true">
@@ -125,7 +257,11 @@ export function GravityLoom() {
         )}
         <span className="loom-stage-caption" aria-hidden="true">
           {attractors.length} ATTRACTORS /{" "}
-          {playing && !reduced ? "WEAVING" : "STILL"}
+          {dragging
+            ? "FOLLOWING YOUR HAND"
+            : playing && !reduced
+              ? "WEAVING"
+              : "DRAG A POINT TO BEGIN"}
         </span>
       </div>
       <div className="loom-controls">
@@ -138,7 +274,7 @@ export function GravityLoom() {
                 if (mode === flow) return;
                 setFlow(mode);
                 setFeedback(
-                  `${mode === "orbit" ? "Orbit" : "Weave"} flow selected. The trails start a new pattern.`,
+                  `${mode === "orbit" ? "Orbit" : "Weave"} flow selected. Your existing threads are preserved.`,
                 );
               }}
             >
@@ -154,11 +290,8 @@ export function GravityLoom() {
                 stop();
                 setFeedback("Paused. Your woven trails stay in place.");
               } else {
-                renderer.current?.play();
-                setPlaying(true);
-                setFeedback(
-                  "Weaving light. Add an attractor or change the flow.",
-                );
+                begin();
+                setFeedback("Weaving light. Drag a point to pull the threads.");
               }
             }}
           >
@@ -168,6 +301,9 @@ export function GravityLoom() {
             onClick={() => {
               stop();
               setAttractors([...defaultAttractors]);
+              liveAttractors.current = defaultAttractors;
+              renderer.current?.reset(defaultAttractors, "orbit", 1);
+              setSelected(0);
               setFlow("orbit");
               setStrength(100);
               setPlacement("0");
@@ -192,7 +328,7 @@ export function GravityLoom() {
             onChange={(event) => {
               setStrength(Number(event.target.value));
               setFeedback(
-                "Flow strength changed. The trails start a new pattern.",
+                "Flow strength changed without restarting the threads.",
               );
             }}
           />
@@ -212,6 +348,19 @@ export function GravityLoom() {
           </select>
           <div className="loom-actions">
             <button
+              disabled={!attractors.length}
+              onClick={() => {
+                move(selected, loomPlacements[Number(placement)], true);
+                renderer.current?.nudge(selected);
+                begin();
+                setFeedback(
+                  `Point ${selected + 1} moved to ${loomPlacements[Number(placement)].label.toLowerCase()}.`,
+                );
+              }}
+            >
+              Move here
+            </button>
+            <button
               disabled={attractors.length >= MAX_ATTRACTORS}
               onClick={() => add(loomPlacements[Number(placement)])}
             >
@@ -220,7 +369,10 @@ export function GravityLoom() {
             <button
               disabled={attractors.length === 0}
               onClick={() => {
-                setAttractors(attractors.slice(0, -1));
+                const next = liveAttractors.current.slice(0, -1);
+                liveAttractors.current = next;
+                setAttractors(next);
+                setSelected(Math.min(selected, Math.max(0, next.length - 1)));
                 setFeedback(
                   `Last attractor removed. ${attractors.length - 1} remain.`,
                 );
@@ -231,6 +383,47 @@ export function GravityLoom() {
           </div>
         </div>
       </div>
+      <details className="loom-fine-controls">
+        <summary>Move a point without dragging</summary>
+        <div
+          role="group"
+          aria-label="Controlled attractor"
+          className="loom-actions"
+        >
+          {attractors.map((_, index) => (
+            <button
+              key={index}
+              aria-pressed={selected === index}
+              onClick={() => setSelected(index)}
+            >
+              Point {index + 1}
+            </button>
+          ))}
+        </div>
+        <div
+          role="group"
+          aria-label="Move selected attractor"
+          className="loom-actions"
+        >
+          <button disabled={!attractors.length} onClick={() => nudge(-0.1, 0)}>
+            Move left
+          </button>
+          <button disabled={!attractors.length} onClick={() => nudge(0.1, 0)}>
+            Move right
+          </button>
+          <button disabled={!attractors.length} onClick={() => nudge(0, -0.1)}>
+            Move up
+          </button>
+          <button disabled={!attractors.length} onClick={() => nudge(0, 0.1)}>
+            Move down
+          </button>
+        </div>
+        <p>
+          {attractors[selected]
+            ? `Point ${selected + 1}: horizontal ${Math.round(attractors[selected].x * 100)}%, vertical ${Math.round(attractors[selected].y * 100)}%.`
+            : "Add a point to begin."}
+        </p>
+      </details>
       <p className="loom-status" role="status" aria-atomic="true">
         {reduced
           ? `Static ${flow} artwork with ${attractors.length} attractors. Reduced motion is enabled. ${feedback}`
@@ -238,11 +431,13 @@ export function GravityLoom() {
             ? `Static ${flow} artwork with ${attractors.length} attractors. Canvas is unavailable. ${feedback}`
             : feedback}
       </p>
-      <p className="loom-note">
-        Tap the field to place an attractor, or choose a position and use Add
-        attractor. Up to four pulls shape the trails; changing the field starts
-        a fresh pattern. This is an artistic attraction-and-swirl model, not a
-        physics simulation.
+      <p className="loom-note" id="loom-instructions">
+        Drag a glowing point with your mouse or finger to pull the existing
+        threads. Drag empty space to move your selected point. Focus the field
+        and use arrow keys to steer, Space to play/pause, or Escape to stop.
+        Named positions, Move here, and the fine controls also work without
+        dragging. Scroll outside the field to move the page. This is kinetic
+        art, not orbital physics.
       </p>
     </div>
   );

@@ -3,29 +3,33 @@ import AxeBuilder from "@axe-core/playwright";
 
 test.describe("touch placement", () => {
   test.use({ hasTouch: true, viewport: { width: 390, height: 1000 } });
-  test("a phone can tap the field and use placement buttons without autoplay", async ({
+  test("a phone tap directly pulls a point and starts the threads; controls add points", async ({
     page,
   }) => {
     await page.goto("/#gravity-loom");
     const exhibit = page.locator("#gravity-loom");
     await exhibit.locator(".loom-stage").tap({ position: { x: 100, y: 120 } });
-    await expect(exhibit.getByRole("status")).toContainText("3 attractors");
+    await expect(exhibit.getByRole("status")).toContainText("Point 1 moved");
+    await expect(exhibit.locator(".loom-stage")).toHaveAttribute(
+      "data-playing",
+      "true",
+    );
+    await exhibit
+      .getByRole("button", { name: "Add attractor", exact: true })
+      .tap();
     await exhibit
       .getByRole("button", { name: "Add attractor", exact: true })
       .tap();
     await expect(
       exhibit.getByRole("button", { name: "Add attractor", exact: true }),
     ).toBeDisabled();
-    await expect(exhibit.locator(".loom-stage")).toHaveAttribute(
-      "data-playing",
-      "false",
-    );
   });
 });
 
 test("loom plays, preserves paused trails, changes flow and resets through keyboard controls", async ({
   page,
 }) => {
+  await page.setViewportSize({ width: 1280, height: 1100 });
   await page.goto("/#gravity-loom");
   const exhibit = page.locator("#gravity-loom");
   const stage = exhibit.locator(".loom-stage");
@@ -55,6 +59,11 @@ test("loom plays, preserves paused trails, changes flow and resets through keybo
   );
   expect(await pixels()).toBe(paused);
   await exhibit
+    .getByRole("button", { name: "Weave", exact: true })
+    .press("Enter");
+  await expect(stage).toHaveAttribute("data-flow", "weave");
+  expect(await pixels()).toBe(paused);
+  await exhibit
     .getByRole("button", { name: "Orbit", exact: true })
     .press("Enter");
   expect(await pixels()).toBe(paused);
@@ -82,7 +91,7 @@ test("loom plays, preserves paused trails, changes flow and resets through keybo
   ).toHaveValue("100");
 });
 
-test("buttons and field placement respect attractor bounds without autoplay", async ({
+test("point controls respect attractor limits without autoplay", async ({
   page,
 }) => {
   await page.goto("/#gravity-loom");
@@ -92,14 +101,12 @@ test("buttons and field placement respect attractor bounds without autoplay", as
     .getByRole("button", { name: "Add attractor", exact: true })
     .press("Enter");
   await expect(exhibit.getByRole("status")).toContainText("3 attractors");
-  await exhibit.locator(".loom-stage").click({ position: { x: 90, y: 90 } });
+  await exhibit
+    .getByRole("button", { name: "Add attractor", exact: true })
+    .press("Enter");
   await expect(
     exhibit.getByRole("button", { name: "Add attractor", exact: true }),
   ).toBeDisabled();
-  await exhibit.locator(".loom-stage").click({ position: { x: 70, y: 70 } });
-  await expect(exhibit.getByRole("status")).toContainText(
-    "Four attractors is the limit",
-  );
   for (let i = 0; i < 4; i++)
     await exhibit
       .getByRole("button", { name: "Remove last", exact: true })
@@ -111,6 +118,105 @@ test("buttons and field placement respect attractor bounds without autoplay", as
     "data-playing",
     "false",
   );
+});
+
+test("mouse dragging captures the pointer, moves the selected point and keeps the live field running", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 1100 });
+  await page.goto("/#gravity-loom");
+  const exhibit = page.locator("#gravity-loom");
+  const stage = exhibit.locator(".loom-stage");
+  await expect(stage).toBeVisible();
+  const box = await stage.boundingBox();
+  if (!box) throw new Error("Missing field");
+  const x = box.x + box.width / 2;
+  const y = box.y + box.height / 2;
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await expect(stage).toHaveAttribute("data-dragging", "true");
+  await expect(stage).toHaveAttribute("data-playing", "true");
+  await page.mouse.move(x + 90, y + 40, { steps: 12 });
+  await page.mouse.up();
+  await expect(stage).toHaveAttribute("data-dragging", "false");
+  await expect(stage).toHaveAttribute("data-playing", "true");
+  await exhibit
+    .getByText("Move a point without dragging", { exact: true })
+    .click();
+  await expect(exhibit.locator(".loom-fine-controls p")).not.toContainText(
+    "horizontal -36%",
+  );
+  await stage.focus();
+  await stage.press("Escape");
+  await expect(stage).toHaveAttribute("data-playing", "false");
+});
+
+test("keyboard and single-click alternatives steer the same field, including reduced motion", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 1100 });
+  await page.goto("/#gravity-loom");
+  const exhibit = page.locator("#gravity-loom");
+  const stage = exhibit.locator(".loom-stage");
+  await stage.focus();
+  await stage.press("ArrowRight");
+  await expect(stage).toHaveAttribute("data-playing", "true");
+  await exhibit
+    .getByText("Move a point without dragging", { exact: true })
+    .click();
+  await expect(exhibit.locator(".loom-fine-controls p")).toContainText(
+    "horizontal -28%",
+  );
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await exhibit
+    .getByRole("button", { name: "Move right", exact: true })
+    .press("Enter");
+  await expect(exhibit.locator(".loom-fine-controls p")).toContainText(
+    "horizontal -18%",
+  );
+  await expect(stage).toHaveAttribute("data-playing", "false");
+  await exhibit.getByLabel("Attractor placement").selectOption("2");
+  await exhibit.getByRole("button", { name: "Move here", exact: true }).click();
+  await expect(exhibit.locator(".loom-fine-controls p")).toContainText(
+    "horizontal 50%",
+  );
+  await expect(stage).toHaveAttribute("data-playing", "false");
+});
+
+test("cancellation and hidden-tab interruption release a drag without restarting on return", async ({
+  page,
+}) => {
+  await page.goto("/#gravity-loom");
+  const stage = page.locator("#gravity-loom .loom-stage");
+  await expect(stage).toBeVisible();
+  const box = await stage.boundingBox();
+  if (!box) throw new Error("Missing field");
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down();
+  await expect(stage).toHaveAttribute("data-dragging", "true");
+  await stage.dispatchEvent("pointercancel", { pointerId: 1, isPrimary: true });
+  await expect(stage).toHaveAttribute("data-dragging", "false");
+  await expect(stage).toHaveAttribute("data-playing", "false");
+  await page.mouse.up();
+  await page.mouse.down();
+  await expect(stage).toHaveAttribute("data-dragging", "true");
+  await page.evaluate(() => {
+    Object.defineProperty(document, "hidden", {
+      configurable: true,
+      value: true,
+    });
+    document.dispatchEvent(new Event("visibilitychange"));
+  });
+  await expect(stage).toHaveAttribute("data-dragging", "false");
+  await page.evaluate(() => {
+    Object.defineProperty(document, "hidden", {
+      configurable: true,
+      value: false,
+    });
+    document.dispatchEvent(new Event("visibilitychange"));
+  });
+  await page.mouse.up();
+  await expect(stage).toHaveAttribute("data-playing", "false");
 });
 
 test("navigation, hidden documents, offscreen changes and reduced motion stop the loom", async ({

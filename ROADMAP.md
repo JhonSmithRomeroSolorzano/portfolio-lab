@@ -481,3 +481,11 @@ Verification: `npm run check` passes with 147 unit/integration/architecture test
 - [x] Review desktop/mobile layouts in both themes, static and playing, keyboard actions, touch placement, and 200% text reflow. Pass the three-run mobile Lighthouse gate with median LCP 1.99s, CLS 0.0004, and TBT 0ms. These are local simulated measurements, not hosted real-user results.
 
 Next: gather feedback on the two visual art experiences rather than expanding the collection again. Human screen-reader listening and further verified professional/contact details remain separate follow-ups.
+
+## Gravity Loom direct manipulation — October 14 feedback
+
+- [x] Replace click-to-configure behavior with mouse/touch dragging of a selected live attractor. Hold its pull more strongly and retain a short release impulse so threads visibly follow the user's hand. Capture the pointer, handle cancellation, and clear active gestures on interruption.
+- [x] Preserve particles, velocities, and trail histories through live field, strength, and flow edits. Start from the displayed preview's actual final state instead of reseeding on Play; only Reset rebuilds normal-motion artwork.
+- [x] Add focused-field arrow steering, Space play/pause, Escape stop, named-position Move here, and optional native directional controls. Movement explicitly starts playback, while hover does not. Keep reduced-motion and canvas-unavailable modes static, with page scrolling available outside the touch-drag field.
+- [x] Pass `npm run check` with 152 unit/integration/architecture tests and all 160 Chromium/WebKit journeys. Cover continuous scene endpoints, stronger held-point response, moving-field bounds, preserved paused histories, pointer capture/release, cancellation, keyboard alternatives, and static modes.
+- [x] Inspect live mouse and native Chromium touch drags at desktop/320px widths in both themes, including unchanged page scroll during a touch drag. Pass three-run mobile performance gates: median LCP 2.04s, CLS 0.0004, and TBT 0ms (local simulation, not real-user measurements).

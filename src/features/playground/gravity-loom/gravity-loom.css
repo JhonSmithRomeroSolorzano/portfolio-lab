@@ -36,9 +36,35 @@
   border: 1px solid var(--line);
   border-radius: 12px;
   overflow: hidden;
-  cursor: crosshair;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
   background:
     radial-gradient(ellipse, #e9d1ab25, transparent 70%), var(--paper);
+}
+.loom-stage[data-dragging="true"] {
+  cursor: grabbing;
+}
+.loom-stage:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 4px;
+}
+.loom-fine-controls {
+  margin-top: 20px;
+  border-top: 1px solid var(--line);
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+.loom-fine-controls summary {
+  min-height: 44px;
+  padding: 12px 0;
+  cursor: pointer;
+}
+.loom-fine-controls .loom-actions {
+  margin-top: 12px;
+}
+.loom-fine-controls p {
+  color: var(--muted);
 }
 .loom-stage canvas,
 .loom-stage svg {

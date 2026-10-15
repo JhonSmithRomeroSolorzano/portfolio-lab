@@ -30,6 +30,17 @@ export function addLoomAttractor(
   ];
 }
 
+export function moveLoomAttractor(
+  points: readonly LoomPoint[],
+  index: number,
+  point: LoomPoint,
+): LoomPoint[] {
+  if (!Number.isInteger(index) || index < 0 || index >= points.length)
+    return [...points];
+  const moved = addLoomAttractor([], point)[0];
+  return points.map((current, i) => (i === index ? moved : current));
+}
+
 export function seedLoom(count: number): LoomParticle[] {
   if (!Number.isInteger(count) || count < 1 || count > 120)
     throw new Error("Loom particle count must be between 1 and 120.");
@@ -52,6 +63,7 @@ export function stepLoom(
   attractors: readonly LoomPoint[],
   flow: LoomFlow,
   strength: number,
+  heldIndex?: number,
 ): LoomParticle[] {
   if (!Number.isFinite(strength) || strength < 0.5 || strength > 1.5)
     throw new Error("Flow strength must be between 0.5 and 1.5.");
@@ -78,8 +90,10 @@ export function stepLoom(
       const dy = center.y - p.y;
       const distance = dx * dx + dy * dy + 0.08;
       const spin = flow === "weave" && i % 2 ? -1 : 1;
-      ax += ((dx * 0.16 - dy * spin * 0.22) * strength) / distance;
-      ay += ((dy * 0.16 + dx * spin * 0.22) * strength) / distance;
+      const pull = i === heldIndex ? 1.8 : 0.16;
+      const swirl = i === heldIndex ? 0.08 : 0.22;
+      ax += ((dx * pull - dy * spin * swirl) * strength) / distance;
+      ay += ((dy * pull + dx * spin * swirl) * strength) / distance;
     });
     let vx = (p.vx + ax / 60) * 0.994;
     let vy = (p.vy + ay / 60) * 0.994;
@@ -104,18 +118,27 @@ export function stepLoom(
 }
 
 /** A deterministic finished drawing for the initial view and static alternatives. */
+export function createLoomScene(
+  attractors: readonly LoomPoint[],
+  flow: LoomFlow,
+  strength: number,
+  count = 72,
+) {
+  let particles = seedLoom(count);
+  const trails: LoomPoint[][] = particles.map((p) => [{ x: p.x, y: p.y }]);
+  for (let step = 1; step <= 180; step++) {
+    particles = stepLoom(particles, attractors, flow, strength);
+    if (step % 3 === 0)
+      particles.forEach((p, i) => trails[i].push({ x: p.x, y: p.y }));
+  }
+  return { particles, trails };
+}
+
 export function loomPreview(
   attractors: readonly LoomPoint[],
   flow: LoomFlow,
   strength: number,
   count = 72,
 ): LoomPoint[][] {
-  let particles = seedLoom(count);
-  const trails: LoomPoint[][] = particles.map((p) => [{ x: p.x, y: p.y }]);
-  for (let step = 0; step < 180; step++) {
-    particles = stepLoom(particles, attractors, flow, strength);
-    if (step % 3 === 0)
-      particles.forEach((p, i) => trails[i].push({ x: p.x, y: p.y }));
-  }
-  return trails;
+  return createLoomScene(attractors, flow, strength, count).trails;
 }

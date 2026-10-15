@@ -1,5 +1,5 @@
 import {
-  loomPreview,
+  createLoomScene,
   seedLoom,
   stepLoom,
   type LoomFlow,
@@ -20,7 +20,11 @@ export function createLoomRenderer(canvas: HTMLCanvasElement) {
   let previous = 0;
   let accumulator = 0;
   let playing = false;
-  let started = false;
+  let ready = false;
+  let selected = 0;
+  let held: number | undefined;
+  let boost: number | undefined;
+  let boostRemaining = 0;
   let width = 1;
   let height = 1;
 
@@ -72,9 +76,17 @@ export function createLoomRenderer(canvas: HTMLCanvasElement) {
       const x = width / 2 + p.x * scale;
       const y = height / 2 + p.y * scale;
       ctx.strokeStyle = dark ? "#ffcc8a" : "#975014";
-      ctx.lineWidth = 1;
+      if (i === selected) {
+        ctx.fillStyle = ctx.strokeStyle;
+        ctx.globalAlpha = i === held ? 0.2 : 0.08;
+        ctx.beginPath();
+        ctx.arc(x, y, i === held ? 30 : 24, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+      ctx.lineWidth = i === selected ? 2 : 1;
       ctx.beginPath();
-      ctx.arc(x, y, 10, 0, Math.PI * 2);
+      ctx.arc(x, y, i === held ? 18 : i === selected ? 14 : 10, 0, Math.PI * 2);
       ctx.stroke();
       ctx.beginPath();
       ctx.arc(x, y, 3, 0, Math.PI * 2);
@@ -88,7 +100,14 @@ export function createLoomRenderer(canvas: HTMLCanvasElement) {
     if (previous) accumulator += Math.min((now - previous) / 1000, 0.05);
     previous = now;
     while (accumulator >= 1 / 60) {
-      particles = stepLoom(particles, attractors, flow, strength);
+      particles = stepLoom(
+        particles,
+        attractors,
+        flow,
+        strength,
+        held ?? (boostRemaining > 0 ? boost : undefined),
+      );
+      boostRemaining = Math.max(0, boostRemaining - 1 / 60);
       particles.forEach((p, i) => {
         trails[i].push({ x: p.x, y: p.y });
         if (trails[i].length > 90) trails[i].shift();
@@ -103,6 +122,15 @@ export function createLoomRenderer(canvas: HTMLCanvasElement) {
     playing = false;
     previous = 0;
     accumulator = 0;
+  }
+  function resetScene() {
+    const scene = createLoomScene(attractors, flow, strength, count);
+    particles = scene.particles;
+    trails = scene.trails;
+    ready = true;
+    held = undefined;
+    boost = undefined;
+    boostRemaining = 0;
   }
   function resize() {
     const box = canvas.getBoundingClientRect();
@@ -127,25 +155,53 @@ export function createLoomRenderer(canvas: HTMLCanvasElement) {
   });
   resize();
   return {
-    configure(next: readonly LoomPoint[], mode: LoomFlow, force: number) {
+    configure(
+      next: readonly LoomPoint[],
+      mode: LoomFlow,
+      force: number,
+      staticMode = false,
+    ) {
       attractors = next;
       flow = mode;
       strength = force;
-      particles = seedLoom(count);
-      trails = playing
-        ? particles.map((p) => [{ x: p.x, y: p.y }])
-        : loomPreview(next, mode, force, count);
-      started = playing;
+      if (!ready || staticMode) resetScene();
+      draw();
+    },
+    move(next: readonly LoomPoint[], staticMode: boolean) {
+      attractors = next;
+      if (staticMode) resetScene();
+      draw();
+    },
+    select(index: number) {
+      selected = index;
+      draw();
+    },
+    grab(index: number) {
+      held = index;
+      draw();
+    },
+    release() {
+      boost = held;
+      boostRemaining = 0.65;
+      held = undefined;
+      draw();
+    },
+    nudge(index: number) {
+      boost = index;
+      boostRemaining = 0.65;
+    },
+    reset(next: readonly LoomPoint[], mode: LoomFlow, force: number) {
+      pause();
+      attractors = next;
+      flow = mode;
+      strength = force;
+      selected = 0;
+      resetScene();
       draw();
     },
     play() {
       if (playing) return;
       playing = true;
-      if (!started) {
-        particles = seedLoom(count);
-        trails = particles.map((p) => [{ x: p.x, y: p.y }]);
-        started = true;
-      }
       frame = requestAnimationFrame(tick);
     },
     pause,

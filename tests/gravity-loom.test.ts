@@ -6,6 +6,8 @@ import {
   loomPreview,
   seedLoom,
   stepLoom,
+  moveLoomAttractor,
+  createLoomScene,
 } from "../src/domain/playground/gravity-loom.ts";
 
 test("loom seeding and previews are deterministic and different flows weave different trails", () => {
@@ -16,6 +18,42 @@ test("loom seeding and previews are deterministic and different flows weave diff
   assert.equal(orbit.length, 48);
   assert.equal(orbit[0].length, 61);
   for (const count of [0, 121, 1.5, NaN]) assert.throws(() => seedLoom(count));
+});
+
+test("moving a point preserves its identity, count and other points, and clamps safely", () => {
+  const moved = moveLoomAttractor(defaultAttractors, 0, { x: 4, y: -4 });
+  assert.equal(moved.length, 2);
+  assert.deepEqual(moved[0], { x: 0.8, y: -0.8 });
+  assert.deepEqual(moved[1], defaultAttractors[1]);
+  assert.equal(defaultAttractors[0].x, -0.36);
+  assert.deepEqual(
+    moveLoomAttractor(defaultAttractors, 9, { x: 0, y: 0 }),
+    defaultAttractors,
+  );
+  assert.throws(() =>
+    moveLoomAttractor(defaultAttractors, 0, { x: NaN, y: 0 }),
+  );
+});
+
+test("preview endpoints and velocities form a continuous live scene; held points pull harder", () => {
+  const scene = createLoomScene(defaultAttractors, "orbit", 1, 48);
+  scene.particles.forEach((p, i) =>
+    assert.deepEqual(scene.trails[i].at(-1), { x: p.x, y: p.y }),
+  );
+  const particles = [{ x: 0, y: 0, vx: 0, vy: 0 }];
+  const points = [{ x: 0.4, y: 0 }];
+  const normal = stepLoom(particles, points, "orbit", 1)[0];
+  const held = stepLoom(particles, points, "orbit", 1, 0)[0];
+  assert.ok(held.vx > normal.vx * 5);
+  let current = seedLoom(48);
+  for (let i = 0; i < 1200; i++) {
+    const moving = [{ x: Math.sin(i / 30) * 0.8, y: Math.cos(i / 20) * 0.8 }];
+    current = stepLoom(current, moving, "weave", 1.5, 0);
+    for (const p of current) {
+      assert.ok(Math.abs(p.x) <= 0.94 && Math.abs(p.y) <= 0.94);
+      assert.ok(Math.hypot(p.vx, p.vy) <= 1.2 + 1e-10);
+    }
+  }
 });
 
 test("long loom runs remain finite, bounded, and independent of input mutation", () => {

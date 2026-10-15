@@ -146,9 +146,9 @@ export const experiences: readonly Experience[] = [
     style: "loom",
     engineering: {
       decision:
-        "A deterministic attraction-and-swirl field advances at fixed steps. The canvas renderer keeps bounded trail histories; React handles controls and feedback.",
+        "A deterministic attraction-and-swirl field advances at fixed steps. Dragging moves a live attractor without resetting particles or trails; React handles controls and feedback.",
       tradeoff:
-        "This is kinetic artwork, not orbital physics. Four attractors and fewer mobile threads bound the work. Placement controls replace pointer-only interaction, and static drawings support reduced motion and unavailable canvas.",
+        "This is kinetic artwork, not orbital physics. Four attractors and fewer mobile threads bound the work. Keyboard steering and native movement controls replace drag-only interaction, and static drawings support reduced motion and unavailable canvas.",
       verification:
         "bounded trajectories, deterministic previews, attractor limits, keyboard and touch placement, actual pause stability, motion interruption, and reflow in both themes.",
       source: "src/features/playground/gravity-loom",
