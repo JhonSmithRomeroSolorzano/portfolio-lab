@@ -156,4 +156,24 @@ export const experiences: readonly Experience[] = [
     load: () =>
       import("./gravity-loom/GravityLoom").then((module) => module.GravityLoom),
   },
+  {
+    id: "pin-lock",
+    title: "Pin & bolt",
+    titleId: "lock-title",
+    category: "MECHANICAL PUZZLE",
+    description: "Small moves. Big unlock.",
+    action: "Move the mechanism ↗",
+    artwork: ["▥", "↔", "▰"],
+    style: "lock",
+    engineering: {
+      decision:
+        "Anatomy's beveled solids form a cutaway lock. A pure five-pin model drives alignment, visible pin positions, spring shapes, and whether the bolt can slide.",
+      tradeoff:
+        "This is an authored sliding-lock puzzle, not a security simulation. Native sliders and step buttons duplicate direct pin dragging; reduced motion keeps every state without decorative movement.",
+      verification:
+        "all authored cuts, blocked attempts, direct manipulation, visible bolt and cover displacement, keyboard alternatives, reduced motion, and narrow-screen reflow.",
+      source: "src/features/playground/pin-lock",
+    },
+    load: () => import("./pin-lock/PinLock").then((module) => module.PinLock),
+  },
 ];

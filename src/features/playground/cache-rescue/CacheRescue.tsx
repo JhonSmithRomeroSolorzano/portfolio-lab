@@ -1,6 +1,5 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { CacheArena } from "./CacheArena";
-import { CachePress } from "./CachePress";
 import { ROUNDS } from "./rounds";
 import { useCacheRescue } from "./useCacheRescue";
 
@@ -26,7 +25,6 @@ export function CacheRescue() {
     togglePlayback,
   } = useCacheRescue();
   const launch = useRef<HTMLButtonElement>(null);
-  const [view, setView] = useState<"machine" | "map">("machine");
 
   return (
     <div className={`cache-game ${playing ? "is-playing" : ""}`}>
@@ -126,32 +124,7 @@ export function CacheRescue() {
         </div>
       </div>
       <div className="cache-console" ref={arena}>
-        <div className="cache-views" role="group" aria-label="Visualization">
-          <button
-            aria-pressed={view === "machine"}
-            onClick={() => setView("machine")}
-          >
-            Machine
-          </button>
-          <button aria-pressed={view === "map"} onClick={() => setView("map")}>
-            Request map
-          </button>
-        </div>
-        {view === "machine" ? (
-          <CachePress
-            run={run}
-            time={time}
-            settings={settings}
-            counts={counts}
-          />
-        ) : (
-          <CacheArena
-            run={run}
-            time={time}
-            settings={settings}
-            counts={counts}
-          />
-        )}
+        <CacheArena run={run} time={time} settings={settings} counts={counts} />
         <p
           className="cache-feedback"
           role="status"
@@ -163,7 +136,7 @@ export function CacheRescue() {
               ? `Mission complete. ${counts.done} replies, one database read.${unsharedReads > 1 ? ` Sharing avoided ${unsharedReads - 1} duplicate reads.` : " This time, both strategies need only one read: the cache refills before the next arrival."}`
               : `${counts.done} replies delivered, but ${counts.queries} database reads. Try sharing the first fetch to avoid duplicate work.`
             : time < 0
-              ? `Choose a strategy, then send the crowd. Every ${view === "machine" ? "card" : "dot"} is one request.`
+              ? "Choose a strategy, then send the crowd. Every dot is one request."
               : `${counts.done} of ${settings.requests} replies delivered. ${counts.queries} database ${counts.queries === 1 ? "read" : "reads"} started.`}
         </p>
         {finished && (

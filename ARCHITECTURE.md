@@ -1,6 +1,6 @@
 # Architecture
 
-The portfolio is a small React application with six optional experiences. Its architecture separates reasons to change without adding a framework, service container, or inheritance hierarchy.
+The portfolio is a small React application with seven optional experiences. Its architecture separates reasons to change without adding a framework, service container, or inheritance hierarchy.
 
 This document owns technical structure, dependency contracts, and design rationale. For agent workflow, verification commands, content safeguards, and delivery instructions, see [AGENTS.md](AGENTS.md).
 
@@ -23,6 +23,7 @@ src/
       algorithm-garden/            UI and CSS
       signal-sculpture/            Controls, canvas renderer, CSS
       gravity-loom/                Field controls, trail renderer, CSS
+      pin-lock/                    Direct manipulation, controls, authored SVG data, CSS
   domain/
     playground/                    Pure cache/puzzle/traversal models
     simulation/                    Maintained systems models used by API and CLI
@@ -44,7 +45,7 @@ e2e/                               Production Chromium and WebKit journeys
 
 The Node API imports the simulation domain. The résumé generator imports verified `features/portfolio/data` without importing presentation components. The archive may use maintained modules, but maintained application/server/scripts code must never depend on the archive. Tests can import either side to retain coverage of historical portable formats and adapters.
 
-The authoring-only `scripts/build-cache-press.mjs` has one explicit dependency exception for `.opencode/skills/anatomy/kit/iso-kit.mjs`. It writes checked-in SVG geometry for Cache Rescue; application modules import only that finished data, never skill code. Ordinary builds do not run the authoring tool. See [the press design and provenance](docs/CACHE_PRESS.md).
+The authoring-only `scripts/build-pin-lock.mjs` has one explicit dependency exception for `.opencode/skills/anatomy/kit/iso-kit.mjs`. It uses the domain's cut patterns to write checked-in SVG geometry for Pin & bolt; application modules import only that finished data, never skill code. Ordinary builds do not run the authoring tool. See [the lock design and provenance](docs/ANATOMY_LOCK.md).
 
 [Dependency tests](tests/architecture.test.ts) check static imports, re-exports, and literal lazy imports against those directions. The [domain TypeScript configuration](tsconfig.domain.json) independently prevents browser/server APIs from leaking into pure models. The [main TypeScript configuration](tsconfig.json) also checks tests, browser journeys, and retained reference source. Archived UI is excluded from lint evolution, but remains type-checked and its behavioral tests run.
 
@@ -56,7 +57,7 @@ The authoring-only `scripts/build-cache-press.mjs` has one explicit dependency e
 - **Dependency inversion:** feature policy stays outside browser subscription utilities, and the API/CLI depend on pure models. No abstract base classes or dependency-injection container are needed for this app. Substitutability is relevant at these contracts, not a reason to introduce inheritance.
 - **KISS and DRY:** keep each game distinct. Share browser lifecycle and common UI primitives, not one configurable animation engine for every experience. Career facts are authored once and reused by the page and résumé downloads.
 
-Cache Rescue's Machine and Request map views consume the same request run, clock, and counts. Switching views does not reset or pause the experiment. The press uses precomputed static SVG groups, projected card placements, and a die position derived from the first fetch's progress; there is no independent animation loop, idle tour, or graphics dependency. Existing explicit playback and interruption/reduced-motion behavior remain authoritative.
+Pin & bolt uses a pure five-pin alignment model, shared cut patterns, and precomputed Anatomy SVG groups/spring paths. React owns discrete heights, bolt state, and cover lift, without an idle loop or per-frame geometry rebuild. Pointer capture preserves the grab offset; the existing interruption hook releases the gesture on navigation, offscreen changes, hidden tabs, or motion preference changes. Native sliders and step buttons provide equivalent controls. Opening moves the lower assembly only when all pin joins align; input is locked until relocking. Reduced motion removes finite CSS feedback/slide transitions without removing any controls or results. The earlier Cache Rescue press was removed after user feedback; Cache Rescue again renders only its original request map.
 
 ## Failure boundaries and styling
 

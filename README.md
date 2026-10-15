@@ -34,11 +34,9 @@ Each experience entry includes a short role summary alongside its detailed contr
 
 ## Labs & play
 
-The collection has **six peer experiences**, reached through illustrated cards and direct anchors. Each has its own visual identity and a short interaction. There is no multi-lab dropdown, expanded dashboard, or nested catalog. Experience and contact stay above the collection.
+The collection has **seven peer experiences**, reached through illustrated cards and direct anchors. Each has its own visual identity and a short interaction. There is no multi-lab dropdown, expanded dashboard, or nested catalog. Experience and contact stay above the collection.
 
 - **[Cache Rescue](https://jhonsmithromerosolorzano.github.io/portfolio-lab/#cache-rescue)**: choose independent reads or a shared fetch, send the crowd, and try to deliver every reply with one database read. Three challenges compare a simultaneous rush, overlapping arrivals, and a sparse stream. Dots move between the crowd, database, shared waiting, and delivered replies. Results explain why sharing avoids duplicate work—or why sparse arrivals need only one read either way. Playback starts only on request, supports pause/resume/reset, and stops when leaving the view, navigating elsewhere, hiding the tab, or changing motion preferences. Reduced motion shows a static result. The deterministic model covers one expired key and one coordinator, fixed successful fetches, unlimited parallel reads, and immediate cache hits. It is an illustration, not a production measurement. The concept follows the user's [visual cache-stampede inspiration](https://www.facebook.com/reel/2912294019139465/); the code and artwork are original.
-
-  Its default **Machine** view is an Anatomy-built isometric duplicating press: request cards collect in trays while a moving die represents the first origin fetch. **Request map** retains the dot visualization. Both share the same model, counts, playback, and predictions; switching views preserves the round. The press is a visual analogy, not a mechanical throughput simulation. See [design and provenance](docs/CACHE_PRESS.md).
 
 - **[Connection puzzle](https://jhonsmithromerosolorzano.github.io/portfolio-lab/#connection-game)**: rotate a 4×4 board to connect its inlet and outlet. Three authored puzzles include hints, undo, reset, keyboard navigation, and validated browser-local progress. Click or Space rotates; arrow keys move between tiles. Open tabs on the same site share saved boards while keeping their selected puzzle and keyboard focus. External changes clear only the affected boards' Undo history and hints; a stale action loads the latest save before asking you to try again. Saves are local to the current site, with honest feedback when storage is unavailable. There is no clock or account.
 - **[Motion Studio](https://jhonsmithromerosolorzano.github.io/portfolio-lab/#motion-studio)**: compare four timing curves against a steady reference using the same distance, duration, and clock. Pick a curve, then explicitly play both lanes. Reduced motion shows the end states. Control changes, hidden tabs, motion-preference changes, navigation away, and scrolling the experience out of view cancel playback. Returning waits for an explicit replay.
@@ -48,11 +46,13 @@ The collection has **six peer experiences**, reached through illustrated cards a
 
 - **[Gravity Loom](https://jhonsmithromerosolorzano.github.io/portfolio-lab/#gravity-loom)**: drag a glowing attractor with mouse or touch to pull the existing threads in real time. Dragging empty space moves the selected point; a stronger held-point pull makes the response perceptible without teleporting particles or clearing trails. Dragging, arrow-key steering, and movement buttons explicitly start playback; hover and scrolling do not. Space plays/pauses the focused field and Escape stops it. Native direction buttons and named positions provide alternatives to dragging. Add up to four attractors, choose Orbit or counter-rotating Weave, and adjust strength without restarting the scene. Only Reset rebuilds the live artwork; reduced motion updates static drawings without animated playback, and SVG retains controls without canvas. Playback stops on navigation, offscreen changes, hidden tabs, or motion-preference changes. The model is kinetic artwork, not orbital physics. Mobile uses 48 threads and wider screens 96, with bounded trail histories and no graphics dependency.
 
-The six pieces download independently as they approach the viewport or when followed directly. Failed downloads offer reload recovery; runtime render/effect errors are isolated to the affected experience and offer a local retry. Both keep the résumé usable. Their styles load with the page. Native dynamic imports avoid a WebKit recovery issue triggered by module preloading shared optional dependencies. `#lab` reaches the collection; old `#signal-lab` anchors also reach it. Old dashboard query parameters no longer configure the public experiences.
+- **[Pin & bolt](https://jhonsmithromerosolorzano.github.io/portfolio-lab/#pin-lock)**: directly drag five brass pins or adjust them with native sliders and step buttons. Each move changes the cutaway lock, its steel followers, and its springs. Align all joins with the shear line to slide the bolt out; an early attempt highlights the blocking pins. Three cut patterns, relocking, reset, and a movable inspection cover keep the interaction repeatable. Reduced motion preserves all states without transitions. This is an authored mechanical puzzle, not a real security simulation. Built with the installed Anatomy skill; [design and provenance](docs/ANATOMY_LOCK.md).
+
+The seven pieces download independently as they approach the viewport or when followed directly. Failed downloads offer reload recovery; runtime render/effect errors are isolated to the affected experience and offer a local retry. Both keep the résumé usable. Their styles load with the page. Native dynamic imports avoid a WebKit recovery issue triggered by module preloading shared optional dependencies. `#lab` reaches the collection; old `#signal-lab` anchors also reach it. Old dashboard query parameters no longer configure the public experiences.
 
 ### Earlier systems experiments
 
-The original Signal Lab dashboard is retired from the public portfolio. Its presentation and browser adapters live in `archive/signal-lab/`; pure models remain in `src/domain/`. The optional API, CLI, and unit/integration coverage are retained. Browser tests now cover the six current experiences rather than the removed dashboard workflows. The [case study](CASE_STUDY.md) documents that earlier model and its assumptions; the [optional local Node API](server/README.md) and batch CLI can still run it.
+The original Signal Lab dashboard is retired from the public portfolio. Its presentation and browser adapters live in `archive/signal-lab/`; pure models remain in `src/domain/`. The optional API, CLI, and unit/integration coverage are retained. Browser tests now cover the seven current experiences rather than the removed dashboard workflows. The [case study](CASE_STUDY.md) documents that earlier model and its assumptions; the [optional local Node API](server/README.md) and batch CLI can still run it.
 
 ## Run locally
 
@@ -83,9 +83,9 @@ Open this repository in OpenCode and mention `@ui-ux-pro-max` in a UI task. If i
 
 ### Anatomy skill
 
-[Anatomy](https://github.com/wheresryan22/anatomy) is installed for this project at `.opencode/skills/anatomy`, with its MIT license, kit, references, scripts, and examples. Mention `@anatomy` for a detailed interactive isometric figure; restart OpenCode if a running session does not discover it. The pinned upstream revision and illustration design are recorded in [the Cache Press notes](docs/CACHE_PRESS.md). Installation adds no application dependency.
+[Anatomy](https://github.com/wheresryan22/anatomy) is installed for this project at `.opencode/skills/anatomy`, with its MIT license, kit, references, scripts, and examples. Mention `@anatomy` for a detailed interactive isometric figure; restart OpenCode if a running session does not discover it. The pinned upstream revision and illustration design are recorded in [the Pin & bolt notes](docs/ANATOMY_LOCK.md). Installation adds no application dependency.
 
-`npm run build:press` regenerates Cache Rescue's checked-in SVG geometry; `npm run build:press -- --check` verifies it without writing. The kit runs only in this authoring step, not in the browser or ordinary production builds. Other projects can use the upstream [installation instructions](https://github.com/wheresryan22/anatomy#install).
+`npm run build:lock` regenerates Pin & bolt's checked-in SVG geometry; `npm run build:lock -- --check` verifies it without writing. The kit runs only in this authoring step, not in the browser or ordinary production builds. Other projects can use the upstream [installation instructions](https://github.com/wheresryan22/anatomy#install).
 
 ### Résumé downloads
 
@@ -98,7 +98,7 @@ The Experience section offers a two-page PDF and a plain-text résumé. Both are
 ```text
 src/app/                  Page composition and navigation
 src/features/portfolio/   Career content and verified résumé data
-src/features/playground/  Six independently loaded experiences
+src/features/playground/  Seven independently loaded experiences
 src/domain/               Pure models shared with the API/CLI
 src/shared/               UI primitives, browser hooks, theme, base styles
 archive/signal-lab/        Retired dashboard reference (not bundled)
@@ -142,7 +142,7 @@ The CLI accepts a file path or stdin, with one scenario per line and a 1 MiB inp
 
 The public recruiter URL is <https://jhonsmithromerosolorzano.github.io/portfolio-lab/>. Static canonical, Open Graph, and large-card metadata point to that address. `public/social-preview.svg` is the editable source for the 1200×630 JPEG sharing image. The Sites preview keeps its existing audience.
 
-Cache Rescue, the connection puzzle, Motion Studio, Algorithm Garden, Signal Sculpture, and Gravity Loom use separate JavaScript bundles. They load near the viewport, on direct anchor entry, or through the explicit load control. A failed download keeps the career content available and offers a reload to the affected experience.
+Cache Rescue, the connection puzzle, Motion Studio, Algorithm Garden, Signal Sculpture, Gravity Loom, and Pin & bolt use separate JavaScript bundles. They load near the viewport, on direct anchor entry, or through the explicit load control. A failed download keeps the career content available and offers a reload to the affected experience.
 
 `npm run test:browser` includes axe accessibility scans for both themes, keyboard journeys, 320px reflow, 200% default text-size checks, direct links, and failed-download recovery. Automated scans and accessibility-tree inspection do not replace a human screen-reader assessment.
 

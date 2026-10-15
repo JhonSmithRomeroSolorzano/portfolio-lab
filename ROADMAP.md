@@ -510,7 +510,7 @@ Next: gather feedback on the two visual art experiences rather than expanding th
 
 ## Anatomy single-flight press — October 15
 
-- [x] Install the requested Anatomy skill locally with its MIT license, kit, references, scripts, and examples pinned to an upstream commit. Record provenance and authoring commands in [the press notes](docs/CACHE_PRESS.md).
+- [x] Install the requested Anatomy skill locally with its MIT license, kit, references, scripts, and examples pinned to an upstream commit. Current provenance and authoring commands are in [the lock notes](docs/ANATOMY_LOCK.md).
 - [x] Use the kit to build an original 52-part isometric duplicating press as Cache Rescue's default Machine view. Keep the existing Request map, all six experiences, and the recruiter-first layout.
 - [x] Drive card identities, trays, origin-read counts, waiting, and delivered replies from the existing deterministic model. Derive die movement from first-fetch progress without another clock or idle autoplay. Preserve playback, predictions, and keyboard focus when switching views, with the existing reduced-motion and interruption policy.
 - [x] Keep geometry generation authoring-only, ship finished SVG data in the existing lazy Cache Rescue bundle, and enforce the exact skill-kit dependency exception without allowing application imports from skills.
@@ -520,3 +520,18 @@ Next: gather feedback on the two visual art experiences rather than expanding th
 - [x] Pass the three-run mobile Lighthouse gate with median LCP 1.98s, CLS 0.0004, and TBT 4.5ms. These are local simulated measurements, not hosted real-user results.
 
 The mechanical drawing is an analogy, not a production measurement or a model of press throughput. Human screen-reader and physical-device assessments remain separate from these automated checks.
+
+## Direct Anatomy interaction — October 15 feedback
+
+The user found the cache/press analogy unclear and requested a separate experience where input visibly changes the mechanism. This supersedes the press presentation above.
+
+- [x] Restore Cache Rescue's original request map and remove its press view, authoring script, generated art, and press-specific checks. Keep Anatomy installed.
+- [x] Add Pin & bolt as a seventh independently loaded experience: five movable pins, visible steel followers and springs, blocked-attempt feedback, a sliding bolt, three cut patterns, and a liftable inspection cover.
+- [x] Provide direct pin dragging with preserved grab offset and pointer capture, plus equivalent native sliders and step buttons. Keep alignment and opening policy in a pure model and generate geometry from the same cut patterns.
+
+- [x] Verify each authored pattern against all 7,776 combinations, input bounds, and reproducible geometry generated from the same domain cuts. Pass `npm run check` with 157 unit/integration/architecture tests and unchanged production budgets.
+- [x] Pass all 191 applicable Chromium/WebKit journeys, with the existing Chromium-only touch-injection skip. New checks assert actual pin/bolt/cover displacement, jams, all three solutions, preserved re-selection, dragging with grab offset, navigation release, and both-theme native touch controls at 320px with 200% text. An earlier run had one intermittent, unchanged WebKit Loom touch failure; the final complete run passes.
+- [x] Inspect closed/open mechanisms and the compact mobile pin chooser at 1440px/390px in both themes, plus 4× close-ups. Anatomy line checks pass with zero floating ends at initial, aligned, and open/cover-lifted states in both themes, with clean consoles. Keep the spring beam in front of its attachment points so lifting the cover does not reveal incorrectly painted wire ends.
+- [x] Pass the three-run mobile Lighthouse gate with median LCP 1.97s, CLS 0.0004, and TBT 0ms. These are local simulated measurements, not hosted real-user results.
+
+This is a mechanical puzzle, not a real security simulation. Physical-device and human screen-reader review remain separate follow-ups.
