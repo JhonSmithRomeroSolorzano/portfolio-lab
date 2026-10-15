@@ -1,0 +1,56 @@
+# Visitor and accessibility review
+
+This is a repeatable review guide, not a claim of completed human testing. Automated browser checks, axe scans, and accessibility-tree inspection cannot stand in for a visitor observation or a screen-reader listening session.
+
+## Current evidence and limits
+
+- The October 15 implementation review reproduced point jumps on off-center grabs, secondary-pointer cancellation ending the primary drag, repeated Space toggles, unchanged arrow-movement status text, small résumé links, and 11px mobile contact copy. Regression coverage lives in `e2e/review-journeys.spec.ts`.
+- Chromium and WebKit can exercise keyboard, layout, native touch taps, downloads, and semantic checks. Native touch-move/scroll injection in the new review test uses Chromium CDP and is explicitly skipped in WebKit. Neither desktop engine emulation is a physical iPhone assessment.
+- **Still pending:** a new visitor attempting the tasks below, physical-device touch review, and a human screen-reader listening session. Do not mark these complete based on automated results.
+
+## First-time visitor session
+
+Ask a willing person who has not used the experience. Explain that the interface—not the participant—is being evaluated. Do not coach them, require a recording, or publish names, private conversations, contact details, or raw interview notes.
+
+Open Gravity Loom with its normal interface visible. Give goals rather than gesture instructions:
+
+1. “Make the drawing change direction.”
+2. “Control a different point.”
+3. “Stop it, then continue.”
+4. “Find the developer’s recent experience, get a résumé, and find a way to contact them.”
+
+Observe their first action, whether they find the controllable points and selected-point feedback, where they hesitate, and whether they recover unaided. Afterwards ask what they expected and what felt surprising. Keep only consented, anonymized issue summaries; do not invent success rates or participants. Turn reproducible problems into focused fixes and tests.
+
+## Real-phone touch session
+
+Use a small phone in light/dark themes, portrait/landscape, and with larger text:
+
+- Grab the edge of a glowing point: it should not jump before the finger moves.
+- Drag it, release, select another, and use the non-drag controls. Verify movement, selection, and retained trails.
+- Drag inside the field: the drawing should respond without moving the page. Swipe the surrounding page: scrolling should remain available. Inspect short landscape screens as well as portrait.
+- Interrupt a drag by switching tabs/apps or changing motion preferences. Return without unexpected playback or a stuck grab.
+- Enable reduced motion: move points and use native controls without continuous animation.
+
+## Screen-reader listening session
+
+Prefer a tester using their usual assistive technology. Suggested combinations are VoiceOver with Safari/iOS and NVDA with Firefox or Chrome. Record only browser/OS/assistive-technology versions and sanitized findings, not personal information. State exactly which combinations were actually tested.
+
+1. Use the skip link, headings, and main navigation. Check meaningful order, focus arrival, and a single copy of career content after hydration.
+2. Read experience dates and contributions. Confirm role summaries, overlapping dates, and qualified experience remain intelligible.
+3. Activate PDF and plain-text downloads; verify the filenames and usable content. Reach Contact and identify the LinkedIn destination.
+4. Enter Gravity Loom. Listen to the field's name/instructions and status. Do not assume screen-reader browse-mode arrows are passed to custom controls: verify the native **Move a point without dragging** controls independently.
+5. Select a point, move it repeatedly, change strength/flow, pause, and reset. Listen for meaningful changing positions, selected/disabled states, lost focus, silence, duplicates, or excessive announcements. No particle frame should be a live announcement.
+6. Repeat key actions with reduced motion and enlarged text. Separate what was heard from what was only inspected in the DOM.
+
+## Recruiter path
+
+At 320px and a typical larger phone width, in both themes:
+
+- Reach Experience from Overview and the menu; read the current role and its project contributions.
+- Activate both résumé links by keyboard/touch. Confirm nonempty PDF/text exports and retained verified content.
+- Reach Contact, read the opportunity statement without zooming by necessity, and identify the verified LinkedIn link. Do not add unverified contact channels.
+- Increase default text size to 200%; check wrapping, focus visibility, and no horizontal page overflow. Recheck with JavaScript disabled using the existing prerender journeys.
+
+## Closing a finding
+
+Note the task, environment, observed behavior, expected behavior, reproduction, fix/test reference, and remaining limitations. Keep human observations distinct from automated evidence. Update [ROADMAP](../ROADMAP.md) only when a review or improvement actually completes; follow [CONTRIBUTING](../CONTRIBUTING.md) for verification.

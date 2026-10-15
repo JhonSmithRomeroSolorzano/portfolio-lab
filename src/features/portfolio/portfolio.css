@@ -12,6 +12,8 @@
   gap: 12px 18px;
 }
 .resume-actions .text-link {
+  min-height: 44px;
+  align-items: center;
   font-size: 0.875rem;
   white-space: nowrap;
 }
@@ -207,6 +209,8 @@
 }
 .contact-actions {
   display: flex;
+  min-width: 0;
+  max-width: 100%;
   flex-wrap: wrap;
   gap: 12px;
 }
@@ -215,7 +219,7 @@
   margin: 21px 0;
 }
 .contact-section p {
-  font-size: 12px;
+  font-size: 1rem;
   line-height: 1.7;
   color: var(--muted);
 }
@@ -234,7 +238,6 @@
   }
   .contact-section p {
     margin-top: 23px;
-    font-size: 11px;
   }
 }
 .workbench {
@@ -509,6 +512,10 @@
 }
 .contact-section .primary-button {
   padding: 14px 18px;
+  max-width: 100%;
+  white-space: normal;
+  gap: 12px;
+  font-size: 0.875rem;
 }
 @media (min-width: 1600px) {
   .workbench {

@@ -20,7 +20,11 @@ export function ResumeSection() {
           <span className="eyebrow">CAREER & EDUCATION</span>
           <h2 id="resume-title">Experience.</h2>
         </div>
-        <div className="resume-actions" aria-label="Resume resources">
+        <div
+          className="resume-actions"
+          role="group"
+          aria-label="Resume resources"
+        >
           <a
             className="text-link resume-download"
             href={`./resume/${resumeDownloads.pdf}`}

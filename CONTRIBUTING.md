@@ -8,4 +8,6 @@
 6. Update the work log only for completed work and describe validation accurately.
 7. Review `git diff` and commit with a message that explains the actual change.
 
+For first-time visitor, real-phone, and screen-reader listening sessions, use the [review guide](docs/USABILITY_REVIEW.md). Distinguish completed human observations from automated checks.
+
 Never commit secrets, local runtime files, dependencies, or unrelated user changes. Keep commit timestamps accurate and do not force-push shared history.

@@ -137,6 +137,8 @@ Cache Rescue, the connection puzzle, Motion Studio, Algorithm Garden, Signal Scu
 
 `npm run test:browser` includes axe accessibility scans for both themes, keyboard journeys, 320px reflow, 200% default text-size checks, direct links, and failed-download recovery. Automated scans and accessibility-tree inspection do not replace a human screen-reader assessment.
 
+The mobile recruiter journey covers both résumé downloads and contact navigation. Resource links have at least 44px-high hit areas, contact copy uses the normal 16px body size, and the contact action wraps with enlarged text. Gravity Loom preserves the grab offset when selecting the edge of a point, ignores Space key repeats, and supplies changing position feedback for keyboard moves. The [visitor and accessibility review guide](docs/USABILITY_REVIEW.md) separates these automated checks from the first-time visitor, physical-device, and screen-reader listening sessions that still need human participation.
+
 For a repeatable Lighthouse report, build the site, start `npm run preview -- --port 4175`, then run `npm run audit:performance -- http://127.0.0.1:4175/`. The script uses the installed Playwright Chromium browser (or `CHROME_PATH` when provided) and writes HTML/JSON reports under ignored `artifacts/`. It uses Lighthouse's mobile simulation defaults. Run it without concurrent browser tests; local lab scores are not real-user measurements or guarantees for the hosted site.
 
 The IBM Plex Latin font files are served locally from `public/fonts/` under the included SIL Open Font License. They are the same Google Fonts distributions used by the original stylesheet; local delivery removes the external stylesheet from the first render path.

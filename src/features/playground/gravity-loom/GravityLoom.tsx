@@ -25,14 +25,18 @@ import { createLoomRenderer } from "./renderer";
 
 const activeHashes = ["#gravity-loom", "#lab"];
 
+function describePosition(point: LoomPoint) {
+  return `horizontal ${Math.round(point.x * 100)}%, vertical ${Math.round(point.y * 100)}%.`;
+}
+
 export function GravityLoom() {
   const canvas = useRef<HTMLCanvasElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const renderer = useRef<ReturnType<typeof createLoomRenderer>>(undefined);
   const liveAttractors = useRef<readonly LoomPoint[]>(defaultAttractors);
-  const gesture = useRef<{ pointerId: number; index: number } | undefined>(
-    undefined,
-  );
+  const gesture = useRef<
+    { pointerId: number; index: number; offset: LoomPoint } | undefined
+  >(undefined);
   const [selected, setSelected] = useState(0);
   const [dragging, setDragging] = useState(false);
   const [attractors, setAttractors] =
@@ -129,7 +133,12 @@ export function GravityLoom() {
     setDragging(false);
     if (event.currentTarget.hasPointerCapture(event.pointerId))
       event.currentTarget.releasePointerCapture(event.pointerId);
-    setFeedback(`Point ${index + 1} moved. Drag again to steer the threads.`);
+    const point = liveAttractors.current[index];
+    setFeedback(
+      point
+        ? `Point ${index + 1} moved to ${describePosition(point)} Drag again to steer the threads.`
+        : "That point was removed. Select another point to continue.",
+    );
   }
 
   function nudge(dx: number, dy: number) {
@@ -139,7 +148,7 @@ export function GravityLoom() {
     renderer.current?.nudge(selected);
     begin();
     setFeedback(
-      `Point ${selected + 1} moved. The existing threads follow its new position.`,
+      `Point ${selected + 1} moved to ${describePosition(liveAttractors.current[selected])}`,
     );
   }
   return (
@@ -179,20 +188,22 @@ export function GravityLoom() {
           const scale = Math.max(1, Math.min(box.width, box.height) * 0.38);
           let index = Math.min(selected, points.length - 1);
           let distance = 32 / scale;
+          let offset = { x: 0, y: 0 };
           points.forEach((p, i) => {
             const d = Math.hypot(p.x - point.x, p.y - point.y);
             if (d < distance) {
               index = i;
               distance = d;
+              offset = { x: p.x - point.x, y: p.y - point.y };
             }
           });
-          gesture.current = { pointerId: event.pointerId, index };
+          gesture.current = { pointerId: event.pointerId, index, offset };
           event.currentTarget.setPointerCapture(event.pointerId);
           event.currentTarget.focus({ preventScroll: true });
           setSelected(index);
           renderer.current?.select(index);
           setDragging(true);
-          move(index, point, false);
+          move(index, { x: point.x + offset.x, y: point.y + offset.y }, false);
           if (!reduced) renderer.current?.grab(index);
           begin();
           setFeedback(
@@ -200,12 +211,21 @@ export function GravityLoom() {
           );
         }}
         onPointerMove={(event) => {
-          if (gesture.current?.pointerId === event.pointerId)
-            move(gesture.current.index, pointerPosition(event), false);
+          if (gesture.current?.pointerId === event.pointerId) {
+            const point = pointerPosition(event);
+            const { index, offset } = gesture.current;
+            move(
+              index,
+              { x: point.x + offset.x, y: point.y + offset.y },
+              false,
+            );
+          }
         }}
         onPointerUp={finish}
         onLostPointerCapture={finish}
-        onPointerCancel={() => stop()}
+        onPointerCancel={(event) => {
+          if (gesture.current?.pointerId === event.pointerId) stop();
+        }}
         onKeyDown={(event) => {
           if (event.altKey || event.ctrlKey || event.metaKey) return;
           const directions: Record<string, [number, number]> = {
@@ -222,6 +242,7 @@ export function GravityLoom() {
             stop();
           } else if (event.key === " ") {
             event.preventDefault();
+            if (event.repeat) return;
             if (playing) stop();
             else begin();
           }
@@ -420,7 +441,7 @@ export function GravityLoom() {
         </div>
         <p>
           {attractors[selected]
-            ? `Point ${selected + 1}: horizontal ${Math.round(attractors[selected].x * 100)}%, vertical ${Math.round(attractors[selected].y * 100)}%.`
+            ? `Point ${selected + 1}: ${describePosition(attractors[selected])}`
             : "Add a point to begin."}
         </p>
       </details>
