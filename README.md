@@ -37,6 +37,9 @@ Each experience entry includes a short role summary alongside its detailed contr
 The collection has **six peer experiences**, reached through illustrated cards and direct anchors. Each has its own visual identity and a short interaction. There is no multi-lab dropdown, expanded dashboard, or nested catalog. Experience and contact stay above the collection.
 
 - **[Cache Rescue](https://jhonsmithromerosolorzano.github.io/portfolio-lab/#cache-rescue)**: choose independent reads or a shared fetch, send the crowd, and try to deliver every reply with one database read. Three challenges compare a simultaneous rush, overlapping arrivals, and a sparse stream. Dots move between the crowd, database, shared waiting, and delivered replies. Results explain why sharing avoids duplicate work—or why sparse arrivals need only one read either way. Playback starts only on request, supports pause/resume/reset, and stops when leaving the view, navigating elsewhere, hiding the tab, or changing motion preferences. Reduced motion shows a static result. The deterministic model covers one expired key and one coordinator, fixed successful fetches, unlimited parallel reads, and immediate cache hits. It is an illustration, not a production measurement. The concept follows the user's [visual cache-stampede inspiration](https://www.facebook.com/reel/2912294019139465/); the code and artwork are original.
+
+  Its default **Machine** view is an Anatomy-built isometric duplicating press: request cards collect in trays while a moving die represents the first origin fetch. **Request map** retains the dot visualization. Both share the same model, counts, playback, and predictions; switching views preserves the round. The press is a visual analogy, not a mechanical throughput simulation. See [design and provenance](docs/CACHE_PRESS.md).
+
 - **[Connection puzzle](https://jhonsmithromerosolorzano.github.io/portfolio-lab/#connection-game)**: rotate a 4×4 board to connect its inlet and outlet. Three authored puzzles include hints, undo, reset, keyboard navigation, and validated browser-local progress. Click or Space rotates; arrow keys move between tiles. Open tabs on the same site share saved boards while keeping their selected puzzle and keyboard focus. External changes clear only the affected boards' Undo history and hints; a stale action loads the latest save before asking you to try again. Saves are local to the current site, with honest feedback when storage is unavailable. There is no clock or account.
 - **[Motion Studio](https://jhonsmithromerosolorzano.github.io/portfolio-lab/#motion-studio)**: compare four timing curves against a steady reference using the same distance, duration, and clock. Pick a curve, then explicitly play both lanes. Reduced motion shows the end states. Control changes, hidden tabs, motion-preference changes, navigation away, and scrolling the experience out of view cancel playback. Returning waits for an explicit replay.
 - **[Algorithm Garden](https://jhonsmithromerosolorzano.github.io/portfolio-lab/#algorithm-garden)**: light up one of three authored trees in breadth-first or pre-order depth-first order. Try a node, recover from a wrong turn, or ask for a hint. Numbered nodes, a traversal trail, and announced feedback explain each move. It works with keyboard or pointer, without a timer. Progress lasts for the visit.
@@ -77,6 +80,12 @@ npm exec --yes --ignore-scripts --package=ui-ux-pro-max-cli@2.15.0 -- uipro init
 ```
 
 Open this repository in OpenCode and mention `@ui-ux-pro-max` in a UI task. If it is missing from an already-open session, restart OpenCode. Project-specific usage rules live in [AGENTS.md](AGENTS.md#uiux-skill).
+
+### Anatomy skill
+
+[Anatomy](https://github.com/wheresryan22/anatomy) is installed for this project at `.opencode/skills/anatomy`, with its MIT license, kit, references, scripts, and examples. Mention `@anatomy` for a detailed interactive isometric figure; restart OpenCode if a running session does not discover it. The pinned upstream revision and illustration design are recorded in [the Cache Press notes](docs/CACHE_PRESS.md). Installation adds no application dependency.
+
+`npm run build:press` regenerates Cache Rescue's checked-in SVG geometry; `npm run build:press -- --check` verifies it without writing. The kit runs only in this authoring step, not in the browser or ordinary production builds. Other projects can use the upstream [installation instructions](https://github.com/wheresryan22/anatomy#install).
 
 ### Résumé downloads
 

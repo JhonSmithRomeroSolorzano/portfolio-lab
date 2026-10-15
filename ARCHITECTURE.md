@@ -44,6 +44,8 @@ e2e/                               Production Chromium and WebKit journeys
 
 The Node API imports the simulation domain. The résumé generator imports verified `features/portfolio/data` without importing presentation components. The archive may use maintained modules, but maintained application/server/scripts code must never depend on the archive. Tests can import either side to retain coverage of historical portable formats and adapters.
 
+The authoring-only `scripts/build-cache-press.mjs` has one explicit dependency exception for `.opencode/skills/anatomy/kit/iso-kit.mjs`. It writes checked-in SVG geometry for Cache Rescue; application modules import only that finished data, never skill code. Ordinary builds do not run the authoring tool. See [the press design and provenance](docs/CACHE_PRESS.md).
+
 [Dependency tests](tests/architecture.test.ts) check static imports, re-exports, and literal lazy imports against those directions. The [domain TypeScript configuration](tsconfig.domain.json) independently prevents browser/server APIs from leaking into pure models. The [main TypeScript configuration](tsconfig.json) also checks tests, browser journeys, and retained reference source. Archived UI is excluded from lint evolution, but remains type-checked and its behavioral tests run.
 
 ## Responsibilities and extension points
@@ -53,6 +55,8 @@ The Node API imports the simulation domain. The résumé generator imports verif
 - **Small contracts:** components receive the data/callbacks they use; optional loaders return a React component. Pure models accept plain typed inputs. The puzzle storage adapter accepts a minimal storage interface, so tests can simulate corrupt or unavailable storage.
 - **Dependency inversion:** feature policy stays outside browser subscription utilities, and the API/CLI depend on pure models. No abstract base classes or dependency-injection container are needed for this app. Substitutability is relevant at these contracts, not a reason to introduce inheritance.
 - **KISS and DRY:** keep each game distinct. Share browser lifecycle and common UI primitives, not one configurable animation engine for every experience. Career facts are authored once and reused by the page and résumé downloads.
+
+Cache Rescue's Machine and Request map views consume the same request run, clock, and counts. Switching views does not reset or pause the experiment. The press uses precomputed static SVG groups, projected card placements, and a die position derived from the first fetch's progress; there is no independent animation loop, idle tour, or graphics dependency. Existing explicit playback and interruption/reduced-motion behavior remain authoritative.
 
 ## Failure boundaries and styling
 

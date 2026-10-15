@@ -507,3 +507,16 @@ Next: gather feedback on the two visual art experiences rather than expanding th
 - [x] Expand the model's valid coordinates and safety bounds to ±1 and move soft frame steering toward the outer edge, so trails can follow a held point beyond the former central restriction. Retain speed caps, fixed steps, grab offsets, and reduced-motion behavior.
 - [x] Verify forward/inverse projection, bounded moving fields, and a held corner pull in unit tests. Browser checks inspect painted marker pixels at all four corners in both themes at 320px/1440px, and verify SVG edge placement through portrait/desktop/landscape resizing. The full-field cases pass three repeated runs in Chromium and WebKit.
 - [x] Pass `npm run check` with 154 unit/integration/architecture tests and production asset budgets. Complete the full browser coverage across the restart: 92 Chromium passes, then 91 WebKit passes with the existing Chromium-only touch-injection skip. Inspect live mouse and native Chromium touch drags toward the outer edge in both themes at desktop/mobile sizes.
+
+## Anatomy single-flight press — October 15
+
+- [x] Install the requested Anatomy skill locally with its MIT license, kit, references, scripts, and examples pinned to an upstream commit. Record provenance and authoring commands in [the press notes](docs/CACHE_PRESS.md).
+- [x] Use the kit to build an original 52-part isometric duplicating press as Cache Rescue's default Machine view. Keep the existing Request map, all six experiences, and the recruiter-first layout.
+- [x] Drive card identities, trays, origin-read counts, waiting, and delivered replies from the existing deterministic model. Derive die movement from first-fetch progress without another clock or idle autoplay. Preserve playback, predictions, and keyboard focus when switching views, with the existing reduced-motion and interruption policy.
+- [x] Keep geometry generation authoring-only, ship finished SVG data in the existing lazy Cache Rescue bundle, and enforce the exact skill-kit dependency exception without allowing application imports from skills.
+
+- [x] Pass `npm run check` with 156 unit/integration/architecture tests and production asset budgets. Complete all 191 applicable Chromium/WebKit journeys, including eight new press checks; retain the existing Chromium-only touch-injection skip. The first combined run hit its shell time limit and one broad Chromium review timed out under four-worker contention; that review passes on rerun with two workers, and the full WebKit run passes with two workers and a 60-second test limit.
+- [x] Inspect desktop and 390px layouts, both themes, completed and paused mid-stroke states, and 4× mechanism close-ups. Anatomy reports zero floating line ends and clean consoles at rest, completed, and paused mid-stroke in both themes. Browser checks also cover 320px with 200% text and axe scans.
+- [x] Pass the three-run mobile Lighthouse gate with median LCP 1.98s, CLS 0.0004, and TBT 4.5ms. These are local simulated measurements, not hosted real-user results.
+
+The mechanical drawing is an analogy, not a production measurement or a model of press throughput. Human screen-reader and physical-device assessments remain separate from these automated checks.

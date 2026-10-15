@@ -57,6 +57,8 @@ test("maintained modules respect layer direction and never depend on retired UI"
                 : from.startsWith("scripts/")
                   ? (from === "scripts/prerender.ts" &&
                       target === "src/app/prerender") ||
+                    (from === "scripts/build-cache-press.mjs" &&
+                      target === ".opencode/skills/anatomy/kit/iso-kit.mjs") ||
                     [
                       "scripts/",
                       "src/domain/",
