@@ -23,7 +23,7 @@ src/
       algorithm-garden/            UI and CSS
       signal-sculpture/            Controls, canvas renderer, CSS
       gravity-loom/                Field controls, trail renderer, CSS
-      pin-lock/                    Direct manipulation, controls, authored SVG data, CSS
+      jet-engine/                  Speed controls, canvas mesh/air renderer, SVG layers, CSS
   domain/
     playground/                    Pure cache/puzzle/traversal models
     simulation/                    Maintained systems models used by API and CLI
@@ -45,7 +45,7 @@ e2e/                               Production Chromium and WebKit journeys
 
 The Node API imports the simulation domain. The résumé generator imports verified `features/portfolio/data` without importing presentation components. The archive may use maintained modules, but maintained application/server/scripts code must never depend on the archive. Tests can import either side to retain coverage of historical portable formats and adapters.
 
-The authoring-only `scripts/build-pin-lock.mjs` has one explicit dependency exception for `.opencode/skills/anatomy/kit/iso-kit.mjs`. It uses the domain's cut patterns to write checked-in SVG geometry for Pin & bolt; application modules import only that finished data, never skill code. Ordinary builds do not run the authoring tool. See [the lock design and provenance](docs/ANATOMY_LOCK.md).
+The authoring-only `scripts/build-jet-engine.mjs` has explicit dependency exceptions for Anatomy's `iso-kit.mjs`, `lathe.mjs`, and `audit.mjs`. It records the actual fixed slabs, annular sectors, and turned profiles, solves static depth order, and writes checked-in theme-specific SVG layers and projection metadata. Application modules use those finished assets, never skill code. Ordinary builds do not run the authoring tool. See [the engine design and provenance](docs/JET_ENGINE.md).
 
 [Dependency tests](tests/architecture.test.ts) check static imports, re-exports, and literal lazy imports against those directions. The [domain TypeScript configuration](tsconfig.domain.json) independently prevents browser/server APIs from leaking into pure models. The [main TypeScript configuration](tsconfig.json) also checks tests, browser journeys, and retained reference source. Archived UI is excluded from lint evolution, but remains type-checked and its behavioral tests run.
 
@@ -57,7 +57,7 @@ The authoring-only `scripts/build-pin-lock.mjs` has one explicit dependency exce
 - **Dependency inversion:** feature policy stays outside browser subscription utilities, and the API/CLI depend on pure models. No abstract base classes or dependency-injection container are needed for this app. Substitutability is relevant at these contracts, not a reason to introduce inheritance.
 - **KISS and DRY:** keep each game distinct. Share browser lifecycle and common UI primitives, not one configurable animation engine for every experience. Career facts are authored once and reused by the page and résumé downloads.
 
-Pin & bolt uses a pure five-pin alignment model, shared cut patterns, and precomputed Anatomy SVG groups/spring paths. React owns discrete heights, bolt state, and cover lift, without an idle loop or per-frame geometry rebuild. Pointer capture preserves the grab offset; the existing interruption hook releases the gesture on navigation, offscreen changes, hidden tabs, or motion preference changes. Native sliders and step buttons provide equivalent controls. Opening moves the lower assembly only when all pin joins align; input is locked until relocking. Reduced motion removes finite CSS feedback/slide transitions without removing any controls or results. The earlier Cache Rescue press was removed after user feedback; Cache Rescue again renders only its original request map.
+Jet Engine replaces the earlier lock. Its pure model maps a normalized speed setting to deliberately slowed rotation, tracer flow/density, heat, and exhaust reach; these are visual parameters, not operating data. A feature-local imperative canvas reprojects swept blade faces and depth-sorts them with air tracers between registered rear/front SVG assets. React owns settings and playback, not per-frame updates. Speed changes start explicitly; the shared interruption hook pauses on navigation, offscreen changes, hidden tabs, and motion-preference changes. Reduced motion redraws a still at the selected setting. Canvas denial exposes static SVG blade faces and speed-dependent air routes; missing SVG art stops playback and offers a reload. Pixel ratio is capped at 1.5 and elapsed-frame catch-up at 50ms; observers, listeners, and animation frames are released on cleanup. Static SVG source sizes are checked separately from the unchanged JavaScript budgets. Cache Rescue retains its original request map.
 
 ## Failure boundaries and styling
 

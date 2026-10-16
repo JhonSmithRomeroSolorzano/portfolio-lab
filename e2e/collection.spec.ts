@@ -255,7 +255,7 @@ test("seven peer experiences keep native anchors and the old Signal Lab anchor r
     "algorithm-garden",
     "signal-sculpture",
     "gravity-loom",
-    "pin-lock",
+    "jet-engine",
   ].entries()) {
     await links.nth(index).press("Enter");
     await expect(page.locator(`#${id}`)).toBeFocused();

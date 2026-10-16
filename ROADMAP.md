@@ -510,7 +510,7 @@ Next: gather feedback on the two visual art experiences rather than expanding th
 
 ## Anatomy single-flight press — October 15
 
-- [x] Install the requested Anatomy skill locally with its MIT license, kit, references, scripts, and examples pinned to an upstream commit. Current provenance and authoring commands are in [the lock notes](docs/ANATOMY_LOCK.md).
+- [x] Install the requested Anatomy skill locally with its MIT license, kit, references, scripts, and examples pinned to an upstream commit. Current provenance and authoring commands are in [the engine notes](docs/JET_ENGINE.md).
 - [x] Use the kit to build an original 52-part isometric duplicating press as Cache Rescue's default Machine view. Keep the existing Request map, all six experiences, and the recruiter-first layout.
 - [x] Drive card identities, trays, origin-read counts, waiting, and delivered replies from the existing deterministic model. Derive die movement from first-fetch progress without another clock or idle autoplay. Preserve playback, predictions, and keyboard focus when switching views, with the existing reduced-motion and interruption policy.
 - [x] Keep geometry generation authoring-only, ship finished SVG data in the existing lazy Cache Rescue bundle, and enforce the exact skill-kit dependency exception without allowing application imports from skills.
@@ -535,3 +535,19 @@ The user found the cache/press analogy unclear and requested a separate experien
 - [x] Pass the three-run mobile Lighthouse gate with median LCP 1.97s, CLS 0.0004, and TBT 0ms. These are local simulated measurements, not hosted real-user results.
 
 This is a mechanical puzzle, not a real security simulation. Physical-device and human screen-reader review remain separate follow-ups.
+
+## Jet Engine — requested Anatomy replacement
+
+The user found the lock unclear and too simple, and requested an aircraft engine whose air animation visibly responds to speed. This replaces the seventh experience, rather than adding another activity.
+
+- [x] Replace Pin & bolt with an Anatomy Hero turbofan: a cutaway nacelle/core, eighteen intake fan blades, six inner blade rows, shaft/couplings, guide vanes, and a stand. Keep the other six pieces unchanged and route the former local lock anchor to the engine.
+- [x] Drive visible rotation, tracer speed/density, heated-core emphasis, and exhaust reach from one normalized engine-speed control, with Idle/Cruise/Full power shortcuts. Keep the behavior explanatory rather than a puzzle; show four short stage descriptions and distinguish cool bypass air from heated core air.
+- [x] Keep per-frame drawing in one capped-resolution canvas between theme-specific Anatomy SVG assets. Use the same projection for fixed and moving parts, explicit playback/interruption, a static reduced-motion composition, and an SVG/canvas-denial alternative. Handle failed casing assets with an honest reload.
+
+- [x] Pass `npm run check` with 158 unit/integration/architecture checks, the existing production budgets, and an 80 KiB compressed limit for both theme pairs of engine SVG source. Keep the initial résumé path independent of the new artwork.
+- [x] Pass Anatomy's static audit: 334 recorded solids across 62 fixed parts, with zero support, clearance, depth-order, or other audit problems. Bound the 78 moving blades separately by their shared radial geometry and axial spacing. Check the combined fixed SVG layers in both themes with zero floating line ends; inspect 4× close-ups and slowed contact sheets with confirmed active fan/airflow clocks.
+- [x] Pass all 18 engine-specific Chromium/WebKit checks, including actual fan/air pixel changes at low/high speed, zero-flow Off, exact pause stability, interruption, reduced motion, canvas denial, failed artwork recovery, delayed-image geometry reservation, legacy entry, and 320px enlarged-text/native-touch controls. Inspect 1440px and 390px compositions in both themes without page overflow.
+- [x] Complete the 202-case portfolio browser run: 199 pass, one existing Chromium-only touch-injection skip, and two failures in unchanged WebKit Motion Studio/Gravity Loom journeys. Both failing journeys pass twice each when rerun serially. No unrelated game behavior was changed to mask those timing/pointer failures.
+- [x] Pass the three-run mobile Lighthouse gate with median LCP 2.22s, CLS 0.0004, and TBT 66ms. These are local simulated measurements, not hosted real-user results.
+
+The engine is a deliberately slowed illustration, not real operating data or a thermodynamic simulation. Physical-device and human screen-reader review remain separate follow-ups.

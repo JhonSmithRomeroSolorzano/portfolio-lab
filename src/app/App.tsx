@@ -15,11 +15,17 @@ export function App() {
   const mainRef = useRef<HTMLElement>(null);
   const navRef = useRef<HTMLElement>(null);
   useLayoutEffect(() => {
-    if (window.location.hash === "#signal-lab") {
+    const legacyDestination =
+      window.location.hash === "#signal-lab"
+        ? "lab"
+        : window.location.hash === "#pin-lock"
+          ? "jet-engine"
+          : null;
+    if (legacyDestination) {
       history.replaceState(
         null,
         "",
-        `${location.pathname}${location.search}#lab`,
+        `${location.pathname}${location.search}#${legacyDestination}`,
       );
     }
     // A client-rendered anchor may not exist during the browser's first hash lookup.

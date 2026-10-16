@@ -157,23 +157,25 @@ export const experiences: readonly Experience[] = [
       import("./gravity-loom/GravityLoom").then((module) => module.GravityLoom),
   },
   {
-    id: "pin-lock",
-    title: "Pin & bolt",
-    titleId: "lock-title",
-    category: "MECHANICAL PUZZLE",
-    description: "Small moves. Big unlock.",
-    action: "Move the mechanism ↗",
-    artwork: ["▥", "↔", "▰"],
-    style: "lock",
+    id: "jet-engine",
+    title: "Jet Engine",
+    titleId: "engine-title",
+    category: "AIR IN MOTION",
+    description: "Change the speed. See the air respond.",
+    action: "Run the engine ↗",
+    artwork: ["≋", "◉", "→"],
+    style: "engine",
     engineering: {
       decision:
-        "Anatomy's beveled solids form a cutaway lock. A pure five-pin model drives alignment, visible pin positions, spring shapes, and whether the bolt can slide.",
+        "Anatomy builds the fixed engine solids. One imperative canvas shares their camera to project rotating blade faces and depth-sorted air tracers; React owns the engine-speed and playback controls.",
       tradeoff:
-        "This is an authored sliding-lock puzzle, not a security simulation. Native sliders and step buttons duplicate direct pin dragging; reduced motion keeps every state without decorative movement.",
+        "The turbofan is an illustrative cutaway, not real operating data. Rotation is slowed. A still composition supports reduced motion, and static SVG parts and air paths remain when canvas is unavailable.",
       verification:
-        "all authored cuts, blocked attempts, direct manipulation, visible bolt and cover displacement, keyboard alternatives, reduced motion, and narrow-screen reflow.",
-      source: "src/features/playground/pin-lock",
+        "monotonic speed-to-flow mappings, blade clearances, actual canvas movement and pause stability, lifecycle interruption, static fallback, and responsive keyboard/touch controls.",
+      source: "src/features/playground/jet-engine",
     },
-    load: () => import("./pin-lock/PinLock").then((module) => module.PinLock),
+    entryAliases: ["#pin-lock"],
+    load: () =>
+      import("./jet-engine/JetEngine").then((module) => module.JetEngine),
   },
 ];
