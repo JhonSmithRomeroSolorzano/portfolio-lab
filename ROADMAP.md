@@ -568,3 +568,12 @@ Next: refine the existing experiences from visitor feedback. Human accessibility
 - [x] Re-run the complete Chromium/WebKit suite after regeneration: 209 passes and the existing Chromium-only touch-injection skip.
 
 Next: confirm the Linux release gate and matching public/private asset manifests, then continue with the visitor-led refinements above.
+
+## Collection order — October 16
+
+- [x] Apply the requested sequence to both the chooser and full experiences: Jet Engine, Gravity Loom, Signal Sculpture, Motion Studio, Connection puzzle, Cache Rescue, and Algorithm Garden. Match every header number to its card and load Jet Engine on collection entry.
+- [x] Preserve direct anchors and the former lock alias. Update browser coverage for card/article order, numbering, the first lazy download, and delayed preceding content.
+- [x] Extend immediate keyboard navigation to collection cards, experience destinations, and lab controls. This prevents an unfinished native smooth scroll from competing with the visitor's next action. Keep pointer transitions and reduced-motion behavior, and check playback interruption with actual wheel input.
+- [x] Pass 158 unit/integration/architecture checks, the production build and asset budgets, and all 209 applicable Chromium/WebKit journeys (one existing platform-specific skip). Inspect the ordered cards at desktop/mobile sizes in both themes without horizontal overflow.
+
+Next: continue refining these experiences from visitor feedback; verified contact/project outcomes and human usability sessions remain outstanding.

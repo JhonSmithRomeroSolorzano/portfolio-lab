@@ -47,7 +47,7 @@ export function AlgorithmGarden() {
   return (
     <div className="algorithm-garden">
       <div className="garden-intro">
-        <span className="play-kicker">04 / FOLLOW YOUR CURIOSITY</span>
+        <span className="play-kicker">07 / FOLLOW YOUR CURIOSITY</span>
         <h3 id="garden-title">
           A little order.
           <br />

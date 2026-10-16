@@ -101,9 +101,8 @@ test("navigation, hidden tabs, scrolling away and reduced motion stop the engine
   });
   await expect(engine).toHaveAttribute("data-playing", "false");
   await page.getByRole("button", { name: "Play engine", exact: true }).click();
-  await page
-    .getByRole("heading", { name: "Experience.", exact: true })
-    .scrollIntoViewIfNeeded();
+  await page.mouse.wheel(0, -20000);
+  await expect(engine).not.toBeInViewport();
   await expect(engine).toHaveAttribute("data-playing", "false");
   await page.locator('.collection-index a[href="#jet-engine"]').press("Enter");
   await page.getByRole("button", { name: "Play engine", exact: true }).click();

@@ -106,7 +106,7 @@ export function JetEngine() {
     <div className="jet-engine" data-playing={running}>
       <header className="engine-heading">
         <div>
-          <span className="play-kicker">07 / ANATOMY · AIR IN MOTION</span>
+          <span className="play-kicker">01 / ANATOMY · AIR IN MOTION</span>
           <h3 id="engine-title">Inside a jet engine.</h3>
           <p>
             Adjust the <strong>engine speed slider</strong>. Watch the fan spin

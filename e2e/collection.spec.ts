@@ -249,15 +249,27 @@ test("seven peer experiences keep native anchors and the old Signal Lab anchor r
   await expect(links).toHaveCount(7);
   await expect(page.locator("#lab > article")).toHaveCount(7);
   for (const [index, id] of [
-    "cache-rescue",
-    "connection-game",
-    "motion-studio",
-    "algorithm-garden",
-    "signal-sculpture",
-    "gravity-loom",
     "jet-engine",
+    "gravity-loom",
+    "signal-sculpture",
+    "motion-studio",
+    "connection-game",
+    "cache-rescue",
+    "algorithm-garden",
   ].entries()) {
+    const number = String(index + 1).padStart(2, "0");
+    await expect(links.nth(index)).toHaveAttribute("href", `#${id}`);
+    await expect(links.nth(index).locator(".collection-number")).toContainText(
+      `${number} /`,
+    );
+    await expect(page.locator("#lab > article").nth(index)).toHaveAttribute(
+      "id",
+      id,
+    );
     await links.nth(index).press("Enter");
+    await expect(page.locator(`#${id} .play-kicker`)).toContainText(
+      `${number} /`,
+    );
     await expect(page.locator(`#${id}`)).toBeFocused();
     await expect(page.locator(`#${id}`)).toBeInViewport();
     await expect(

@@ -7,7 +7,7 @@ test("career content loads without downloading the optional experiments", async 
   const chunks: string[] = [];
   page.on("request", (request) => {
     if (
-      /\/(CacheRescue|RoutePuzzle|MotionStudio|AlgorithmGarden|SignalSculpture|GravityLoom)-.*\.js/.test(
+      /\/(CacheRescue|RoutePuzzle|MotionStudio|AlgorithmGarden|SignalSculpture|GravityLoom|JetEngine)-.*\.js/.test(
         request.url(),
       )
     )
@@ -26,9 +26,9 @@ test("career content loads without downloading the optional experiments", async 
     .getByRole("link", { name: "Labs & play" })
     .press("Enter");
   await expect(
-    page.getByRole("button", { name: "Send the crowd", exact: false }),
+    page.getByRole("slider", { name: "Engine speed" }),
   ).toBeVisible();
-  expect(chunks.some((url) => url.includes("CacheRescue-"))).toBeTruthy();
+  expect(chunks.some((url) => url.includes("JetEngine-"))).toBeTruthy();
 });
 
 for (const [hash, control] of [
@@ -65,7 +65,7 @@ for (const failure of ["aborted", "unavailable"] as const) {
             headers: { "cache-control": "no-store" },
           }),
     );
-    await page.goto("/?traffic=237#lab");
+    await page.goto("/?traffic=237#cache-rescue");
     await expect(
       page
         .getByRole("status")

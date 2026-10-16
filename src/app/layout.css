@@ -275,7 +275,13 @@
   position: relative;
   isolation: isolate;
 }
-html:has(.identity-rail nav a:focus-visible, main > section:focus-visible) {
+html:has(
+  .identity-rail nav a:focus-visible,
+  main > section:focus-visible,
+  .collection-index a:focus-visible,
+  .play-exhibit:focus-visible,
+  .play-exhibit :focus-visible
+) {
   scroll-behavior: auto;
 }
 .identity-rail .nav-cursor {

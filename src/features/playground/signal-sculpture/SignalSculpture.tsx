@@ -56,7 +56,7 @@ export function SignalSculpture() {
     <div className="sculpture-experience">
       <header className="sculpture-header">
         <div>
-          <span className="play-kicker">05 / GENERATIVE ART</span>
+          <span className="play-kicker">03 / GENERATIVE ART</span>
           <h3 id="sculpture-title">
             Signal Sculpture<span>.</span>
           </h3>

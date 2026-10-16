@@ -63,7 +63,7 @@ test("legacy About links still select Overview without losing query state", asyn
     .getByRole("link", { name: "Labs & play" })
     .click();
   await expect(
-    page.getByRole("button", { name: "Send the crowd", exact: false }),
+    page.getByRole("slider", { name: "Engine speed", exact: true }),
   ).toBeVisible();
 });
 

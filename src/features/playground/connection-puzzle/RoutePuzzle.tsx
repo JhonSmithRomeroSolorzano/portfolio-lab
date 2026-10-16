@@ -35,7 +35,7 @@ export function RoutePuzzle() {
   return (
     <div className="route-game">
       <div className="route-instructions">
-        <span className="play-kicker">02 / A LITTLE LOGIC</span>
+        <span className="play-kicker">05 / A LITTLE LOGIC</span>
         <h3 id="route-title">
           Make a <br />
           <em>connection.</em>

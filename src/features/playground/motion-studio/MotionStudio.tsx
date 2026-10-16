@@ -20,7 +20,7 @@ export function MotionStudio() {
   return (
     <div className="motion-studio" ref={container}>
       <div className="motion-intro">
-        <span className="play-kicker">03 / FEEL THE DIFFERENCE</span>
+        <span className="play-kicker">04 / FEEL THE DIFFERENCE</span>
         <h3 id="motion-title">
           Same journey.
           <br />

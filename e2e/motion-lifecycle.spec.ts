@@ -13,9 +13,11 @@ for (const width of [1280, 390]) {
         .getByRole("link", { name: /Motion studio/ });
       await entry.press("Enter");
       await expect(page.locator("#motion-studio")).toBeFocused();
+      await expect(page.locator("html")).toHaveCSS("scroll-behavior", "auto");
       await page.getByRole("slider", { name: /Duration/ }).fill("1800");
       const play = page.getByRole("button", { name: /Play motion/ });
       await play.press("Enter");
+      await expect(page.locator("html")).toHaveCSS("scroll-behavior", "auto");
       await expect(page.locator(".motion-feedback")).toHaveText(
         "Comparing both curves…",
       );
@@ -26,10 +28,10 @@ for (const width of [1280, 390]) {
           .getByRole("link", { name: "Résumé", exact: true })
           .press("Enter");
       } else {
-        // Leave the experience without changing the URL or firing hashchange.
-        await page
-          .getByRole("heading", { name: "Experience.", exact: true })
-          .scrollIntoViewIfNeeded();
+        // Real scroll input leaves immediately, without waiting for another
+        // section's entrance animation or changing the URL/hash.
+        await page.mouse.wheel(0, -20000);
+        await expect(page.locator("#motion-studio")).not.toBeInViewport();
         await expect(page).toHaveURL(/#motion-studio$/);
       }
 

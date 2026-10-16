@@ -29,7 +29,7 @@ export function CacheRescue() {
   return (
     <div className={`cache-game ${playing ? "is-playing" : ""}`}>
       <div className="cache-intro">
-        <span className="play-kicker">01 / A SMALL RESCUE MISSION</span>
+        <span className="play-kicker">06 / A SMALL RESCUE MISSION</span>
         <h3 id="rescue-title">
           Beat the rush.
           <br />

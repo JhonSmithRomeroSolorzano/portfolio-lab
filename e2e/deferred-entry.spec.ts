@@ -27,7 +27,7 @@ for (const browseAway of [false, true]) {
       release = resolve;
     });
     let requested = false;
-    await page.route("**/SignalSculpture-*.js", async (route) => {
+    await page.route("**/JetEngine-*.js", async (route) => {
       requested = true;
       await pending;
       await route.continue();
@@ -40,7 +40,7 @@ for (const browseAway of [false, true]) {
       await expect(page.locator("#workbench")).toBeInViewport();
     }
     release();
-    await expect(page.locator(".sculpture-experience")).toBeVisible();
+    await expect(page.locator(".jet-engine")).toBeVisible();
     await page.waitForTimeout(300);
     await expect(
       page.locator(browseAway ? "#workbench" : "#loom-title"),

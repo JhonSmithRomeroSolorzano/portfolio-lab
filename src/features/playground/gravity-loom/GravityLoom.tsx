@@ -179,7 +179,7 @@ export function GravityLoom() {
     <div className="loom-experience">
       <header className="loom-header">
         <div>
-          <span className="play-kicker">06 / KINETIC ART</span>
+          <span className="play-kicker">02 / KINETIC ART</span>
           <h3 id="loom-title">
             Gravity Loom<span>.</span>
           </h3>
