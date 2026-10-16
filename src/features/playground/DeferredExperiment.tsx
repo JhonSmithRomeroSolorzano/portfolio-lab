@@ -75,14 +75,34 @@ export function DeferredExperiment({
 
   useLayoutEffect(() => {
     const target = document.getElementById(id);
-    if (
-      Experiment &&
+    const ownsLanding = () =>
       anchorUninterrupted.current &&
       window.location.hash === `#${id}` &&
-      document.activeElement === target
-    ) {
-      target?.scrollIntoView({ behavior: "instant", block: "start" });
-    }
+      document.activeElement === target;
+    if (!Experiment || !target || !ownsLanding()) return;
+
+    let frame = 0;
+    const align = () => {
+      frame = 0;
+      if (ownsLanding())
+        target.scrollIntoView({ behavior: "instant", block: "start" });
+      else observer?.disconnect();
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(align);
+    };
+    // Neighboring lazy content can move the destination after this component
+    // mounts. Align after layout, while the visitor still owns this landing.
+    const observer =
+      typeof ResizeObserver === "undefined"
+        ? undefined
+        : new ResizeObserver(schedule);
+    observer?.observe(target.closest("main") ?? target);
+    schedule();
+    return () => {
+      cancelAnimationFrame(frame);
+      observer?.disconnect();
+    };
   }, [Experiment, id]);
 
   useEffect(() => {

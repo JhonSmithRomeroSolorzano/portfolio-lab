@@ -50,6 +50,8 @@ The collection has **seven peer experiences**, reached through illustrated cards
 
 The seven pieces download independently as they approach the viewport or when followed directly. Failed downloads offer reload recovery; runtime render/effect errors are isolated to the affected experience and offer a local retry. Both keep the résumé usable. Their styles load with the page. Native dynamic imports avoid a WebKit recovery issue triggered by module preloading shared optional dependencies. `#lab` reaches the collection; old `#signal-lab` anchors also reach it. Old dashboard query parameters no longer configure the public experiences.
 
+Direct experience links retain their landing while nearby content finishes loading. Wheel, touch, pointer, and keyboard input release that adjustment; browsing away never pulls the visitor back to a pending experience.
+
 ### Earlier systems experiments
 
 The original Signal Lab dashboard is retired from the public portfolio. Its presentation and browser adapters live in `archive/signal-lab/`; pure models remain in `src/domain/`. The optional API, CLI, and unit/integration coverage are retained. Browser tests now cover the seven current experiences rather than the removed dashboard workflows. The [case study](CASE_STUDY.md) documents that earlier model and its assumptions; the [optional local Node API](server/README.md) and batch CLI can still run it.

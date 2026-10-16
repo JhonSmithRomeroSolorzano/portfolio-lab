@@ -551,3 +551,12 @@ The user found the lock unclear and too simple, and requested an aircraft engine
 - [x] Pass the three-run mobile Lighthouse gate with median LCP 2.22s, CLS 0.0004, and TBT 66ms. These are local simulated measurements, not hosted real-user results.
 
 The engine is a deliberately slowed illustration, not real operating data or a thermodynamic simulation. Physical-device and human screen-reader review remain separate follow-ups.
+
+## Direct experience landing — October 16
+
+- [x] Reproduce WebKit moving a directly linked Gravity Loom heading above the viewport after nearby lazy content loads. The failing drag trace clicked at viewport y = -22; a separate browser inspection confirmed the misplaced landing.
+- [x] Keep an uninterrupted, focused experience entry aligned after layout changes, with animation-frame coalescing and cleanup. Preserve the existing wheel/touch/pointer/keyboard interruption policy, native focus, reduced motion, and navigation away.
+- [x] Add Chromium/WebKit coverage for settled normal/reduced-motion landings, delayed neighboring imports, and scrolling away before completion. The new cases and original drag journey pass three repetitions in both browsers (30 checks).
+- [x] Pass `npm run check` with 158 unit/integration/architecture tests and production asset budgets, then the complete browser suite with 209 passes and the existing Chromium-only touch-injection skip. Inspect the corrected WebKit landing and desktop/mobile engine, contact, and field layouts in both themes. The three-run local mobile Lighthouse gate passes with median LCP 1.95s, CLS 0.0004, and TBT 0ms; these are simulated measurements.
+
+Next: refine the existing experiences from visitor feedback. Human accessibility/device sessions and verified contact/project outcomes remain outstanding.
