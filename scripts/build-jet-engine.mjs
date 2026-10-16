@@ -267,18 +267,24 @@ A.settle(R, P);
 A.auditOrExit(R, P);
 const ordered = [...R.items].sort((a, b) => a.key - b.key);
 const output = await format(
-  JSON.stringify({
-    parts: serial + ROTORS.reduce((n, r) => n + r.blades, 0),
-    origin: k.iso([0, 0, 0], P),
-    axes: [
-      k.axisVector(P, [1, 0, 0]),
-      k.axisVector(P, [0, 1, 0]),
-      k.axisVector(P, [0, 0, 1]),
-    ],
-    view: [1100, 480],
-    camera: { view: G.viewOf(P), light: G.lightOf(P) },
-    guideMeshes: guides,
-  }),
+  JSON.stringify(
+    {
+      parts: serial + ROTORS.reduce((n, r) => n + r.blades, 0),
+      origin: k.iso([0, 0, 0], P),
+      axes: [
+        k.axisVector(P, [1, 0, 0]),
+        k.axisVector(P, [0, 1, 0]),
+        k.axisVector(P, [0, 0, 1]),
+      ],
+      view: [1100, 480],
+      camera: { view: G.viewOf(P), light: G.lightOf(P) },
+      guideMeshes: guides,
+    },
+    (_, value) =>
+      // Keep far more than screen precision without serializing platform-specific
+      // trailing bits from trigonometry into the checked-in projection metadata.
+      typeof value === "number" ? Number(value.toFixed(8)) : value,
+  ),
   { parser: "json" },
 );
 const outputs = new Map([[file, output]]);
@@ -321,7 +327,9 @@ for (const theme of ["light", "dark"])
 for (const [destination, content] of outputs) {
   if (process.argv.includes("--check")) {
     if (readFileSync(destination, "utf8") !== content)
-      throw new Error("Engine art is stale. Run npm run build:engine.");
+      throw new Error(
+        `Engine art differs in ${destination.pathname.split("/").at(-1)}. Run npm run build:engine.`,
+      );
   } else writeFileSync(destination, content);
 }
 console.log(

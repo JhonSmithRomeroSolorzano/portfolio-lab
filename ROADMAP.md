@@ -560,3 +560,11 @@ The engine is a deliberately slowed illustration, not real operating data or a t
 - [x] Pass `npm run check` with 158 unit/integration/architecture tests and production asset budgets, then the complete browser suite with 209 passes and the existing Chromium-only touch-injection skip. Inspect the corrected WebKit landing and desktop/mobile engine, contact, and field layouts in both themes. The three-run local mobile Lighthouse gate passes with median LCP 1.95s, CLS 0.0004, and TBT 0ms; these are simulated measurements.
 
 Next: refine the existing experiences from visitor feedback. Human accessibility/device sessions and verified contact/project outcomes remain outstanding.
+
+## Portable engine generation — October 16
+
+- [x] Address the Linux release gate's artwork reproducibility failure by serializing projection metadata at eight decimal places, instead of platform-dependent trigonometric trailing bits. Retain exact comparisons for all generated files and include the affected filename in mismatch errors. The four SVG drawings remain unchanged.
+- [x] Pass the existing 158 unit/integration/architecture checks, production build, and artwork regeneration on local Node 24 and Node 25. The largest metadata number adjustment is less than 0.000000005; visible geometry remains unchanged at screen resolution.
+- [x] Re-run the complete Chromium/WebKit suite after regeneration: 209 passes and the existing Chromium-only touch-injection skip.
+
+Next: confirm the Linux release gate and matching public/private asset manifests, then continue with the visitor-led refinements above.

@@ -63,7 +63,10 @@ npm run build:engine -- --audit
 ```
 
 The generator writes four theme-specific SVG assets and projection data. The
-selected theme loads two images only when the experience is mounted; theme changes
+projection JSON uses eight decimal places to avoid platform-dependent trailing
+bits in trigonometric results. This is far below a screen pixel; regeneration
+still compares every generated file exactly and reports the differing filename.
+The selected theme loads two images only when the experience is mounted; theme changes
 select the matching pair. Both theme pairs together have an 80 KiB compressed
 source-art regression limit, separate from the existing JavaScript budgets.
 Ordinary builds
