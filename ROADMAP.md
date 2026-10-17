@@ -591,3 +591,15 @@ Next: continue refining these experiences from visitor feedback; verified contac
 - [x] Replace the selected layer's solid blue fill with a neutral border. Let blue follow active request processing, and give Infrastructure a subtle persistent tint and dashed border to distinguish hosting from a request hop.
 - [x] Remove Pause/Replay controls at the user's request. Run automatically while visible, pause for hidden tabs, offscreen changes, keyboard exploration, and reduced motion, and restart from the browser when eligible again. Retain independent, stable detail selection.
 - [x] Pass `npm run check`, all 26 focused portfolio/map checks, and desktop/mobile inspection in both themes, including 320px at 200% text. The full run has 212 passes, one existing platform skip, the two previously reported Chromium Motion Studio failures, and a WebKit flow-test clock race. Freeze the sequence test's clock before navigation; all 18 flow checks then pass across three repetitions in both browsers. No application behavior was changed for that test race.
+
+## Mobile release recovery — October 17
+
+- [x] Place the mobile stack-flow counter beside its reserved-height description and tighten the readout's top spacing. Keep the request tour, readable text, stable layer panels, and the existing résumé-proximity limit; do not relax the failing release assertion.
+- [x] Correct the narrow-container rule to stack the actual topology grid, rather than its flex wrapper. At 320px with 200% text, each layer gets the full width; keep controls, content, and selection usable without horizontal overflow.
+- [x] Trace the Motion Studio replay failures to Chromium continuing a synthetic wheel gesture after the viewport reaches the page edge. Wait for native scroll completion before the test begins another navigation; retain offscreen interruption and explicit-replay assertions without changing game behavior.
+- [x] Aim the delayed-entry wheel test at the experience heading instead of the default pointer position inside the separately scrollable identity rail. Keep its assertion that late content must not pull a visitor back.
+- [x] Wait for Gravity Loom's reduced-motion state to render before testing subsequent arrow-key announcements, so the test does not race the browser preference event.
+
+- [x] Pass all 158 unit/integration/architecture checks, the production build and asset budgets, and 215 Chromium/WebKit journeys with the existing platform-specific skip. Repeat the direct-entry cases three times in both browsers (24 passes), and visually inspect desktop/mobile themes and the one-column 320px/200% text layout.
+
+Next: collect first-time visitor feedback, physical-phone observations, and a human screen-reader assessment. Add verified project outcomes and direct contact details when supplied; further technical work should address concrete findings.

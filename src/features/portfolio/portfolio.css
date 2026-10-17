@@ -709,6 +709,13 @@
   .map-caption > span:first-child {
     letter-spacing: 0.5px;
   }
+  .map-flow-readout {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    align-items: baseline;
+    gap: 8px;
+    margin-top: 14px;
+  }
   .map-footnote {
     font-size: 0.625rem;
   }
@@ -872,8 +879,9 @@
   }
 }
 @container (max-width: 12rem) {
-  .stack-drawing {
-    grid-template-columns: 1fr;
+  .map-topology {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
   }
   .map-wires {
     display: none;

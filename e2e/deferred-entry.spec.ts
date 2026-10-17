@@ -36,6 +36,9 @@ for (const browseAway of [false, true]) {
     await expect(page.locator(".loom-stage")).toBeVisible();
     await expect.poll(() => requested).toBe(true);
     if (browseAway) {
+      // Scroll the experience, not the independently scrollable identity rail
+      // at the mouse's default (0, 0) position.
+      await page.locator("#loom-title").hover();
       await page.mouse.wheel(0, -20000);
       await expect(page.locator("#workbench")).toBeInViewport();
     }

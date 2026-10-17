@@ -192,11 +192,20 @@ test("reduced motion retains a static explanation and selectable layers", async 
       labelBottom: rect(".map-flow-readout").bottom,
       footnoteTop: rect(".map-footnote").top,
       overflow: document.documentElement.scrollWidth > innerWidth,
+      nodes: Array.from(document.querySelectorAll(".stack-node"), (node) => {
+        const { left, top, bottom } = node.getBoundingClientRect();
+        return { left, top, bottom };
+      }),
     };
   });
   expect(layout.captionBottom).toBeLessThanOrEqual(layout.nodeTop);
   expect(layout.labelBottom).toBeLessThanOrEqual(layout.footnoteTop);
   expect(layout.overflow).toBe(false);
+  for (const [index, node] of layout.nodes.entries()) {
+    expect(node.left).toBe(layout.nodes[0].left);
+    if (index > 0)
+      expect(node.top).toBeGreaterThanOrEqual(layout.nodes[index - 1].bottom);
+  }
   await page.locator(".stack-node-data").click();
   await expect(page.locator(".stack-node-data")).toHaveAttribute(
     "aria-pressed",

@@ -171,6 +171,9 @@ test("holding Space toggles once, while repeated arrows give updated position fe
   await field.press("Space");
   await expect(field).toHaveAttribute("data-playing", "false");
   await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(exhibit.getByRole("status")).toContainText(
+    "Reduced motion is enabled",
+  );
   await field.press("ArrowRight");
   await expect(exhibit.getByRole("status")).toContainText("horizontal -28%");
   await field.press("ArrowRight");

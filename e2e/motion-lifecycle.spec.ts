@@ -28,11 +28,20 @@ for (const width of [1280, 390]) {
           .getByRole("link", { name: "Résumé", exact: true })
           .press("Enter");
       } else {
-        // Real scroll input leaves immediately, without waiting for another
-        // section's entrance animation or changing the URL/hash.
+        // Chromium can keep processing a wheel gesture after reaching the
+        // page edge. Finish that gesture before starting a new navigation.
+        const scrollEnd = page.evaluate(
+          () =>
+            new Promise<void>((resolve) => {
+              document.addEventListener("scrollend", () => resolve(), {
+                once: true,
+              });
+            }),
+        );
         await page.mouse.wheel(0, -20000);
         await expect(page.locator("#motion-studio")).not.toBeInViewport();
         await expect(page).toHaveURL(/#motion-studio$/);
+        await scrollEnd;
       }
 
       const feedback = page.locator(".motion-feedback");
