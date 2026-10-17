@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useClientReady } from "../../shared/hooks/useClientReady";
 
 import { stackLayers } from "./data/technology-stack";
+import { stackFlowSteps, useStackFlow } from "./useStackFlow";
+import { useStackConnections } from "./useStackConnections";
 
 function LayerIcon({ kind }: { kind: string }) {
   return (
@@ -44,44 +46,114 @@ export function StackMap() {
   const ready = useClientReady();
   const [selected, setSelected] =
     useState<(typeof stackLayers)[number]["id"]>("frontend");
+  const flow = useStackFlow();
+  const { topology, connections } = useStackConnections();
+  const current = stackFlowSteps[flow.step];
   return (
     <div className="stack-map">
-      <div className="stack-drawing" role="group" aria-label="Explore my stack">
+      <div
+        ref={flow.target}
+        className="stack-drawing"
+        role="group"
+        aria-label="Explore my stack"
+        data-playing={flow.playing}
+        onFocusCapture={(event) =>
+          flow.setKeyboardFocus(event.target.matches(":focus-visible"))
+        }
+        onBlurCapture={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget))
+            flow.setKeyboardFocus(false);
+        }}
+      >
         <div className="map-caption">
           <span>A MAP OF MY WORK</span>
           <span>
             Choose a layer <span aria-hidden="true">↙</span>
           </span>
         </div>
-        <svg
-          className="map-wires"
-          viewBox="0 0 800 400"
-          preserveAspectRatio="none"
-          fill="none"
-          aria-hidden="true"
-        >
-          <path className="map-wire" d="M200 120H600V280H200V120" />
-          <path className="map-wire-secondary" d="M200 120H400V280H600" />
-          <circle cx="400" cy="120" r="4" />
-          <circle cx="400" cy="280" r="4" />
-        </svg>
-        {stackLayers.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            disabled={!ready}
-            className={`stack-node stack-node-${item.id}`}
-            aria-pressed={selected === item.id}
-            aria-controls="stack-detail"
-            onClick={() => setSelected(item.id)}
+        <div className="map-topology" data-step={flow.step} ref={topology}>
+          <svg
+            className="map-wires"
+            viewBox={connections.viewBox}
+            preserveAspectRatio="none"
+            fill="none"
+            aria-hidden="true"
           >
-            <LayerIcon kind={item.id} />
-            <strong>{item.name}</strong>
-            <span>{item.caption}</span>
-          </button>
-        ))}
-        <p className="map-footnote">
-          Frontend · backend · data · infrastructure
+            <path
+              className="map-wire"
+              d={`${connections.request}${connections.query}`}
+            />
+            <path className="map-wire-secondary" d={connections.hosting} />
+            <path
+              key={`${flow.tour}-${flow.step}`}
+              className="map-packet"
+              pathLength="100"
+              d={
+                flow.step === 1
+                  ? connections.request
+                  : flow.step === 3
+                    ? connections.query
+                    : flow.step === 5
+                      ? connections.result
+                      : flow.step === 7
+                        ? connections.response
+                        : connections.request
+              }
+              data-visible={[1, 3, 5, 7].includes(flow.step)}
+            />
+          </svg>
+          {stackLayers.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              disabled={!ready}
+              className={`stack-node stack-node-${item.id}`}
+              aria-pressed={selected === item.id}
+              aria-controls="stack-detail"
+              data-flow-active={current.node === item.id && !flow.reducedMotion}
+              aria-describedby="stack-flow-description"
+              onClick={() => setSelected(item.id)}
+            >
+              <LayerIcon kind={item.id} />
+              <strong>{item.name}</strong>
+              <span>{item.caption}</span>
+              <span className="map-node-activity" aria-hidden="true">
+                {item.id === "infrastructure"
+                  ? "Hosting the flow"
+                  : current.node === item.id
+                    ? current.activity
+                    : "Ready"}
+              </span>
+            </button>
+          ))}
+        </div>
+        <p className="map-flow-readout" aria-hidden="true">
+          <span className="map-flow-count">
+            {flow.reducedMotion ? "FLOW" : `0${flow.step + 1} / 09`}
+          </span>
+          <span className="map-flow-labels">
+            {stackFlowSteps.map((step, index) => (
+              <span
+                key={step.label}
+                data-current={!flow.reducedMotion && flow.step === index}
+              >
+                {step.label}
+              </span>
+            ))}
+            <span data-current={flow.reducedMotion}>
+              Browser → API → data → browser
+            </span>
+          </span>
+        </p>
+        <p className="map-footnote" id="stack-flow-description">
+          Illustrative request round trip · hosted on infrastructure. Not live
+          traffic.
+          <span className="sr-only">
+            {" "}
+            The browser sends a request to the backend, which validates it and
+            queries data. Data returns a result, the backend builds a response,
+            and the browser renders it. Infrastructure hosts the services.
+          </span>
         </p>
       </div>
       <div

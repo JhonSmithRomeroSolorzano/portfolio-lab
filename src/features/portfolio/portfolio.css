@@ -309,16 +309,24 @@
 }
 .stack-drawing {
   min-height: 420px;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 44px 32px;
-  padding: 64px 28px 54px;
+  display: flex;
+  flex-direction: column;
+  padding: 64px 28px 20px;
   position: relative;
   background-color: var(--board);
   background-image:
     linear-gradient(var(--map-grid) 1px, transparent 1px),
     linear-gradient(90deg, var(--map-grid) 1px, transparent 1px);
   background-size: 24px 24px;
+}
+.map-topology {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 44px 32px;
+  flex: 1;
+  min-height: 300px;
 }
 .map-caption {
   position: absolute;
@@ -351,8 +359,26 @@
   opacity: 0.45;
   vector-effect: non-scaling-stroke;
 }
-.map-wires circle {
-  fill: var(--electric);
+.map-packet {
+  stroke: var(--electric);
+  stroke-width: 5px;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+  stroke-dasharray: 7 100;
+  stroke-dashoffset: 7;
+  animation: map-packet-travel 1.4s linear both;
+}
+.map-packet[data-visible="false"] {
+  visibility: hidden;
+}
+.stack-drawing[data-playing="false"] .map-packet,
+.stack-drawing[data-playing="false"] .map-node-activity::before {
+  animation-play-state: paused;
+}
+@keyframes map-packet-travel {
+  to {
+    stroke-dashoffset: -100;
+  }
 }
 .stack-node {
   position: relative;
@@ -388,24 +414,91 @@
   color: var(--electric);
 }
 .stack-node[aria-pressed="true"] {
-  color: #fff;
-  background: #255ad5;
-  border-color: #255ad5;
-  box-shadow: 5px 5px 0 color-mix(in srgb, var(--electric) 24%, transparent);
+  border-color: var(--muted);
+  box-shadow: inset 0 0 0 1px var(--muted);
 }
-.stack-node[aria-pressed="true"] > span,
-.stack-node[aria-pressed="true"] svg {
-  color: #fff;
+.stack-node-infrastructure {
+  background: color-mix(in srgb, var(--node) 88%, var(--accent));
+  border-style: dashed;
 }
 .stack-node:hover {
   box-shadow: 5px 5px 0 color-mix(in srgb, var(--electric) 35%, transparent);
 }
+.stack-node .map-node-activity {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 1.2em;
+  font: 0.625rem/1.3 var(--mono);
+  margin-top: 3px;
+}
+.map-node-activity::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.3;
+}
+.stack-node[data-flow-active="true"] {
+  color: #fff;
+  background: #255ad5;
+  border-color: #255ad5;
+  outline: 2px solid var(--electric);
+  outline-offset: 3px;
+}
+.stack-node[data-flow-active="true"] > span,
+.stack-node[data-flow-active="true"] svg {
+  color: #fff;
+}
+.stack-node:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 5px;
+}
+.stack-node[data-flow-active="true"] .map-node-activity::before,
+.stack-node-infrastructure .map-node-activity::before {
+  opacity: 1;
+  animation: map-processing 0.7s ease-in-out infinite alternate;
+}
+@keyframes map-processing {
+  to {
+    opacity: 0.35;
+  }
+}
+.map-flow-readout {
+  margin: 22px 0 0;
+  color: var(--ink);
+  font: 0.6875rem/1.6 var(--mono);
+  min-width: 0;
+}
+.map-flow-count {
+  display: block;
+  color: var(--accent);
+  font-size: 0.625rem;
+  letter-spacing: 0.06em;
+}
+.map-flow-labels {
+  display: grid;
+}
+.map-flow-labels > span {
+  grid-area: 1 / 1;
+  visibility: hidden;
+}
+.map-flow-labels > span[data-current="true"] {
+  visibility: visible;
+}
 .map-footnote {
-  position: absolute;
-  inset: auto 22px 17px;
-  margin: 0;
-  font: 9px var(--mono);
+  margin: 12px 0 0;
+  font: 0.625rem/1.6 var(--mono);
   color: var(--muted);
+}
+@media (prefers-reduced-motion: reduce) {
+  .map-packet {
+    display: none;
+  }
+  .map-node-activity::before {
+    animation: none !important;
+  }
 }
 .stack-details {
   display: grid;
@@ -591,7 +684,7 @@
     width: 100%;
     min-height: 6.5rem;
     padding: 10px;
-    gap: 6px;
+    gap: 4px;
   }
   .stack-node strong {
     font-size: 0.875rem;
@@ -602,8 +695,11 @@
 
   .stack-drawing {
     min-height: 0;
-    gap: 24px 14px;
-    padding: 50px 14px 42px;
+    padding: max(50px, 2.25rem) 14px 20px;
+  }
+  .map-topology {
+    min-height: 0;
+    gap: 24px 20px;
   }
   .map-caption {
     inset-inline: 14px;
@@ -614,8 +710,7 @@
     letter-spacing: 0.5px;
   }
   .map-footnote {
-    inset-inline: 14px;
-    font-size: 0.5rem;
+    font-size: 0.625rem;
   }
   .stack-detail {
     display: flex;

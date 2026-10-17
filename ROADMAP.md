@@ -577,3 +577,17 @@ Next: confirm the Linux release gate and matching public/private asset manifests
 - [x] Pass 158 unit/integration/architecture checks, the production build and asset budgets, and all 209 applicable Chromium/WebKit journeys (one existing platform-specific skip). Inspect the ordered cards at desktop/mobile sizes in both themes without horizontal overflow.
 
 Next: continue refining these experiences from visitor feedback; verified contact/project outcomes and human usability sessions remain outstanding.
+
+## Stack map request flow — October 16
+
+- [x] Animate the existing four-layer map as a browser request, backend validation, data lookup, result, response construction, and browser rendering. Keep infrastructure as the hosting layer rather than implying that it is another request hop. Clearly label the flow as illustrative, not live traffic.
+- [x] Start a calm tour on the first visible visit, with Pause and explicit Replay. Stop for keyboard layer exploration, navigation, offscreen/hidden changes, and motion-preference changes. Keep selectable technology panels independent of the animation and provide a static reduced-motion explanation.
+- [x] Reserve the intrinsic height of every readout, and measure connections from card edges so packets stay visible along the gaps at different widths and text sizes. Use CSS/SVG motion with one timer per step, cleaned-up observers, and no new dependency or network request.
+- [x] Pass `npm run check` with 158 unit/integration/architecture checks and production asset budgets. Verify the round-trip sequence, exact packet endpoints, pause/replay, keyboard selection, hidden/offscreen/navigation interruption, and live reduced-motion changes in Chromium and WebKit. Inspect both themes on desktop/mobile, a paused packet mid-route, and 320px with 200% text without horizontal overflow. Keep the mobile overview's existing résumé proximity check passing.
+- [x] Complete the full browser run with 213 passes, the existing Chromium-only touch-injection skip, and two Chromium Motion Studio scroll/replay failures. Both failures remain on a serial rerun; no Motion Studio code was changed to mask them. After the final enlarged-text/focus refinements, all 26 stack-flow, stable-panel, and portfolio checks pass in both browsers; six of eight Motion Studio lifecycle checks pass.
+
+### Automatic flow and color semantics — follow-up
+
+- [x] Replace the selected layer's solid blue fill with a neutral border. Let blue follow active request processing, and give Infrastructure a subtle persistent tint and dashed border to distinguish hosting from a request hop.
+- [x] Remove Pause/Replay controls at the user's request. Run automatically while visible, pause for hidden tabs, offscreen changes, keyboard exploration, and reduced motion, and restart from the browser when eligible again. Retain independent, stable detail selection.
+- [x] Pass `npm run check`, all 26 focused portfolio/map checks, and desktop/mobile inspection in both themes, including 320px at 200% text. The full run has 212 passes, one existing platform skip, the two previously reported Chromium Motion Studio failures, and a WebKit flow-test clock race. Freeze the sequence test's clock before navigation; all 18 flow checks then pass across three repetitions in both browsers. No application behavior was changed for that test race.
