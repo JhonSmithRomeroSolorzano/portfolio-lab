@@ -16,6 +16,9 @@ for (const width of [1280, 390]) {
       await expect(page.locator("html")).toHaveCSS("scroll-behavior", "auto");
       await page.getByRole("slider", { name: /Duration/ }).fill("1800");
       const play = page.getByRole("button", { name: /Play motion/ });
+      // Keyboard navigation leaves the pointer at the viewport edge. Position
+      // the later wheel gesture over the experience before starting playback.
+      if (exit === "scrolling") await play.hover();
       await play.press("Enter");
       await expect(page.locator("html")).toHaveCSS("scroll-behavior", "auto");
       await expect(page.locator(".motion-feedback")).toHaveText(

@@ -602,4 +602,6 @@ Next: continue refining these experiences from visitor feedback; verified contac
 
 - [x] Pass all 158 unit/integration/architecture checks, the production build and asset budgets, and 215 Chromium/WebKit journeys with the existing platform-specific skip. Repeat the direct-entry cases three times in both browsers (24 passes), and visually inspect desktop/mobile themes and the one-column 320px/200% text layout.
 
+- [x] The first GitHub run passes the mobile layout check but exposes a WebKit/Linux wheel-target failure in the Motion Studio check. Position the pointer over the visible Play control before starting playback instead of sending the later wheel input from the untouched viewport edge; retain the offscreen, interruption, and explicit-replay requirements. Pass `npm run check`, 40 repeated lifecycle checks, and the full 215-pass browser suite with its existing platform skip.
+
 Next: collect first-time visitor feedback, physical-phone observations, and a human screen-reader assessment. Add verified project outcomes and direct contact details when supplied; further technical work should address concrete findings.
