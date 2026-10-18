@@ -605,3 +605,10 @@ Next: continue refining these experiences from visitor feedback; verified contac
 - [x] The first GitHub run passes the mobile layout check but exposes a WebKit/Linux wheel-target failure in the Motion Studio check. Position the pointer over the visible Play control before starting playback instead of sending the later wheel input from the untouched viewport edge; retain the offscreen, interruption, and explicit-replay requirements. Pass `npm run check`, 40 repeated lifecycle checks, and the full 215-pass browser suite with its existing platform skip.
 
 Next: collect first-time visitor feedback, physical-phone observations, and a human screen-reader assessment. Add verified project outcomes and direct contact details when supplied; further technical work should address concrete findings.
+
+## Infrastructure experience — October 17
+
+- [x] Add Jhon's directly confirmed Linux and PM2 experience to Infrastructure, grouped under Operating systems and Process management. Reuse the shared technology data for both résumé downloads and keep Azure/AWS qualifications intact.
+- [x] Pass `npm run check` and all 215 browser checks with the existing platform skip. Inspect the panel at desktop/mobile sizes in both themes, confirm stable layer heights, and visually verify both pages of the regenerated résumé.
+
+Next: continue from concrete visitor findings and new verified profile details.

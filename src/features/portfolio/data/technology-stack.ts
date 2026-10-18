@@ -1,4 +1,5 @@
 // Experience confirmed by Jhon and his LinkedIn profile on October 6, 2026.
+// Linux and PM2 confirmed directly by Jhon on October 17, 2026.
 // Preserve his distinction between Azure experience and some AWS experience.
 export const languages = ["JavaScript", "TypeScript"] as const;
 export const testing = {
@@ -59,8 +60,10 @@ export const stackLayers = [
     caption: "Containers + delivery",
     title: "From a change to a deployment.",
     description:
-      "I work with Docker and GitHub Actions for continuous integration and continuous deployment (CI/CD). My cloud experience includes Azure and some work with AWS. Testing across the stack helps me check changes before they ship.",
+      "I have experience with Linux, PM2 process management, and Docker. I use GitHub Actions for CI/CD and have cloud experience with Azure and some AWS.",
     groups: [
+      { label: "Operating systems", items: ["Linux"] },
+      { label: "Process management", items: ["PM2"] },
       { label: "Containers", items: ["Docker"] },
       { label: "CI/CD", items: ["GitHub Actions"] },
       { label: "Cloud", items: ["Azure", "AWS (some experience)"] },
