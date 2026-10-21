@@ -1,20 +1,10 @@
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  useSyncExternalStore,
-} from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import {
   airPoint,
   enginePower,
   engineSpeed,
 } from "../../../domain/playground/jet-engine";
-import { useMediaQuery } from "../../../shared/hooks/useMediaQuery";
-import {
-  REDUCED_MOTION,
-  usePlaybackInterruption,
-} from "../../../shared/hooks/usePlaybackInterruption";
+import { useViewportPlayback } from "../../../shared/hooks/useViewportPlayback";
 import { createEngineRenderer } from "./renderer";
 import { engineFaces, project, svgPath } from "./mesh";
 import backLight from "./engine-back-light.svg";
@@ -22,7 +12,6 @@ import backDark from "./engine-back-dark.svg";
 import frontLight from "./engine-front-light.svg";
 import frontDark from "./engine-front-dark.svg";
 
-const HASHES = ["#jet-engine", "#pin-lock"];
 const PRESETS = [
   { name: "Idle", value: 25 },
   { name: "Cruise", value: 60 },
@@ -41,22 +30,23 @@ const staticFaces = engineFaces(0);
 
 export function JetEngine() {
   const [speed, setSpeed] = useState(35);
-  const [playing, setPlaying] = useState(false);
   const [available, setAvailable] = useState(false);
   const [artFailed, setArtFailed] = useState(false);
-  const reduced = useMediaQuery(REDUCED_MOTION);
   const dark = useSyncExternalStore(subscribeTheme, themeSnapshot, () => false);
   const stage = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const renderer = useRef<ReturnType<typeof createEngineRenderer>>(undefined);
   const power = enginePower(speed);
-  const pause = useCallback(() => setPlaying(false), []);
-  usePlaybackInterruption(pause, { target: stage, activeHashes: HASHES });
+  const {
+    playing: running,
+    reduced,
+    play,
+    pause,
+  } = useViewportPlayback(stage, available && speed > 0 && !artFailed);
   useEffect(() => {
     if (!canvas.current) return;
     const view = createEngineRenderer(canvas.current, () => {
       setAvailable(false);
-      setPlaying(false);
     });
     renderer.current = view;
     setAvailable(!!view);
@@ -68,7 +58,6 @@ export function JetEngine() {
   useEffect(() => {
     renderer.current?.configure(speed, reduced);
   }, [speed, reduced]);
-  const running = playing && available && !reduced && speed > 0 && !artFailed;
   useEffect(() => {
     if (running) renderer.current?.play();
     else renderer.current?.pause();
@@ -77,10 +66,11 @@ export function JetEngine() {
     const next = engineSpeed(value);
     if (next === speed) return;
     setSpeed(next);
-    setPlaying(next > 0 && !reduced && !!renderer.current);
+    if (next > 0) play();
+    else pause();
   }
   function reset() {
-    setPlaying(false);
+    pause();
     setSpeed(35);
     renderer.current?.reset(35);
   }
@@ -146,7 +136,6 @@ export function JetEngine() {
           draggable="false"
           onError={() => {
             setArtFailed(true);
-            setPlaying(false);
           }}
         />
         <svg
@@ -185,7 +174,6 @@ export function JetEngine() {
           draggable="false"
           onError={() => {
             setArtFailed(true);
-            setPlaying(false);
           }}
         />
       </div>
@@ -196,7 +184,7 @@ export function JetEngine() {
             ? "AIRFLOW LIVE"
             : reduced
               ? "REDUCED-MOTION STILL"
-              : "CHANGE SPEED TO START"}
+              : "AIRFLOW PAUSED"}
         </span>
       </div>
       <div className="engine-control-panel">
@@ -219,8 +207,8 @@ export function JetEngine() {
           <span>FULL POWER</span>
         </div>
         <p id="engine-speed-help">
-          Changing speed starts the motion. Blue air flows around the core;
-          orange air passes through the heated core.
+          Motion starts when the engine comes into view. Pause anytime. Blue air
+          flows around the core; orange air passes through the heated core.
         </p>
         <div className="engine-toolbar">
           <div
@@ -244,10 +232,10 @@ export function JetEngine() {
               className="engine-play"
               disabled={!available || reduced || artFailed}
               onClick={() => {
-                if (running) setPlaying(false);
+                if (running) pause();
                 else {
                   if (speed === 0) setSpeed(35);
-                  setPlaying(true);
+                  play();
                 }
               }}
             >

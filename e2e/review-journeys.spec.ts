@@ -162,14 +162,15 @@ test("holding Space toggles once, while repeated arrows give updated position fe
   const field = exhibit.getByRole("group", {
     name: "Interactive gravity field",
   });
+  await expect(field).toHaveAttribute("data-playing", "true");
   await field.focus();
   await page.keyboard.down("Space");
-  await expect(field).toHaveAttribute("data-playing", "true");
+  await expect(field).toHaveAttribute("data-playing", "false");
   await page.keyboard.down("Space");
-  await expect(field).toHaveAttribute("data-playing", "true");
+  await expect(field).toHaveAttribute("data-playing", "false");
   await page.keyboard.up("Space");
   await field.press("Space");
-  await expect(field).toHaveAttribute("data-playing", "false");
+  await expect(field).toHaveAttribute("data-playing", "true");
   await page.emulateMedia({ reducedMotion: "reduce" });
   await expect(exhibit.getByRole("status")).toContainText(
     "Reduced motion is enabled",

@@ -40,12 +40,8 @@ test("loom plays, preserves paused trails, changes flow and resets through keybo
   await expect(
     exhibit.getByRole("heading", { name: "Gravity Loom." }),
   ).toBeVisible();
-  await expect(stage).toHaveAttribute("data-playing", "false");
-  const initial = await pixels();
-  await exhibit
-    .getByRole("button", { name: "Play", exact: true })
-    .press("Enter");
   await expect(stage).toHaveAttribute("data-playing", "true");
+  const initial = await pixels();
   await expect.poll(pixels).not.toBe(initial);
   await exhibit
     .getByRole("button", { name: "Pause", exact: true })
@@ -91,11 +87,12 @@ test("loom plays, preserves paused trails, changes flow and resets through keybo
   ).toHaveValue("100");
 });
 
-test("point controls respect attractor limits without autoplay", async ({
+test("point controls respect attractor limits and a manual pause", async ({
   page,
 }) => {
   await page.goto("/#gravity-loom");
   const exhibit = page.locator("#gravity-loom");
+  await exhibit.getByRole("button", { name: "Pause", exact: true }).click();
   await exhibit.getByLabel("Attractor placement").selectOption("1");
   await exhibit
     .getByRole("button", { name: "Add attractor", exact: true })
@@ -183,7 +180,7 @@ test("keyboard and single-click alternatives steer the same field, including red
   await expect(stage).toHaveAttribute("data-playing", "false");
 });
 
-test("cancellation and hidden-tab interruption release a drag without restarting on return", async ({
+test("cancellation stops the field and hidden-tab interruption releases a drag", async ({
   page,
 }) => {
   await page.goto("/#gravity-loom");
@@ -216,26 +213,22 @@ test("cancellation and hidden-tab interruption release a drag without restarting
     document.dispatchEvent(new Event("visibilitychange"));
   });
   await page.mouse.up();
-  await expect(stage).toHaveAttribute("data-playing", "false");
+  await expect(stage).toHaveAttribute("data-playing", "true");
 });
 
-test("navigation, hidden documents, offscreen changes and reduced motion stop the loom", async ({
+test("hidden tabs release a reduced-motion drag even when playback is already still", async ({
   page,
 }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/#gravity-loom");
-  const exhibit = page.locator("#gravity-loom");
-  const stage = exhibit.locator(".loom-stage");
-  await exhibit.getByRole("button", { name: "Play", exact: true }).click();
-  await page
-    .locator('nav[aria-label="Main navigation"] a[href="#resume"]')
-    .click();
+  const stage = page.locator("#gravity-loom .loom-stage");
+  await expect(stage).toBeInViewport();
+  const box = await stage.boundingBox();
+  if (!box) throw new Error("Missing field");
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down();
+  await expect(stage).toHaveAttribute("data-dragging", "true");
   await expect(stage).toHaveAttribute("data-playing", "false");
-  await exhibit.scrollIntoViewIfNeeded();
-  await exhibit.getByRole("button", { name: "Play", exact: true }).click();
-  await page.locator("#resume").scrollIntoViewIfNeeded();
-  await expect(stage).toHaveAttribute("data-playing", "false");
-  await exhibit.scrollIntoViewIfNeeded();
-  await exhibit.getByRole("button", { name: "Play", exact: true }).click();
   await page.evaluate(() => {
     Object.defineProperty(document, "hidden", {
       configurable: true,
@@ -243,25 +236,9 @@ test("navigation, hidden documents, offscreen changes and reduced motion stop th
     });
     document.dispatchEvent(new Event("visibilitychange"));
   });
+  await expect(stage).toHaveAttribute("data-dragging", "false");
+  await page.mouse.up();
   await expect(stage).toHaveAttribute("data-playing", "false");
-  await page.evaluate(() => {
-    Object.defineProperty(document, "hidden", {
-      configurable: true,
-      value: false,
-    });
-    document.dispatchEvent(new Event("visibilitychange"));
-  });
-  await expect(stage).toHaveAttribute("data-playing", "false");
-  await exhibit.getByRole("button", { name: "Play", exact: true }).click();
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await expect(stage).toHaveAttribute("data-playing", "false");
-  await expect(
-    exhibit.getByRole("button", { name: "Play", exact: true }),
-  ).toBeDisabled();
-  await exhibit.getByRole("button", { name: "Weave", exact: true }).click();
-  await expect(exhibit.getByRole("status")).toContainText(
-    "Static weave artwork",
-  );
 });
 
 test("canvas denial retains a static woven drawing and working placement controls", async ({

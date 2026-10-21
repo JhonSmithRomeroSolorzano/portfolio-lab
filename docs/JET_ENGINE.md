@@ -6,8 +6,10 @@ A cutaway aircraft turbofan replaces Pin & bolt, following the user's request fo
 an obvious speed-to-airflow interaction and richer animation. One engine-speed
 control drives the fan, compressor and turbine rotation, air tracer speed and
 density, heated-core emphasis, and exhaust reach. Idle, Cruise, and Full power are
-shortcuts to the same control. Changing speed starts the animation explicitly;
-Pause freezes it, and returning from an interruption never autoplays.
+shortcuts to the same control. The drawing animates when it enters view and
+suspends offscreen or in hidden tabs. Returning resumes it unless the visitor
+used Pause, Reset, or zero speed. Play and speed changes can restart it;
+reduced-motion preferences always keep the composition still.
 
 This is an Anatomy **Hero**, with a sectioned nacelle, exposed core, multiple
 blade rows, and continuous air streams. It is an educational visual model, not

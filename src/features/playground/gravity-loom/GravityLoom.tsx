@@ -16,15 +16,9 @@ import {
   type LoomFlow,
   type LoomPoint,
 } from "../../../domain/playground/gravity-loom";
-import { useMediaQuery } from "../../../shared/hooks/useMediaQuery";
-import {
-  REDUCED_MOTION,
-  usePlaybackInterruption,
-} from "../../../shared/hooks/usePlaybackInterruption";
+import { useViewportPlayback } from "../../../shared/hooks/useViewportPlayback";
 import { createLoomRenderer } from "./renderer";
 import { loomViewport, projectLoomPoint, unprojectLoomPoint } from "./viewport";
-
-const activeHashes = ["#gravity-loom", "#lab"];
 
 function describePosition(point: LoomPoint) {
   return `horizontal ${Math.round(point.x * 100)}%, vertical ${Math.round(point.y * 100)}%.`;
@@ -45,16 +39,22 @@ export function GravityLoom() {
   const [flow, setFlow] = useState<LoomFlow>("orbit");
   const [strength, setStrength] = useState(100);
   const [placement, setPlacement] = useState("0");
-  const [playing, setPlaying] = useState(false);
-  const [available, setAvailable] = useState(true);
+  const [available, setAvailable] = useState(false);
   const [fallbackViewport, setFallbackViewport] = useState(() =>
     loomViewport(320, 320),
   );
   const [feedback, setFeedback] = useState(
     "Grab a glowing point and drag. The threads follow your pull.",
   );
-  const reduced = useMediaQuery(REDUCED_MOTION);
-  const stop = useCallback(() => {
+  const {
+    playing,
+    reduced,
+    inView,
+    visible,
+    play: begin,
+    pause,
+  } = useViewportPlayback(stage, available);
+  const releaseGesture = useCallback(() => {
     const pointer = gesture.current?.pointerId;
     gesture.current = undefined;
     if (pointer !== undefined && stage.current?.hasPointerCapture(pointer))
@@ -63,10 +63,16 @@ export function GravityLoom() {
     renderer.current?.release();
     renderer.current?.pause();
     setDragging(false);
-    setPlaying(false);
-    setFeedback("Playback stopped. The field is still.");
   }, []);
-  usePlaybackInterruption(stop, { target: stage, activeHashes });
+  function stop() {
+    pause();
+    releaseGesture();
+    setFeedback("Playback stopped. The field is still.");
+  }
+  useEffect(() => {
+    if (playing) renderer.current?.play();
+    else releaseGesture();
+  }, [playing, reduced, inView, visible, releaseGesture]);
   useEffect(() => {
     if (!canvas.current) return;
     renderer.current = createLoomRenderer(canvas.current);
@@ -119,12 +125,6 @@ export function GravityLoom() {
     setFeedback(
       `Attractor ${attractors.length + 1} added. The field has ${attractors.length + 1} attractors.`,
     );
-  }
-
-  function begin() {
-    if (reduced || !available) return;
-    renderer.current?.play();
-    setPlaying(true);
   }
 
   function pointerPosition(event: PointerEvent<HTMLDivElement>): LoomPoint {
@@ -319,7 +319,7 @@ export function GravityLoom() {
             ? "FOLLOWING YOUR HAND"
             : playing && !reduced
               ? "WEAVING"
-              : "DRAG A POINT TO BEGIN"}
+              : "STILL FIELD"}
         </span>
       </div>
       <div className="loom-controls">
@@ -490,12 +490,12 @@ export function GravityLoom() {
             : feedback}
       </p>
       <p className="loom-note" id="loom-instructions">
-        Drag a glowing point with your mouse or finger to pull the existing
-        threads. Drag empty space to move your selected point. Focus the field
-        and use arrow keys to steer, Space to play/pause, or Escape to stop.
-        Named positions, Move here, and the fine controls also work without
-        dragging. Scroll outside the field to move the page. This is kinetic
-        art, not orbital physics.
+        The field moves when it comes into view. Pause anytime. Drag a glowing
+        point with your mouse or finger to pull the existing threads. Drag empty
+        space to move your selected point. Focus the field and use arrow keys to
+        steer, Space to play/pause, or Escape to stop. Named positions, Move
+        here, and the fine controls also work without dragging. Scroll outside
+        the field to move the page. This is kinetic art, not orbital physics.
       </p>
     </div>
   );

@@ -25,7 +25,7 @@ test("engine speed visibly changes airflow and fan motion, while pause freezes a
   await page.locator(".engine-canvas[data-spool]").waitFor();
   await expect(page.locator(".jet-engine")).toHaveAttribute(
     "data-playing",
-    "false",
+    "true",
   );
   await page.getByRole("button", { name: /^Idle 25%/ }).click();
   await expect(page.locator(".jet-engine")).toHaveAttribute(
@@ -67,52 +67,6 @@ test("engine speed visibly changes airflow and fan motion, while pause freezes a
   );
   // A few anti-aliased metal-edge pixels can fall in the blue classification.
   expect((await pixels(page)).blue).toBeLessThan(low.blue * 0.05);
-});
-
-test("navigation, hidden tabs, scrolling away and reduced motion stop the engine without autoplay", async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 1440, height: 1100 });
-  await page.goto("/#jet-engine");
-  const engine = page.locator(".jet-engine");
-  await page.getByRole("button", { name: /^Cruise 60%/ }).click();
-  await page
-    .getByRole("navigation", { name: "Main navigation" })
-    .getByRole("link", { name: "Résumé", exact: true })
-    .press("Enter");
-  await expect(engine).toHaveAttribute("data-playing", "false");
-  await page.locator('.collection-index a[href="#jet-engine"]').press("Enter");
-  await expect(engine).toHaveAttribute("data-playing", "false");
-  await page.getByRole("button", { name: "Play engine", exact: true }).click();
-  await page.evaluate(() => {
-    Object.defineProperty(document, "hidden", {
-      configurable: true,
-      value: true,
-    });
-    document.dispatchEvent(new Event("visibilitychange"));
-  });
-  await expect(engine).toHaveAttribute("data-playing", "false");
-  await page.evaluate(() => {
-    Object.defineProperty(document, "hidden", {
-      configurable: true,
-      value: false,
-    });
-    document.dispatchEvent(new Event("visibilitychange"));
-  });
-  await expect(engine).toHaveAttribute("data-playing", "false");
-  await page.getByRole("button", { name: "Play engine", exact: true }).click();
-  await page.mouse.wheel(0, -20000);
-  await expect(engine).not.toBeInViewport();
-  await expect(engine).toHaveAttribute("data-playing", "false");
-  await page.locator('.collection-index a[href="#jet-engine"]').press("Enter");
-  await page.getByRole("button", { name: "Play engine", exact: true }).click();
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await expect(engine).toHaveAttribute("data-playing", "false");
-  await expect(
-    page.getByRole("button", { name: "Play engine", exact: true }),
-  ).toBeDisabled();
-  await page.emulateMedia({ reducedMotion: "no-preference" });
-  await expect(engine).toHaveAttribute("data-playing", "false");
 });
 
 test("reduced-motion speed changes redraw a still composition instead of running a clock", async ({
@@ -177,7 +131,7 @@ test("failed casing artwork offers honest recovery without breaking career conte
     .click();
   await expect(page.locator(".engine-art-error")).toHaveCount(0);
   await expect(
-    page.getByRole("button", { name: "Play engine", exact: true }),
+    page.getByRole("button", { name: "Pause engine", exact: true }),
   ).toBeEnabled();
   await expect
     .poll(() =>

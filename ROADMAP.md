@@ -612,3 +612,12 @@ Next: collect first-time visitor feedback, physical-phone observations, and a hu
 - [x] Pass `npm run check` and all 215 browser checks with the existing platform skip. Inspect the panel at desktop/mobile sizes in both themes, confirm stable layer heights, and visually verify both pages of the regenerated résumé.
 
 Next: continue from concrete visitor findings and new verified profile details.
+
+## Viewport autoplay — October 21 feedback
+
+- [x] Start Jet Engine and Gravity Loom when their drawing enters view, including ordinary scrolling and direct links. Suspend them offscreen and in hidden tabs, then resume without overriding a visitor’s Pause or Reset. Keep reduced-motion and unavailable-renderer views static.
+- [x] Share the opt-in lifecycle hook while retaining each renderer, engine speed controls, Loom dragging/keyboard input, and the other experiences’ playback policies. Update the controls’ explanations and current architecture/product documentation.
+
+- [x] Pass `npm run check` with 158 unit/integration/architecture checks and the production build/asset budgets. Pass 225 Chromium/WebKit journeys with the existing platform-specific skip, including viewport entry, hidden-tab return, manual pause/reset persistence, live reduced-motion changes, static drag interruption, and unavailable IntersectionObserver. Inspect desktop/mobile artwork and controls in both themes.
+
+Next: continue from concrete visitor findings and verified profile details; collect physical-phone and human screen-reader feedback.
