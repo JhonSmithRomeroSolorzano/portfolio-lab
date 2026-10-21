@@ -155,11 +155,14 @@ export function createLoomRenderer(canvas: HTMLCanvasElement) {
       force: number,
       staticMode = false,
     ) {
+      // Flow and force affect future steps, not the already woven trails.
+      // Preserve paused pixels instead of rasterizing the same paths again.
+      const redraw = !ready || staticMode || next !== attractors;
       attractors = next;
       flow = mode;
       strength = force;
       if (!ready || staticMode) resetScene();
-      draw();
+      if (redraw) draw();
     },
     move(next: readonly LoomPoint[], staticMode: boolean) {
       attractors = next;

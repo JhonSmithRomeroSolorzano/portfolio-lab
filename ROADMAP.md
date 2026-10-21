@@ -620,4 +620,6 @@ Next: continue from concrete visitor findings and new verified profile details.
 
 - [x] Pass `npm run check` with 158 unit/integration/architecture checks and the production build/asset budgets. Pass 225 Chromium/WebKit journeys with the existing platform-specific skip, including viewport entry, hidden-tab return, manual pause/reset persistence, live reduced-motion changes, static drag interruption, and unavailable IntersectionObserver. Inspect desktop/mobile artwork and controls in both themes.
 
+- [x] Trace the Linux WebKit release failure to a redundant repaint on paused flow changes: the CI images differed in only 4–14 low-alpha pixels while retaining the same trails. Preserve the existing canvas when only future flow/strength settings change; still redraw changed attractors and reduced-motion compositions. Keep the strict paused-image assertion. Repeat `npm run check` and the full browser suite after this fix: 158 checks and 225 browser passes with the existing platform skip.
+
 Next: continue from concrete visitor findings and verified profile details; collect physical-phone and human screen-reader feedback.
