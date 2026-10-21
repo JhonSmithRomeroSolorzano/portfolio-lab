@@ -25,6 +25,13 @@ const exhibits = [
     pause: "Pause",
     play: "Play",
   },
+  {
+    id: "signal-sculpture",
+    state: ".sculpture-stage",
+    stage: ".sculpture-stage",
+    pause: "Pause",
+    play: "Play",
+  },
 ];
 
 for (const exhibit of exhibits) {

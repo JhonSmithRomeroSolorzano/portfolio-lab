@@ -77,9 +77,9 @@ export const experiences: readonly Experience[] = [
       decision:
         "Pure point geometry defines three forms. A canvas renderer handles perspective and interpolation without updating React on every frame.",
       tradeoff:
-        "Projected points suggest depth without a graphics dependency. Mobile uses fewer points; animation starts only on request and static forms remain available with reduced motion or without canvas.",
+        "Projected points suggest depth without a graphics dependency. Mobile uses fewer points; animation runs in view with a manual pause, while static forms remain available with reduced motion or without canvas.",
       verification:
-        "deterministic geometry, morph endpoints, keyboard controls, motion interruption, static fallback, and mobile reflow in both themes.",
+        "deterministic geometry, morph endpoints, keyboard controls, viewport autoplay, persistent manual pause, static fallback, and mobile reflow in both themes.",
       source: "src/features/playground/signal-sculpture",
     },
     load: () =>

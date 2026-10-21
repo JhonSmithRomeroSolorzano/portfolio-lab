@@ -1,17 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   sculptureForms,
   sculpturePoints,
   type SculptureForm,
 } from "../../../domain/playground/signal-sculpture";
-import { useMediaQuery } from "../../../shared/hooks/useMediaQuery";
-import {
-  REDUCED_MOTION,
-  usePlaybackInterruption,
-} from "../../../shared/hooks/usePlaybackInterruption";
+import { useViewportPlayback } from "../../../shared/hooks/useViewportPlayback";
 import { createSculptureRenderer } from "./renderer";
 
-const activeHashes = ["#signal-sculpture", "#lab"];
 const labels = { monogram: "Monogram", ribbon: "Ribbon", orbit: "Orbit" };
 
 export function SignalSculpture() {
@@ -20,17 +15,14 @@ export function SignalSculpture() {
   const renderer =
     useRef<ReturnType<typeof createSculptureRenderer>>(undefined);
   const [form, setForm] = useState<SculptureForm>("monogram");
-  const [playing, setPlaying] = useState(false);
-  const [available, setAvailable] = useState(true);
+  const [available, setAvailable] = useState(false);
   const [message, setMessage] = useState(
-    "Monogram ready. Press Play to bring it to life.",
+    "Monogram in motion. Choose another form or send a pulse.",
   );
-  const reduced = useMediaQuery(REDUCED_MOTION);
-  const stop = useCallback(() => {
-    renderer.current?.pause();
-    setPlaying(false);
-  }, []);
-  usePlaybackInterruption(stop, { target: stage, activeHashes });
+  const { playing, reduced, play, pause } = useViewportPlayback(
+    stage,
+    available,
+  );
   useEffect(() => {
     if (!canvas.current) return;
     renderer.current = createSculptureRenderer(canvas.current);
@@ -41,6 +33,10 @@ export function SignalSculpture() {
     };
   }, []);
   useEffect(() => {
+    if (playing) renderer.current?.play();
+    else renderer.current?.pause();
+  }, [playing]);
+  useEffect(() => {
     if (reduced) renderer.current?.settle();
   }, [reduced]);
 
@@ -48,9 +44,7 @@ export function SignalSculpture() {
     if (next === form) return;
     setForm(next);
     renderer.current?.setForm(next, reduced || !playing);
-    setMessage(
-      `${labels[next]} selected${playing && !reduced ? ". Particles are transforming." : ". Press Play to animate."}`,
-    );
+    setMessage(`${labels[next]} selected. Particles are transforming.`);
   }
   return (
     <div className="sculpture-experience">
@@ -116,10 +110,9 @@ export function SignalSculpture() {
           <button
             disabled={reduced || !available}
             onClick={() => {
-              if (playing) stop();
+              if (playing) pause();
               else {
-                renderer.current?.play();
-                setPlaying(true);
+                play();
                 setMessage(
                   `${labels[form]} in motion. Choose another form or send a pulse.`,
                 );
@@ -139,7 +132,7 @@ export function SignalSculpture() {
           </button>
           <button
             onClick={() => {
-              stop();
+              pause();
               renderer.current?.reset();
               renderer.current?.setForm("monogram", true);
               setForm("monogram");
@@ -160,9 +153,10 @@ export function SignalSculpture() {
               : `${labels[form]} is still. Press Play to animate.`}
       </p>
       <p className="sculpture-note">
-        Choose a form while playing to watch it dissolve and reassemble. Pulse
-        sends a wave through the points. Mouse movement gently changes the
-        perspective; all actions work with buttons, touch, and keyboard.
+        Starts when it comes into view. Pause anytime. Choose a form while
+        playing to watch it dissolve and reassemble. Pulse sends a wave through
+        the points. Mouse movement gently changes the perspective; all actions
+        work with buttons, touch, and keyboard.
       </p>
     </div>
   );

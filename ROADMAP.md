@@ -623,3 +623,10 @@ Next: continue from concrete visitor findings and new verified profile details.
 - [x] Trace the Linux WebKit release failure to a redundant repaint on paused flow changes: the CI images differed in only 4–14 low-alpha pixels while retaining the same trails. Preserve the existing canvas when only future flow/strength settings change; still redraw changed attractors and reduced-motion compositions. Keep the strict paused-image assertion. Repeat `npm run check` and the full browser suite after this fix: 158 checks and 225 browser passes with the existing platform skip.
 
 Next: continue from concrete visitor findings and verified profile details; collect physical-phone and human screen-reader feedback.
+
+## Signal Sculpture autoplay — October 21 follow-up
+
+- [x] Use the shared viewport playback policy for Signal Sculpture: start when its drawing enters view, suspend offscreen or in hidden tabs, and resume on return. Preserve manual Pause/Reset, reduced-motion static forms, canvas fallback, and form/Pulse controls.
+- [x] Extend the common lifecycle journeys to the sculpture and verify actual canvas motion/frozen pixels alongside form transitions, keyboard controls, and static accessibility checks. Pass `npm run check` with 158 code checks and the production build/asset budgets, plus 231 Chromium/WebKit journeys with the existing platform-specific skip. Inspect desktop/mobile views in both themes.
+
+Next: continue from concrete visitor findings and verified profile details; physical-phone and human screen-reader assessments remain outstanding.

@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-test("sculpture is explicit, transforms without resetting playback, pulses, pauses and resets", async ({
+test("sculpture starts in view, transforms without resetting playback, pulses, pauses and resets", async ({
   page,
 }) => {
   // Keep the arena and controls visible together; offscreen interruption is
@@ -13,16 +13,13 @@ test("sculpture is explicit, transforms without resetting playback, pulses, paus
   await expect(
     exhibit.getByRole("heading", { name: "Signal Sculpture." }),
   ).toBeVisible();
-  await expect(stage).toHaveAttribute("data-playing", "false");
+  await expect(stage).toHaveAttribute("data-playing", "true");
   const pixels = () =>
     exhibit
       .locator("canvas")
       .evaluate((node) => (node as HTMLCanvasElement).toDataURL());
   const initial = await pixels();
-  await exhibit
-    .getByRole("button", { name: "Play", exact: true })
-    .press("Enter");
-  await expect(stage).toHaveAttribute("data-playing", "true");
+  await expect(exhibit.getByRole("status")).toContainText("Monogram in motion");
   // The monogram itself rotates before any shape change or pulse.
   await expect.poll(pixels).not.toBe(initial);
   await exhibit
@@ -47,12 +44,17 @@ test("sculpture is explicit, transforms without resetting playback, pulses, paus
   await expect(stage).toHaveAttribute("data-form", "monogram");
 });
 
-test("hidden document stops the actual canvas clock and returning waits for Play", async ({
+test("hidden document freezes sculpture pixels and returning resumes the clock", async ({
   page,
 }) => {
   await page.goto("/#signal-sculpture");
   const exhibit = page.locator("#signal-sculpture");
-  await exhibit.getByRole("button", { name: "Play", exact: true }).click();
+  const stage = exhibit.locator(".sculpture-stage");
+  const pixels = () =>
+    exhibit
+      .locator("canvas")
+      .evaluate((node: HTMLCanvasElement) => node.toDataURL());
+  await expect(stage).toHaveAttribute("data-playing", "true");
   await page.evaluate(() => {
     Object.defineProperty(document, "hidden", {
       configurable: true,
@@ -60,10 +62,15 @@ test("hidden document stops the actual canvas clock and returning waits for Play
     });
     document.dispatchEvent(new Event("visibilitychange"));
   });
-  await expect(exhibit.locator(".sculpture-stage")).toHaveAttribute(
-    "data-playing",
-    "false",
+  await expect(stage).toHaveAttribute("data-playing", "false");
+  const frozen = await pixels();
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+      ),
   );
+  expect(await pixels()).toBe(frozen);
   await page.evaluate(() => {
     Object.defineProperty(document, "hidden", {
       configurable: true,
@@ -71,37 +78,24 @@ test("hidden document stops the actual canvas clock and returning waits for Play
     });
     document.dispatchEvent(new Event("visibilitychange"));
   });
-  await expect(
-    exhibit.getByRole("button", { name: "Play", exact: true }),
-  ).toBeEnabled();
-  await expect(exhibit.locator(".sculpture-stage")).toHaveAttribute(
-    "data-playing",
-    "false",
-  );
+  await expect(stage).toHaveAttribute("data-playing", "true");
+  await expect.poll(pixels).not.toBe(frozen);
 });
 
-test("navigation, offscreen and reduced motion stop playback and returning never autoplays", async ({
+test("reduced motion settles the sculpture and retains selectable static forms", async ({
   page,
 }) => {
   await page.goto("/#signal-sculpture");
   const exhibit = page.locator("#signal-sculpture");
   const stage = exhibit.locator(".sculpture-stage");
-  await exhibit.getByRole("button", { name: "Play", exact: true }).click();
-  await page
-    .locator('nav[aria-label="Main navigation"] a[href="#resume"]')
-    .click();
-  await expect(stage).toHaveAttribute("data-playing", "false");
-  await exhibit.scrollIntoViewIfNeeded();
-  await expect(stage).toHaveAttribute("data-playing", "false");
-  await exhibit.getByRole("button", { name: "Play", exact: true }).click();
-  await page.locator("#resume").scrollIntoViewIfNeeded();
-  await expect(stage).toHaveAttribute("data-playing", "false");
-  await exhibit.scrollIntoViewIfNeeded();
-  await exhibit.getByRole("button", { name: "Play", exact: true }).click();
+  await expect(stage).toHaveAttribute("data-playing", "true");
   await page.emulateMedia({ reducedMotion: "reduce" });
   await expect(stage).toHaveAttribute("data-playing", "false");
   await expect(
     exhibit.getByRole("button", { name: "Play", exact: true }),
+  ).toBeDisabled();
+  await expect(
+    exhibit.getByRole("button", { name: "Pulse", exact: true }),
   ).toBeDisabled();
   await exhibit
     .getByRole("button", { name: "Orbit", exact: true })
@@ -109,6 +103,7 @@ test("navigation, offscreen and reduced motion stop playback and returning never
   await expect(exhibit.getByRole("status")).toContainText(
     "Orbit displayed without animation",
   );
+  await expect(stage).toHaveAttribute("data-form", "orbit");
 });
 
 test("canvas denial retains selectable static sculpture forms", async ({
