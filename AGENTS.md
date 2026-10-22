@@ -24,6 +24,7 @@ This file owns instructions for agents working in this repository: preparation, 
 - For interface design, review, and fixes, load [UI UX Pro Max](.opencode/skills/ui-ux-pro-max/SKILL.md). In OpenCode, mention `@ui-ux-pro-max` to load it explicitly.
 - Run its Python searches from the repository root. Use focused `--domain ux` searches for interaction concerns and `--stack react` for this project's implementation. Keep the existing React/TypeScript/Vite, CSS, and SVG approach; use Context7 for version-specific library documentation.
 - Apply recommendations within the current product direction and content safeguards. Generate or persist a new design system only when the requested work needs one; installation alone does not authorize a redesign.
+- Check skill recommendations against the installed dependency versions; bundled guidance may target newer APIs. Treat companion skills as optional guidance, not authorization to add frameworks, publish assets, or replace this project's stack. Keep upstream skill files unchanged unless intentionally updating the vendor snapshot.
 - The bundled third-party files in `.opencode/skills/` are excluded from app linting and formatting so routine checks do not rewrite upstream resources. Setup and reinstall instructions are in [README](README.md#opencode-uiux-skill).
 
 ## Content safeguards

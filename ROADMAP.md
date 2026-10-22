@@ -646,3 +646,12 @@ Next: continue from concrete visitor feedback; physical-phone and human screen-r
 - [x] Pass 160 code checks and the production build, plus all 12 per-form pointer cases in the full Chromium/WebKit run. The local full run completes 240 cases and hits four unrelated WebKit timeouts, including page creation; the affected files then pass eight serial cases with the existing platform-specific skip. An earlier isolated reduced-motion entry failure passes all six repetitions without an application change.
 
 Next: verify the hosted release and matching deployment manifests, then continue from visitor feedback.
+
+## Documentation and architecture review — October 22
+
+- [x] Reconcile AGENTS, README, ARCHITECTURE, contributor instructions, server documentation, and the historical case study with the current seven-experience application. Remove runnable-dashboard instructions from the optional API guide and distinguish archived browser evidence from current coverage.
+- [x] Harden dependency validation at the browser entry and app layer. Reject Node/build/skill imports from browser code and keep the server-rendering entry build-only; cover re-exports, lazy imports, CommonJS, and import types with explicit rejection fixtures. Retain the existing feature/domain/controller/renderer structure without adding inheritance or a service container.
+- [x] Add automated checks for first-party Markdown links/anchors, documented npm script names, and all eight bundled skill entrypoints and their concrete local resources. Smoke-test UI UX Pro Max's React and UX searches; document companion skills' Claude-specific examples and unavailable optional tooling without rewriting the vendor snapshot.
+- [x] Pass `npm run check`: lint, formatting, 164 unit/integration/documentation/architecture checks, strict types, résumé generation, prerendering, release manifest, and asset budgets. Pass 243 Chromium/WebKit browser cases with the existing Chromium-only touch-injection skip. Inspect the desktop production overview; existing browser cases cover mobile layouts, both themes, keyboard, reduced motion, fallback/recovery, and hydration.
+
+No application behavior or career claims changed. External documentation URLs, every optional third-party skill workflow, hosted publication, physical phones, and human screen-reader listening were not revalidated by this review.
