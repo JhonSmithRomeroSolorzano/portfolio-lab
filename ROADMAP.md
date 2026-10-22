@@ -689,6 +689,28 @@ Next: validate this environment through the protected PR, then verify both publi
 - [x] Pass all 38 focused Chromium/WebKit checks, including new immediate-state contrast, text-size, selection, and 200% reflow regressions. Inspect desktop/mobile views in both themes and a keyboard-selected 320px/200% composition without horizontal overflow or page errors. The existing mobile résumé-proximity and stable-panel assertions remain unchanged.
 - [x] Pass `npm run check` with 165 unit/integration/documentation/architecture checks, strict types, and production asset budgets. Run the full browser suite against an isolated production preview on port 4184: 255 passes and the existing Chromium-only touch-injection skip, with no failures or retries.
 
+### Cross-platform scroll regression — October 22
+
+- [x] Replace the deferred-entry test's single oversized wheel delta with bounded successive wheel gestures, observing the overview before releasing the delayed lab download. Preserve both the native wheel-interruption path and the final assertion that late content does not pull the visitor back.
+- [x] Pass all 165 code checks and production asset budgets, 40 repeated direct-entry Chromium/WebKit cases, and the complete browser suite: 255 passes and the existing platform-specific skip. GitHub's Linux run remains the merge gate.
+
+### Batched viewport playback — October 22
+
+- [x] Fix stale viewport playback when an observer delivers multiple transitions together: use the latest entry for the observed stage. Preserve manual pause, hidden-tab suspension, reduced motion, and renderer availability.
+- [x] Add a browser regression that queues opposite visibility states together and exercises autoplay, offscreen pause, return, and hidden-tab resume. Both engines reproduce the failure against the previous build.
+- [x] Pass 165 code checks and the full Chromium/WebKit suite: 257 passes, one existing platform-specific skip, and no retries. Inspect desktop/light and mobile/dark sculpture views; protected Linux validation remains the merge gate.
+
+## CI Node setup maintenance — October 22
+
+- [x] Update both pinned setup-node references to upstream v7.1.0, verifying the commit against the release tag. Keep validation and deployment verification on Node 24, preserve dependency caching, and incorporate the completed playback fixes before release validation.
+- [x] Pass all 165 code checks, strict types, the production build, and asset budgets on the updated branch. The required Linux check validates the action inside the release environment before merging.
+
+## Compatible dependency maintenance — October 22
+
+- [x] Update React/React DOM, axe, Playwright, ESLint, Prettier, and TypeScript ESLint within their existing major versions. Pair Playwright 1.64.1 with the matching official Noble container and registry-verified immutable digest.
+- [x] Address the newer accessibility scanner's label-in-name findings: include Cache Rescue's visible zero-padded numbers in challenge names; keep Algorithm Garden's visit-order badges beside the node buttons while preserving their announced visit order and keyboard behavior.
+- [x] Pass all 165 code checks and production asset budgets. Pass the eight previously failing expanded-state accessibility journeys across Chromium/WebKit, light/dark themes, and 320px/1440px widths; inspect the corrected controls and keyboard selection. Pass the integrated full Chromium/WebKit suite with 257 passes, one existing platform-specific skip, and no retries. The protected Linux release gate remains required before merging.
+
 ## Motion preferences, lab wayfinding, and review preparation — October 22
 
 - [x] Add a site-wide Motion settings disclosure with native Follow device / Reduce animation radios. Persist and synchronize the preference, restore it before paint, respect device reduction, and retain a usable visit-local choice when storage is blocked. Apply one policy to the map, CSS effects, imperative page motion, and all lab playback without undoing manual pauses.
@@ -696,4 +718,5 @@ Next: validate this environment through the protected PR, then verify both publi
 - [x] Expand the human-review guide with neutral motion/wayfinding tasks, actual-device and listening checks, explicit session statuses, and a private sanitized-finding template. Preparation is complete; no human session was conducted.
 - [x] Cover policy, pre-paint restoration, subscriptions, device precedence, tab synchronization, and storage failure in unit tests. Pass all 22 new Chromium/WebKit checks, including actual frozen canvas pixels, retained manual pauses, static results, native focus/history, no-JavaScript links, expanded-panel axe checks, and 320px/200% text. Correct WebKit's null mouse-focus destination handling and mobile dropdown clipping without weakening assertions.
 - [x] Pass `npm run check` with 169 code checks and production asset budgets, and the complete browser suite with 277 passes and the existing platform-specific skip. Scope older chooser tests to their navigation landmark now that valid neighbor links repeat experience names. An initial sculpture visibility failure passes three repetitions in each browser without a playback change before the final full pass. Inspect both themes at desktop/mobile sizes, enlarged text, and landscape; retain human-testing limits.
+- [x] Integrate the subsequently merged dependency, accessibility, and batched-viewport fixes from main. Let native wayfinding text supply accessible names, resolving the newer scanner's label-in-name findings, and add an exact visible-name regression. Revalidate the combined branch: 169 code checks, production asset budgets, and 279 Chromium/WebKit passes with the existing platform-specific skip.
 - [ ] Conduct the first-time visitor, physical-phone, and human screen-reader sessions in [the review guide](docs/USABILITY_REVIEW.md); automated results are not substitutes.

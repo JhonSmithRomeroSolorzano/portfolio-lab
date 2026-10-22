@@ -14,11 +14,7 @@ export function ExperienceNavigation({
   return (
     <nav className="experience-navigation" aria-label={`${title} navigation`}>
       {previous && (
-        <a
-          className="experience-nav-previous"
-          href={`#${previous.id}`}
-          aria-label={`Previous experience: ${previous.title}`}
-        >
+        <a className="experience-nav-previous" href={`#${previous.id}`}>
           <span className="experience-nav-direction">Previous</span>
           <span>← {previous.title}</span>
         </a>
@@ -27,11 +23,7 @@ export function ExperienceNavigation({
         Back to collection ↑
       </a>
       {next && (
-        <a
-          className="experience-nav-next"
-          href={`#${next.id}`}
-          aria-label={`Next experience: ${next.title}`}
-        >
+        <a className="experience-nav-next" href={`#${next.id}`}>
           <span className="experience-nav-direction">Next</span>
           <span>{next.title} →</span>
         </a>

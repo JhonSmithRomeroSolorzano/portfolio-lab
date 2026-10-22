@@ -15,6 +15,10 @@ test("each experience links to its actual neighbors and the collection without w
   ];
   for (const [index, id] of ids.entries()) {
     const nav = page.locator(`#${id} .experience-navigation`);
+    for (const link of await nav.getByRole("link").all()) {
+      const visibleName = (await link.innerText()).replace(/\s+/g, " ").trim();
+      await expect(link).toHaveAccessibleName(visibleName);
+    }
     await expect(
       nav.getByRole("link", { name: "Back to collection" }),
     ).toHaveAttribute("href", "#collection");

@@ -9,7 +9,7 @@ test("reselecting the current challenge or strategy preserves the rescue result"
   await page
     .getByRole("button", { name: "Send & see the result" })
     .press("Enter");
-  await page.getByRole("button", { name: /Challenge 1:/ }).press("Enter");
+  await page.getByRole("button", { name: /Challenge 01:/ }).press("Enter");
   await expect(page.locator(".cache-feedback")).toContainText(
     "24 database reads",
   );
@@ -170,7 +170,7 @@ test("optional predictions compare against actual results and reset with the cha
     "You called it: 1 database read.",
   );
   await page
-    .getByRole("button", { name: "Challenge 3: Room to breathe" })
+    .getByRole("button", { name: "Challenge 03: Room to breathe" })
     .click();
   await expect(page.locator(".cache-prediction-result")).toBeEmpty();
   await page.getByLabel("How many database reads?").fill("1.5");
