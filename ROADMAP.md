@@ -700,6 +700,11 @@ Next: validate this environment through the protected PR, then verify both publi
 - [x] Add a browser regression that queues opposite visibility states together and exercises autoplay, offscreen pause, return, and hidden-tab resume. Both engines reproduce the failure against the previous build.
 - [x] Pass 165 code checks and the full Chromium/WebKit suite: 257 passes, one existing platform-specific skip, and no retries. Inspect desktop/light and mobile/dark sculpture views; protected Linux validation remains the merge gate.
 
+## CI Node setup maintenance — October 22
+
+- [x] Update both pinned setup-node references to upstream v7.1.0, verifying the commit against the release tag. Keep validation and deployment verification on Node 24, preserve dependency caching, and incorporate the completed playback fixes before release validation.
+- [x] Pass all 165 code checks, strict types, the production build, and asset budgets on the updated branch. The required Linux check validates the action inside the release environment before merging.
+
 ## Compatible dependency maintenance — October 22
 
 - [x] Update React/React DOM, axe, Playwright, ESLint, Prettier, and TypeScript ESLint within their existing major versions. Pair Playwright 1.64.1 with the matching official Noble container and registry-verified immutable digest.
