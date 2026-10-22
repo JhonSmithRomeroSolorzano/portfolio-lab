@@ -170,6 +170,82 @@ input[type="range"] {
     animation: none !important;
   }
 }
+html[data-motion="reduce"] {
+  scroll-behavior: auto;
+}
+html[data-motion="reduce"] *,
+html[data-motion="reduce"] *::before,
+html[data-motion="reduce"] *::after {
+  transition: none !important;
+  animation: none !important;
+}
+.motion-settings {
+  position: relative;
+  margin-top: 8px;
+  min-width: 0;
+}
+.motion-settings summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--ink);
+  font-size: 0.75rem;
+  cursor: pointer;
+  list-style: none;
+}
+.motion-settings summary::-webkit-details-marker {
+  display: none;
+}
+.motion-settings svg {
+  flex-shrink: 0;
+}
+.motion-settings summary:hover {
+  background: var(--soft);
+}
+.motion-settings-panel {
+  padding: 12px;
+  margin-top: 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--node);
+  color: var(--ink);
+}
+.motion-settings fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.motion-settings legend,
+.motion-settings p {
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+.motion-settings p {
+  margin: 8px 0 0;
+  color: var(--muted);
+}
+.motion-settings label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-height: 44px;
+  padding-block: 8px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.motion-settings input {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  margin: 3px 0 0;
+  accent-color: var(--accent);
+}
 h2 {
   font: 500 34px/1.2 var(--display);
   letter-spacing: -1px;

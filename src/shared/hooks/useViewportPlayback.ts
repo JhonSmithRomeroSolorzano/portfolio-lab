@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useState, type RefObject } from "react";
-import { useMediaQuery } from "./useMediaQuery";
-import { REDUCED_MOTION } from "./usePlaybackInterruption";
+import { useReducedMotion } from "./useReducedMotion";
 
 /** Opt-in autoplay: visibility suspends playback without undoing a manual pause. */
 export function useViewportPlayback(
   target: RefObject<HTMLElement | null>,
   available: boolean,
 ) {
-  const reduced = useMediaQuery(REDUCED_MOTION);
+  const reduced = useReducedMotion();
   const [requested, setRequested] = useState(true);
   const [inView, setInView] = useState(false);
   const [visible, setVisible] = useState(false);

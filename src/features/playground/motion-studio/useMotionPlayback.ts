@@ -1,9 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useMediaQuery } from "../../../shared/hooks/useMediaQuery";
-import {
-  REDUCED_MOTION,
-  usePlaybackInterruption,
-} from "../../../shared/hooks/usePlaybackInterruption";
+import { useReducedMotion } from "../../../shared/hooks/useReducedMotion";
+import { usePlaybackInterruption } from "../../../shared/hooks/usePlaybackInterruption";
 import { CURVES } from "./curves";
 
 const ACTIVE_HASHES = ["#motion-studio", "#lab"];
@@ -13,7 +10,7 @@ export function useMotionPlayback() {
   const [duration, setDuration] = useState(1100);
   const [playing, setPlaying] = useState(false);
   const [arrived, setArrived] = useState(false);
-  const reduced = useMediaQuery(REDUCED_MOTION);
+  const reduced = useReducedMotion();
   const container = useRef<HTMLDivElement>(null);
   const runner = useRef<HTMLDivElement>(null);
   const baseline = useRef<HTMLDivElement>(null);

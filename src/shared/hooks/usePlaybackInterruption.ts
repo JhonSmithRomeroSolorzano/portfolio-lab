@@ -1,6 +1,7 @@
 import { useEffect, type RefObject } from "react";
+import { motionQuery } from "../motion/motion-preference";
 
-export const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
+export { REDUCED_MOTION } from "../motion/motion-preference";
 
 type Options = {
   target?: RefObject<HTMLElement | null>;
@@ -13,7 +14,7 @@ export function usePlaybackInterruption(
   { target, activeHashes }: Options = {},
 ) {
   useEffect(() => {
-    const media = window.matchMedia(REDUCED_MOTION);
+    const media = motionQuery();
     const visibility = () => {
       if (document.hidden) stop();
     };

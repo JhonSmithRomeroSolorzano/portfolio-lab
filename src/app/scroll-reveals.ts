@@ -1,9 +1,7 @@
 /** Progressive enhancement: content is readable before, during, and without motion. */
 export function observeScrollReveals(
   root: HTMLElement,
-  motion: MediaQueryList = window.matchMedia(
-    "(prefers-reduced-motion: reduce)",
-  ),
+  motion: MotionQuery = motionQuery(),
   Observer:
     typeof IntersectionObserver | undefined = window.IntersectionObserver,
 ): () => void {
@@ -81,3 +79,7 @@ export function observeScrollReveals(
     root.removeEventListener("focusin", onFocus);
   };
 }
+import {
+  motionQuery,
+  type MotionQuery,
+} from "../shared/motion/motion-preference";

@@ -1,6 +1,7 @@
 import { ImplementationNote } from "./ImplementationNote";
 import { experiences } from "./catalog";
 import { DeferredExperiment } from "./DeferredExperiment";
+import { ExperienceNavigation } from "./ExperienceNavigation";
 
 export function PlaygroundSection() {
   return (
@@ -23,7 +24,12 @@ export function PlaygroundSection() {
           you to get your hands on.
         </p>
       </div>
-      <nav className="collection-index" aria-label="Explore the collection">
+      <nav
+        className="collection-index"
+        id="collection"
+        tabIndex={-1}
+        aria-label="Explore the collection"
+      >
         {experiences.map((experience, index) => (
           <a
             key={experience.id}
@@ -51,7 +57,7 @@ export function PlaygroundSection() {
           </a>
         ))}
       </nav>
-      {experiences.map((experience) => (
+      {experiences.map((experience, index) => (
         <article
           key={experience.id}
           className="play-exhibit"
@@ -61,6 +67,11 @@ export function PlaygroundSection() {
         >
           <DeferredExperiment {...experience} />
           <ImplementationNote experience={experience} />
+          <ExperienceNavigation
+            title={experience.title}
+            previous={experiences[index - 1]}
+            next={experiences[index + 1]}
+          />
         </article>
       ))}
     </section>
