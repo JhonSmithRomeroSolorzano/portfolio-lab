@@ -680,3 +680,9 @@ GitHub protection/security settings are already active. Workflow/dependency chan
 - [x] Use the PR run to identify Git's ownership check on the host-mounted checkout after all 165 code tests and Vite succeed. Trust only that job's exact `GITHUB_WORKSPACE` path inside its ephemeral container so release fingerprinting can read HEAD; keep checkout credentials disabled and do not use a wildcard trust rule.
 
 Next: validate this environment through the protected PR, then verify both published hosts at the tested release. Continue product work from concrete visitor findings and verified profile details.
+
+## Compatible dependency maintenance — October 22
+
+- [x] Update React/React DOM, axe, Playwright, ESLint, Prettier, and TypeScript ESLint within their existing major versions. Pair Playwright 1.64.1 with the matching official Noble container and registry-verified immutable digest.
+- [x] Address the newer accessibility scanner's label-in-name findings: include Cache Rescue's visible zero-padded numbers in challenge names; keep Algorithm Garden's visit-order badges beside the node buttons while preserving their announced visit order and keyboard behavior.
+- [x] Pass all 165 code checks and production asset budgets. Pass the eight previously failing expanded-state accessibility journeys across Chromium/WebKit, light/dark themes, and 320px/1440px widths; inspect the corrected controls and keyboard selection. The full browser and Linux release gates remain required before merging.
