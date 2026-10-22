@@ -680,3 +680,22 @@ GitHub protection/security settings are already active. Workflow/dependency chan
 - [x] Use the PR run to identify Git's ownership check on the host-mounted checkout after all 165 code tests and Vite succeed. Trust only that job's exact `GITHUB_WORKSPACE` path inside its ephemeral container so release fingerprinting can read HEAD; keep checkout credentials disabled and do not use a wildcard trust rule.
 
 Next: validate this environment through the protected PR, then verify both published hosts at the tested release. Continue product work from concrete visitor findings and verified profile details.
+
+## Stack map quick polish — October 22
+
+- [x] Eliminate the processing transition's brief white-on-light labels by switching text and background together. Keep shadow feedback, automatic request flow, infrastructure styling, and keyboard/reduced-motion behavior unchanged.
+- [x] Raise supporting map annotations to at least 12px at the default text size, increase the mobile detail description and action text, and retain a 44px detail-link target. Reduce excess mobile spacing rather than shrinking text or relaxing the résumé-proximity gate.
+- [x] Distinguish selection from activity with a reserved “Details” marker on the selected card, “Viewing…” in its stable panel, and a separately labeled FLOW readout. Keep the caption in normal flow for enlarged text.
+- [x] Pass all 38 focused Chromium/WebKit checks, including new immediate-state contrast, text-size, selection, and 200% reflow regressions. Inspect desktop/mobile views in both themes and a keyboard-selected 320px/200% composition without horizontal overflow or page errors. The existing mobile résumé-proximity and stable-panel assertions remain unchanged.
+- [x] Pass `npm run check` with 165 unit/integration/documentation/architecture checks, strict types, and production asset budgets. Run the full browser suite against an isolated production preview on port 4184: 255 passes and the existing Chromium-only touch-injection skip, with no failures or retries.
+
+### Cross-platform scroll regression — October 22
+
+- [x] Replace the deferred-entry test's single oversized wheel delta with bounded successive wheel gestures, observing the overview before releasing the delayed lab download. Preserve both the native wheel-interruption path and the final assertion that late content does not pull the visitor back.
+- [x] Pass all 165 code checks and production asset budgets, 40 repeated direct-entry Chromium/WebKit cases, and the complete browser suite: 255 passes and the existing platform-specific skip. GitHub's Linux run remains the merge gate.
+
+### Batched viewport playback — October 22
+
+- [x] Fix stale viewport playback when an observer delivers multiple transitions together: use the latest entry for the observed stage. Preserve manual pause, hidden-tab suspension, reduced motion, and renderer availability.
+- [x] Add a browser regression that queues opposite visibility states together and exercises autoplay, offscreen pause, return, and hidden-tab resume. Both engines reproduce the failure against the previous build.
+- [x] Pass 165 code checks and the full Chromium/WebKit suite: 257 passes, one existing platform-specific skip, and no retries. Inspect desktop/light and mobile/dark sculpture views; protected Linux validation remains the merge gate.
