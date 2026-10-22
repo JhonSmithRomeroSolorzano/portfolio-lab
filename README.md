@@ -140,6 +140,8 @@ Actions are pinned to upstream commit SHAs, with weekly npm and Actions update P
 
 CI retains HTML/JSON browser reports, failed-attempt traces/screenshots, and available Lighthouse reports for 14 days in `validation-diagnostics-<run>-<attempt>`, even when validation fails. The existing single CI retry remains; inspect flaky cases in the report even if the retry passes. Superseded PR runs may be cancelled, but main runs finish deployment and verification before another main run starts. Jobs have bounded timeouts. Only the deploy job has Pages/OIDC write permissions; dependency installation and deployed-asset verification run in read-only jobs. No gates use `continue-on-error`.
 
+Release jobs explicitly use `ubuntu-24.04`; OS upgrades require a reviewed workflow change rather than following `ubuntu-latest`. Browser installation has its own five-minute limit inside the existing 20-minute build limit. A failed or timed-out installation blocks publication; it never skips browser validation.
+
 ## Batch experiments
 
 Replay scenarios without a browser or running API:
