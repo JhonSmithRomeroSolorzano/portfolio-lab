@@ -665,3 +665,9 @@ No application behavior or career claims changed. External documentation URLs, e
 - [x] Validate workflow syntax with checksum-verified actionlint 1.7.12, parse the Dependabot configuration, and pass `npm run check` (164 checks and production build/budgets). Run the full browser suite with CI reporters: 243 passes, the existing platform-specific skip, and no flakes. Verify generated HTML/JSON reports. Use an isolated preview on port 4183 because 4173 was occupied; leave that server untouched. Pass sequential mobile Lighthouse gates with median LCP 2.13s, CLS 0.0004, and TBT 0ms; these are local simulated measurements.
 
 GitHub protection/security settings are already active. Workflow/dependency changes take effect after their reviewed branch is merged; publication and private Sites settings are unchanged by this hardening work.
+
+### Runner migration recovery — October 22
+
+- [x] Merge the verified hardening PR through its required check. The PR run passes all 243 browser cases with the existing skip, dependency auditing, and Lighthouse; its diagnostic artifact is available on GitHub.
+- [x] Diagnose the main release stopping before publication: Ubuntu 26.04's package mirror downloads consume the 20-minute job limit during Playwright installation. The successful PR also used Ubuntu 26, so this is not evidence that the OS is unsupported or the application tests failed. The previous public deployment remains in place.
+- [x] Pin all release jobs to supported Ubuntu 24.04 so runner OS changes are deliberate, and give browser installation a five-minute step limit. Preserve the full browser suite, performance thresholds, permissions, and overall job deadlines. Local actionlint and `npm run check` pass; publication remains blocked until the follow-up passes the protected PR check.

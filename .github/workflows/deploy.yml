@@ -16,7 +16,8 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # Upgrade deliberately instead of inheriting ubuntu-latest OS migrations.
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -30,7 +31,9 @@ jobs:
       - name: Audit all dependencies, including build tooling
         run: npm audit --audit-level=high
       - run: npm run check
-      - run: npx playwright install --with-deps chromium webkit
+      - name: Install browser dependencies
+        timeout-minutes: 5
+        run: npx playwright install --with-deps chromium webkit
       - run: npm run test:browser
       - name: Check mobile loading performance
         run: npm run audit:ci
@@ -55,7 +58,7 @@ jobs:
   deploy:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
       pages: write
@@ -70,7 +73,7 @@ jobs:
 
   verify:
     needs: deploy
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
       contents: read
