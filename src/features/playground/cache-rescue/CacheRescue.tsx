@@ -47,7 +47,7 @@ export function CacheRescue() {
           {ROUNDS.map((r, i) => (
             <button
               key={r.name}
-              aria-label={`Challenge ${i + 1}: ${r.name}`}
+              aria-label={`Challenge ${String(i + 1).padStart(2, "0")}: ${r.name}`}
               aria-pressed={i === round}
               onClick={() => chooseRound(i)}
             >
