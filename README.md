@@ -87,6 +87,8 @@ npm exec --yes --ignore-scripts --package=ui-ux-pro-max-cli@2.15.0 -- uipro init
 
 Open this repository in OpenCode and mention `@ui-ux-pro-max` in a UI task. If it is missing from an already-open session, restart OpenCode. Project-specific usage rules live in [AGENTS.md](AGENTS.md#uiux-skill).
 
+The companion skills are upstream reference material, not an application setup requirement. Some examples use Claude-specific `.claude/skills/` paths, tool names, or optional AI/image-generation skills that are not installed here. Resolve bundled resources under `.opencode/skills/<name>/`, check tool/prerequisite availability before running a workflow, and do not install Tailwind/shadcn or external generation tools just because a companion example uses them. The portfolio keeps its existing CSS/SVG stack; UI UX Pro Max's local searches and Anatomy's engine authoring are the verified project workflows.
+
 ### Anatomy skill
 
 [Anatomy](https://github.com/wheresryan22/anatomy) is installed for this project at `.opencode/skills/anatomy`, with its MIT license, kit, references, scripts, and examples. Mention `@anatomy` for a detailed interactive isometric figure; restart OpenCode if a running session does not discover it. The pinned upstream revision and illustration design are recorded in [the Jet Engine notes](docs/JET_ENGINE.md). Installation adds no application dependency.
@@ -114,7 +116,7 @@ tests/                   Unit/integration and architecture checks
 e2e/                     Chromium and WebKit journeys
 ```
 
-See [ARCHITECTURE.md](ARCHITECTURE.md) for dependency direction, responsibilities, styling ownership, and enforced boundaries.
+See [ARCHITECTURE.md](ARCHITECTURE.md) for dependency direction, responsibilities, styling ownership, and enforced boundaries. `npm test` also validates local documentation links/anchors, documented npm script names, and bundled skill entrypoints; it does not validate external URLs or run every third-party skill workflow.
 
 The app uses React, TypeScript, and Vite. Relative asset paths support both GitHub Pages project URLs and root hosting. It has keyboard-operable controls, a skip link, live metric announcements, and reduced-motion support. Typography is served locally with system fallbacks.
 
@@ -131,6 +133,12 @@ Each change should add something useful: a feature, a fix, a meaningful test, or
 ## Deployment
 
 GitHub Actions validates pull requests and deploys passing changes on `main` to GitHub Pages. The repository's Pages source must be set to **GitHub Actions**. The `.openai/hosting.json` manifest also supports an owner-private Sites preview.
+
+The `build` check gates release on a high/critical dependency audit (including development tooling), the existing code/build checks, Chromium/WebKit journeys, and mobile performance budgets. `main` requires that GitHub Actions check against an up-to-date branch, including for admins; force-pushes and branch deletion are disabled. Submit changes through a branch/PR so validation can run before they reach `main`. These protection settings live on GitHub, not in the workflow YAML.
+
+Actions are pinned to upstream commit SHAs, with weekly npm and Actions update PRs configured in [Dependabot](.github/dependabot.yml); automated security updates are also enabled in GitHub settings. Updates are not automatically merged. Do not suppress audit failures or use forced dependency upgrades without reviewing the advisory and compatibility.
+
+CI retains HTML/JSON browser reports, failed-attempt traces/screenshots, and available Lighthouse reports for 14 days in `validation-diagnostics-<run>-<attempt>`, even when validation fails. The existing single CI retry remains; inspect flaky cases in the report even if the retry passes. Superseded PR runs may be cancelled, but main runs finish deployment and verification before another main run starts. Jobs have bounded timeouts. Only the deploy job has Pages/OIDC write permissions; dependency installation and deployed-asset verification run in read-only jobs. No gates use `continue-on-error`.
 
 ## Batch experiments
 

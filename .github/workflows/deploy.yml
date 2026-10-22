@@ -11,34 +11,53 @@ permissions:
 
 concurrency:
   group: portfolio-${{ github.ref }}
-  cancel-in-progress: true
+  # Superseded PR checks can stop; never interrupt a main deployment/verification.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v7.0.1
-      - uses: actions/setup-node@v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: "24"
           cache: npm
       - run: npm ci
+      - name: Audit all dependencies, including build tooling
+        run: npm audit --audit-level=high
       - run: npm run check
       - run: npx playwright install --with-deps chromium webkit
       - run: npm run test:browser
       - name: Check mobile loading performance
         run: npm run audit:ci
-      - uses: actions/upload-pages-artifact@v5.0.0
-        if: github.event_name != 'pull_request'
+      - name: Retain browser and performance diagnostics
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: validation-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            test-results/
+            playwright-report/
+            artifacts/playwright-results.json
+            artifacts/lighthouse*.json
+            artifacts/lighthouse*.html
+          if-no-files-found: ignore
+          retention-days: 14
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         with:
           path: dist
 
   deploy:
-    if: github.event_name != 'pull_request'
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
-      contents: read
       pages: write
       id-token: write
     environment:
@@ -47,9 +66,19 @@ jobs:
     steps:
       - name: Deploy
         id: deployment
-        uses: actions/deploy-pages@v5.0.1
-      - uses: actions/checkout@v7.0.1
-      - uses: actions/setup-node@v7.0.0
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+
+  verify:
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: "24"
           cache: npm

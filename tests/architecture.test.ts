@@ -1,8 +1,11 @@
 import assert from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
-import { dirname, relative, resolve } from "node:path";
+import { relative, resolve } from "node:path";
 import test from "node:test";
-import ts from "typescript";
+import {
+  allowedDependency,
+  dependencyViolations,
+} from "./helpers/architecture";
 
 const root = resolve(import.meta.dirname, "..");
 function files(directory: string): string[] {
@@ -23,77 +26,73 @@ test("maintained modules respect layer direction and never depend on retired UI"
     files(resolve(root, dir)),
   )) {
     const from = relative(root, file).replaceAll("\\", "/");
-    const ast = ts.createSourceFile(
-      file,
-      readFileSync(file, "utf8"),
-      ts.ScriptTarget.Latest,
-      true,
-    );
-    function check(specifier: string) {
-      if (!specifier.startsWith(".")) {
-        if (from.startsWith("src/domain/"))
-          violations.push(`${from} imports external ${specifier}`);
-        return;
-      }
-      const target = relative(
-        root,
-        resolve(dirname(file), specifier),
-      ).replaceAll("\\", "/");
-      const feature = from.match(/^src\/features\/([^/]+)\//)?.[1];
-      const allowed = target.startsWith("archive/")
-        ? false
-        : from.startsWith("src/domain/")
-          ? target.startsWith("src/domain/")
-          : from.startsWith("src/shared/")
-            ? target.startsWith("src/shared/")
-            : feature
-              ? ["src/domain/", "src/shared/", `src/features/${feature}/`].some(
-                  (prefix) => target.startsWith(prefix),
-                )
-              : from.startsWith("server/")
-                ? ["server/", "src/domain/"].some((prefix) =>
-                    target.startsWith(prefix),
-                  )
-                : from.startsWith("scripts/")
-                  ? (from === "scripts/prerender.ts" &&
-                      target === "src/app/prerender") ||
-                    (from === "scripts/build-jet-engine.mjs" &&
-                      ["iso-kit.mjs", "lathe.mjs", "audit.mjs"].some(
-                        (name) =>
-                          target === `.opencode/skills/anatomy/kit/${name}`,
-                      )) ||
-                    [
-                      "scripts/",
-                      "src/domain/",
-                      "src/features/portfolio/data/",
-                    ].some((prefix) => target.startsWith(prefix))
-                  : true;
-      if (!allowed) violations.push(`${from} → ${target}`);
-    }
-    function visit(node: ts.Node) {
-      if (
-        (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) &&
-        node.moduleSpecifier &&
-        ts.isStringLiteral(node.moduleSpecifier)
-      )
-        check(node.moduleSpecifier.text);
-      if (
-        ts.isCallExpression(node) &&
-        node.expression.kind === ts.SyntaxKind.ImportKeyword
-      ) {
-        if (
-          node.arguments.length === 1 &&
-          ts.isStringLiteral(node.arguments[0])
-        )
-          check(node.arguments[0].text);
-        else
-          violations.push(
-            `${from}: dynamic imports must have a statically verifiable target`,
-          );
-      }
-      ts.forEachChild(node, visit);
-    }
-    visit(ast);
+    violations.push(...dependencyViolations(from, readFileSync(file, "utf8")));
   }
   assert.deepEqual(violations, [], "Dependency direction violations");
+});
+
+test("dependency policy rejects inverted layers and browser/build boundary leaks", () => {
+  const forbidden = [
+    ["src/main.tsx", "../server/api"],
+    ["src/app/App.tsx", "../../scripts/build-resume"],
+    ["src/app/App.tsx", "../../archive/signal-lab/SignalLab"],
+    ["src/app/App.tsx", "../../.opencode/skills/anatomy/kit/iso-kit.mjs"],
+    ["src/main.tsx", "./app/prerender"],
+    ["src/features/playground/Game.tsx", "../../app/prerender.tsx"],
+    ["src/features/playground/Game.tsx", "../portfolio/ResumeSection"],
+    ["src/shared/helper.ts", "../features/portfolio/data/profile"],
+    ["src/domain/model.ts", "../shared/helper"],
+    ["src/domain/model.ts", "node:fs"],
+    ["src/app/App.tsx", "pdfkit"],
+    ["src/shared/helper.ts", "node:fs"],
+    ["src/features/playground/Game.tsx", "react-dom/server"],
+    ["scripts/other.ts", "../src/app/prerender"],
+    [
+      "scripts/build-jet-engine.mjs",
+      "../.opencode/skills/anatomy/kit/tube.mjs",
+    ],
+    ["server/api.ts", "../src/features/portfolio/data/profile"],
+  ];
+  for (const [from, target] of forbidden)
+    assert.equal(allowedDependency(from, target), false, `${from} → ${target}`);
+  const allowed = [
+    ["src/main.tsx", "./app/App"],
+    ["src/main.tsx", "react-dom/client"],
+    ["src/app/prerender.tsx", "react-dom/server"],
+    ["src/features/playground/Game.tsx", "../../domain/playground/model"],
+    ["src/features/portfolio/ResumeSection.tsx", "react"],
+    ["scripts/prerender.ts", "../src/app/prerender"],
+    ["scripts/build-resume.ts", "../src/features/portfolio/data/profile"],
+    [
+      "scripts/build-jet-engine.mjs",
+      "../.opencode/skills/anatomy/kit/audit.mjs",
+    ],
+    ["server/api.ts", "../src/domain/simulation/simulation.ts"],
+    ["src/domain/playground/model.ts", "./other"],
+  ];
+  for (const [from, target] of allowed)
+    assert.equal(allowedDependency(from, target), true, `${from} → ${target}`);
+});
+
+test("dependency inspection checks every module syntax instead of just static imports", () => {
+  for (const source of [
+    'import api from "../../server/api";',
+    'export * from "../../server/api";',
+    'import type { API } from "../../server/api";',
+    'const api = import("../../server/api");',
+    "const api = import(`../../server/api`);",
+    'const api = require("../../server/api");',
+    'import api = require("../../server/api");',
+    'type API = import("../../server/api").API;',
+    "const api = import(target);",
+  ])
+    assert.equal(
+      dependencyViolations("src/app/App.tsx", source).length,
+      1,
+      source,
+    );
+  assert.deepEqual(
+    dependencyViolations("src/app/App.tsx", 'import { useRef } from "react";'),
+    [],
+  );
 });

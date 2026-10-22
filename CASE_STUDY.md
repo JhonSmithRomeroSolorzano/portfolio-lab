@@ -1,8 +1,8 @@
 # Signal Lab: making system trade-offs inspectable
 
-> Historical engineering reference: this describes the original systems dashboard, retired from the public page on October 10. Its models, local API, and CLI remain available in source. The current portfolio presents four independent games and interactive pieces.
+> Historical engineering reference: this describes the original systems dashboard, retired from the public page on October 10. Its UI/adapters live in [archive/signal-lab/](archive/signal-lab/README.md); models, local API, and CLI remain runnable independently. The walkthrough and dashboard evidence below are historical, not instructions for the current UI. See [README](README.md#labs--play) for today's collection and [ARCHITECTURE](ARCHITECTURE.md) for current boundaries.
 
-**[Try the browser lab](https://jhonsmithromerosolorzano.github.io/portfolio-lab/#lab)** · [Run the local API](server/README.md) · [Read the model](src/domain/simulation/simulation.ts)
+**[Explore the current playground](https://jhonsmithromerosolorzano.github.io/portfolio-lab/#lab)** · [Run the local API](server/README.md) · [Read the model](src/domain/simulation/simulation.ts)
 
 Signal Lab is an original portfolio project by Jhon Smith Romero. It turns a familiar engineering conversation—traffic, caching, database capacity, and failure—into a small experiment a reviewer can reproduce. It is not a production benchmark or a claim about a previous employer's systems.
 
@@ -79,13 +79,13 @@ Logs contain a generated request ID, normalized route, method, status, timestamp
 
 `npm test` covers the model, request conservation, URL round trips, storage/file boundaries, comparison, expiry, queues, rate-window boundaries, batch CLI exit codes, and real HTTP responses on an ephemeral loopback port. `npm run build` checks TypeScript for the browser, server, and scripts before producing static assets. GitHub Actions runs both before Pages deployment.
 
-Browser checks cover precise traffic input, baseline comparison, saved-library persistence, file import, expiry/queue interaction, and a narrow mobile viewport. A permanent Playwright suite now runs recruiter navigation, résumé downloads, theme persistence, mobile layout, legacy links, and imported URL state in Chromium and WebKit before Pages deployment. Browser downloads depend on host support; copyable JSON/CSV views provide a visible fallback. File contents are generated and tested independently.
+Historical browser checks covered precise traffic input, baseline comparison, saved-library persistence, file import, expiry/queue interaction, and a narrow mobile viewport. Those dashboard journeys were retired with the UI; the current Playwright suite covers recruiter navigation, résumé downloads, themes, accessibility, and the active experiences in Chromium and WebKit. Portable-format and model unit tests remain. The archived UI's copyable JSON/CSV views provided a fallback when downloads were blocked; file generation remains tested independently.
 
-The browser suite now also covers comparison restoration, saved-library edits, cross-tab changes, deadline outcomes, cache accounting, and keyboard table scrolling. Unit tests check exact event ordering, conservation, retry budgets, reproducibility, and invalid imports. The local development client now checks explicitly requested scenarios through the Node service. A same-origin development proxy avoids enabling CORS. Replies are bounded and checked against the echoed scenario, model version, and all calculated fields. Cancellation and input changes invalidate pending replies. HTTP round-trip time remains separate from modeled latency; published builds never contact localhost.
+Earlier dashboard journeys also covered comparison restoration, saved-library edits, cross-tab changes, deadline outcomes, cache accounting, and keyboard table scrolling. Retained unit tests check exact event ordering, conservation, retry budgets, reproducibility, and invalid imports. The archived client adapter checks explicitly requested scenarios through the Node service using a same-origin development proxy, bounded replies, model/echo validation, and cancellation. It is not mounted in the current portfolio; published builds never contact localhost.
 
 ## Compact investigations across the stack
 
-The portfolio puts professional experience before the lab. The lab presents one experiment at a time in a bounded workspace, with an optional expanded view, instead of growing the page as tools are opened. Its searchable catalog separates frontend, backend, data, and workspace tools. The catalog, sharing controls, and guides are secondary options behind **More experiments**, keeping the initial portfolio view focused on one working demo. Guided investigations ask a question, load a reproducible configuration, and reveal evidence on demand.
+The retired dashboard presented one experiment at a time in a bounded workspace with an optional expanded view. Its searchable catalog separated frontend, backend, data, and workspace tools. The catalog, sharing controls, and guides were secondary options behind **More experiments**. Guided investigations asked a question, loaded a reproducible configuration, and revealed evidence on demand. The current portfolio retains experience-first ordering but no longer mounts this workspace.
 
 Six additional pure models expose specific decisions:
 

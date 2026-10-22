@@ -646,3 +646,22 @@ Next: continue from concrete visitor feedback; physical-phone and human screen-r
 - [x] Pass 160 code checks and the production build, plus all 12 per-form pointer cases in the full Chromium/WebKit run. The local full run completes 240 cases and hits four unrelated WebKit timeouts, including page creation; the affected files then pass eight serial cases with the existing platform-specific skip. An earlier isolated reduced-motion entry failure passes all six repetitions without an application change.
 
 Next: verify the hosted release and matching deployment manifests, then continue from visitor feedback.
+
+## Documentation and architecture review — October 22
+
+- [x] Reconcile AGENTS, README, ARCHITECTURE, contributor instructions, server documentation, and the historical case study with the current seven-experience application. Remove runnable-dashboard instructions from the optional API guide and distinguish archived browser evidence from current coverage.
+- [x] Harden dependency validation at the browser entry and app layer. Reject Node/build/skill imports from browser code and keep the server-rendering entry build-only; cover re-exports, lazy imports, CommonJS, and import types with explicit rejection fixtures. Retain the existing feature/domain/controller/renderer structure without adding inheritance or a service container.
+- [x] Add automated checks for first-party Markdown links/anchors, documented npm script names, and all eight bundled skill entrypoints and their concrete local resources. Smoke-test UI UX Pro Max's React and UX searches; document companion skills' Claude-specific examples and unavailable optional tooling without rewriting the vendor snapshot.
+- [x] Pass `npm run check`: lint, formatting, 164 unit/integration/documentation/architecture checks, strict types, résumé generation, prerendering, release manifest, and asset budgets. Pass 243 Chromium/WebKit browser cases with the existing Chromium-only touch-injection skip. Inspect the desktop production overview; existing browser cases cover mobile layouts, both themes, keyboard, reduced motion, fallback/recovery, and hydration.
+
+No application behavior or career claims changed. External documentation URLs, every optional third-party skill workflow, hosted publication, physical phones, and human screen-reader listening were not revalidated by this review.
+
+## CI/CD hardening — October 22
+
+- [x] Preserve the existing code/build, Chromium/WebKit, accessibility, asset-budget, mobile Lighthouse, and post-deployment integrity gates. Add an all-dependency high/critical audit; update only Vite from 6.4.3 to 6.4.5 within the existing major. The current audit reports zero vulnerabilities.
+- [x] Pin workflow actions to verified upstream commit SHAs, disable persisted checkout credentials, bound job durations, and restrict Pages publication explicitly to main. Separate deployed-asset verification into a read-only job so dependency installation never shares Pages/OIDC write permissions. Serialize main runs through verification while still cancelling superseded PR runs.
+- [x] Retain browser HTML/JSON reports, failed-attempt traces/screenshots, and available Lighthouse reports for 14 days, including validation failures. Keep the single CI retry and every existing test assertion/threshold unchanged; expose retries/flaky outcomes rather than silently masking them.
+- [x] Enable GitHub's Dependabot alerts and automated security updates, and configure weekly npm/Actions update PRs without auto-merge. Enable main protection requiring an up-to-date GitHub Actions `build` check, including for admins, with force-push and deletion disabled. GitHub opened its first automated Vite security-update PR, confirming that automation is active; the combined hardening change includes the same fix.
+- [x] Validate workflow syntax with checksum-verified actionlint 1.7.12, parse the Dependabot configuration, and pass `npm run check` (164 checks and production build/budgets). Run the full browser suite with CI reporters: 243 passes, the existing platform-specific skip, and no flakes. Verify generated HTML/JSON reports. Use an isolated preview on port 4183 because 4173 was occupied; leave that server untouched. Pass sequential mobile Lighthouse gates with median LCP 2.13s, CLS 0.0004, and TBT 0ms; these are local simulated measurements.
+
+GitHub protection/security settings are already active. Workflow/dependency changes take effect after their reviewed branch is merged; publication and private Sites settings are unchanged by this hardening work.
