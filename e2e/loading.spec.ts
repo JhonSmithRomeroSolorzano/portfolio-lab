@@ -125,11 +125,10 @@ for (const phase of ["render", "effect"] as const) {
       const response = await route.fetch();
       const source = await response.text();
       // Use the built module's own React runtime for an authentic effect failure.
-      const reactImport = source.match(
-        /import\{([^}]+)\}from\s*["']([^"']+)["']/,
-      );
-      const effectAlias = reactImport?.[1].match(/(?:^|,)r as (\w+)/)?.[1];
-      expect(reactImport).toBeTruthy();
+      // Locate the runtime that the chunk actually calls. Export aliases and
+      // CommonJS interop wrappers differ between Rollup and Rolldown builds.
+      const effectAlias = source.match(/\b(\w+)\.useEffect\b/)?.[1];
+      if (phase === "effect") expect(effectAlias).toBeTruthy();
       const fault =
         phase === "render"
           ? 'if (!window.__experienceRecovered) throw new Error("render failure");'

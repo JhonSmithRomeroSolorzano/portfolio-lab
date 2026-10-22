@@ -6,7 +6,11 @@ export default defineConfig({
   base: "./",
   // Native dynamic imports also recover in WebKit after a failed optional load.
   // Preloading a game's shared dependencies can keep that failed module cached.
-  build: { modulePreload: false },
+  build: {
+    modulePreload: false,
+    // Keep the previous output targets when upgrading Vite's newer defaults.
+    target: ["es2020", "edge88", "firefox78", "chrome87", "safari14"],
+  },
   server: {
     proxy: {
       "/local-api": {
