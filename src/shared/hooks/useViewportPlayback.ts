@@ -35,8 +35,12 @@ export function useViewportPlayback(
       typeof IntersectionObserver === "undefined"
         ? undefined
         : new IntersectionObserver(
-            ([entry]) => {
-              setInView(entry.isIntersecting && entry.intersectionRatio > 0);
+            (entries) => {
+              // A scroll/layout cycle can queue several changes for this one
+              // target. The final entry describes its current visibility.
+              const entry = entries[entries.length - 1];
+              if (entry)
+                setInView(entry.isIntersecting && entry.intersectionRatio > 0);
             },
             { threshold: [0, 0.01] },
           );

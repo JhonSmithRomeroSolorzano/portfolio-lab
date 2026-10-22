@@ -693,3 +693,9 @@ Next: validate this environment through the protected PR, then verify both publi
 
 - [x] Replace the deferred-entry test's single oversized wheel delta with bounded successive wheel gestures, observing the overview before releasing the delayed lab download. Preserve both the native wheel-interruption path and the final assertion that late content does not pull the visitor back.
 - [x] Pass all 165 code checks and production asset budgets, 40 repeated direct-entry Chromium/WebKit cases, and the complete browser suite: 255 passes and the existing platform-specific skip. GitHub's Linux run remains the merge gate.
+
+### Batched viewport playback — October 22
+
+- [x] Fix stale viewport playback when an observer delivers multiple transitions together: use the latest entry for the observed stage. Preserve manual pause, hidden-tab suspension, reduced motion, and renderer availability.
+- [x] Add a browser regression that queues opposite visibility states together and exercises autoplay, offscreen pause, return, and hidden-tab resume. Both engines reproduce the failure against the previous build.
+- [x] Pass 165 code checks and the full Chromium/WebKit suite: 257 passes, one existing platform-specific skip, and no retries. Inspect desktop/light and mobile/dark sculpture views; protected Linux validation remains the merge gate.
