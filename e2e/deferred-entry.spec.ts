@@ -39,8 +39,15 @@ for (const browseAway of [false, true]) {
       // Scroll the experience, not the independently scrollable identity rail
       // at the mouse's default (0, 0) position.
       await page.locator("#loom-title").hover();
-      await page.mouse.wheel(0, -20000);
-      await expect(page.locator("#workbench")).toBeInViewport();
+      // Wheel deltas do not guarantee a scroll distance across engines. Use
+      // successive gestures and observe the destination before releasing the
+      // delayed download, keeping the scroll-interruption assertion intact.
+      await expect(async () => {
+        await page.mouse.wheel(0, -1000);
+        await expect(page.locator("#workbench")).toBeInViewport({
+          timeout: 250,
+        });
+      }).toPass({ timeout: 15_000, intervals: [100] });
     }
     release();
     await expect(page.locator(".jet-engine")).toBeVisible();

@@ -140,3 +140,52 @@ for (const exhibit of exhibits) {
     await expect(state).toHaveAttribute("data-playing", "true");
   });
 }
+
+test("sculpture uses the latest entry when viewport changes are delivered together", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    const NativeObserver = window.IntersectionObserver;
+    window.IntersectionObserver = class extends NativeObserver {
+      constructor(
+        callback: IntersectionObserverCallback,
+        options?: IntersectionObserverInit,
+      ) {
+        super((entries, observer) => {
+          callback(
+            entries.flatMap((entry) => {
+              if (!entry.target.matches(".sculpture-stage")) return [entry];
+              // Model a queued transition immediately before the current entry.
+              const earlier = {
+                target: entry.target,
+                time: entry.time - 1,
+                rootBounds: entry.rootBounds,
+                boundingClientRect: entry.boundingClientRect,
+                intersectionRect: entry.intersectionRect,
+                isIntersecting: !entry.isIntersecting,
+                intersectionRatio: entry.isIntersecting ? 0 : 1,
+              };
+              return [earlier, entry];
+            }),
+            observer,
+          );
+        }, options);
+      }
+    };
+  });
+  await page.goto("/#signal-sculpture");
+  const stage = page.locator(".sculpture-stage");
+  await expect(stage).toHaveAttribute("data-playing", "true");
+  await page
+    .getByRole("navigation", { name: "Main navigation", exact: true })
+    .getByRole("link", { name: "Résumé", exact: true })
+    .press("Enter");
+  await expect(stage).not.toBeInViewport();
+  await expect(stage).toHaveAttribute("data-playing", "false");
+  await stage.scrollIntoViewIfNeeded();
+  await expect(stage).toHaveAttribute("data-playing", "true");
+  await hideDocument(page, true);
+  await expect(stage).toHaveAttribute("data-playing", "false");
+  await hideDocument(page, false);
+  await expect(stage).toHaveAttribute("data-playing", "true");
+});

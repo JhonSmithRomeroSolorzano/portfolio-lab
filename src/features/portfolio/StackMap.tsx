@@ -114,7 +114,12 @@ export function StackMap() {
               aria-describedby="stack-flow-description"
               onClick={() => setSelected(item.id)}
             >
-              <LayerIcon kind={item.id} />
+              <span className="stack-node-heading">
+                <LayerIcon kind={item.id} />
+                <span className="map-node-selection" aria-hidden="true">
+                  Details
+                </span>
+              </span>
               <strong>{item.name}</strong>
               <span>{item.caption}</span>
               <span className="map-node-activity" aria-hidden="true">
@@ -129,7 +134,7 @@ export function StackMap() {
         </div>
         <p className="map-flow-readout" aria-hidden="true">
           <span className="map-flow-count">
-            {flow.reducedMotion ? "FLOW" : `0${flow.step + 1} / 09`}
+            {flow.reducedMotion ? "FLOW" : `FLOW 0${flow.step + 1}/09`}
           </span>
           <span className="map-flow-labels">
             {stackFlowSteps.map((step, index) => (
@@ -171,7 +176,7 @@ export function StackMap() {
             aria-hidden={selected !== layer.id}
             inert={selected !== layer.id}
           >
-            <span className="stack-detail-label">{layer.name}</span>
+            <span className="stack-detail-label">Viewing {layer.name}</span>
             <h2>{layer.title}</h2>
             <p>{layer.description}</p>
             <dl className="stack-facts" aria-label="Technology categories">
