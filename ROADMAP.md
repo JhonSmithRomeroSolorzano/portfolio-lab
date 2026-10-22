@@ -708,6 +708,6 @@ Next: validate this environment through the protected PR, then verify both publi
 
 ## Paired Vite toolchain upgrade — October 22
 
-- [x] Upgrade Vite to 8.3.4 and React plugin to 6.1.2 together, resolving their incompatible standalone Dependabot updates. Preserve the previous output transformation targets, native optional imports, and relative asset paths.
+- [x] Upgrade Vite to 8.3.4 and React plugin to 6.1.2 together, resolving their incompatible standalone Dependabot updates. Preserve the previous output transformation targets, native optional imports, and relative asset paths. Group future Vite/plugin version updates together in Dependabot.
 - [x] Adapt the effect-error recovery fixture to use the React runtime actually referenced by the generated chunk instead of a bundler-specific export alias. All four render/effect recovery cases pass in Chromium and WebKit.
-- [x] Pass 165 code checks, strict types, production generation, and asset budgets. Smoke-test the Vite development server and keyboard-operated stack-map selection without page errors. Complete the integrated browser and Linux performance gates before merging.
+- [x] Pass 165 code checks, strict types, production generation, and asset budgets. Smoke-test the Vite development server and keyboard-operated stack-map selection without page errors. Pass the integrated Chromium/WebKit suite with 257 passes, one existing platform-specific skip, and no retries. The protected Linux browser and performance gates remain required before merging.
