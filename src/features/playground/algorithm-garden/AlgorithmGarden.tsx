@@ -141,19 +141,23 @@ export function AlgorithmGarden() {
               })}
           </svg>
           {tree.map((node) => (
-            <button
+            <div
               key={node.id}
-              className={`garden-node ${visited.includes(node.id) ? "is-lit" : ""} ${hint && order[visited.length] === node.id ? "is-hinted" : ""}`}
+              className="garden-node-slot"
               style={{ left: `${node.x}%`, top: `${node.y}%` }}
-              aria-label={`Node ${node.id}${visited.includes(node.id) ? `, visited ${visited.indexOf(node.id) + 1}` : ""}`}
-              aria-disabled={visited.includes(node.id)}
-              onClick={() => visit(node.id)}
             >
-              {node.id}
+              <button
+                className={`garden-node ${visited.includes(node.id) ? "is-lit" : ""} ${hint && order[visited.length] === node.id ? "is-hinted" : ""}`}
+                aria-label={`Node ${node.id}${visited.includes(node.id) ? `, visited ${visited.indexOf(node.id) + 1}` : ""}`}
+                aria-disabled={visited.includes(node.id)}
+                onClick={() => visit(node.id)}
+              >
+                {node.id}
+              </button>
               {visited.includes(node.id) && (
                 <small aria-hidden="true">{visited.indexOf(node.id) + 1}</small>
               )}
-            </button>
+            </div>
           ))}
         </div>
         <div className="garden-trail" aria-label="Your traversal">

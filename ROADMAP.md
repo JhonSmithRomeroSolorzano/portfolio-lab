@@ -704,3 +704,9 @@ Next: validate this environment through the protected PR, then verify both publi
 
 - [x] Update both pinned setup-node references to upstream v7.1.0, verifying the commit against the release tag. Keep validation and deployment verification on Node 24, preserve dependency caching, and incorporate the completed playback fixes before release validation.
 - [x] Pass all 165 code checks, strict types, the production build, and asset budgets on the updated branch. The required Linux check validates the action inside the release environment before merging.
+
+## Compatible dependency maintenance — October 22
+
+- [x] Update React/React DOM, axe, Playwright, ESLint, Prettier, and TypeScript ESLint within their existing major versions. Pair Playwright 1.64.1 with the matching official Noble container and registry-verified immutable digest.
+- [x] Address the newer accessibility scanner's label-in-name findings: include Cache Rescue's visible zero-padded numbers in challenge names; keep Algorithm Garden's visit-order badges beside the node buttons while preserving their announced visit order and keyboard behavior.
+- [x] Pass all 165 code checks and production asset budgets. Pass the eight previously failing expanded-state accessibility journeys across Chromium/WebKit, light/dark themes, and 320px/1440px widths; inspect the corrected controls and keyboard selection. Pass the integrated full Chromium/WebKit suite with 257 passes, one existing platform-specific skip, and no retries. The protected Linux release gate remains required before merging.
