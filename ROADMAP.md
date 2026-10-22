@@ -638,3 +638,11 @@ Next: continue from concrete visitor findings and verified profile details; phys
 - [x] Pass 160 unit/integration/architecture checks, the production build and asset budgets, and 235 Chromium/WebKit journeys with the existing platform-specific skip. Repeat pointer journeys 12 times after making their frozen-clock entry setup explicit. Check actual pointer-driven pixels, gradual entry/exit, paused/reduced-motion stability, and desktop/mobile views in both themes.
 
 Next: continue from concrete visitor feedback; physical-phone and human screen-reader assessments remain outstanding.
+
+### Pointer release checks — follow-up
+
+- [x] Address Linux WebKit's 30-second test limit by giving each sculpture form its own pointer journey. Compare SHA-256 hashes of all raw canvas pixels instead of repeatedly PNG-encoding and transferring full images; preserve every entry/exit, directional-response, pause, and reduced-motion assertion.
+
+- [x] Pass 160 code checks and the production build, plus all 12 per-form pointer cases in the full Chromium/WebKit run. The local full run completes 240 cases and hits four unrelated WebKit timeouts, including page creation; the affected files then pass eight serial cases with the existing platform-specific skip. An earlier isolated reduced-motion entry failure passes all six repetitions without an application change.
+
+Next: verify the hosted release and matching deployment manifests, then continue from visitor feedback.
