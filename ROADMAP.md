@@ -688,3 +688,8 @@ Next: validate this environment through the protected PR, then verify both publi
 - [x] Distinguish selection from activity with a reserved “Details” marker on the selected card, “Viewing…” in its stable panel, and a separately labeled FLOW readout. Keep the caption in normal flow for enlarged text.
 - [x] Pass all 38 focused Chromium/WebKit checks, including new immediate-state contrast, text-size, selection, and 200% reflow regressions. Inspect desktop/mobile views in both themes and a keyboard-selected 320px/200% composition without horizontal overflow or page errors. The existing mobile résumé-proximity and stable-panel assertions remain unchanged.
 - [x] Pass `npm run check` with 165 unit/integration/documentation/architecture checks, strict types, and production asset budgets. Run the full browser suite against an isolated production preview on port 4184: 255 passes and the existing Chromium-only touch-injection skip, with no failures or retries.
+
+### Cross-platform scroll regression — October 22
+
+- [x] Replace the deferred-entry test's single oversized wheel delta with bounded successive wheel gestures, observing the overview before releasing the delayed lab download. Preserve both the native wheel-interruption path and the final assertion that late content does not pull the visitor back.
+- [x] Pass all 165 code checks and production asset budgets, 40 repeated direct-entry Chromium/WebKit cases, and the complete browser suite: 255 passes and the existing platform-specific skip. GitHub's Linux run remains the merge gate.
