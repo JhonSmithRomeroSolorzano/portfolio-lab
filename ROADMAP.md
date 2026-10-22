@@ -699,3 +699,8 @@ Next: validate this environment through the protected PR, then verify both publi
 - [x] Fix stale viewport playback when an observer delivers multiple transitions together: use the latest entry for the observed stage. Preserve manual pause, hidden-tab suspension, reduced motion, and renderer availability.
 - [x] Add a browser regression that queues opposite visibility states together and exercises autoplay, offscreen pause, return, and hidden-tab resume. Both engines reproduce the failure against the previous build.
 - [x] Pass 165 code checks and the full Chromium/WebKit suite: 257 passes, one existing platform-specific skip, and no retries. Inspect desktop/light and mobile/dark sculpture views; protected Linux validation remains the merge gate.
+
+## CI Node setup maintenance — October 22
+
+- [x] Update both pinned setup-node references to upstream v7.1.0, verifying the commit against the release tag. Keep validation and deployment verification on Node 24, preserve dependency caching, and incorporate the completed playback fixes before release validation.
+- [x] Pass all 165 code checks, strict types, the production build, and asset budgets on the updated branch. The required Linux check validates the action inside the release environment before merging.
