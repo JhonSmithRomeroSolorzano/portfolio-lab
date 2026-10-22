@@ -1,5 +1,7 @@
 import {
+  approachSculptureView,
   morphPoint,
+  projectSculpturePoint,
   sculpturePoints,
   type SculptureForm,
 } from "../../../domain/playground/signal-sculpture";
@@ -22,6 +24,7 @@ export function createSculptureRenderer(canvas: HTMLCanvasElement) {
   let width = 1;
   let height = 1;
   let pointer = { x: 0, y: 0 };
+  let pointerTarget = { x: 0, y: 0 };
 
   function draw() {
     if (!ctx) return;
@@ -37,16 +40,15 @@ export function createSculptureRenderer(canvas: HTMLCanvasElement) {
           Math.exp(
             -Math.pow((Math.hypot(point.x, point.y) - pulse * 0.65) * 9, 2),
           ) * 0.12;
-        const z = point.z + wave;
-        const x = point.x * Math.cos(tilt) + z * Math.sin(tilt);
-        const depth = z * Math.cos(tilt) - point.x * Math.sin(tilt);
-        const perspective = 2.8 / (2.8 - depth);
+        const projected = projectSculpturePoint(
+          { ...point, z: point.z + wave },
+          tilt,
+          pointer,
+        );
         return {
-          x: width / 2 + (x + pointer.x * depth * 0.18) * scale * perspective,
-          y:
-            height / 2 +
-            (point.y + pointer.y * depth * 0.18) * scale * perspective,
-          depth,
+          x: width / 2 + projected.x * scale,
+          y: height / 2 + projected.y * scale,
+          depth: projected.depth,
           i,
         };
       })
@@ -75,6 +77,7 @@ export function createSculptureRenderer(canvas: HTMLCanvasElement) {
   function tick(now: number) {
     const dt = previous ? Math.min((now - previous) / 1000, 0.05) : 0;
     previous = now;
+    pointer = approachSculptureView(pointer, pointerTarget, dt);
     elapsed += dt;
     pulse += dt;
     transition = Math.min(1, transition + dt / 1.8);
@@ -89,6 +92,8 @@ export function createSculptureRenderer(canvas: HTMLCanvasElement) {
     playing = false;
     cancelAnimationFrame(frame);
     previous = 0;
+    // Preserve frozen pixels; a later Play eases back from the saved view.
+    pointerTarget = { x: 0, y: 0 };
   }
   function resize() {
     const box = canvas.getBoundingClientRect();
@@ -117,6 +122,7 @@ export function createSculptureRenderer(canvas: HTMLCanvasElement) {
       points = destination;
       transition = 1;
       pointer = { x: 0, y: 0 };
+      pointerTarget = { x: 0, y: 0 };
       elapsed = 0;
       pulse = 10;
       draw();
@@ -140,13 +146,14 @@ export function createSculptureRenderer(canvas: HTMLCanvasElement) {
       pulse = 0;
     },
     pointer(x: number, y: number) {
-      pointer = { x, y };
+      pointerTarget = { x, y };
     },
     reset() {
       pause();
       elapsed = 0;
       pulse = 10;
       pointer = { x: 0, y: 0 };
+      pointerTarget = { x: 0, y: 0 };
     },
     dispose() {
       pause();

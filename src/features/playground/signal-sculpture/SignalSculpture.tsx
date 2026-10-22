@@ -74,6 +74,7 @@ export function SignalSculpture() {
           );
         }}
         onPointerLeave={() => renderer.current?.pointer(0, 0)}
+        onPointerCancel={() => renderer.current?.pointer(0, 0)}
       >
         <span className="sculpture-stage-label" aria-hidden="true">
           JSR / FIELD STUDIES
@@ -155,7 +156,7 @@ export function SignalSculpture() {
       <p className="sculpture-note">
         Starts when it comes into view. Pause anytime. Choose a form while
         playing to watch it dissolve and reassemble. Pulse sends a wave through
-        the points. Mouse movement gently changes the perspective; all actions
+        the points. Move your mouse to gently tilt the sculpture; all actions
         work with buttons, touch, and keyboard.
       </p>
     </div>

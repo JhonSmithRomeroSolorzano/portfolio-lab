@@ -630,3 +630,11 @@ Next: continue from concrete visitor findings and verified profile details; coll
 - [x] Extend the common lifecycle journeys to the sculpture and verify actual canvas motion/frozen pixels alongside form transitions, keyboard controls, and static accessibility checks. Pass `npm run check` with 158 code checks and the production build/asset budgets, plus 231 Chromium/WebKit journeys with the existing platform-specific skip. Inspect desktop/mobile views in both themes.
 
 Next: continue from concrete visitor findings and verified profile details; physical-phone and human screen-reader assessments remain outstanding.
+
+## Signal Sculpture pointer response — October 21
+
+- [x] Replace depth-weighted mouse offsets with a bounded view tilt and small pan, so cursor feedback stays perceptible throughout the sculpture's rotation. Ease both entry and return to center in the existing animation loop.
+- [x] Keep Pause pixel-stable, clear stale pointer targets on interruption, and reset the view for reduced motion and Reset. Retain independent automatic rotation, forms, Pulse, and touch/keyboard controls.
+- [x] Pass 160 unit/integration/architecture checks, the production build and asset budgets, and 235 Chromium/WebKit journeys with the existing platform-specific skip. Repeat pointer journeys 12 times after making their frozen-clock entry setup explicit. Check actual pointer-driven pixels, gradual entry/exit, paused/reduced-motion stability, and desktop/mobile views in both themes.
+
+Next: continue from concrete visitor feedback; physical-phone and human screen-reader assessments remain outstanding.

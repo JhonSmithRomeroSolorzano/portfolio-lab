@@ -1,5 +1,6 @@
 export type SculptureForm = "monogram" | "ribbon" | "orbit";
 export type SculpturePoint = { x: number; y: number; z: number };
+export type SculptureView = Pick<SculpturePoint, "x" | "y">;
 export const sculptureForms: readonly SculptureForm[] = [
   "monogram",
   "ribbon",
@@ -96,5 +97,39 @@ export function morphPoint(
     x: from.x + (to.x - from.x) * ease + Math.sin(index * 2.3) * scatter,
     y: from.y + (to.y - from.y) * ease + Math.cos(index * 1.7) * scatter,
     z: from.z + (to.z - from.z) * ease + Math.sin(index) * scatter,
+  };
+}
+
+/** Ease the view at the same rate on different displays, including its return. */
+export function approachSculptureView(
+  current: SculptureView,
+  target: SculptureView,
+  seconds: number,
+): SculptureView {
+  const blend = 1 - Math.exp(-Math.max(0, seconds) / 0.12);
+  const approach = (value: number, destination: number) =>
+    value + (Math.max(-0.5, Math.min(0.5, destination)) - value) * blend;
+  return { x: approach(current.x, target.x), y: approach(current.y, target.y) };
+}
+
+/** Apply the view after the object's spin, with a small depth-independent pan. */
+export function projectSculpturePoint(
+  point: SculpturePoint,
+  spin: number,
+  view: SculptureView,
+) {
+  const x = point.x * Math.cos(spin) + point.z * Math.sin(spin);
+  const z = point.z * Math.cos(spin) - point.x * Math.sin(spin);
+  const yaw = view.x * 0.18;
+  const pitch = -view.y * 0.16;
+  const turnedX = x * Math.cos(yaw) + z * Math.sin(yaw);
+  const turnedZ = z * Math.cos(yaw) - x * Math.sin(yaw);
+  const y = point.y * Math.cos(pitch) - turnedZ * Math.sin(pitch);
+  const depth = point.y * Math.sin(pitch) + turnedZ * Math.cos(pitch);
+  const perspective = 2.8 / (2.8 - depth);
+  return {
+    x: turnedX * perspective + view.x * 0.12,
+    y: y * perspective + view.y * 0.12,
+    depth,
   };
 }
