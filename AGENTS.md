@@ -36,6 +36,7 @@ This file owns instructions for agents working in this repository: preparation, 
 ## Delivery and documentation
 
 - Review each diff before committing. Normal commits/pushes of verified portfolio improvements to the configured origin are authorized. Keep each commit coherent, independently reviewable, and buildable, with relevant tests alongside the behavior they verify. Never force-push, backdate, or pad activity with artificial splits, empty commits, or date-only edits.
+- `main` requires the up-to-date GitHub Actions `build` check, including for admins. Publish changes on a branch/PR rather than attempting to bypass protection with a direct push; see [deployment](README.md#deployment) for the release gates and diagnostic reports.
 - Update the document that owns a changed rule in the same change: this file for agent workflow and safeguards, ARCHITECTURE for technical design, README for product/setup information, and ROADMAP for completed work and next steps. Cross-link instead of copying rules between AGENTS and ARCHITECTURE. Check commands and technical claims against the implementation and configuration; reconcile discrepancies rather than preserving stale documentation.
 - Keep daily automation configuration and generated artifacts out of this public repo. Preserve the Sites preview's existing audience. Follow the deployment setup linked from [README](README.md#deployment).
 - If external authentication/publication is blocked, report once and wait for a meaningful change rather than repeatedly committing roadmap edits.

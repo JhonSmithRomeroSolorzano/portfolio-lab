@@ -134,6 +134,12 @@ Each change should add something useful: a feature, a fix, a meaningful test, or
 
 GitHub Actions validates pull requests and deploys passing changes on `main` to GitHub Pages. The repository's Pages source must be set to **GitHub Actions**. The `.openai/hosting.json` manifest also supports an owner-private Sites preview.
 
+The `build` check gates release on a high/critical dependency audit (including development tooling), the existing code/build checks, Chromium/WebKit journeys, and mobile performance budgets. `main` requires that GitHub Actions check against an up-to-date branch, including for admins; force-pushes and branch deletion are disabled. Submit changes through a branch/PR so validation can run before they reach `main`. These protection settings live on GitHub, not in the workflow YAML.
+
+Actions are pinned to upstream commit SHAs, with weekly npm and Actions update PRs configured in [Dependabot](.github/dependabot.yml); automated security updates are also enabled in GitHub settings. Updates are not automatically merged. Do not suppress audit failures or use forced dependency upgrades without reviewing the advisory and compatibility.
+
+CI retains HTML/JSON browser reports, failed-attempt traces/screenshots, and available Lighthouse reports for 14 days in `validation-diagnostics-<run>-<attempt>`, even when validation fails. The existing single CI retry remains; inspect flaky cases in the report even if the retry passes. Superseded PR runs may be cancelled, but main runs finish deployment and verification before another main run starts. Jobs have bounded timeouts. Only the deploy job has Pages/OIDC write permissions; dependency installation and deployed-asset verification run in read-only jobs. No gates use `continue-on-error`.
+
 ## Batch experiments
 
 Replay scenarios without a browser or running API:
