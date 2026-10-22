@@ -19,6 +19,10 @@ jobs:
     # Upgrade deliberately instead of inheriting ubuntu-latest OS migrations.
     runs-on: ubuntu-24.04
     timeout-minutes: 20
+    container:
+      # Match @playwright/test; the immutable image includes browsers and OS libraries.
+      image: mcr.microsoft.com/playwright:v1.64.0-noble@sha256:06a9939e57531807f8d5fd76ce44b53165ffb7d7501d87ab10e285c20b1e971f
+      options: --init --ipc=host
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -31,9 +35,6 @@ jobs:
       - name: Audit all dependencies, including build tooling
         run: npm audit --audit-level=high
       - run: npm run check
-      - name: Install browser dependencies
-        timeout-minutes: 5
-        run: npx playwright install --with-deps chromium webkit
       - run: npm run test:browser
       - name: Check mobile loading performance
         run: npm run audit:ci

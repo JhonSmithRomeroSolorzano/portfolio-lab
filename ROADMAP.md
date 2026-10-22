@@ -671,3 +671,11 @@ GitHub protection/security settings are already active. Workflow/dependency chan
 - [x] Merge the verified hardening PR through its required check. The PR run passes all 243 browser cases with the existing skip, dependency auditing, and Lighthouse; its diagnostic artifact is available on GitHub.
 - [x] Diagnose the main release stopping before publication: Ubuntu 26.04's package mirror downloads consume the 20-minute job limit during Playwright installation. The successful PR also used Ubuntu 26, so this is not evidence that the OS is unsupported or the application tests failed. The previous public deployment remains in place.
 - [x] Pin all release jobs to supported Ubuntu 24.04 so runner OS changes are deliberate, and give browser installation a five-minute step limit. Preserve the full browser suite, performance thresholds, permissions, and overall job deadlines. Local actionlint and `npm run check` pass; publication remains blocked until the follow-up passes the protected PR check.
+
+### Preinstalled browser environment — October 22
+
+- [x] Confirm the Ubuntu 24.04 main run also times out downloading browser OS dependencies from the Azure Ubuntu mirror, before browser tests start. The application checks pass; increasing test retries would not address this setup failure.
+- [x] Run validation in the official Playwright Noble image pinned to a registry-verified digest and the installed Playwright version. Keep Node 24, the full browser/performance gates, existing permissions, and the separate publication/verification jobs. Add a toolchain check that requires coordinated Playwright/image updates.
+- [x] Pass checksum-verified actionlint, `npm run check` with 165 code checks and the production build/budgets, and all 243 local Chromium/WebKit cases with the existing platform-specific skip. The Linux container and its performance gate still require the protected PR run.
+
+Next: validate this environment through the protected PR, then verify both published hosts at the tested release. Continue product work from concrete visitor findings and verified profile details.
