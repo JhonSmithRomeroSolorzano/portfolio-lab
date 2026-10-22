@@ -680,3 +680,9 @@ GitHub protection/security settings are already active. Workflow/dependency chan
 - [x] Use the PR run to identify Git's ownership check on the host-mounted checkout after all 165 code tests and Vite succeed. Trust only that job's exact `GITHUB_WORKSPACE` path inside its ephemeral container so release fingerprinting can read HEAD; keep checkout credentials disabled and do not use a wildcard trust rule.
 
 Next: validate this environment through the protected PR, then verify both published hosts at the tested release. Continue product work from concrete visitor findings and verified profile details.
+
+## Paired Vite toolchain upgrade — October 22
+
+- [x] Upgrade Vite to 8.3.4 and React plugin to 6.1.2 together, resolving their incompatible standalone Dependabot updates. Preserve the previous output transformation targets, native optional imports, and relative asset paths.
+- [x] Adapt the effect-error recovery fixture to use the React runtime actually referenced by the generated chunk instead of a bundler-specific export alias. All four render/effect recovery cases pass in Chromium and WebKit.
+- [x] Pass 165 code checks, strict types, production generation, and asset budgets. Smoke-test the Vite development server and keyboard-operated stack-map selection without page errors. Complete the integrated browser and Linux performance gates before merging.
