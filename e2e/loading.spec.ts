@@ -161,7 +161,10 @@ for (const phase of ["render", "effect"] as const) {
     await expect(page.locator("#cache-rescue")).toContainText(
       "Recovered experience",
     );
-    await page.getByRole("link", { name: /Algorithm Garden/ }).click();
+    await page
+      .getByRole("navigation", { name: "Explore the collection" })
+      .getByRole("link", { name: /Algorithm Garden/ })
+      .click();
     await expect(
       page
         .locator("#algorithm-garden")

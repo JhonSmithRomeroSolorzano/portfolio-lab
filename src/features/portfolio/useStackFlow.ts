@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useMediaQuery } from "../../shared/hooks/useMediaQuery";
-import { REDUCED_MOTION } from "../../shared/hooks/usePlaybackInterruption";
+import { useReducedMotion } from "../../shared/hooks/useReducedMotion";
 
 export const stackFlowSteps = [
   {
@@ -35,7 +34,7 @@ export const STACK_FLOW_STEP_MS = 1400;
 /** Automatic decorative flow, active only while visible and not being explored by keyboard. */
 export function useStackFlow() {
   const target = useRef<HTMLDivElement>(null);
-  const reducedMotion = useMediaQuery(REDUCED_MOTION);
+  const reducedMotion = useReducedMotion();
   const [inView, setInView] = useState(false);
   const [visible, setVisible] = useState(false);
   const [keyboardFocus, setKeyboardFocus] = useState(false);

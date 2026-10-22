@@ -514,6 +514,13 @@
     animation: none !important;
   }
 }
+html[data-motion="reduce"] .map-packet,
+html[data-motion="reduce"] .experience-list > li::after {
+  display: none;
+}
+html[data-motion="reduce"] .experience-list > li[data-traced="true"]::before {
+  box-shadow: none;
+}
 .stack-details {
   display: grid;
   min-width: 0;

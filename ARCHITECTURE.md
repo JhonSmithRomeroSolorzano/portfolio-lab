@@ -29,6 +29,7 @@ src/
     simulation/                    Maintained systems models used by API and CLI
   shared/
     hooks/                         Browser media queries and playback interruption
+    motion/                        Effective device/site motion preference and subscriptions
     ui/                            Arrow and theme control
     theme/                         Theme preference policy
     styles/                        Tokens, base elements, shared primitives
@@ -63,9 +64,13 @@ Jet Engine replaces the earlier lock. Its pure model maps a normalized speed set
 
 ## Failure boundaries and styling
 
+`shared/motion/motion-preference.ts` owns the effective motion policy: device reduction OR the site's saved reduction. A small MediaQuery-like source combines device changes, same-document preference events, and validated local-storage events; React's `useReducedMotion`/`useMotionPreference` snapshots and the imperative navigation/reveal observers consume that same source. The HTML motion bootstrap restores the choice before paint, and the root's `data-motion` attribute gates CSS effects. Root attributes retain a visit-local choice if storage is denied. Subscriptions remove their device/window listeners on cleanup. The UI uses a native disclosure and radio group; it cannot enable animation against a device preference. Playback controllers retain their existing manual-pause intent or explicit-replay policy.
+
 The portfolio's `useStackFlow` owns the stack map's nine-step request tour, with one cleaned-up interval rather than React updates per frame. SVG stroke animation moves packets along the same paths used for connections; node activity and the readout come from that step list. `useStackConnections` measures actual card edges with a cleaned-up resize observer, keeping packet travel visible in the gaps after reflow or text zoom instead of hiding most of it behind cards. The readout reserves all labels' intrinsic heights, independently of the selected experience panel. A feature-local intersection observer, document-visibility listener, reduced-motion subscription, and keyboard-focus state gate automatic playback; returning starts a new request so the CSS packet and step clock stay aligned. Motion Studio and Cache Rescue retain explicit replay; Jet Engine, Gravity Loom, and Signal Sculpture opt into viewport autoplay. Selected details use a neutral border and textual marker, active processing uses blue, and infrastructure has a persistent tint/dashed border. Node text and fill switch together; only shadow changes transition, avoiding transient white-on-light labels in either direction. The caption stays in normal flow so larger text can wrap without covering cards. CSS suppresses decorative motion under reduced motion, including before hydration. No network request or new graphics dependency is involved.
 
 Each game has an independent download placeholder and runtime error boundary. An import failure offers a reload; a render/effect failure offers a local remount. Navigation and career content remain usable. Error boundaries do not catch arbitrary event-handler or asynchronous callback errors; expected storage and Web Animation cancellation failures are handled where those operations run.
+
+`ExperienceNavigation` receives neighbors from the same typed catalog that renders the collection. Its native anchors live outside deferred downloads/error boundaries, so wayfinding works during failures and without JavaScript. Visible link text supplies their accessible names without an ARIA override. The chooser's `#collection` target accepts focus without entering the Tab order; query/history handling and direct-entry alignment remain native/existing app responsibilities. No routing dependency or extra catalog is introduced.
 
 Intersection observation enhances loading/playback but is not required. Reduced motion, page visibility, and (where appropriate) navigation/offscreen changes interrupt playback. Effects release listeners, observers, and animation frames on cleanup.
 

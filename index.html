@@ -36,6 +36,22 @@
           .setAttribute("content", theme === "dark" ? "#0e1b2d" : "#f4f3ec");
       })();
     </script>
+    <script id="motion-bootstrap">
+      (() => {
+        let preference;
+        try {
+          preference = localStorage.getItem("portfolio-motion");
+        } catch {}
+        const root = document.documentElement;
+        root.dataset.motionPreference =
+          preference === "reduce" ? "reduce" : "system";
+        root.dataset.motion =
+          preference === "reduce" ||
+          matchMedia("(prefers-reduced-motion: reduce)").matches
+            ? "reduce"
+            : "full";
+      })();
+    </script>
     <meta
       name="description"
       content="Jhon Smith Romero — Senior Full-stack Engineer. React, TypeScript, Node.js and Azure. Explore my experience, résumé and interactive experiments."

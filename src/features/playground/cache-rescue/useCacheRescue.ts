@@ -3,11 +3,8 @@ import {
   rescueRun,
   rescueSnapshot,
 } from "../../../domain/playground/cache-rescue";
-import { useMediaQuery } from "../../../shared/hooks/useMediaQuery";
-import {
-  REDUCED_MOTION,
-  usePlaybackInterruption,
-} from "../../../shared/hooks/usePlaybackInterruption";
+import { useReducedMotion } from "../../../shared/hooks/useReducedMotion";
+import { usePlaybackInterruption } from "../../../shared/hooks/usePlaybackInterruption";
 import { ROUNDS } from "./rounds";
 
 const ACTIVE_HASHES = ["#cache-rescue", "#lab"];
@@ -19,7 +16,7 @@ export function useCacheRescue() {
   const [shared, setShared] = useState(false);
   const [time, setTime] = useState(-25);
   const [playRequested, setPlaying] = useState(false);
-  const reduced = useMediaQuery(REDUCED_MOTION);
+  const reduced = useReducedMotion();
   const arena = useRef<HTMLDivElement>(null);
   const settings = ROUNDS[round];
   const run = useMemo(() => rescueRun(settings, shared), [settings, shared]);

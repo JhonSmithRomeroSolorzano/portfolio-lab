@@ -42,7 +42,7 @@ export function observePortfolioMotion(
   view: Window = window,
 ) {
   const doc = root.ownerDocument;
-  const motion = view.matchMedia("(prefers-reduced-motion: reduce)");
+  const motion = motionQuery(view, doc.documentElement);
   const links = Array.from(
     nav.querySelectorAll<HTMLAnchorElement>('a[href^="#"]'),
   );
@@ -259,3 +259,4 @@ export function observePortfolioMotion(
     delete nav.dataset.ready;
   };
 }
+import { motionQuery } from "../shared/motion/motion-preference";

@@ -8,6 +8,7 @@ import { ContactSection } from "../features/portfolio/ContactSection";
 import { ResumeSection } from "../features/portfolio/ResumeSection";
 import { GITHUB, LINKEDIN } from "../features/portfolio/data/profile";
 import { ThemeSwitcher } from "../shared/ui/ThemeSwitcher";
+import { MotionSettings } from "../shared/ui/MotionSettings";
 import { BrandMark } from "../features/portfolio/BrandMark";
 
 import { SOURCE_REPOSITORY } from "../shared/project";
@@ -99,6 +100,7 @@ export function App() {
               </a>
             </div>
             <ThemeSwitcher />
+            <MotionSettings />
           </div>
         </header>
         <div className="portfolio-content">

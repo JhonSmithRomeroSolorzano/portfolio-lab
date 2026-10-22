@@ -190,6 +190,7 @@ test("motion comparison shares a clock and duration, and control changes cancel 
   // Enter through the page so initial hash restoration cannot steal focus mid-click.
   await page.goto("/");
   await page
+    .getByRole("navigation", { name: "Explore the collection" })
     .getByRole("link", { name: /Motion studio/, exact: false })
     .press("Enter");
   await expect(page.locator("#motion-studio")).toBeFocused();
