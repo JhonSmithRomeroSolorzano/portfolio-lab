@@ -11,7 +11,7 @@ suspends offscreen or in hidden tabs. Returning resumes it unless the visitor
 used Pause, Reset, or zero speed. Play and speed changes can restart it;
 reduced-motion preferences always keep the composition still.
 
-This is an Anatomy **Hero**, with a sectioned nacelle, exposed core, multiple
+This is an Anatomy **Hero**, with an under-wing pylon, sectioned nacelle, exposed core, multiple
 blade rows, and continuous air streams. It is an educational visual model, not
 real operating data, an engine design, or a thermodynamic simulation. Rotation
 is deliberately slowed. Orange indicates heated core air, not an afterburner.
@@ -20,11 +20,15 @@ mass-flow or bypass ratio. The shared pure model owns all visual speed mappings.
 
 ## Parts list before geometry
 
-- Stand: four pads, four feet, deck, two engine pedestals, and engraved plaque.
+- Aircraft attachment: a swept wing section with an airfoil-shaped cross-section,
+  four skin panels, flap-line seams and fasteners, a pylon fairing, two access
+  panels, and a three-piece curved attachment saddle. The wing is cropped; the
+  figure does not depict a complete aircraft or a particular certified installation.
 - Nacelle: intake lip, aft lip, rear and front cutaway shells, three external
   fastening bands, and fastener dots on the exposed cut edges.
 - Core: sectioned compressor casing, combustor casing and perforated liner,
-  turbine casing, core nozzle, and twelve radial supports joining the nacelle.
+  turbine casing, core nozzle, three closed shoulder collars between different
+  casing diameters, and twelve radial supports joining the nacelle.
 - Shaft: three exposed shaft sections, two solid couplings, spinner nose, and six stationary guide vanes.
 - Moving assemblies: eighteen swept fan blades, four ten-blade compressor
   rows, two ten-blade turbine rows, and their hubs. Each blade's faces are
@@ -37,13 +41,23 @@ mass-flow or bypass ratio. The shared pure model owns all visual speed mappings.
 Anatomy authors one complete static SVG per theme, in the measured global painter's
 order. Each convex casing panel is an independent audited draw item; panels are
 not hidden inside a group with an unchecked internal order. Perforations, screws,
-deck rules, and engraving paint with their actual host rather than on a universal
+wing seams and access-panel fasteners paint with their actual host rather than on a universal
 foreground overlay. Guide vanes are fixed parts, not duplicate canvas geometry.
 The existing `engine-back-*` asset names now contain that complete base scene;
 they no longer mean a back-only layer. The former front SVG assets are removed.
 
+The cropped wing is the audit's explicitly fixed support boundary, not an implied
+floor under the engine. Its flat underside contacts the pylon, which contacts the
+curved saddle above the retained nacelle. The saddle steps around the nacelle band
+rather than intersecting it. There are no test-stand feet or engine pedestals.
+The three core collars close the former four-unit axial gaps without closing the
+intentional longitudinal cutaway or eliminating blade-tip clearance. Matching-color
+0.3px surface strokes seal antialiasing cracks between tangent SVG facets; they
+do not alter the geometry or substitute for measured depth order. Empty paths are
+omitted, retaining the original art budget with nine-degree-or-finer casing panels.
+
 The generator also exports indexed visibility triangles from those same recorded
-slabs, annular sectors, and turned profiles. Screen positions use Anatomy's exact
+prisms, annular sectors, and turned profiles. Screen positions use Anatomy's exact
 0.1-pixel path rounding, and camera depth uses 0.001-world-unit precision. Integer
 deltas compress the data in the existing lazy engine bundle. Legacy layer labels
 in the diagnostic groups are used only to reproduce the old bug, never to render.

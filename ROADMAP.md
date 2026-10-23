@@ -758,3 +758,12 @@ Next: pass the protected Linux check, then synchronize and verify both hosts at 
 - [x] Pass three sequential local mobile Lighthouse samples with median LCP 2.03s, CLS 0, and TBT 0ms. These are simulated measurements, not hosted real-user guarantees.
 
 Protected Linux PR validation remains the merge gate. Physical-device and human screen-reader sessions remain separate from automated and emulated review.
+
+## Under-wing engine and closed casing joints — October 23
+
+- [x] Replace the test-stand deck, feet, pedestals, and plaque with a cropped swept wing, airfoil-shaped skin panels, pylon fairing, access panels, and a fitted three-piece curved saddle. Use the wing as the fixed structural boundary and step the saddle around the nacelle band rather than intersecting it. Do not imply a complete aircraft or certified installation.
+- [x] Close the three axial gaps between different core casing diameters with sectioned shoulder collars. Keep the intentional longitudinal cutaway and blade-tip clearance; seal subpixel SVG facet cracks with matching-color surface coverage, not depth-key overrides.
+- [x] Regenerate the shared projection and visibility geometry; make browser near/far probes use physical positions and ray-test the actual new collar surfaces. Pass `npm run check` with 178 tests, strict types, production build, and unchanged art/JavaScript budgets.
+- [x] Pass the 377-item/377-solid Anatomy audit with no support, intersection, or depth-order problems. Inspect desktop/mobile artwork and 4× joints in both themes; both line checks report zero floating ends and no console errors.
+- [x] Pass the complete Chromium/WebKit suite with 285 passes, the existing platform-specific skip, and no retries. Retain native keyboard/touch controls, motion preferences, viewport playback, image-load recovery, and canvas-free rendering.
+- [x] Pass three sequential local mobile Lighthouse samples with median LCP 1.95s, CLS 0, and TBT 0ms. These simulated local measurements do not replace the protected Linux release check or physical-device review.

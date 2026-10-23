@@ -11,10 +11,33 @@ const file = new URL(
   import.meta.url,
 );
 const F = G.frameAlong([0, 0, ENGINE_CENTER], [1, 0, 0]);
-const deck = { x: -190, y: -84, w: 370, d: 168, r: 8 };
+// A cropped wing section supplies the fixed structural boundary of the figure.
+const wingZ = 228;
+const wingSpans = [-160, -84, -12, 66, 143];
+const wingFrame = G.frameAlong([8, 0, wingZ], [0.38, 1, 0]);
+const wingProfile = [
+  [0, 3],
+  [-3, 0],
+  [-124, 0],
+  [-136, 1],
+  [-105, 4],
+  [-35, 12],
+  [-8, 10],
+  [-1, 7],
+];
+const wingPoint = (span, chord, height) =>
+  G.add3(
+    wingFrame.o,
+    G.add3(
+      G.mul3(wingFrame.a, span),
+      G.add3(G.mul3(wingFrame.u, chord), G.mul3(wingFrame.v, height)),
+    ),
+  );
 const P = k.fitProjection(
   [
-    ...k.boxCorners(deck, -12, 4),
+    ...wingSpans.flatMap((span) =>
+      wingProfile.map(([chord, h]) => wingPoint(span, chord, h)),
+    ),
     [-230, 0, 170],
     [310, 0, 170],
     [-180, -68, 170],
@@ -43,24 +66,96 @@ function put(name, layer, svg, shape, at, assembly = name) {
   }
   return item;
 }
-function slab(name, plan, z, h, layer = "back") {
-  put(
+for (let i = 0; i < wingSpans.length - 1; i++) {
+  const y0 = wingSpans[i],
+    y1 = wingSpans[i + 1];
+  const name = `wing.skin.${i}`;
+  const item = put(
     name,
-    layer,
-    k.solidSvg(k.slabOf(plan, z, h, P, 4, Math.min(0.7, h / 4)), {
-      tone: "mid",
-    }),
-    A.slab(plan, z, h, { name, ground: name.startsWith("stand.") }, 4),
-    [plan.x + plan.w / 2, plan.y + plan.d / 2, z + h / 2],
+    "back",
+    k.solidSvg(G.prismOf(wingFrame, wingProfile, y0, y1, P), { tone: "lo" }),
+    A.prism(wingFrame, wingProfile, y0, y1, { name, ground: true }),
+    wingPoint((y0 + y1) / 2, -68, 4),
+  );
+  // Panel seams and fasteners sit on the wing skin and meet its span boundaries.
+  item.svg += k.lineSvg(
+    k.pathOf(
+      [wingPoint(y0, -105, 4), wingPoint(y1, -105, 4)].map((p) => k.iso(p, P)),
+    ),
+    { tone: "lo" },
+  );
+  item.svg += k.dotsSvg(
+    Array.from({ length: 6 }, (_, n) =>
+      k.iso(
+        wingPoint(y0 + ((y1 - y0) * (n + 0.5)) / 6, -102, 4 + (3 * 8) / 70),
+        P,
+      ),
+    ),
+    { size: 0.55, tone: "lo" },
   );
 }
-for (const [i, [x, y]] of k.corners(deck, 28).entries()) {
-  slab(`stand.pad.${i}`, { x: x - 8, y: y - 8, w: 16, d: 16, r: 2 }, -12, 5);
-  slab(`stand.foot.${i}`, { x: x - 6, y: y - 6, w: 12, d: 12, r: 2 }, -7, 7);
+const pylonFrame = G.frameAlong([0, 0, 0], [0, -1, 0]);
+const pylonPolygon = [
+  [-35, 167],
+  [68, 167],
+  [110, wingZ],
+  [14, wingZ],
+];
+put(
+  "pylon.fairing",
+  "back",
+  k.solidSvg(G.prismOf(pylonFrame, pylonPolygon, 0, 10, P), { tone: "mid" }),
+  A.prism(pylonFrame, pylonPolygon, 0, 10, { name: "pylon.fairing" }),
+  [40, -5, 197],
+);
+// The curved saddle sits on the retained upper/rear nacelle, not in the cutaway.
+for (const [i, [start, end, radius]] of [
+  [-35, -10, 61],
+  [-10, -6, 64],
+  [-6, 68, 61],
+].entries()) {
+  const saddle = [
+      ...Array.from({ length: 9 }, (_, j) => {
+        const y = -14 + (14 * j) / 8;
+        return [y, Math.sqrt(radius * radius - y * y)];
+      }),
+      [0, 65],
+      [-14, 65],
+    ],
+    name = `pylon.saddle.${i}`;
+  put(
+    name,
+    "back",
+    k.solidSvg(G.prismOf(F, saddle, start, end, P), { tone: "hi" }),
+    A.prism(F, saddle, start, end, { name }),
+    [(start + end) / 2, -7, 165],
+  );
 }
-slab("stand.deck", deck, 0, 4);
-for (const x of [-108, 105])
-  slab(`stand.pedestal.${x}`, { x: x - 8, y: -7, w: 16, d: 14, r: 1.5 }, 4, 37);
+for (const [i, x] of [0, 42].entries()) {
+  const panel = [
+      [x, 184],
+      [x + 22, 184],
+      [x + 35, 210],
+      [x + 13, 210],
+    ],
+    name = `pylon.access.${i}`;
+  const item = put(
+    name,
+    "front",
+    k.solidSvg(G.prismOf(pylonFrame, panel, -0.7, 0, P), { tone: "mid" }),
+    A.prism(pylonFrame, panel, -0.7, 0, { name }),
+    [x + 17, 0.35, 197],
+  );
+  item.svg += k.dotsSvg(
+    [
+      [x + 4, 188],
+      [x + 20, 188],
+      [x + 29, 206],
+      [x + 15, 206],
+    ].map(([px, z]) => k.iso([px, 0.7, z], P)),
+    { size: 0.6, tone: "hi" },
+  );
+}
 
 function ring(name, s0, s1, ri, ro, layer = "front") {
   const shape = A.ring(F, s0, s1, ri, ro, { name, steps: 48 });
@@ -98,7 +193,7 @@ for (const [index, x] of [-138, -10, 134].entries()) {
   sectorPair(`nacelle.band.${index}`, x, x + 4, 61, 64);
 }
 function sector(name, s0, s1, ri, ro, a0, a1, layer) {
-  const count = Math.ceil((a1 - a0) / (Math.PI / 24));
+  const count = Math.ceil((a1 - a0) / (Math.PI / 20));
   for (let i = 0; i < count; i++) {
     const a = a0 + ((a1 - a0) * i) / count,
       b = a0 + ((a1 - a0) * (i + 1)) / count;
@@ -166,6 +261,18 @@ const sections = [
   [70, 112, 26, 30],
   [116, 144, 21, 25],
 ];
+// Closed stepped shoulders join different liner diameters without an axial air gap.
+for (let i = 0; i < sections.length - 1; i++) {
+  const current = sections[i],
+    next = sections[i + 1];
+  sectorPair(
+    `core.joint.${i}`,
+    current[1],
+    next[0],
+    Math.min(current[2], next[2]),
+    Math.max(current[3], next[3]),
+  );
+}
 for (const [i, [s0, s1, ri, ro]] of sections.entries()) {
   sectorPair(`core.${i}`, s0, s1, ri, ro);
   for (const [j, a] of [2.1, 3.8, 5.4].entries()) {
@@ -247,25 +354,6 @@ for (const item of R.items.filter((item) => item.assembly === "core.1.rear")) {
     { size: 0.65, tone: "lo" },
   );
 }
-const deckItem = R.items.find((item) => item.name === "stand.deck");
-deckItem.svg += k.lineSvg(k.planOutline(k.insetPlan(deck, 5), 4, P), {
-  tone: "lo",
-});
-deckItem.svg += k.dotsSvg(
-  k.corners(deck, 10).map(([x, y]) => k.iso([x, y, 4], P)),
-  { size: 1, tone: "hi" },
-);
-const plaque = { x: 95, y: 63, w: 63, d: 12, r: 1 };
-slab("stand.plaque", plaque, 4, 0.7);
-R.items.find((item) => item.name === "stand.plaque").svg += k.faceTextSvg(
-  k.topMatrix([126, 71], 4.7, P),
-  "AIR / CORE",
-  {
-    size: 3,
-    tone: "hi",
-    anchor: "middle",
-  },
-);
 for (const [assembly, boundary, at] of [
   ["nacelle.shell.upper", Math.PI / 2, (x) => [x, 0, ENGINE_CENTER + 59]],
   ["nacelle.shell.lower", Math.PI * 2, (x) => [x, 59, ENGINE_CENTER]],
@@ -455,8 +543,13 @@ for (const theme of ["light", "dark"])
             "#edf1ee",
             "#596f80",
           ];
-    const css = `.iso-fill{fill:${palette[0]}}.iso-top{fill:${palette[5]}}${[0, 1, 2, 3].map((i) => `.iso-shade[data-shade="${i}"]{fill:${palette[i + 1]}}`).join("")}.iso-line{fill:none;stroke:${palette[6]};stroke-width:.65;stroke-linejoin:round;stroke-linecap:round}.iso-dots circle,.iso-face-text{fill:${palette[6]}}.iso-face-text{font-family:monospace}`;
-    const body = ordered.map((p) => p.svg).join("");
+    // Subpixel matching-color coverage seals raster seams between tangent panels;
+    // it is not a new geometric surface or a painter-key/depth workaround.
+    const css = `.iso-fill,.iso-top,.iso-shade{stroke-width:.3;stroke-linejoin:round}.iso-fill{fill:${palette[0]};stroke:${palette[0]}}.iso-top{fill:${palette[5]};stroke:${palette[5]}}${[0, 1, 2, 3].map((i) => `.iso-shade[data-shade="${i}"]{fill:${palette[i + 1]};stroke:${palette[i + 1]}}`).join("")}.iso-line{fill:none;stroke:${palette[6]};stroke-width:.65;stroke-linejoin:round;stroke-linecap:round}.iso-dots circle,.iso-face-text{fill:${palette[6]}}.iso-face-text{font-family:monospace}`;
+    const body = ordered
+      .map((p) => p.svg)
+      .join("")
+      .replace(/<path[^>]* d=""[^>]*\/>/g, "");
     outputs.set(
       new URL(
         `../src/features/playground/jet-engine/engine-${layer}-${theme}.svg`,

@@ -112,7 +112,7 @@ export function JetEngine() {
             ? "Engine artwork unavailable."
             : !artReady
               ? "Loading the cutaway aircraft engine artwork."
-              : `Cutaway aircraft turbofan at ${speed} percent speed. ${running ? "Fan, core rotors and airflow are moving." : "Still engine and airflow view."}`
+              : `Wing-mounted cutaway aircraft turbofan at ${speed} percent speed. ${running ? "Fan, core rotors and airflow are moving." : "Still engine and airflow view."}`
         }
       >
         <img
@@ -174,7 +174,7 @@ export function JetEngine() {
         />
       </div>
       <div className="engine-view-caption" aria-hidden="true">
-        <span>ENGINE CUTAWAY</span>
+        <span>UNDER-WING CUTAWAY</span>
         <span>
           {running
             ? "AIRFLOW LIVE"
@@ -294,8 +294,10 @@ export function JetEngine() {
                       : `Paused at ${speed}%. Play the engine or change its speed to see the airflow.`}
       </p>
       <p className="engine-disclaimer">
-        Illustrative turbofan cutaway. Rotation is slowed; colors reveal air
-        routes and heating. Not real engine data or a thermodynamic simulation.
+        Illustrative under-wing turbofan cutaway. The pylon joins the engine to
+        the wing; the open side exposes its internals. Rotation is slowed;
+        colors reveal air routes and heating. Not real engine data or a
+        thermodynamic simulation.
       </p>
     </div>
   );

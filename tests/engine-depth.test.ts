@@ -18,8 +18,54 @@ import {
 import {
   engineFaces,
   staticTriangles,
+  projectDepth,
 } from "../src/features/playground/jet-engine/mesh";
 import geometry from "../src/features/playground/jet-engine/engine-depth.json";
+import art from "../src/features/playground/jet-engine/engine-art.json";
+
+test("wing-mounted engine has sealed core shoulders and no test-stand geometry", () => {
+  const names = geometry.groups.map((group) => group.name);
+  assert.ok(!names.some((name) => name.startsWith("stand.")));
+  for (const prefix of [
+    "wing.skin.",
+    "pylon.fairing",
+    "pylon.saddle.",
+    "pylon.access.",
+  ])
+    assert.ok(names.some((name) => name.startsWith(prefix)));
+  for (const [i, [start, end, radius]] of [
+    [-12, -8, 35],
+    [66, 70, 35],
+    [112, 116, 30],
+  ].entries()) {
+    const joint = new DepthIndex(
+      geometry.groups
+        .filter((g) => g.name.startsWith(`core.joint.${i}.`))
+        .flatMap((g) =>
+          staticTriangles.slice(g.start / 3, (g.start + g.count) / 3),
+        ),
+    );
+    for (let step = 0; step <= 20; step++) {
+      const x = start + 0.01 + ((end - start - 0.02) * step) / 20;
+      // Probe the true faceted wall, not an ideal circle just outside it.
+      const startAngle =
+        Math.PI * 1.5 + Math.atan2(art.camera.view[2], art.camera.view[1]);
+      const count = Math.ceil((Math.PI * 2 - startAngle) / (Math.PI / 20)),
+        stride = (Math.PI * 2 - startAngle) / count;
+      const a = startAngle + Math.floor((5.8 - startAngle) / stride) * stride,
+        b = a + stride;
+      const p = projectDepth([
+        x,
+        (radius * (Math.cos(a) + Math.cos(b))) / 2,
+        102 + (radius * (Math.sin(a) + Math.sin(b))) / 2,
+      ]);
+      assert.ok(
+        Math.abs(joint.nearest(p[0], p[1]) - p[2]) < 0.6,
+        `joint ${i} is open at x=${x}`,
+      );
+    }
+  }
+});
 
 test("the SVG's actual individual paint sequence matches the measured geometry order", () => {
   assert.equal(geometry.triangles.length, staticTriangles.length * 3);
@@ -278,8 +324,14 @@ test("real engine poses reproduce both old layering errors and pass pixel/ray vi
     let visible = 0,
       hidden = 0;
     const movingIndex = new DepthIndex(moving);
-    for (let y = 125; y < 310; y += 3)
-      for (let x = 240; x < 715; x += 3) {
+    const bounds = [
+      Math.min(...moving.map((t) => t.bounds[0])),
+      Math.min(...moving.map((t) => t.bounds[1])),
+      Math.max(...moving.map((t) => t.bounds[2])),
+      Math.max(...moving.map((t) => t.bounds[3])),
+    ];
+    for (let y = Math.ceil(bounds[1]); y < bounds[3]; y += 3)
+      for (let x = Math.ceil(bounds[0]); x < bounds[2]; x += 3) {
         const px = x + 0.5,
           py = y + 0.5,
           d = movingIndex.nearest(px, py),

@@ -1,5 +1,30 @@
 import { expect, test, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { readFileSync } from "node:fs";
+
+// Physical probes survive reframing the figure to include the wing.
+const projection = JSON.parse(
+  readFileSync(
+    new URL(
+      "../src/features/playground/jet-engine/engine-art.json",
+      import.meta.url,
+    ),
+    "utf8",
+  ),
+) as { origin: number[]; axes: number[][] };
+const project = (world: readonly number[]): [number, number] =>
+  [0, 1].map(
+    (axis) =>
+      projection.origin[axis] +
+      world.reduce(
+        (sum, value, i) => sum + value * projection.axes[i][axis],
+        0,
+      ),
+  ) as [number, number];
+const probes = {
+  near: project([-149, 15.0488626, 106.58306889]),
+  hidden: project([77, -13.91710628, 97.04332233]),
+};
 
 async function pixels(page: Page) {
   return page.locator(".engine-canvas").evaluate((node: HTMLCanvasElement) => {
@@ -224,25 +249,32 @@ for (const theme of ["light", "dark"] as const)
           ),
       )
       .toBeTruthy();
-    const samples = await page.locator(".engine-stage").evaluate((stage) => {
-      const canvas = stage.querySelector<HTMLCanvasElement>("canvas")!,
-        img = stage.querySelector<HTMLImageElement>("img")!;
-      const composite = document.createElement("canvas");
-      composite.width = canvas.width;
-      composite.height = canvas.height;
-      const ctx = composite.getContext("2d")!;
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      ctx.drawImage(canvas, 0, 0);
-      const sample = (x: number, y: number) => {
-        const px = Math.floor(((x + 0.5) * canvas.width) / 1100),
-          py = Math.floor(((y + 0.5) * canvas.height) / 480);
-        return {
-          paint: [...canvas.getContext("2d")!.getImageData(px, py, 1, 1).data],
-          composite: [...ctx.getImageData(px, py, 1, 1).data],
+    const samples = await page
+      .locator(".engine-stage")
+      .evaluate((stage, probes) => {
+        const canvas = stage.querySelector<HTMLCanvasElement>("canvas")!,
+          img = stage.querySelector<HTMLImageElement>("img")!;
+        const composite = document.createElement("canvas");
+        composite.width = canvas.width;
+        composite.height = canvas.height;
+        const ctx = composite.getContext("2d")!;
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        ctx.drawImage(canvas, 0, 0);
+        const sample = (x: number, y: number) => {
+          const px = Math.floor((x * canvas.width) / 1100),
+            py = Math.floor((y * canvas.height) / 480);
+          return {
+            paint: [
+              ...canvas.getContext("2d")!.getImageData(px, py, 1, 1).data,
+            ],
+            composite: [...ctx.getImageData(px, py, 1, 1).data],
+          };
         };
-      };
-      return { near: sample(311, 237), hidden: sample(591, 185) };
-    });
+        return {
+          near: sample(...probes.near),
+          hidden: sample(...probes.hidden),
+        };
+      }, probes);
     expect(samples.near.paint[3]).toBeGreaterThan(240);
     expect(samples.near.composite.slice(0, 3)).toEqual(
       samples.near.paint.slice(0, 3),
@@ -263,19 +295,21 @@ test("SVG-only fallback preserves the same near/far visibility", async ({
   await page
     .getByRole("slider", { name: "Engine speed", exact: true })
     .press("Home");
-  const hits = await page.locator(".engine-fallback").evaluate((svg) => {
-    const faces = [
-      ...svg.querySelectorAll<SVGGeometryElement>(".engine-blade"),
-    ];
-    return {
-      near: faces.some((face) =>
-        face.isPointInFill(new DOMPoint(311.5, 237.5)),
-      ),
-      hidden: faces.some((face) =>
-        face.isPointInFill(new DOMPoint(591.5, 185.5)),
-      ),
-    };
-  });
+  const hits = await page
+    .locator(".engine-fallback")
+    .evaluate((svg, probes) => {
+      const faces = [
+        ...svg.querySelectorAll<SVGGeometryElement>(".engine-blade"),
+      ];
+      return {
+        near: faces.some((face) =>
+          face.isPointInFill(new DOMPoint(...probes.near)),
+        ),
+        hidden: faces.some((face) =>
+          face.isPointInFill(new DOMPoint(...probes.hidden)),
+        ),
+      };
+    }, probes);
   expect(hits).toEqual({ near: true, hidden: false });
 });
 
