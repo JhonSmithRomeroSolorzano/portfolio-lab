@@ -727,3 +727,11 @@ Next: validate this environment through the protected PR, then verify both publi
 - [x] Adapt the effect-error recovery fixture to use the React runtime actually referenced by the generated chunk instead of a bundler-specific export alias. All four render/effect recovery cases pass in Chromium and WebKit.
 - [x] Pass 165 code checks, strict types, production generation, and asset budgets. Smoke-test the Vite development server and keyboard-operated stack-map selection without page errors. Pass the integrated Chromium/WebKit suite with 257 passes, one existing platform-specific skip, and no retries. The protected Linux browser and performance gates remain required before merging.
 - [x] Pass the unchanged mobile performance budgets with three sequential local Lighthouse runs: median LCP 2.12s, CLS 0.0004, and TBT 0ms. These are simulated local measurements; the Linux performance check remains authoritative for merging.
+
+## Compatible compiler and type upgrades — October 22
+
+- [x] Upgrade TypeScript from 5.8.3 to 6.0.3 with the merged typescript-eslint 8.72.0. Explicitly include Node ambient types in the main configuration while retaining the pure domain's empty types list and DOM-free checks.
+- [x] Update Node 24 types to 24.19.2 and PDFKit types to 0.17.7 without changing the CI runtime, application dependencies, or browser behavior.
+- [x] Validate a clean `npm ci`, zero audit vulnerabilities, and `npm run check` on Node 24.22.1: all 169 code checks, strict types, résumé generation, production build, and asset budgets pass.
+- [x] Pass the full Chromium/WebKit suite with 279 passes and the existing platform-specific skip, without retries. An initial WebKit blank-page failure occurred during a concurrent rebuild; the affected case passes six serial repetitions and the final full run passes against unchanged output. No application code or browser assertions changed.
+- [x] Inspect desktop/mobile views in both themes without overflow or page errors; all 15 generated browser assets match the deployed release byte-for-byte. Pass three sequential local mobile Lighthouse samples with median LCP 1.97s, CLS 0, and TBT 0ms. These are simulated measurements; protected Linux CI remains the release gate.
