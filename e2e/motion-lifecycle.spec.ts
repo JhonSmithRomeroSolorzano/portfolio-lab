@@ -16,6 +16,9 @@ for (const width of [1280, 390]) {
       await expect(page.locator("html")).toHaveCSS("scroll-behavior", "auto");
       await page.getByRole("slider", { name: /Duration/ }).fill("1800");
       const play = page.getByRole("button", { name: /Play motion/ });
+      await play.focus();
+      await play.scrollIntoViewIfNeeded();
+      await expect(play).toBeInViewport({ ratio: 1 });
       // Keyboard navigation leaves the pointer at the viewport edge. Position
       // the later wheel gesture over the experience before starting playback.
       if (exit === "scrolling") await play.hover();
@@ -31,20 +34,33 @@ for (const width of [1280, 390]) {
           .getByRole("link", { name: "Résumé", exact: true })
           .press("Enter");
       } else {
-        // Chromium can keep processing a wheel gesture after reaching the
-        // page edge. Finish that gesture before starting a new navigation.
-        const scrollEnd = page.evaluate(
+        // Native wheel distances differ across engines. Observe an actual
+        // exit instead of assuming one oversized delta reaches the page top.
+        await expect(async () => {
+          await page.mouse.wheel(0, -800);
+          await expect(page.locator("#motion-studio")).not.toBeInViewport({
+            timeout: 200,
+          });
+        }).toPass({ timeout: 5000, intervals: [100] });
+        await expect(page).toHaveURL(/#motion-studio$/);
+        // Multiple wheel events can produce multiple scrollend events. Wait
+        // for a quiet scroll interval before making another keyboard journey.
+        await page.evaluate(
           () =>
             new Promise<void>((resolve) => {
-              document.addEventListener("scrollend", () => resolve(), {
-                once: true,
-              });
+              let quiet: ReturnType<typeof setTimeout>;
+              const finish = () => {
+                document.removeEventListener("scroll", moving);
+                resolve();
+              };
+              const moving = () => {
+                clearTimeout(quiet);
+                quiet = setTimeout(finish, 150);
+              };
+              document.addEventListener("scroll", moving, { passive: true });
+              moving();
             }),
         );
-        await page.mouse.wheel(0, -20000);
-        await expect(page.locator("#motion-studio")).not.toBeInViewport();
-        await expect(page).toHaveURL(/#motion-studio$/);
-        await scrollEnd;
       }
 
       const feedback = page.locator(".motion-feedback");
@@ -59,6 +75,11 @@ for (const width of [1280, 390]) {
       await expect(page.locator(".motion-runner.has-arrived")).toHaveCount(0);
 
       await entry.press("Enter");
+      // press() focuses but does not wait for WebKit's focus scrolling. Make
+      // the control visible before starting the replay's short live clock.
+      await play.focus();
+      await play.scrollIntoViewIfNeeded();
+      await expect(play).toBeInViewport({ ratio: 1 });
       await expect(feedback).toContainText("Ready when you are");
       await play.press("Enter");
       await expect(feedback).toHaveText("Comparing both curves…");
