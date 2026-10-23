@@ -735,3 +735,12 @@ Next: validate this environment through the protected PR, then verify both publi
 - [x] Validate a clean `npm ci`, zero audit vulnerabilities, and `npm run check` on Node 24.22.1: all 169 code checks, strict types, résumé generation, production build, and asset budgets pass.
 - [x] Pass the full Chromium/WebKit suite with 279 passes and the existing platform-specific skip, without retries. An initial WebKit blank-page failure occurred during a concurrent rebuild; the affected case passes six serial repetitions and the final full run passes against unchanged output. No application code or browser assertions changed.
 - [x] Inspect desktop/mobile views in both themes without overflow or page errors; all 15 generated browser assets match the deployed release byte-for-byte. Pass three sequential local mobile Lighthouse samples with median LCP 1.97s, CLS 0, and TBT 0ms. These are simulated measurements; protected Linux CI remains the release gate.
+
+## Motion lifecycle release recovery — October 23
+
+- [x] Inspect both attempts of the failed mobile WebKit release check. The first never scrolls Motion Studio out of view; the retry starts replay while the viewport is still moving. The case passes 12 local repetitions before changes, so these traces identify synchronization gaps rather than a consistently reproduced application defect.
+- [x] Use bounded native wheel gestures until the experience leaves the viewport, then observe a quiet scroll interval before returning. Focus and fully reveal Play before starting its short animation clock. Preserve the offscreen-stop, unchanged-hash, no-animation, no-automatic-replay, and explicit-replay assertions; keep the existing exit deadline and CI retry policy.
+- [x] Pass 64 repeated lifecycle journeys across Chromium/WebKit and desktop/mobile widths, plus `npm run check` with all 169 code checks, strict types, the production build, and asset budgets. No application behavior or career content changes.
+- [x] Pass the complete browser suite with 279 passes, the existing platform-specific skip, and no retries. Inspect desktop keyboard playback, mobile controls, light/dark themes, and reduced-motion feedback without console errors.
+
+Next: pass the protected Linux check, then synchronize and verify both hosts at the tested release. Human visitor, physical-phone, and screen-reader sessions remain outstanding.
