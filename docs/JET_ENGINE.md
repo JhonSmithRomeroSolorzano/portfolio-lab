@@ -34,22 +34,49 @@ mass-flow or bypass ratio. The shared pure model owns all visual speed mappings.
 
 ## Rendering boundaries
 
-Anatomy authors the fixed SVG solids. A single feature-local 2D canvas renders
-the moving blade faces and the continuous air tracers between rear and front SVG
-layers. This avoids introducing a graphics dependency or a general 3D engine.
-The pure model and generated projection keep all three layers registered.
-React owns controls and announcements, never per-frame geometry. The renderer
-caps pixel ratio and catch-up, and releases its frames, observers, and listeners.
-Small screens enlarge all registered drawing layers together inside a clipped
-stage, keeping the fan and core readable without horizontal page scrolling.
-Intrinsic image dimensions reserve the stage before SVG downloads finish, so
-late casing assets do not move the controls or misregister the canvas.
-Reduced motion uses a still composition at the chosen speed. Canvas denial keeps
-an SVG engine and speed-dependent air paths; it does not claim animated playback.
+Anatomy authors one complete static SVG per theme, in the measured global painter's
+order. Each convex casing panel is an independent audited draw item; panels are
+not hidden inside a group with an unchecked internal order. Perforations, screws,
+deck rules, and engraving paint with their actual host rather than on a universal
+foreground overlay. Guide vanes are fixed parts, not duplicate canvas geometry.
+The existing `engine-back-*` asset names now contain that complete base scene;
+they no longer mean a back-only layer. The former front SVG assets are removed.
 
-The static authoring recorder uses the actual slabs, annular sectors, and turned
-profiles. Moving blade clearances are bounded separately by their pure radial
-geometry and axial spacing. Surface marks stay on their physical parts.
+The generator also exports indexed visibility triangles from those same recorded
+slabs, annular sectors, and turned profiles. Screen positions use Anatomy's exact
+0.1-pixel path rounding, and camera depth uses 0.001-world-unit precision. Integer
+deltas compress the data in the existing lazy engine bundle. Legacy layer labels
+in the diagnostic groups are used only to reproduce the old bug, never to render.
+
+A feature-local 2D canvas maintains a cached fixed-surface depth buffer, then
+establishes moving-metal depth per pixel. Air streaks, guide streams, tracer heads,
+and exhaust all test that same nearest depth; they cannot paint through nearer
+metal. Sloped faces and lines use interpolated planes/depth, not their average
+depth. Concave swept caps use ear clipping rather than a triangle fan. Antialiased
+fringes and technical outlines preserve smooth edges; border samples use the
+nearest physical edge rather than extrapolating a steep surface plane. Fixed
+guide coverage is cached at settled speed but retested against moving blades on
+every frame. There is no graphics library or WebGL/GPU requirement.
+
+The SVG-only fallback uses the same planes. It subtracts nearer opaque polygons
+from blade faces and clips individual air-line intervals, so disabling canvas
+does not restore the old foreground/background layering error. This alternative
+is calculated lazily only when canvas is unavailable, not on the normal motion
+path. It remains static and does not claim animated playback.
+
+React owns controls and announcements, never per-frame updates. Pixel ratio,
+frame catch-up, observer/listener cleanup, viewport autoplay, and manual pause
+intent retain their existing policies. Reduced motion uses a depth-correct still.
+Small screens enlarge the registered SVG and canvas together inside a clipped
+stage without horizontal page scrolling. Intrinsic image dimensions reserve the
+stage before downloads finish, avoiding registration or control-layout shifts.
+Playback waits for the selected theme's complete base image, so isolated moving
+blades never appear while casing art is still downloading or changing theme.
+
+The static audit proves the fixed draw order. Separate pixel/ray tests cover
+rotating geometry across the full shared fan/core pattern period, including
+surfaces incorrectly hidden by the old front SVG and blades incorrectly drawn
+through the old back SVG. Moving clearances retain their radial/axial bounds.
 
 ## Provenance and regeneration
 
@@ -64,13 +91,14 @@ npm run build:engine -- --check
 npm run build:engine -- --audit
 ```
 
-The generator writes four theme-specific SVG assets and projection data. The
+The generator writes two complete theme-specific SVG assets, visibility geometry,
+and projection data. The
 projection JSON uses eight decimal places to avoid platform-dependent trailing
 bits in trigonometric results. This is far below a screen pixel; regeneration
 still compares every generated file exactly and reports the differing filename.
-The selected theme loads two images only when the experience is mounted; theme changes
-select the matching pair. Both theme pairs together have an 80 KiB compressed
-source-art regression limit, separate from the existing JavaScript budgets.
+The selected theme loads one image only when the experience is mounted; theme changes
+select the matching image. Both theme images together retain the 80 KiB compressed
+source-art regression limit; visibility data is counted in the existing JavaScript budgets.
 Ordinary builds
 do not regenerate the figure and do not ship the skill kit. The earlier lock and
 its assets are removed; the existing six other experiences remain unchanged.

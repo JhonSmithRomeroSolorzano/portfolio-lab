@@ -126,8 +126,12 @@
   opacity: 0.7;
 }
 .engine-blade {
+  stroke: none;
+}
+.engine-blade-outline {
+  fill: none;
   stroke: var(--engine-edge);
-  stroke-width: 0.6;
+  stroke-width: 0.55;
 }
 .engine-blade[data-shade="0"] {
   fill: var(--engine-metal-0);

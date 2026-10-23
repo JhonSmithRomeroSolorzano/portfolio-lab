@@ -4,6 +4,7 @@ import * as k from "../.opencode/skills/anatomy/kit/iso-kit.mjs";
 import * as G from "../.opencode/skills/anatomy/kit/lathe.mjs";
 import * as A from "../.opencode/skills/anatomy/kit/audit.mjs";
 import { ENGINE_CENTER, ROTORS } from "../src/domain/playground/jet-engine.ts";
+import { triangulate } from "../src/domain/playground/engine-depth.ts";
 
 const file = new URL(
   "../src/features/playground/jet-engine/engine-art.json",
@@ -25,16 +26,22 @@ const P = k.fitProjection(
 );
 const R = A.recorder(P);
 let serial = 0;
-function put(name, layer, svg, shape, at) {
-  R.put({
+const assemblies = new Set();
+function put(name, layer, svg, shape, at, assembly = name) {
+  const item = R.put({
     name,
-    piece: name,
+    piece: assembly,
+    assembly,
     layer,
     svg,
     at,
     shapes: [].concat(shape).map((s) => R.solid(s)),
   });
-  serial++;
+  if (!assemblies.has(assembly)) {
+    assemblies.add(assembly);
+    serial++;
+  }
+  return item;
 }
 function slab(name, plan, z, h, layer = "back") {
   put(
@@ -56,7 +63,7 @@ for (const x of [-108, 105])
   slab(`stand.pedestal.${x}`, { x: x - 8, y: -7, w: 16, d: 14, r: 1.5 }, 4, 37);
 
 function ring(name, s0, s1, ri, ro, layer = "front") {
-  const shape = A.ring(F, s0, s1, ri, ro, { name });
+  const shape = A.ring(F, s0, s1, ri, ro, { name, steps: 48 });
   put(
     name,
     layer,
@@ -82,7 +89,7 @@ for (const [name, s0, s1] of [
     name,
     "back",
     k.solidSvg(G.solidOf(profile, F, P, { steps: 24 }), { tone: "hi" }),
-    A.solid(F, profile, { name }),
+    A.solid(F, profile, { name, steps: 24 }),
     [(s0 + s1) / 2, 0, ENGINE_CENTER],
   );
 }
@@ -91,8 +98,6 @@ for (const [index, x] of [-138, -10, 134].entries()) {
   sectorPair(`nacelle.band.${index}`, x, x + 4, 61, 64);
 }
 function sector(name, s0, s1, ri, ro, a0, a1, layer) {
-  const pieces = [],
-    shapes = [];
   const count = Math.ceil((a1 - a0) / (Math.PI / 24));
   for (let i = 0; i < count; i++) {
     const a = a0 + ((a1 - a0) * i) / count,
@@ -104,40 +109,46 @@ function sector(name, s0, s1, ri, ro, a0, a1, layer) {
       [ri * Math.cos(b), ri * Math.sin(b)],
     ];
     const paths = G.prismOf(F, polygon, s0, s1, P);
-    pieces.push(
+    const edges = [];
+    for (const s of [s0, s1])
+      for (const radius of [ri, ro])
+        edges.push(
+          k.pathOf([
+            k.iso(G.pointOf(F, s, radius, a), P),
+            k.iso(G.pointOf(F, s, radius, b), P),
+          ]),
+        );
+    for (const boundary of [i === 0 ? a : null, i === count - 1 ? b : null])
+      if (boundary !== null)
+        edges.push(
+          k.pathOf(
+            [
+              k.iso(G.pointOf(F, s0, ri, boundary), P),
+              k.iso(G.pointOf(F, s0, ro, boundary), P),
+              k.iso(G.pointOf(F, s1, ro, boundary), P),
+              k.iso(G.pointOf(F, s1, ri, boundary), P),
+            ],
+            true,
+          ),
+        );
+    const panelName = `${name}.panel.${i}`;
+    const item = put(
+      panelName,
+      layer,
       k.solidSvg(
         { ...paths, outline: "", crease: "" },
         { tone: "mid", crease: "none" },
-      ),
-    );
-    shapes.push(A.prism(F, polygon, s0, s1, { name }));
-  }
-  const edges = [a0, a1].map((a) =>
-    k.pathOf(
+      ) + k.lineSvg(edges.join(""), { tone: "mid" }),
+      A.prism(F, polygon, s0, s1, { name: panelName }),
       [
-        k.iso(G.pointOf(F, s0, ri, a), P),
-        k.iso(G.pointOf(F, s0, ro, a), P),
-        k.iso(G.pointOf(F, s1, ro, a), P),
-        k.iso(G.pointOf(F, s1, ri, a), P),
+        (s0 + s1) / 2,
+        (Math.cos((a + b) / 2) * (ri + ro)) / 2,
+        ENGINE_CENTER + (Math.sin((a + b) / 2) * (ri + ro)) / 2,
       ],
-      true,
-    ),
-  );
-  for (const s of [s0, s1])
-    for (const radius of [ri, ro])
-      edges.push(
-        k.pathOf(
-          Array.from({ length: count + 1 }, (_, i) =>
-            k.iso(G.pointOf(F, s, radius, a0 + ((a1 - a0) * i) / count), P),
-          ),
-        ),
-      );
-  pieces.push(k.lineSvg(edges.join(""), { tone: "mid" }));
-  put(name, layer, pieces.join(""), shapes, [
-    (s0 + s1) / 2,
-    (Math.cos((a0 + a1) / 2) * (ri + ro)) / 2,
-    ENGINE_CENTER + (Math.sin((a0 + a1) / 2) * (ri + ro)) / 2,
-  ]);
+      name,
+    );
+    item.angular = [a, b];
+  }
 }
 function sectorPair(name, s0, s1, ri, ro) {
   const view = G.viewOf(P),
@@ -191,7 +202,7 @@ for (const [index, [s0, s1]] of [
     name,
     "back",
     k.solidSvg(G.solidOf(shaft, F, P, { steps: 24 }), { tone: "hi" }),
-    A.solid(F, shaft, { name }),
+    A.solid(F, shaft, { name, steps: 24 }),
     [(s0 + s1) / 2, 0, ENGINE_CENTER],
   );
 }
@@ -205,11 +216,10 @@ put(
   "intake.spinner",
   "front",
   k.solidSvg(G.solidOf(spinner, F, P, { steps: 48 }), { tone: "hi" }),
-  A.solid(F, spinner, { name: "intake.spinner" }),
+  A.solid(F, spinner, { name: "intake.spinner", steps: 48 }),
   [-160, 0, ENGINE_CENTER],
 );
 // Fixed guide vanes support the front shaft bearing, behind the moving fan.
-const guides = [];
 for (let i = 0; i < 6; i++) {
   const a = (i * Math.PI) / 3,
     poly = [
@@ -226,46 +236,152 @@ for (let i = 0; i < 6; i++) {
     A.prism(F, poly, -132, -130, { name: `guide.${i}` }),
     G.pointOf(F, -131, 33, a),
   );
-  guides.push({ x: -131, polygon: poly });
 }
-const marks = [];
-const liner = R.items.find((item) => item.name === "core.1.rear");
-if (liner)
-  liner.svg += k.dotsSvg(
-    Array.from({ length: 56 }, (_, i) =>
-      k.iso(G.pointOf(F, (i % 7) * 9, 31, 2.2 + Math.floor(i / 7) * 0.35), P),
-    ),
+for (const item of R.items.filter((item) => item.assembly === "core.1.rear")) {
+  const dots = Array.from({ length: 56 }, (_, i) => ({
+    x: (i % 7) * 9,
+    a: 2.2 + Math.floor(i / 7) * 0.35,
+  })).filter((p) => p.a >= item.angular[0] && p.a < item.angular[1]);
+  item.svg += k.dotsSvg(
+    dots.map((p) => k.iso(G.pointOf(F, p.x, 31, p.a), P)),
     { size: 0.65, tone: "lo" },
   );
-marks.push(
-  k.lineSvg(k.planOutline(k.insetPlan(deck, 5), 4, P), { tone: "lo" }),
-);
-marks.push(
-  k.dotsSvg(
-    k.corners(deck, 10).map(([x, y]) => k.iso([x, y, 4], P)),
-    { size: 1, tone: "hi" },
-  ),
+}
+const deckItem = R.items.find((item) => item.name === "stand.deck");
+deckItem.svg += k.lineSvg(k.planOutline(k.insetPlan(deck, 5), 4, P), {
+  tone: "lo",
+});
+deckItem.svg += k.dotsSvg(
+  k.corners(deck, 10).map(([x, y]) => k.iso([x, y, 4], P)),
+  { size: 1, tone: "hi" },
 );
 const plaque = { x: 95, y: 63, w: 63, d: 12, r: 1 };
 slab("stand.plaque", plaque, 4, 0.7);
-marks.push(
-  k.faceTextSvg(k.topMatrix([126, 71], 4.7, P), "AIR / CORE", {
+R.items.find((item) => item.name === "stand.plaque").svg += k.faceTextSvg(
+  k.topMatrix([126, 71], 4.7, P),
+  "AIR / CORE",
+  {
     size: 3,
     tone: "hi",
     anchor: "middle",
-  }),
+  },
 );
-const screws = [];
-for (let x = -126; x < 138; x += 18)
-  screws.push(
-    k.iso([x, 59, ENGINE_CENTER], P),
-    k.iso([x, 0, ENGINE_CENTER + 59], P),
+for (const [assembly, boundary, at] of [
+  ["nacelle.shell.upper", Math.PI / 2, (x) => [x, 0, ENGINE_CENTER + 59]],
+  ["nacelle.shell.lower", Math.PI * 2, (x) => [x, 59, ENGINE_CENTER]],
+]) {
+  const host = R.items.find(
+    (item) =>
+      item.assembly === assembly &&
+      Math.min(
+        Math.abs(item.angular[0] - boundary),
+        Math.abs(item.angular[1] - boundary),
+      ) < 1e-7,
   );
-marks.push(k.dotsSvg(screws, { size: 0.65, tone: "hi" }));
+  host.svg += k.dotsSvg(
+    Array.from({ length: 15 }, (_, i) => k.iso(at(-126 + i * 18), P)),
+    { size: 0.65, tone: "hi" },
+  );
+}
 // The optional full audit solves the same recorded static geometry, not proxies.
 A.settle(R, P);
 A.auditOrExit(R, P);
 const ordered = [...R.items].sort((a, b) => a.key - b.key);
+// Visibility is exported from the actual recorded surfaces, not object-centre keys.
+const meshVertices = [],
+  meshTriangles = [],
+  meshGroups = [],
+  vertexIds = new Map();
+const V = G.viewOf(P);
+function meshFace(world, normal) {
+  if (G.dot3(normal, V) <= 1e-8) return;
+  const projected = world.map((p) => {
+    const [x, y] = k.iso(p, P);
+    return [
+      Math.round(x * 10) / 10,
+      Math.round(y * 10) / 10,
+      Number(G.dot3(p, V).toFixed(3)),
+    ];
+  });
+  for (const t of triangulate(projected))
+    for (const p of t.vertices) {
+      const key = p.join(",");
+      let id = vertexIds.get(key);
+      if (id === undefined) {
+        id = meshVertices.length / 3;
+        vertexIds.set(key, id);
+        meshVertices.push(...p);
+      }
+      meshTriangles.push(id);
+    }
+}
+function meshShape(shape) {
+  const { F: frame, poly } = shape;
+  if (shape.kind === "prism") {
+    const area = poly.reduce(
+      (sum, p, i) =>
+        sum +
+        p[0] * poly[(i + 1) % poly.length][1] -
+        poly[(i + 1) % poly.length][0] * p[1],
+      0,
+    );
+    const ring = area > 0 ? poly : [...poly].reverse();
+    const at = (s, p) =>
+      G.add3(
+        frame.o,
+        G.add3(
+          G.mul3(frame.a, s),
+          G.add3(G.mul3(frame.u, p[0]), G.mul3(frame.v, p[1])),
+        ),
+      );
+    const low = ring.map((p) => at(shape.s0, p)),
+      high = ring.map((p) => at(shape.s1, p));
+    meshFace(low, G.mul3(frame.a, -1));
+    meshFace(high, frame.a);
+    for (let i = 0; i < ring.length; i++) {
+      const j = (i + 1) % ring.length;
+      meshFace(
+        [low[i], low[j], high[j], high[i]],
+        G.add3(
+          G.mul3(frame.u, ring[j][1] - ring[i][1]),
+          G.mul3(frame.v, ring[i][0] - ring[j][0]),
+        ),
+      );
+    }
+  } else if (shape.kind === "body") {
+    const steps = shape.steps || 48;
+    for (let i = 0; i < poly.length; i++) {
+      const j = (i + 1) % poly.length,
+        ds = poly[j][0] - poly[i][0],
+        dr = poly[j][1] - poly[i][1];
+      for (let n = 0; n < steps; n++) {
+        const a = (n * Math.PI * 2) / steps,
+          b = ((n + 1) * Math.PI * 2) / steps,
+          radial = G.radialOf(frame, (a + b) / 2);
+        meshFace(
+          [
+            G.pointOf(frame, poly[i][0], poly[i][1], a),
+            G.pointOf(frame, poly[j][0], poly[j][1], a),
+            G.pointOf(frame, poly[j][0], poly[j][1], b),
+            G.pointOf(frame, poly[i][0], poly[i][1], b),
+          ],
+          G.add3(G.mul3(radial, ds), G.mul3(frame.a, -dr)),
+        );
+      }
+    }
+  } else throw new Error(`Unrecorded visibility geometry: ${shape.kind}`);
+}
+for (const item of ordered) {
+  const start = meshTriangles.length;
+  for (const shape of item.shapes) meshShape(shape);
+  meshGroups.push({
+    name: item.name,
+    assembly: item.assembly,
+    legacyLayer: item.layer,
+    start,
+    count: meshTriangles.length - start,
+  });
+}
 const output = await format(
   JSON.stringify(
     {
@@ -278,7 +394,6 @@ const output = await format(
       ],
       view: [1100, 480],
       camera: { view: G.viewOf(P), light: G.lightOf(P) },
-      guideMeshes: guides,
     },
     (_, value) =>
       // Keep far more than screen precision without serializing platform-specific
@@ -288,8 +403,38 @@ const output = await format(
   { parser: "json" },
 );
 const outputs = new Map([[file, output]]);
+const lastVertex = [0, 0, 0];
+let lastIndex = 0;
+const vertexDeltas = meshVertices.map((value, i) => {
+  const axis = i % 3,
+    integer = Math.round(value * (axis === 2 ? 1000 : 10)),
+    delta = integer - lastVertex[axis];
+  lastVertex[axis] = integer;
+  return delta;
+});
+const indexDeltas = meshTriangles.map((value) => {
+  const delta = value - lastIndex;
+  lastIndex = value;
+  return delta;
+});
+outputs.set(
+  new URL(
+    "../src/features/playground/jet-engine/engine-depth.json",
+    import.meta.url,
+  ),
+  await format(
+    JSON.stringify({
+      version: 1,
+      encoding: "delta-v1",
+      vertices: vertexDeltas,
+      triangles: indexDeltas,
+      groups: meshGroups,
+    }),
+    { parser: "json" },
+  ),
+);
 for (const theme of ["light", "dark"])
-  for (const layer of ["back", "front"]) {
+  for (const layer of ["back"]) {
     const palette =
       theme === "dark"
         ? [
@@ -311,11 +456,7 @@ for (const theme of ["light", "dark"])
             "#596f80",
           ];
     const css = `.iso-fill{fill:${palette[0]}}.iso-top{fill:${palette[5]}}${[0, 1, 2, 3].map((i) => `.iso-shade[data-shade="${i}"]{fill:${palette[i + 1]}}`).join("")}.iso-line{fill:none;stroke:${palette[6]};stroke-width:.65;stroke-linejoin:round;stroke-linecap:round}.iso-dots circle,.iso-face-text{fill:${palette[6]}}.iso-face-text{font-family:monospace}`;
-    const body =
-      ordered
-        .filter((p) => p.layer === layer)
-        .map((p) => p.svg)
-        .join("") + (layer === "front" ? marks.join("") : "");
+    const body = ordered.map((p) => p.svg).join("");
     outputs.set(
       new URL(
         `../src/features/playground/jet-engine/engine-${layer}-${theme}.svg`,

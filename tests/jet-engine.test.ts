@@ -97,7 +97,7 @@ test("Anatomy engine artwork reproduces with measured static depth order and bou
   );
   let bytes = 0;
   for (const theme of ["light", "dark"])
-    for (const layer of ["front", "back"]) {
+    for (const layer of ["back"]) {
       const svg = readFileSync(
         `src/features/playground/jet-engine/engine-${layer}-${theme}.svg`,
         "utf8",

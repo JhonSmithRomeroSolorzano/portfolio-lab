@@ -5,8 +5,14 @@ import {
   flowOpacity,
   ENGINE_CENTER,
 } from "../../../domain/playground/jet-engine";
-import { depth, engineFaces, project } from "./mesh";
+import {
+  triangulate,
+  type DepthPoint,
+} from "../../../domain/playground/engine-depth";
+import { engineFaces, projectDepth, staticTriangles } from "./mesh";
+import { EngineRaster, type Ink, type InkSample } from "./raster";
 
+/** Opaque surfaces establish depth first; every air sample tests that same depth. */
 export function createEngineRenderer(
   canvas: HTMLCanvasElement,
   onFailure: () => void,
@@ -22,149 +28,168 @@ export function createEngineRenderer(
     still = false,
     frame = 0,
     previous = 0;
-  let width = 1,
-    height = 1;
-  let cool = "#287cc0",
-    hot = "#c85b21",
-    edge = "#516c80",
-    metal: string[] = [];
-  let coolRgb = [36, 122, 185],
-    hotRgb = [195, 91, 32];
-  const path = (
-    points: readonly (readonly [number, number])[],
-    close = false,
-  ) => {
-    ctx.beginPath();
-    points.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
-    if (close) ctx.closePath();
-  };
+  let image: ImageData | undefined, raster: EngineRaster | undefined;
+  let guideSpool = NaN,
+    guideRaster: EngineRaster | undefined,
+    guides: InkSample[] = [];
+  let cool: Ink = [36, 122, 185],
+    hot: Ink = [195, 91, 32],
+    edge: Ink = [81, 110, 128],
+    metal: Ink[] = [];
+  const hex = (value: string): Ink =>
+    [1, 3, 5].map((offset) =>
+      parseInt(value.slice(offset, offset + 2), 16),
+    ) as [number, number, number];
   function palette() {
+    guideSpool = NaN;
     const css = getComputedStyle(canvas);
-    cool = css.getPropertyValue("--engine-cool").trim();
-    hot = css.getPropertyValue("--engine-hot").trim();
-    edge = css.getPropertyValue("--engine-edge").trim();
+    cool = hex(css.getPropertyValue("--engine-cool").trim());
+    hot = hex(css.getPropertyValue("--engine-hot").trim());
+    edge = hex(css.getPropertyValue("--engine-edge").trim());
     metal = Array.from({ length: 5 }, (_, i) =>
-      css.getPropertyValue(`--engine-metal-${i}`).trim(),
-    );
-    coolRgb = [1, 3, 5].map((offset) =>
-      parseInt(cool.slice(offset, offset + 2), 16),
-    );
-    hotRgb = [1, 3, 5].map((offset) =>
-      parseInt(hot.slice(offset, offset + 2), 16),
+      hex(css.getPropertyValue(`--engine-metal-${i}`).trim()),
     );
   }
+  function ink(route: number, x: number): Ink {
+    const heat = route % 3 === 0 ? Math.max(0, Math.min(1, (x + 8) / 32)) : 0;
+    return heat === 0
+      ? cool
+      : heat === 1
+        ? hot
+        : (cool.map((value, i) =>
+            Math.round(value + (hot[i] - value) * heat),
+          ) as [number, number, number]);
+  }
   function draw() {
-    if (!ctx) return;
-    const power = enginePower(spool);
-    ctx.setTransform(canvas.width / 1100, 0, 0, canvas.height / 480, 0, 0);
-    ctx.clearRect(0, 0, 1100, 480);
-    // A translucent volume represents heated air, not an afterburner flame.
+    if (!ctx || !raster || !image) return;
+    const r = raster,
+      power = enginePower(spool),
+      faces = engineFaces(angle);
+    r.begin();
+    for (const face of faces)
+      for (let i = 0; i < face.triangles.length; i++)
+        r.metal(face.triangles[i], metal[face.shade], face.boundaries[i]);
+    // Only antialiased fringes need blending; solid visibility never uses a mean-depth sort.
+    for (const face of faces)
+      for (let i = 0; i < face.triangles.length; i++)
+        r.metal(face.triangles[i], metal[face.shade], face.boundaries[i], true);
+    for (const face of faces)
+      for (let i = 0; i < face.vertices.length; i++)
+        r.line(
+          face.vertices[i],
+          face.vertices[(i + 1) % face.vertices.length],
+          edge,
+          0.55,
+          1,
+          0.008,
+        );
     if (power.throttle > 0) {
-      const start = project([145, 0, ENGINE_CENTER]),
-        end = project([145 + power.reach, 0, ENGINE_CENTER]);
-      const gradient = ctx.createLinearGradient(
-        start[0],
-        start[1],
-        end[0],
-        end[1],
-      );
-      gradient.addColorStop(0, hot);
-      gradient.addColorStop(1, "transparent");
-      const top = [],
-        bottom = [];
+      const start = projectDepth([145, 0, ENGINE_CENTER]),
+        end = projectDepth([145 + power.reach, 0, ENGINE_CENTER]);
+      const alpha = (x: number) =>
+        Math.max(0, 1 - (x - start[0]) / (end[0] - start[0])) *
+        (0.13 + power.heat * 0.08);
+      const top: DepthPoint[] = [],
+        bottom: DepthPoint[] = [];
       for (let i = 0; i <= 30; i++) {
-        const t = i / 30,
-          r =
+        const u = i / 30,
+          radius =
             (11 + power.throttle * 10) *
-            Math.sin(Math.PI * (0.12 + t * 0.88)) *
-            (1 - t * 0.4);
-        top.push(project([145 + power.reach * t, 0, ENGINE_CENTER + r]));
-        bottom.push(project([145 + power.reach * t, 0, ENGINE_CENTER - r]));
+            Math.sin(Math.PI * (0.12 + u * 0.88)) *
+            (1 - u * 0.4);
+        top.push(
+          projectDepth([145 + power.reach * u, 0, ENGINE_CENTER + radius]),
+        );
+        bottom.push(
+          projectDepth([145 + power.reach * u, 0, ENGINE_CENTER - radius]),
+        );
       }
-      ctx.fillStyle = gradient;
-      ctx.globalAlpha = 0.13 + power.heat * 0.08;
-      path([...top, ...bottom.reverse()], true);
-      ctx.fill();
+      for (let i = 0; i < 30; i++)
+        for (const t of triangulate([
+          top[i],
+          top[i + 1],
+          bottom[i + 1],
+          bottom[i],
+        ]))
+          r.volume(t, hot, alpha);
     }
-    type Trace = {
-      points: [number, number][];
+    const traces: {
+      points: DepthPoint[];
       alpha: number;
-      heat: number;
+      color: Ink;
       depth: number;
       width: number;
+    }[] = [];
+    const drawGuides = (collect?: InkSample[]) => {
+      if (power.throttle > 0)
+        for (let route = 0; route < routes; route++) {
+          let previous = airPoint(route, 0, power);
+          for (let i = 1; i <= 44; i++) {
+            const point = airPoint(route, i / 44, power);
+            r.line(
+              projectDepth(previous),
+              projectDepth(point),
+              ink(route, (previous[0] + point[0]) / 2),
+              0.7,
+              0.045 + power.throttle * 0.045,
+              0,
+              collect,
+            );
+            previous = point;
+          }
+        }
     };
-    const traces: Trace[] = [];
-    for (let route = 0; route < routes; route++) {
-      // Quiet guide streams retain the route while particles make speed visible.
-      if (power.throttle > 0) {
-        const points = Array.from({ length: 45 }, (_, i) =>
-          project(airPoint(route, i / 44, power)),
-        );
-        ctx.globalAlpha = 0.045 + power.throttle * 0.045;
-        ctx.strokeStyle = cool;
-        ctx.lineWidth = 0.7;
-        path(points);
-        ctx.stroke();
+    if (spool === target) {
+      if (guideSpool !== spool || guideRaster !== r) {
+        guides = [];
+        guideSpool = spool;
+        guideRaster = r;
+        drawGuides(guides);
       }
+      r.samples(guides);
+    } else drawGuides();
+    for (let route = 0; route < routes; route++) {
       for (let slot = 0; slot < 22; slot++) {
         const density = Math.max(0, Math.min(1, power.density - slot));
         if (!density) continue;
-        const u = (((slot / 22 + route * 0.037 + clock * 0.085) % 1) + 1) % 1;
-        const point = airPoint(route, u, power);
-        const trail = (0.008 + power.throttle * 0.025) * (still ? 0.7 : 1);
-        const points = Array.from({ length: 5 }, (_, i) =>
-          project(airPoint(route, Math.max(0, u - trail * (1 - i / 4)), power)),
+        const u = (((slot / 22 + route * 0.037 + clock * 0.085) % 1) + 1) % 1,
+          point = airPoint(route, u, power),
+          trail = (0.008 + power.throttle * 0.025) * (still ? 0.7 : 1);
+        const points = Array.from({ length: 3 }, (_, i) =>
+          projectDepth(
+            airPoint(route, Math.max(0, u - trail * (1 - i / 2)), power),
+          ),
         );
         traces.push({
           points,
           alpha: density * flowOpacity(u) * (0.38 + power.throttle * 0.38),
-          heat:
-            route % 3 === 0 ? Math.max(0, Math.min(1, (point[0] + 8) / 32)) : 0,
-          depth: depth(point),
+          color: ink(route, point[0]),
+          depth: points[points.length - 1][2],
           width: route % 3 === 0 ? 1.5 : 1.05,
         });
       }
     }
-    const faces = engineFaces(angle);
-    let fi = 0,
-      ti = 0;
+    // Air is transparent, but its per-pixel visibility is still tested against all metal.
     traces.sort((a, b) => a.depth - b.depth);
-    while (fi < faces.length || ti < traces.length) {
-      if (
-        ti < traces.length &&
-        (fi === faces.length || traces[ti].depth < faces[fi].depth)
-      ) {
-        const trace = traces[ti++];
-        ctx.globalAlpha = trace.alpha;
-        const color =
-          trace.heat === 0
-            ? cool
-            : trace.heat === 1
-              ? hot
-              : `rgb(${coolRgb.map((value, i) => Math.round(value + (hotRgb[i] - value) * trace.heat)).join(",")})`;
-        ctx.strokeStyle = color;
-        ctx.lineWidth = trace.width;
-        ctx.lineCap = "round";
-        path(trace.points);
-        ctx.stroke();
-        const tip = trace.points[trace.points.length - 1];
-        ctx.globalAlpha = trace.alpha * 0.7;
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.arc(tip[0], tip[1], 1.1 + power.throttle * 0.65, 0, Math.PI * 2);
-        ctx.fill();
-      } else {
-        const face = faces[fi++];
-        ctx.globalAlpha = 1;
-        ctx.fillStyle = metal[face.shade];
-        ctx.strokeStyle = edge;
-        ctx.lineWidth = 0.55;
-        path(face.points, true);
-        ctx.fill();
-        ctx.stroke();
-      }
+    for (const trace of traces) {
+      for (let i = 0; i < trace.points.length - 1; i++)
+        r.line(
+          trace.points[i],
+          trace.points[i + 1],
+          trace.color,
+          trace.width,
+          trace.alpha,
+        );
+      const tip = trace.points[trace.points.length - 1];
+      r.line(
+        tip,
+        tip,
+        trace.color,
+        (1.1 + power.throttle * 0.65) * 2,
+        trace.alpha * 0.7,
+      );
     }
-    ctx.globalAlpha = 1;
+    ctx.putImageData(image, 0, 0);
     canvas.dataset.spool = spool.toFixed(2);
     canvas.dataset.phase = angle.toFixed(3);
     canvas.dataset.flow = power.flow.toFixed(3);
@@ -187,19 +212,23 @@ export function createEngineRenderer(
     if (playing) frame = requestAnimationFrame(tick);
   }
   function resize() {
-    const box = canvas.getBoundingClientRect();
-    width = Math.max(1, box.width);
-    height = Math.max(1, box.height);
-    const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
-    canvas.width = Math.round(width * ratio);
-    canvas.height = Math.round(height * ratio);
+    const box = canvas.getBoundingClientRect(),
+      ratio = Math.min(window.devicePixelRatio || 1, 1.5);
+    const width = Math.max(1, Math.round(box.width * ratio)),
+      height = Math.max(1, Math.round(box.height * ratio));
+    if (!image || canvas.width !== width || canvas.height !== height) {
+      canvas.width = width;
+      canvas.height = height;
+      image = ctx!.createImageData(width, height);
+      raster = new EngineRaster(width, height, staticTriangles, image.data);
+    }
     draw();
   }
-  const resizeObserver =
+  const observer =
     typeof ResizeObserver !== "undefined"
       ? new ResizeObserver(resize)
       : undefined;
-  resizeObserver?.observe(canvas);
+  observer?.observe(canvas);
   window.addEventListener("resize", resize);
   const themeObserver = new MutationObserver(() => {
     palette();
@@ -241,7 +270,7 @@ export function createEngineRenderer(
     },
     dispose() {
       pause();
-      resizeObserver?.disconnect();
+      observer?.disconnect();
       themeObserver.disconnect();
       window.removeEventListener("resize", resize);
       canvas.removeEventListener("contextlost", lost);

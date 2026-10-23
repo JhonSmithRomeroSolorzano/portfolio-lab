@@ -5,8 +5,23 @@ import {
   type EnginePoint,
 } from "../../../domain/playground/jet-engine";
 import art from "./engine-art.json";
+import geometry from "./engine-depth.json";
+import {
+  decodeDepthMesh,
+  triangulate,
+  type DepthPoint,
+  type DepthTriangle,
+} from "../../../domain/playground/engine-depth";
 
-export type Face = { points: [number, number][]; depth: number; shade: number };
+export type Face = {
+  points: [number, number][];
+  vertices: DepthPoint[];
+  triangles: DepthTriangle[];
+  boundaries: readonly (readonly [boolean, boolean, boolean])[];
+  depth: number;
+  shade: number;
+};
+export const staticTriangles = decodeDepthMesh(geometry);
 export function project(point: EnginePoint): [number, number] {
   return [
     art.origin[0] +
@@ -18,6 +33,9 @@ export function project(point: EnginePoint): [number, number] {
 export function depth(point: EnginePoint) {
   return point.reduce((sum, value, i) => sum + value * art.camera.view[i], 0);
 }
+export function projectDepth(point: EnginePoint): DepthPoint {
+  return [...project(point), depth(point)];
+}
 function face(vertices: EnginePoint[], normal: EnginePoint, out: Face[]) {
   const length = Math.hypot(...normal) || 1;
   if (normal.reduce((sum, v, i) => sum + v * art.camera.view[i], 0) <= 0)
@@ -27,8 +45,24 @@ function face(vertices: EnginePoint[], normal: EnginePoint, out: Face[]) {
     0,
   );
   const shade = [0, 0.2, 0.42, 0.62].filter((value) => score >= value).length;
+  const projected = vertices.map(projectDepth),
+    triangles = triangulate(projected);
+  const boundaries = triangles.map(
+    (t) =>
+      t.vertices.map((a, i) => {
+        const b = t.vertices[(i + 1) % 3];
+        return projected.some(
+          (p, j) =>
+            (p === a && projected[(j + 1) % projected.length] === b) ||
+            (p === b && projected[(j + 1) % projected.length] === a),
+        );
+      }) as [boolean, boolean, boolean],
+  );
   out.push({
-    points: vertices.map(project),
+    points: projected.map((p) => [p[0], p[1]]),
+    vertices: projected,
+    triangles,
+    boundaries,
     depth: vertices.reduce((sum, p) => sum + depth(p), 0) / vertices.length,
     shade,
   });
@@ -58,8 +92,6 @@ function prism(
 }
 export function engineFaces(angle: number): Face[] {
   const faces: Face[] = [];
-  for (const guide of art.guideMeshes)
-    prism(guide.x, guide.polygon as [number, number][], 2, faces);
   for (const rotor of ROTORS) {
     for (let i = 0; i < rotor.blades; i++)
       prism(

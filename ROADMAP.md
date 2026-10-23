@@ -744,3 +744,17 @@ Next: validate this environment through the protected PR, then verify both publi
 - [x] Pass the complete browser suite with 279 passes, the existing platform-specific skip, and no retries. Inspect desktop keyboard playback, mobile controls, light/dark themes, and reduced-motion feedback without console errors.
 
 Next: pass the protected Linux check, then synchronize and verify both hosts at the tested release. Human visitor, physical-phone, and screen-reader sessions remain outstanding.
+
+## Jet Engine occlusion repair — October 23
+
+- [x] Reproduce both mixed-render errors: the foreground SVG hid nearer fan surfaces, while moving geometry and air painted over nearer back-SVG metal. The old fixed-part audit did not validate that final composition or the internal order of grouped casing panels.
+- [x] Audit individual convex panels and emit the measured global static paint sequence directly into one complete theme SVG. Attach perforations, screws, and engraving to their hosts, and keep guide vanes in the fixed scene. Retain the existing geometry and controls rather than adding another activity.
+- [x] Derive indexed visibility triangles from the recorded surfaces. Use per-pixel static/moving depth for metal, air, guide streams, heads, and exhaust; preserve concave blade caps with ear clipping and clamp silhouette samples to physical edge depths. Cache settled guides without bypassing moving-blade visibility.
+- [x] Apply the same planes to the lazy SVG fallback, clipping faces and air-line intervals. Wait for the selected complete casing image before showing moving geometry or starting playback; retain reserved dimensions and all viewport/manual-pause/motion policies.
+- [x] Add draw-order-independent synthetic tests, real pixel/ray comparisons across a complete shared fan/core pattern period, native composite samples in both themes, and SVG-only visibility probes. Verify the actual SVG paint sequence against its recorded individual geometry, not just the authoring recorder's keys.
+
+- [x] Pass `npm run check` with 177 code/documentation/architecture checks, strict types, résumé generation, the production build, and unchanged asset budgets. Pass the complete Chromium/WebKit run with 285 passes, the existing Chromium-only touch-injection skip, and no retries. All 58 focused engine/viewport/motion-setting cases also pass.
+- [x] Pass Anatomy's actual 334-item/334-solid draw audit with zero problems, and both static line checks with zero floating ends. Inspect desktop/mobile compositions and 4× vector-fallback junctions in both themes; verify active rotation still advances at the selected speed in a capped-resolution retina smoke check. These do not replace physical-device or screen-reader sessions.
+- [x] Pass three sequential local mobile Lighthouse samples with median LCP 2.03s, CLS 0, and TBT 0ms. These are simulated measurements, not hosted real-user guarantees.
+
+Protected Linux PR validation remains the merge gate. Physical-device and human screen-reader sessions remain separate from automated and emulated review.

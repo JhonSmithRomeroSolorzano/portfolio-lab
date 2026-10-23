@@ -97,7 +97,7 @@ The companion skills are upstream reference material, not an application setup r
 
 [Anatomy](https://github.com/wheresryan22/anatomy) is installed for this project at `.opencode/skills/anatomy`, with its MIT license, kit, references, scripts, and examples. Mention `@anatomy` for a detailed interactive isometric figure; restart OpenCode if a running session does not discover it. The pinned upstream revision and illustration design are recorded in [the Jet Engine notes](docs/JET_ENGINE.md). Installation adds no application dependency.
 
-`npm run build:engine` regenerates Jet Engine's checked-in SVG assets and projection data; `npm run build:engine -- --check` verifies them without writing, and `npm run build:engine -- --audit` checks the recorded static geometry. The kit runs only in this authoring step, not in the browser or ordinary production builds. Other projects can use the upstream [installation instructions](https://github.com/wheresryan22/anatomy#install).
+`npm run build:engine` regenerates Jet Engine's complete theme SVGs, projection, and visibility data; `npm run build:engine -- --check` verifies them without writing, and `npm run build:engine -- --audit` checks the actual individual fixed draw items. Moving blades and air share per-pixel visibility against that geometry; the SVG fallback clips the same faces and air routes. The kit runs only in authoring, not in the browser or ordinary builds. See [the depth/occlusion design](docs/JET_ENGINE.md#rendering-boundaries). Other projects can use the upstream [installation instructions](https://github.com/wheresryan22/anatomy#install).
 
 ### Résumé downloads
 
@@ -162,7 +162,7 @@ The CLI accepts a file path or stdin, with one scenario per line and a 1 MiB inp
 
 The public recruiter URL is <https://jhonsmithromerosolorzano.github.io/portfolio-lab/>. Static canonical, Open Graph, and large-card metadata point to that address. `public/social-preview.svg` is the editable source for the 1200×630 JPEG sharing image. The Sites preview keeps its existing audience.
 
-Cache Rescue, the connection puzzle, Motion Studio, Algorithm Garden, Signal Sculpture, Gravity Loom, and Jet Engine use separate JavaScript bundles. They load near the viewport, on direct anchor entry, or through the explicit load control. A failed download keeps the career content available and offers a reload to the affected experience. Jet Engine's fixed artwork uses theme-specific SVG assets loaded with that experience, not geometry embedded in the entry JavaScript. Missing casing art pauses the experience and offers an explicit reload.
+Cache Rescue, the connection puzzle, Motion Studio, Algorithm Garden, Signal Sculpture, Gravity Loom, and Jet Engine use separate JavaScript bundles. They load near the viewport, on direct anchor entry, or through the explicit load control. A failed download keeps the career content available and offers a reload to the affected experience. Jet Engine loads one complete fixed-art SVG for the selected theme; its compact visibility data stays in the optional engine bundle, not the initial entry. Missing art pauses the experience and offers a reload.
 
 `npm run test:browser` includes axe accessibility scans for both themes, keyboard journeys, 320px reflow, 200% default text-size checks, direct links, and failed-download recovery. Challenge and traversal controls keep their visible labels consistent with their accessible names, including after selection. Automated scans and accessibility-tree inspection do not replace a human screen-reader assessment.
 

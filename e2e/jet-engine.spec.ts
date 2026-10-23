@@ -114,7 +114,7 @@ test("failed casing artwork offers honest recovery without breaking career conte
   page,
 }) => {
   let fail = true;
-  await page.route("**/engine-front-light-*.svg", (route) =>
+  await page.route("**/engine-back-light-*.svg", (route) =>
     fail
       ? route.fulfill({ status: 503, body: "Unavailable" })
       : route.continue(),
@@ -136,7 +136,7 @@ test("failed casing artwork offers honest recovery without breaking career conte
   await expect
     .poll(() =>
       page
-        .locator(".engine-front")
+        .locator(".engine-rear")
         .evaluate(
           (node: HTMLImageElement) => node.complete && node.naturalWidth > 0,
         ),
@@ -171,6 +171,11 @@ test("the registered drawing reserves its geometry while casing assets are delay
   await expect.poll(() => requested).toBeTruthy();
   const stage = page.locator(".engine-stage");
   const before = (await stage.boundingBox())!;
+  await expect(page.locator(".jet-engine")).toHaveAttribute(
+    "data-playing",
+    "false",
+  );
+  await expect(page.locator(".engine-canvas")).toBeHidden();
   expect(before.height).toBeGreaterThan(100);
   expect(before.height / before.width).toBeCloseTo(480 / 1100, 2);
   release();
@@ -184,6 +189,94 @@ test("the registered drawing reserves its geometry while casing assets are delay
     )
     .toBeTruthy();
   expect((await stage.boundingBox())!.height).toBeCloseTo(before.height, 0);
+  await expect(page.locator(".engine-canvas")).toBeVisible();
+  await expect(page.locator(".jet-engine")).toHaveAttribute(
+    "data-playing",
+    "true",
+  );
+});
+
+for (const theme of ["light", "dark"] as const)
+  test(`near fan faces remain visible and the shaft/casing hide far blades in ${theme}`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 1100 });
+    await page.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
+    await page.goto("/#jet-engine");
+    await page.locator(".engine-canvas[data-spool]").waitFor();
+    await page
+      .locator("#jet-engine")
+      .getByRole("button", { name: "Reset", exact: true })
+      .click();
+    await page
+      .getByRole("slider", { name: "Engine speed", exact: true })
+      .press("Home");
+    await expect(page.locator(".engine-canvas")).toHaveAttribute(
+      "data-phase",
+      "0.000",
+    );
+    await expect
+      .poll(() =>
+        page
+          .locator(".engine-rear")
+          .evaluate(
+            (img: HTMLImageElement) => img.complete && img.naturalWidth > 0,
+          ),
+      )
+      .toBeTruthy();
+    const samples = await page.locator(".engine-stage").evaluate((stage) => {
+      const canvas = stage.querySelector<HTMLCanvasElement>("canvas")!,
+        img = stage.querySelector<HTMLImageElement>("img")!;
+      const composite = document.createElement("canvas");
+      composite.width = canvas.width;
+      composite.height = canvas.height;
+      const ctx = composite.getContext("2d")!;
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(canvas, 0, 0);
+      const sample = (x: number, y: number) => {
+        const px = Math.floor(((x + 0.5) * canvas.width) / 1100),
+          py = Math.floor(((y + 0.5) * canvas.height) / 480);
+        return {
+          paint: [...canvas.getContext("2d")!.getImageData(px, py, 1, 1).data],
+          composite: [...ctx.getImageData(px, py, 1, 1).data],
+        };
+      };
+      return { near: sample(311, 237), hidden: sample(591, 185) };
+    });
+    expect(samples.near.paint[3]).toBeGreaterThan(240);
+    expect(samples.near.composite.slice(0, 3)).toEqual(
+      samples.near.paint.slice(0, 3),
+    );
+    expect(samples.hidden.paint[3]).toBe(0);
+  });
+
+test("SVG-only fallback preserves the same near/far visibility", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    HTMLCanvasElement.prototype.getContext = () => null;
+  });
+  await page.goto("/#jet-engine");
+  await expect(page.locator(".engine-feedback")).toContainText(
+    "Canvas animation is unavailable",
+  );
+  await page
+    .getByRole("slider", { name: "Engine speed", exact: true })
+    .press("Home");
+  const hits = await page.locator(".engine-fallback").evaluate((svg) => {
+    const faces = [
+      ...svg.querySelectorAll<SVGGeometryElement>(".engine-blade"),
+    ];
+    return {
+      near: faces.some((face) =>
+        face.isPointInFill(new DOMPoint(311.5, 237.5)),
+      ),
+      hidden: faces.some((face) =>
+        face.isPointInFill(new DOMPoint(591.5, 185.5)),
+      ),
+    };
+  });
+  expect(hits).toEqual({ near: true, hidden: false });
 });
 
 test.describe("responsive touch controls", () => {
