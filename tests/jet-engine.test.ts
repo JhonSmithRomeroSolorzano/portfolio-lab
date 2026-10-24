@@ -175,11 +175,23 @@ test("moving blades remain in their radial and axial clearances at every sampled
   for (const face of b) {
     assert.ok(Number.isFinite(face.depth));
     assert.ok(face.shade >= 0 && face.shade <= 4);
-    assert.ok(face.points.flat().every(Number.isFinite));
+    assert.ok(face.vertices.flat().every(Number.isFinite));
   }
 });
 
 test("Anatomy engine artwork reproduces with measured static depth order and bounded SVG assets", () => {
+  const runtime = JSON.parse(
+    readFileSync(
+      "src/features/playground/jet-engine/engine-depth.json",
+      "utf8",
+    ),
+  );
+  assert.deepEqual(Object.keys(runtime).sort(), [
+    "encoding",
+    "triangles",
+    "version",
+    "vertices",
+  ]);
   execFileSync(
     process.execPath,
     ["--import", "tsx", "scripts/build-jet-engine.mjs", "--audit", "--check"],

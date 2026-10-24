@@ -23,6 +23,9 @@ export class EngineRaster {
   readonly pixels: Uint8ClampedArray;
   readonly sx: number;
   readonly sy: number;
+  private fringe = new Float64Array(0);
+  private fringeCount = 0;
+  private fringeColor: [number, number, number] = [0, 0, 0];
   constructor(
     readonly width: number,
     readonly height: number,
@@ -35,13 +38,11 @@ export class EngineRaster {
     this.staticDepth = new Float32Array(width * height);
     this.staticDepth.fill(-Infinity);
     this.pixels = pixels || new Uint8ClampedArray(width * height * 4);
-    for (const t of staticTriangles)
-      this.scan(t, 0.35, (_x, _y, z, index) => {
-        if (z > this.staticDepth[index]) this.staticDepth[index] = z;
-      });
+    for (const t of staticTriangles) this.scan(t, 0.35);
     this.begin();
   }
   begin() {
+    this.fringeCount = 0;
     this.depth.set(this.staticDepth);
     this.pixels.fill(0);
   }
@@ -71,18 +72,9 @@ export class EngineRaster {
   private scan(
     source: DepthTriangle,
     padding: number,
-    visit: (
-      x: number,
-      y: number,
-      z: number,
-      index: number,
-      d0: number,
-      d1: number,
-      d2: number,
-      l0: boolean,
-      l1: boolean,
-      l2: boolean,
-    ) => void,
+    color?: Ink,
+    boundaries?: EdgeMask,
+    alphaAt?: (x: number, y: number) => number,
   ) {
     const t = this.scaled(source);
     if (!t) return;
@@ -138,58 +130,91 @@ export class EngineRaster {
             }
           }
         }
-        visit(
-          px,
-          py,
-          z,
-          y * this.width + x,
-          d0,
-          d1,
-          d2,
-          edges[0].left,
-          edges[1].left,
-          edges[2].left,
-        );
+        const index = y * this.width + x;
+        if (!color) {
+          if (z > this.staticDepth[index]) this.staticDepth[index] = z;
+          continue;
+        }
+        if (!boundaries) {
+          if (z < this.depth[index] - DEPTH_EPSILON) continue;
+          if (
+            (Math.abs(d0) < 1e-8 && !edges[0].left) ||
+            (Math.abs(d1) < 1e-8 && !edges[1].left) ||
+            (Math.abs(d2) < 1e-8 && !edges[2].left)
+          )
+            continue;
+          this.blend(index, color, alphaAt!(px / this.sx, py / this.sy));
+          continue;
+        }
+        let coverage = 1;
+        if (boundaries[0]) coverage = Math.min(coverage, clamp(d0 + 0.5));
+        else if (d0 < 0 || (Math.abs(d0) < 1e-8 && !edges[0].left)) continue;
+        if (boundaries[1]) coverage = Math.min(coverage, clamp(d1 + 0.5));
+        else if (d1 < 0 || (Math.abs(d1) < 1e-8 && !edges[1].left)) continue;
+        if (boundaries[2]) coverage = Math.min(coverage, clamp(d2 + 0.5));
+        else if (d2 < 0 || (Math.abs(d2) < 1e-8 && !edges[2].left)) continue;
+        if (coverage <= 0) continue;
+        if (d0 < 0 || d1 < 0 || d2 < 0) {
+          // Acute corners inherit the same nearest-edge coverage as before.
+          let nearest = Infinity;
+          for (let i = 0; i < 3; i++)
+            if (boundaries[i]) {
+              const a = source.vertices[i],
+                b = source.vertices[(i + 1) % 3],
+                ax = a[0] * this.sx,
+                ay = a[1] * this.sy,
+                dx = (b[0] - a[0]) * this.sx,
+                dy = (b[1] - a[1]) * this.sy;
+              const u = clamp(
+                ((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy),
+              );
+              nearest = Math.min(
+                nearest,
+                Math.hypot(px - ax - u * dx, py - ay - u * dy),
+              );
+            }
+          coverage = Math.min(coverage, clamp(0.5 - nearest));
+        }
+        if (coverage >= 0.999) {
+          if (z < this.depth[index] - DEPTH_EPSILON) continue;
+          this.depth[index] = z;
+          this.blend(index, color, 1);
+        } else if (coverage > 0) {
+          // Epsilon-tied opaque samples may lower depth slightly later. Do not
+          // reject fringes until the complete opaque pass has finished.
+          this.queueFringe(index, z, color, coverage);
+        }
       }
   }
-  metal(t: DepthTriangle, color: Ink, boundaries: EdgeMask, edges = false) {
-    this.scan(t, 0.75, (x, y, z, index, d0, d1, d2, l0, l1, l2) => {
-      let coverage = 1;
-      if (boundaries[0]) coverage = Math.min(coverage, clamp(d0 + 0.5));
-      else if (d0 < 0 || (Math.abs(d0) < 1e-8 && !l0)) return;
-      if (boundaries[1]) coverage = Math.min(coverage, clamp(d1 + 0.5));
-      else if (d1 < 0 || (Math.abs(d1) < 1e-8 && !l1)) return;
-      if (boundaries[2]) coverage = Math.min(coverage, clamp(d2 + 0.5));
-      else if (d2 < 0 || (Math.abs(d2) < 1e-8 && !l2)) return;
-      if (coverage <= 0 || z < this.depth[index] - DEPTH_EPSILON) return;
-      if (edges && (d0 < 0 || d1 < 0 || d2 < 0)) {
-        // Acute door/blade corners must not grow a long antialiased miter.
-        let nearest = Infinity;
-        for (let i = 0; i < 3; i++)
-          if (boundaries[i]) {
-            const a = t.vertices[i],
-              b = t.vertices[(i + 1) % 3],
-              ax = a[0] * this.sx,
-              ay = a[1] * this.sy,
-              dx = (b[0] - a[0]) * this.sx,
-              dy = (b[1] - a[1]) * this.sy;
-            const u = clamp(
-              ((x - ax) * dx + (y - ay) * dy) / (dx * dx + dy * dy),
-            );
-            nearest = Math.min(
-              nearest,
-              Math.hypot(x - ax - u * dx, y - ay - u * dy),
-            );
-          }
-        coverage = Math.min(coverage, clamp(0.5 - nearest));
-      }
-      if (edges) {
-        if (coverage < 0.999) this.blend(index, color, coverage);
-      } else if (coverage >= 0.999) {
-        this.depth[index] = z;
-        this.blend(index, color, 1);
-      }
-    });
+  metal(t: DepthTriangle, color: Ink, boundaries: EdgeMask) {
+    this.scan(t, 0.75, color, boundaries);
+  }
+  private queueFringe(index: number, depth: number, color: Ink, alpha: number) {
+    if (this.fringeCount + 6 > this.fringe.length) {
+      const grown = new Float64Array(Math.max(24576, this.fringe.length * 2));
+      grown.set(this.fringe);
+      this.fringe = grown;
+    }
+    const at = this.fringeCount;
+    this.fringe[at] = index;
+    this.fringe[at + 1] = depth;
+    this.fringe[at + 2] = color[0];
+    this.fringe[at + 3] = color[1];
+    this.fringe[at + 4] = color[2];
+    this.fringe[at + 5] = alpha;
+    this.fringeCount += 6;
+  }
+  /** Resolve only queued edge pixels after all opaque surfaces establish depth. */
+  finishMetal() {
+    for (let at = 0; at < this.fringeCount; at += 6) {
+      const index = this.fringe[at];
+      if (this.fringe[at + 1] < this.depth[index] - DEPTH_EPSILON) continue;
+      this.fringeColor[0] = this.fringe[at + 2];
+      this.fringeColor[1] = this.fringe[at + 3];
+      this.fringeColor[2] = this.fringe[at + 4];
+      this.blend(index, this.fringeColor, this.fringe[at + 5]);
+    }
+    this.fringeCount = 0;
   }
   line(
     a: DepthPoint,
@@ -249,15 +274,6 @@ export class EngineRaster {
     color: Ink,
     alphaAt: (x: number, y: number) => number,
   ) {
-    this.scan(t, 0, (x, y, z, index, d0, d1, d2, l0, l1, l2) => {
-      if (
-        (Math.abs(d0) < 1e-8 && !l0) ||
-        (Math.abs(d1) < 1e-8 && !l1) ||
-        (Math.abs(d2) < 1e-8 && !l2) ||
-        z < this.depth[index] - DEPTH_EPSILON
-      )
-        return;
-      this.blend(index, color, alphaAt(x / this.sx, y / this.sy));
-    });
+    this.scan(t, 0, color, undefined, alphaAt);
   }
 }

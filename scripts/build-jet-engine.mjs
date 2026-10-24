@@ -528,10 +528,15 @@ outputs.set(
       encoding: "delta-v1",
       vertices: vertexDeltas,
       triangles: indexDeltas,
-      groups: meshGroups,
     }),
     { parser: "json" },
   ),
+);
+outputs.set(
+  new URL("./fixtures/engine-audit.json", import.meta.url),
+  await format(JSON.stringify({ version: 1, groups: meshGroups }), {
+    parser: "json",
+  }),
 );
 for (const theme of ["light", "dark"])
   for (const layer of ["back"]) {
@@ -557,7 +562,7 @@ for (const theme of ["light", "dark"])
           ];
     // Subpixel matching-color coverage seals raster seams between tangent panels;
     // it is not a new geometric surface or a painter-key/depth workaround.
-    const css = `.iso-fill,.iso-top,.iso-shade{stroke-width:.3;stroke-linejoin:round}.iso-fill{fill:${palette[0]};stroke:${palette[0]}}.iso-top{fill:${palette[5]};stroke:${palette[5]}}${[0, 1, 2, 3].map((i) => `.iso-shade[data-shade="${i}"]{fill:${palette[i + 1]};stroke:${palette[i + 1]}}`).join("")}.iso-line{fill:none;stroke:${palette[6]};stroke-width:.65;stroke-linejoin:round;stroke-linecap:round}.iso-dots circle,.iso-face-text{fill:${palette[6]}}.iso-face-text{font-family:monospace}`;
+    const css = `.iso-fill,.iso-top,.iso-shade{stroke-width:.3;stroke-linejoin:round}.iso-fill{fill:${palette[0]};stroke:${palette[0]}}.iso-top{fill:${palette[5]};stroke:${palette[5]}}${[0, 1, 2, 3].map((i) => `.iso-shade[data-shade="${i}"]{fill:${palette[i + 1]};stroke:${palette[i + 1]}}`).join("")}.iso-line{fill:none;stroke:${palette[6]};stroke-width:.65;stroke-linejoin:round;stroke-linecap:round}`;
     const body = ordered
       .map((p) => p.svg)
       .join("")

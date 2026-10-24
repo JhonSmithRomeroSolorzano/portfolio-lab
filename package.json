@@ -20,6 +20,7 @@
     "replay": "node --import tsx scripts/replay.ts",
     "test:browser": "playwright test",
     "audit:performance": "node scripts/audit-performance.mjs",
+    "profile:engine": "node scripts/profile-engine.mjs",
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.domain.json",
     "lint": "eslint . --max-warnings 0",
     "format:check": "prettier --check .",
