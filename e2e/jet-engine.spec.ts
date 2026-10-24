@@ -1,6 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { readFileSync } from "node:fs";
+import { airPoint, enginePower } from "../src/domain/playground/jet-engine";
 
 // Physical probes survive reframing the figure to include the wing.
 const projection = JSON.parse(
@@ -25,6 +26,296 @@ const probes = {
   near: project([-149, 15.0488626, 106.58306889]),
   hidden: project([77, -13.91710628, 97.04332233]),
 };
+const reverseProbes = Array.from({ length: 36 }, (_, route) => route)
+  .filter((route) => route % 3 !== 0)
+  .flatMap((route) =>
+    [0.88, 0.94].map((u) =>
+      project(airPoint(route, u, enginePower(100), "reverse")),
+    ),
+  );
+async function reversePixels(page: Page) {
+  return page.locator(".engine-canvas").evaluate(
+    (canvas: HTMLCanvasElement, probes) => {
+      const { width, height } = canvas,
+        data = canvas.getContext("2d")!.getImageData(0, 0, width, height).data;
+      const cool = (at: number) =>
+        data[at + 3] > 35 &&
+        data[at + 2] > data[at] + 55 &&
+        data[at + 2] > data[at + 1] + 15;
+      let front = 0,
+        rearBlue = 0,
+        rearHot = 0;
+      for (const [x, y] of probes.front)
+        for (let dy = -3; dy <= 3; dy++)
+          for (let dx = -3; dx <= 3; dx++) {
+            const px = Math.floor((x * width) / 1100) + dx,
+              py = Math.floor((y * height) / 480) + dy;
+            if (
+              px >= 0 &&
+              px < width &&
+              py >= 0 &&
+              py < height &&
+              cool((py * width + px) * 4)
+            )
+              front++;
+          }
+      for (let y = 0; y < height; y++)
+        for (let x = Math.ceil((probes.rear * width) / 1100); x < width; x++) {
+          const at = (y * width + x) * 4;
+          if (cool(at)) rearBlue++;
+          if (data[at + 3] > 35 && data[at] > data[at + 2] + 55) rearHot++;
+        }
+      return { front, rearBlue, rearHot };
+    },
+    { front: reverseProbes, rear: project([185, 0, 102])[0] },
+  );
+}
+function stageFrame(page: Page) {
+  return page.locator(".engine-stage").evaluate((node) => {
+    const rect = node.getBoundingClientRect();
+    return {
+      x: rect.x + scrollX,
+      y: rect.y + scrollY,
+      width: rect.width,
+      height: rect.height,
+    };
+  });
+}
+async function recordDeployment(page: Page, retarget = false) {
+  await page
+    .locator(".engine-canvas")
+    .evaluate((node: HTMLCanvasElement, retarget) => {
+      const samples: number[] = [];
+      node.dataset.deploymentTrace = "[]";
+      node.dataset.retargeted = "false";
+      const observer = new MutationObserver(() => {
+        const value = Number(node.dataset.reverser);
+        samples.push(value);
+        node.dataset.deploymentTrace = JSON.stringify(samples);
+        if (
+          retarget &&
+          node.dataset.retargeted !== "true" &&
+          value < 0.7 &&
+          value > 0.15
+        ) {
+          node.dataset.retargeted = "true";
+          document
+            .querySelector<HTMLButtonElement>(".engine-thrust-control button")!
+            .click();
+        }
+      });
+      observer.observe(node, {
+        attributes: true,
+        attributeFilter: ["data-reverser"],
+      });
+      node.addEventListener(
+        "end-deployment-trace",
+        () => observer.disconnect(),
+        { once: true },
+      );
+    }, retarget);
+}
+async function deploymentTrace(page: Page) {
+  return page.locator(".engine-canvas").evaluate((node: HTMLCanvasElement) => {
+    node.dispatchEvent(new Event("end-deployment-trace"));
+    return JSON.parse(node.dataset.deploymentTrace!) as number[];
+  });
+}
+
+test("reverse thrust visibly redirects only bypass air and preserves paused speed/rotation", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1200 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/#jet-engine");
+  await page.getByRole("button", { name: /^Full power/ }).click();
+  await page.locator(".engine-canvas").waitFor({ state: "visible" });
+  const before = await reversePixels(page),
+    phase = await page.locator(".engine-canvas").getAttribute("data-phase");
+  const toggle = page.getByRole("button", {
+    name: "Reverse thrust",
+    exact: true,
+  });
+  await toggle.focus();
+  await page.keyboard.press("Space");
+  await expect(toggle).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator(".engine-canvas")).toHaveAttribute(
+    "data-reverser",
+    "1.000",
+  );
+  const after = await reversePixels(page);
+  expect(after.front).toBeGreaterThan(before.front + 60);
+  expect(before.rearBlue).toBeGreaterThan(100);
+  expect(after.rearBlue).toBeLessThan(before.rearBlue * 0.1);
+  expect(after.rearHot).toBeGreaterThan(50);
+  await expect(
+    page.getByRole("slider", { name: "Engine speed", exact: true }),
+  ).toHaveValue("100");
+  await expect(page.locator(".engine-canvas")).toHaveAttribute(
+    "data-phase",
+    phase!,
+  );
+  await expect(page.locator(".jet-engine")).toHaveAttribute(
+    "data-playing",
+    "false",
+  );
+  await expect(page.locator(".engine-feedback")).toContainText(
+    "engine rotation does not reverse",
+  );
+  await page.keyboard.press("Space");
+  await expect(toggle).toHaveAttribute("aria-pressed", "false");
+  await expect(page.locator(".engine-canvas")).toHaveAttribute(
+    "data-reverser",
+    "0.000",
+  );
+});
+
+test("live reverser eases through deployment while rotors continue forward; Pause and Reset retain intent", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1200 });
+  await page.goto("/#jet-engine");
+  await page.locator(".engine-canvas[data-phase]").waitFor();
+  const canvas = page.locator(".engine-canvas"),
+    toggle = page.getByRole("button", { name: "Reverse thrust", exact: true });
+  await expect(page.locator(".jet-engine")).toHaveAttribute(
+    "data-playing",
+    "true",
+  );
+  const phase = Number(await canvas.getAttribute("data-phase"));
+  await recordDeployment(page);
+  await toggle.click();
+  await expect(canvas).toHaveAttribute("data-reverser", "1.000");
+  const opening = await deploymentTrace(page);
+  expect(opening.some((d) => d > 0.05 && d < 0.95)).toBeTruthy();
+  expect(opening.every((d, i) => i === 0 || d >= opening[i - 1])).toBeTruthy();
+  expect(
+    (Number(await canvas.getAttribute("data-phase")) - phase + Math.PI * 10) %
+      (Math.PI * 10),
+  ).toBeGreaterThan(0.1);
+  // Observe actual frames, not a remote poll that may arrive after closure.
+  // Reopen at an intermediate frame to exercise rapid mid-motion retargeting.
+  await recordDeployment(page, true);
+  await toggle.click();
+  await expect(canvas).toHaveAttribute("data-retargeted", "true");
+  await expect(canvas).toHaveAttribute("data-reverser", "1.000");
+  const retargeting = await deploymentTrace(page);
+  expect(Math.min(...retargeting)).toBeGreaterThan(0.1);
+  expect(retargeting.some((d) => d < 0.8)).toBeTruthy();
+  expect(
+    retargeting.every(
+      (d, i) => i === 0 || Math.abs(d - retargeting[i - 1]) < 0.25,
+    ),
+  ).toBeTruthy();
+  await page.getByRole("button", { name: "Pause engine", exact: true }).click();
+  const paused = (await pixels(page)).image;
+  await page.waitForTimeout(120);
+  expect((await pixels(page)).image).toBe(paused);
+  await toggle.click();
+  await expect(canvas).toHaveAttribute("data-reverser", "0.000");
+  await expect(page.locator(".jet-engine")).toHaveAttribute(
+    "data-playing",
+    "false",
+  );
+  await toggle.click();
+  await page
+    .locator("#jet-engine")
+    .getByRole("button", { name: "Reset", exact: true })
+    .click();
+  await expect(toggle).toHaveAttribute("aria-pressed", "false");
+  await expect(canvas).toHaveAttribute("data-reverser", "0.000");
+  await expect(
+    page.getByRole("slider", { name: "Engine speed", exact: true }),
+  ).toHaveValue("35");
+});
+
+test("the actual opaque assembly remains centered in forward and reverse configurations", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1200 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/#jet-engine");
+  await page.locator(".engine-canvas").waitFor({ state: "visible" });
+  await page
+    .getByRole("slider", { name: "Engine speed", exact: true })
+    .press("Home");
+  const frame = await stageFrame(page);
+  for (const mode of ["forward", "reverse"]) {
+    if (mode === "reverse")
+      await page
+        .getByRole("button", { name: "Reverse thrust", exact: true })
+        .click();
+    const after = await stageFrame(page);
+    expect(after).toEqual(frame);
+    const center = await page.locator(".engine-stage").evaluate((stage) => {
+      const view = document.createElement("canvas");
+      view.width = 1100;
+      view.height = 480;
+      const ctx = view.getContext("2d")!;
+      ctx.drawImage(
+        stage.querySelector<HTMLImageElement>("img")!,
+        0,
+        0,
+        1100,
+        480,
+      );
+      ctx.drawImage(
+        stage.querySelector<HTMLCanvasElement>("canvas")!,
+        0,
+        0,
+        1100,
+        480,
+      );
+      const data = ctx.getImageData(0, 0, 1100, 480).data;
+      let left = 1100,
+        right = 0,
+        top = 480,
+        bottom = 0;
+      for (let y = 0; y < 480; y++)
+        for (let x = 0; x < 1100; x++)
+          if (data[(y * 1100 + x) * 4 + 3] > 120) {
+            left = Math.min(left, x);
+            right = Math.max(right, x);
+            top = Math.min(top, y);
+            bottom = Math.max(bottom, y);
+          }
+      return { x: (left + right) / 2, y: (top + bottom) / 2 };
+    });
+    expect(Math.abs(center.x - 550)).toBeLessThan(18);
+    expect(Math.abs(center.y - 240)).toBeLessThan(18);
+  }
+});
+
+test("canvas-free reverse mode updates doors and clipped air, remains off at zero, and handles rapid selection", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    HTMLCanvasElement.prototype.getContext = () => null;
+  });
+  await page.goto("/#jet-engine");
+  await expect(page.locator(".engine-feedback")).toContainText(
+    "Canvas animation is unavailable",
+  );
+  const svg = page.locator(".engine-fallback"),
+    toggle = page.getByRole("button", { name: "Reverse thrust", exact: true }),
+    before = await svg.innerHTML();
+  await toggle.click();
+  await expect(toggle).toHaveAttribute("aria-pressed", "true");
+  expect(await svg.innerHTML()).not.toEqual(before);
+  const reverse = await svg.innerHTML();
+  await toggle.click();
+  await toggle.click();
+  expect(await svg.innerHTML()).toEqual(reverse);
+  await page
+    .getByRole("slider", { name: "Engine speed", exact: true })
+    .press("Home");
+  await expect(page.locator(".engine-feedback")).toContainText("Engine off");
+  await expect(page.locator(".jet-engine")).toHaveAttribute(
+    "data-playing",
+    "false",
+  );
+  await expect(page.locator(".fallback-cool")).toHaveCount(0);
+});
 
 async function pixels(page: Page) {
   return page.locator(".engine-canvas").evaluate((node: HTMLCanvasElement) => {
@@ -326,7 +617,22 @@ test.describe("responsive touch controls", () => {
       await expect(
         page.getByRole("slider", { name: "Engine speed", exact: true }),
       ).toHaveValue("100");
+      await page
+        .getByRole("button", { name: "Reverse thrust", exact: true })
+        .tap();
+      await expect(
+        page.getByRole("button", { name: "Reverse thrust", exact: true }),
+      ).toHaveAttribute("aria-pressed", "true");
       await page.addStyleTag({ content: "html { font-size: 200%; }" });
+      const frame = await stageFrame(page);
+      await page
+        .getByRole("button", { name: "Reverse thrust", exact: true })
+        .tap();
+      expect(await stageFrame(page)).toEqual(frame);
+      await page
+        .getByRole("button", { name: "Reverse thrust", exact: true })
+        .tap();
+      expect(await stageFrame(page)).toEqual(frame);
       expect(
         await page.evaluate(
           () => document.documentElement.scrollWidth <= innerWidth,

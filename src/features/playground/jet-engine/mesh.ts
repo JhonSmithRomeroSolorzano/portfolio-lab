@@ -2,6 +2,8 @@ import {
   bladePolygon,
   ENGINE_CENTER,
   ROTORS,
+  reverserSolids,
+  reverserVertices,
   type EnginePoint,
 } from "../../../domain/playground/jet-engine";
 import art from "./engine-art.json";
@@ -90,7 +92,43 @@ function prism(
     );
   }
 }
-export function engineFaces(angle: number): Face[] {
+let lastDeployment = NaN;
+let lastReverserFaces: Face[] = [];
+export function reverserFaces(deployment: number): Face[] {
+  if (deployment === lastDeployment) return lastReverserFaces;
+  const faces: Face[] = [];
+  for (const solid of reverserSolids(deployment)) {
+    const vertices = reverserVertices(solid),
+      count = solid.polygon.length;
+    const surface = (indices: number[]) => {
+      const points = indices.map((i) => vertices[i]),
+        a = points[0],
+        b = points[1],
+        c = points[2];
+      const ab = b.map((v, i) => v - a[i]),
+        ac = c.map((v, i) => v - a[i]);
+      face(
+        points,
+        [
+          ab[1] * ac[2] - ab[2] * ac[1],
+          ab[2] * ac[0] - ab[0] * ac[2],
+          ab[0] * ac[1] - ab[1] * ac[0],
+        ],
+        faces,
+      );
+    };
+    surface([3, 2, 1, 0]);
+    surface([4, 5, 6, 7]);
+    for (let i = 0; i < count; i++) {
+      const j = (i + 1) % count;
+      surface([i, j, j + count, i + count]);
+    }
+  }
+  lastDeployment = deployment;
+  lastReverserFaces = faces;
+  return faces;
+}
+export function engineFaces(angle: number, deployment = 0): Face[] {
   const faces: Face[] = [];
   for (const rotor of ROTORS) {
     for (let i = 0; i < rotor.blades; i++)
@@ -113,7 +151,9 @@ export function engineFaces(angle: number): Face[] {
     );
     prism(rotor.x, hub, 4, faces);
   }
-  return faces.sort((a, b) => a.depth - b.depth);
+  return [...faces, ...reverserFaces(deployment)].sort(
+    (a, b) => a.depth - b.depth,
+  );
 }
 export function svgPath(points: readonly (readonly [number, number])[]) {
   return points

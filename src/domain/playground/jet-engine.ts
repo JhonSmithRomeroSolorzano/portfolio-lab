@@ -1,4 +1,12 @@
 export type EnginePoint = readonly [number, number, number];
+export type ThrustMode = "forward" | "reverse";
+export const REVERSER = {
+  start: 92,
+  end: 120,
+  inner: 57,
+  outer: 61,
+  panels: 30,
+} as const;
 export const ENGINE_CENTER = 102;
 export const ROTORS = [
   { x: -148, radius: 55, blades: 18, ratio: 1 },
@@ -42,8 +50,11 @@ export function airPoint(
   route: number,
   progress: number,
   power: ReturnType<typeof enginePower>,
+  mode: ThrustMode = "forward",
 ): EnginePoint {
   const u = Math.max(0, Math.min(1, progress));
+  if (mode === "reverse" && route % 3 !== 0)
+    return reverseAirPoint(route, u, power);
   const x = -225 + u * (370 + power.reach);
   const bypass = route % 3 !== 0;
   const angle = route * 2.399963229728653;
@@ -74,6 +85,131 @@ export function airPoint(
     Math.cos(angle + twist) * radius * spread,
     ENGINE_CENTER + Math.sin(angle + twist) * radius * spread,
   ];
+}
+
+/** Cold-stream illustration: intake stays forward; only bypass flow turns out/front. */
+function reverseAirPoint(
+  route: number,
+  u: number,
+  power: ReturnType<typeof enginePower>,
+): EnginePoint {
+  const entry = airPoint(route, 315 / (370 + power.reach), power);
+  if (u <= 0.62)
+    return airPoint(route, (315 * u) / 0.62 / (370 + power.reach), power);
+  const angle = Math.atan2(entry[2] - ENGINE_CENTER, entry[1]);
+  const spread = 0.84 + ((route * 17) % 11) / 70;
+  const cubic = (a: number, b: number, c: number, d: number, t: number) =>
+    a * (1 - t) ** 3 +
+    3 * b * t * (1 - t) ** 2 +
+    3 * c * t * t * (1 - t) +
+    d * t ** 3;
+  let x: number, radius: number;
+  if (u <= 0.78) {
+    const t = (u - 0.62) / 0.16;
+    x = cubic(90, 93, 96, 94, t);
+    radius = cubic(47, 47, 58, 70, t) * spread;
+  } else {
+    const t = (u - 0.78) / 0.22;
+    x = cubic(94, 74, 65 - power.reach, 40 - power.reach, t);
+    radius = cubic(70, 88, 96, 96 + power.reach * 0.08, t) * spread;
+  }
+  return [
+    x,
+    Math.cos(angle) * radius,
+    ENGINE_CENTER + Math.sin(angle) * radius,
+  ];
+}
+
+export function approachReverser(current: number, target: number, dt: number) {
+  const next =
+    current +
+    (target - current) *
+      (1 - Math.exp(-Math.max(0, Math.min(dt, 0.05)) / 0.22));
+  return Math.abs(target - next) < 0.001 ? target : next;
+}
+/** Bypass redirection appears only after the outer doors have opened clear. */
+export function reverserFlowWeight(deployment: number) {
+  return smooth((deployment - 0.85) / 0.15);
+}
+
+export type ReverserSolid = {
+  name: string;
+  kind: "door" | "blocker";
+  frame: { o: EnginePoint; a: EnginePoint; u: EnginePoint; v: EnginePoint };
+  polygon: readonly (readonly [number, number])[];
+  start: number;
+  end: number;
+};
+/** True rigid panels: each rotates around its own tangential hinge. */
+export function reverserSolids(deployment: number): ReverserSolid[] {
+  const d = Math.max(0, Math.min(1, deployment)),
+    solids: ReverserSolid[] = [];
+  for (let i = 0; i < REVERSER.panels; i++) {
+    const a = Math.PI / 2 + (i * Math.PI * 1.5) / REVERSER.panels,
+      b = Math.PI / 2 + ((i + 1) * Math.PI * 1.5) / REVERSER.panels,
+      mid = (a + b) / 2;
+    const axis: EnginePoint = [0, -Math.sin(mid), Math.cos(mid)];
+    for (const kind of ["door", "blocker"] as const) {
+      const outer = kind === "door",
+        ri = outer ? 57 : 55.8,
+        ro = outer ? 61 : 57;
+      const inset = outer ? 0 : (b - a) * 0.25;
+      const theta = outer ? -0.78 * d : 1.35 * smooth((d - 0.25) / 0.75);
+      const hinge: EnginePoint = [
+        REVERSER.end,
+        ro * Math.cos(mid),
+        ENGINE_CENTER + ro * Math.sin(mid),
+      ];
+      const rotate = (v: EnginePoint): EnginePoint => {
+        const c = Math.cos(theta),
+          s = Math.sin(theta),
+          dot = v.reduce((sum, value, j) => sum + value * axis[j], 0);
+        const cross = [
+          axis[1] * v[2] - axis[2] * v[1],
+          axis[2] * v[0] - axis[0] * v[2],
+          axis[0] * v[1] - axis[1] * v[0],
+        ];
+        return v.map(
+          (value, j) => value * c + cross[j] * s + axis[j] * dot * (1 - c),
+        ) as [number, number, number];
+      };
+      const rotated = rotate([-hinge[0], -hinge[1], ENGINE_CENTER - hinge[2]]);
+      solids.push({
+        name: `reverser.${kind}.${i}`,
+        kind,
+        frame: {
+          o: rotated.map((v, j) => v + hinge[j]) as [number, number, number],
+          a: rotate([1, 0, 0]),
+          u: rotate([0, 1, 0]),
+          v: rotate([0, 0, 1]),
+        },
+        polygon: [
+          [ri * Math.cos(a + inset), ri * Math.sin(a + inset)],
+          [ro * Math.cos(a + inset), ro * Math.sin(a + inset)],
+          [ro * Math.cos(b - inset), ro * Math.sin(b - inset)],
+          [ri * Math.cos(b - inset), ri * Math.sin(b - inset)],
+        ],
+        start: outer ? 92 : 97,
+        end: 120,
+      });
+    }
+  }
+  return solids;
+}
+
+export function reverserVertices(solid: ReverserSolid): EnginePoint[] {
+  return [solid.start, solid.end].flatMap((s) =>
+    solid.polygon.map(
+      ([u, v]) =>
+        solid.frame.o.map(
+          (value, i) =>
+            value +
+            solid.frame.a[i] * s +
+            solid.frame.u[i] * u +
+            solid.frame.v[i] * v,
+        ) as [number, number, number],
+    ),
+  );
 }
 
 export function flowOpacity(progress: number) {

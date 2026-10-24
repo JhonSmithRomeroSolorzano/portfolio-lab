@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { engineSpeed } from "../../../domain/playground/jet-engine";
+import {
+  engineSpeed,
+  type ThrustMode,
+} from "../../../domain/playground/jet-engine";
 import { useViewportPlayback } from "../../../shared/hooks/useViewportPlayback";
 import { createEngineRenderer } from "./renderer";
 import { stillAir, stillFaces } from "./svg-frame";
@@ -23,6 +26,7 @@ const themeSnapshot = () => document.documentElement.dataset.theme === "dark";
 
 export function JetEngine() {
   const [speed, setSpeed] = useState(35);
+  const [mode, setMode] = useState<ThrustMode>("forward");
   const [available, setAvailable] = useState<boolean | undefined>(undefined);
   const [artFailed, setArtFailed] = useState(false);
   const [loadedArt, setLoadedArt] = useState<string>();
@@ -54,8 +58,8 @@ export function JetEngine() {
     };
   }, []);
   useEffect(() => {
-    renderer.current?.configure(speed, reduced);
-  }, [speed, reduced]);
+    renderer.current?.configure(speed, reduced, mode);
+  }, [speed, reduced, mode]);
   useEffect(() => {
     if (running) renderer.current?.play();
     else renderer.current?.pause();
@@ -70,12 +74,14 @@ export function JetEngine() {
   function reset() {
     pause();
     setSpeed(35);
+    setMode("forward");
     renderer.current?.reset(35);
   }
-  const fallbackRoutes = available === false && artReady ? stillAir(speed) : [];
-  const fallbackFaces = available === false && artReady ? stillFaces() : [];
+  const fallbackRoutes =
+    available === false && artReady ? stillAir(speed, mode) : [];
+  const fallbackFaces = available === false && artReady ? stillFaces(mode) : [];
   return (
-    <div className="jet-engine" data-playing={running}>
+    <div className="jet-engine" data-playing={running} data-thrust={mode}>
       <header className="engine-heading">
         <div>
           <span className="play-kicker">01 / ANATOMY · AIR IN MOTION</span>
@@ -103,6 +109,34 @@ export function JetEngine() {
           Heated core air
         </span>
       </div>
+      <div className="engine-thrust-control">
+        <button
+          type="button"
+          aria-pressed={mode === "reverse"}
+          aria-describedby="engine-thrust-help"
+          onClick={() => setMode(mode === "forward" ? "reverse" : "forward")}
+        >
+          Reverse thrust{" "}
+          <span aria-hidden="true">{mode === "reverse" ? "On" : "Off"}</span>
+        </button>
+        <div className="engine-thrust-help">
+          <p
+            id={mode === "forward" ? "engine-thrust-help" : undefined}
+            aria-hidden={mode !== "forward"}
+          >
+            Try the landing reverser: deploy doors to turn bypass air forward,
+            not reverse the engine’s rotation.
+          </p>
+          <p
+            id={mode === "reverse" ? "engine-thrust-help" : undefined}
+            aria-hidden={mode !== "reverse"}
+          >
+            Landing illustration: doors redirect blue bypass air forward. The
+            fan keeps spinning normally; orange core exhaust still exits
+            rearward.
+          </p>
+        </div>
+      </div>
       <div
         className="engine-stage"
         ref={stage}
@@ -112,7 +146,7 @@ export function JetEngine() {
             ? "Engine artwork unavailable."
             : !artReady
               ? "Loading the cutaway aircraft engine artwork."
-              : `Wing-mounted cutaway aircraft turbofan at ${speed} percent speed. ${running ? "Fan, core rotors and airflow are moving." : "Still engine and airflow view."}`
+              : `Wing-mounted cutaway aircraft turbofan at ${speed} percent speed. ${mode === "reverse" ? "Reverse thrust selected: bypass air redirects forward; core exhaust and blade rotation retain their normal direction." : "Forward thrust selected."} ${running ? "Fan, core rotors and airflow are moving." : "Still engine and airflow view."}`
         }
       >
         <img
@@ -174,7 +208,11 @@ export function JetEngine() {
         />
       </div>
       <div className="engine-view-caption" aria-hidden="true">
-        <span>UNDER-WING CUTAWAY</span>
+        <span>
+          {mode === "reverse"
+            ? "REVERSE THRUST · BYPASS FORWARD"
+            : "UNDER-WING CUTAWAY"}
+        </span>
         <span>
           {running
             ? "AIRFLOW LIVE"
@@ -272,8 +310,14 @@ export function JetEngine() {
           </span>
         </li>
         <li>
-          <strong>4 · Exhaust</strong>
-          <span>The core and bypass streams meet behind the engine.</span>
+          <strong>
+            {mode === "reverse" ? "4 · Reverse thrust" : "4 · Exhaust"}
+          </strong>
+          <span>
+            {mode === "reverse"
+              ? "Blocker flaps redirect bypass air through open doors toward the front; core exhaust continues rearward."
+              : "The core and bypass streams meet behind the engine."}
+          </span>
         </li>
       </ol>
       <p className="engine-feedback" role="status" aria-atomic="true">
@@ -291,13 +335,18 @@ export function JetEngine() {
                     ? `Static SVG view at ${speed}%. Canvas animation is unavailable; the speed control still updates the air paths.`
                     : running
                       ? `Running at a ${speed}% setting. Higher speed means faster blades, faster and denser air trails, and a longer exhaust stream.`
-                      : `Paused at ${speed}%. Play the engine or change its speed to see the airflow.`}
+                      : `Paused at ${speed}%. Play the engine or change its speed to see the airflow.`}{" "}
+        {mode === "reverse"
+          ? "Reverse thrust selected. Bypass air redirects forward; engine rotation does not reverse."
+          : "Forward thrust selected."}
       </p>
       <p className="engine-disclaimer">
         Illustrative under-wing turbofan cutaway. The pylon joins the engine to
         the wing; the open side exposes its internals. Rotation is slowed;
         colors reveal air routes and heating. Not real engine data or a
-        thermodynamic simulation.
+        thermodynamic simulation. The reverser is a simplified cold-stream
+        landing illustration, not a particular aircraft’s mechanism or operating
+        procedure.
       </p>
     </div>
   );

@@ -23,6 +23,28 @@ import {
 import geometry from "../src/features/playground/jet-engine/engine-depth.json";
 import art from "../src/features/playground/jet-engine/engine-art.json";
 
+test("the wing/engine assembly stays centered and within the fixed frame across deployment", () => {
+  for (const d of [0, 0.25, 0.5, 0.75, 1]) {
+    const points = [
+      ...staticTriangles.flatMap((t) => t.vertices),
+      ...engineFaces(0, d).flatMap((f) => f.vertices),
+    ];
+    const left = Math.min(...points.map((p) => p[0])),
+      right = Math.max(...points.map((p) => p[0])),
+      top = Math.min(...points.map((p) => p[1])),
+      bottom = Math.max(...points.map((p) => p[1]));
+    assert.ok(
+      Math.abs((left + right) / 2 - 550) < 18,
+      `horizontal centre at deployment ${d}`,
+    );
+    assert.ok(
+      Math.abs((top + bottom) / 2 - 240) < 18,
+      `vertical centre at deployment ${d}`,
+    );
+    assert.ok(left > 35 && right < 1065 && top > 35 && bottom < 445);
+  }
+});
+
 test("wing-mounted engine has sealed core shoulders and no test-stand geometry", () => {
   const names = geometry.groups.map((group) => group.name);
   assert.ok(!names.some((name) => name.startsWith("stand.")));
@@ -46,7 +68,8 @@ test("wing-mounted engine has sealed core shoulders and no test-stand geometry",
         ),
     );
     for (let step = 0; step <= 20; step++) {
-      const x = start + 0.01 + ((end - start - 0.02) * step) / 20;
+      // Stay off the independently rounded 0.1px cap rims; audit proves contact.
+      const x = start + 0.15 + ((end - start - 0.3) * step) / 20;
       // Probe the true faceted wall, not an ideal circle just outside it.
       const startAngle =
         Math.PI * 1.5 + Math.atan2(art.camera.view[2], art.camera.view[1]);
@@ -222,6 +245,17 @@ test("thin silhouette borders use edge depth instead of extrapolating steep plan
   assert.ok(Number.isFinite(value) && value >= 0 && value <= 10);
 });
 
+test("acute reverser tips cannot paint an antialiasing miter beyond the physical corner", () => {
+  const tip = triangle([
+    [580.278, 258.54, 10],
+    [586.795, 263.564, 20],
+    [589.638, 267.72, 25],
+  ])!;
+  const raster = new EngineRaster(1100, 480, []);
+  raster.metal(tip, [100, 120, 160], [true, true, false], true);
+  assert.equal(raster.pixels[(257 * 1100 + 579) * 4 + 3], 0);
+});
+
 test("SVG fallback clips polygons and individual line intervals rather than assigning a whole front layer", () => {
   const cover = triangle([
     [0, 0, 4],
@@ -285,11 +319,17 @@ test("real engine poses reproduce both old layering errors and pass pixel/ray vi
   let falseFront = 0,
     backLeaks = 0;
   // Fan and core blade patterns share a pi/9 period. Cover that entire period.
-  for (const angle of Array.from(
-    { length: 16 },
-    (_, i) => (i * Math.PI) / 144,
-  )) {
-    const faces = engineFaces(angle),
+  const poses = [
+    ...Array.from({ length: 16 }, (_, i) => ({
+      angle: (i * Math.PI) / 144,
+      deployment: 0,
+    })),
+    ...[0.25, 0.5, 0.75, 1].flatMap((deployment) =>
+      [0, 0.15].map((angle) => ({ angle, deployment })),
+    ),
+  ];
+  for (const { angle, deployment } of poses) {
+    const faces = engineFaces(angle, deployment),
       moving = faces.flatMap((face) => face.triangles),
       index = new DepthIndex([...staticTriangles, ...moving]);
     const raster = new EngineRaster(1100, 480, staticTriangles);

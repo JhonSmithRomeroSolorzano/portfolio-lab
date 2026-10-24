@@ -60,6 +60,13 @@ The seven pieces download independently as they approach the viewport or when fo
 
 Direct experience links retain their landing while nearby content finishes loading. Wheel, touch, pointer, and keyboard input release that adjustment; browsing away never pulls the visitor back to a pending experience.
 
+Jet Engine's **Reverse thrust** control deploys a simplified cold-stream reverser:
+blue bypass air turns forward through open doors while the fan keeps its normal
+rotation and orange core exhaust still exits rearward. The control preserves speed
+and Pause intent, works in reduced-motion and SVG-only views, and resets to forward
+thrust. It illustrates a landing principle—not negative RPM, a braking measurement,
+or a particular aircraft's operating procedure. Static decorative dots are removed.
+
 ### Earlier systems experiments
 
 The original Signal Lab dashboard is retired from the public portfolio. Its presentation and browser adapters live in `archive/signal-lab/`; pure models remain in `src/domain/`. The optional API, CLI, and unit/integration coverage are retained. Browser tests now cover the seven current experiences rather than the removed dashboard workflows. The [case study](CASE_STUDY.md) documents that earlier model and its assumptions; the [optional local Node API](server/README.md) and batch CLI can still run it.

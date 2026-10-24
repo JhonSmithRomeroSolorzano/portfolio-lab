@@ -153,7 +153,7 @@ export class EngineRaster {
       }
   }
   metal(t: DepthTriangle, color: Ink, boundaries: EdgeMask, edges = false) {
-    this.scan(t, 0.75, (_x, _y, z, index, d0, d1, d2, l0, l1, l2) => {
+    this.scan(t, 0.75, (x, y, z, index, d0, d1, d2, l0, l1, l2) => {
       let coverage = 1;
       if (boundaries[0]) coverage = Math.min(coverage, clamp(d0 + 0.5));
       else if (d0 < 0 || (Math.abs(d0) < 1e-8 && !l0)) return;
@@ -162,6 +162,27 @@ export class EngineRaster {
       if (boundaries[2]) coverage = Math.min(coverage, clamp(d2 + 0.5));
       else if (d2 < 0 || (Math.abs(d2) < 1e-8 && !l2)) return;
       if (coverage <= 0 || z < this.depth[index] - DEPTH_EPSILON) return;
+      if (edges && (d0 < 0 || d1 < 0 || d2 < 0)) {
+        // Acute door/blade corners must not grow a long antialiased miter.
+        let nearest = Infinity;
+        for (let i = 0; i < 3; i++)
+          if (boundaries[i]) {
+            const a = t.vertices[i],
+              b = t.vertices[(i + 1) % 3],
+              ax = a[0] * this.sx,
+              ay = a[1] * this.sy,
+              dx = (b[0] - a[0]) * this.sx,
+              dy = (b[1] - a[1]) * this.sy;
+            const u = clamp(
+              ((x - ax) * dx + (y - ay) * dy) / (dx * dx + dy * dy),
+            );
+            nearest = Math.min(
+              nearest,
+              Math.hypot(x - ax - u * dx, y - ay - u * dy),
+            );
+          }
+        coverage = Math.min(coverage, clamp(0.5 - nearest));
+      }
       if (edges) {
         if (coverage < 0.999) this.blend(index, color, coverage);
       } else if (coverage >= 0.999) {

@@ -209,6 +209,50 @@
   border-radius: 7px;
   font: 0.8125rem/1.5 var(--mono);
 }
+.engine-thrust-control {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  margin: 0;
+  padding: 0 36px 20px;
+}
+.engine-thrust-control button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 11px 16px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  color: var(--ink);
+  background: var(--paper);
+  font: 0.8125rem/1.5 var(--mono);
+}
+.engine-thrust-control button[aria-pressed="true"] {
+  color: var(--paper);
+  background: var(--ink);
+  border-color: var(--ink);
+}
+.engine-thrust-control button span {
+  font-size: 0.6875rem;
+  min-width: 3ch;
+}
+.engine-thrust-help {
+  display: grid;
+  flex: 1 1 280px;
+}
+.engine-thrust-control p {
+  grid-area: 1/1;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8125rem;
+  line-height: 1.7;
+}
+.engine-thrust-control p[aria-hidden="true"] {
+  visibility: hidden;
+}
 .engine-presets button span {
   font-size: 0.625rem;
   color: var(--muted);
@@ -279,6 +323,9 @@
   font: inherit;
 }
 @media (max-width: 760px) {
+  .engine-thrust-control {
+    padding: 0 20px 20px;
+  }
   .engine-heading {
     padding: 24px 20px 0;
   }

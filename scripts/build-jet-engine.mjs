@@ -3,7 +3,13 @@ import { format } from "prettier";
 import * as k from "../.opencode/skills/anatomy/kit/iso-kit.mjs";
 import * as G from "../.opencode/skills/anatomy/kit/lathe.mjs";
 import * as A from "../.opencode/skills/anatomy/kit/audit.mjs";
-import { ENGINE_CENTER, ROTORS } from "../src/domain/playground/jet-engine.ts";
+import {
+  ENGINE_CENTER,
+  ROTORS,
+  REVERSER,
+  reverserSolids,
+  reverserVertices,
+} from "../src/domain/playground/jet-engine.ts";
 import { triangulate } from "../src/domain/playground/engine-depth.ts";
 
 const file = new URL(
@@ -38,14 +44,19 @@ const P = k.fitProjection(
     ...wingSpans.flatMap((span) =>
       wingProfile.map(([chord, h]) => wingPoint(span, chord, h)),
     ),
-    [-230, 0, 170],
-    [310, 0, 170],
-    [-180, -68, 170],
-    [-180, 68, 34],
+    ...[-156, 146].flatMap((x) =>
+      Array.from({ length: 48 }, (_, i) => [
+        x,
+        65 * Math.cos((i * Math.PI) / 24),
+        ENGINE_CENTER + 65 * Math.sin((i * Math.PI) / 24),
+      ]),
+    ),
+    [-179, 0, ENGINE_CENTER],
+    ...[0, 1].flatMap((d) => reverserSolids(d).flatMap(reverserVertices)),
   ],
   1100,
   480,
-  { pad: 36, azimuth: 117, elevation: 20 },
+  { pad: 52, azimuth: 117, elevation: 20 },
 );
 const R = A.recorder(P);
 let serial = 0;
@@ -77,21 +88,12 @@ for (let i = 0; i < wingSpans.length - 1; i++) {
     A.prism(wingFrame, wingProfile, y0, y1, { name, ground: true }),
     wingPoint((y0 + y1) / 2, -68, 4),
   );
-  // Panel seams and fasteners sit on the wing skin and meet its span boundaries.
+  // Panel seams sit on the wing skin and meet its span boundaries.
   item.svg += k.lineSvg(
     k.pathOf(
       [wingPoint(y0, -105, 4), wingPoint(y1, -105, 4)].map((p) => k.iso(p, P)),
     ),
     { tone: "lo" },
-  );
-  item.svg += k.dotsSvg(
-    Array.from({ length: 6 }, (_, n) =>
-      k.iso(
-        wingPoint(y0 + ((y1 - y0) * (n + 0.5)) / 6, -102, 4 + (3 * 8) / 70),
-        P,
-      ),
-    ),
-    { size: 0.55, tone: "lo" },
   );
 }
 const pylonFrame = G.frameAlong([0, 0, 0], [0, -1, 0]);
@@ -139,21 +141,12 @@ for (const [i, x] of [0, 42].entries()) {
       [x + 13, 210],
     ],
     name = `pylon.access.${i}`;
-  const item = put(
+  put(
     name,
     "front",
     k.solidSvg(G.prismOf(pylonFrame, panel, -0.7, 0, P), { tone: "mid" }),
     A.prism(pylonFrame, panel, -0.7, 0, { name }),
     [x + 17, 0.35, 197],
-  );
-  item.svg += k.dotsSvg(
-    [
-      [x + 4, 188],
-      [x + 20, 188],
-      [x + 29, 206],
-      [x + 15, 206],
-    ].map(([px, z]) => k.iso([px, 0.7, z], P)),
-    { size: 0.6, tone: "hi" },
   );
 }
 
@@ -254,7 +247,8 @@ function sectorPair(name, s0, s1, ri, ro) {
   sector(`${name}.rear`, s0, s1, ri, ro, a, b, "back");
   sector(`${name}.lower`, s0, s1, ri, ro, b, Math.PI * 2, "front");
 }
-sectorPair("nacelle.shell", -144, 140, 57, 61);
+sectorPair("nacelle.shell", -144, REVERSER.start, 57, 61);
+sectorPair("nacelle.aft", REVERSER.end, 140, 57, 61);
 const sections = [
   [-104, -12, 28, 32],
   [-8, 66, 31, 35],
@@ -344,32 +338,49 @@ for (let i = 0; i < 6; i++) {
     G.pointOf(F, -131, 33, a),
   );
 }
-for (const item of R.items.filter((item) => item.assembly === "core.1.rear")) {
-  const dots = Array.from({ length: 56 }, (_, i) => ({
-    x: (i % 7) * 9,
-    a: 2.2 + Math.floor(i / 7) * 0.35,
-  })).filter((p) => p.a >= item.angular[0] && p.a < item.angular[1]);
-  item.svg += k.dotsSvg(
-    dots.map((p) => k.iso(G.pointOf(F, p.x, 31, p.a), P)),
-    { size: 0.65, tone: "lo" },
+// Moving doors are rendered by the shared runtime mesh, not baked into this base.
+function reverserContacts(fixedScene, solids) {
+  const boxes = solids.map(A.boundsOf);
+  const low = [0, 1, 2].map(
+    (axis) => Math.min(...boxes.map((box) => box.min[axis])) - 0.2,
   );
+  const high = [0, 1, 2].map(
+    (axis) => Math.max(...boxes.map((box) => box.max[axis])) + 0.2,
+  );
+  const nearby = fixedScene.filter((shape) => {
+    const box = A.boundsOf(shape);
+    return low.every(
+      (v, axis) => box.max[axis] >= v && box.min[axis] <= high[axis],
+    );
+  });
+  // The full fixed scene is audited separately. Its nearby members are anchored
+  // boundaries. Use the static sink/support query: flight clearances skip pairs
+  // with equal offsets, even when their baked-in rotations differ.
+  const fixed = new Set(nearby);
+  return A.supports([...nearby, ...solids], [], {
+    ground: (shape) => fixed.has(shape),
+  });
 }
-for (const [assembly, boundary, at] of [
-  ["nacelle.shell.upper", Math.PI / 2, (x) => [x, 0, ENGINE_CENTER + 59]],
-  ["nacelle.shell.lower", Math.PI * 2, (x) => [x, 59, ENGINE_CENTER]],
-]) {
-  const host = R.items.find(
-    (item) =>
-      item.assembly === assembly &&
-      Math.min(
-        Math.abs(item.angular[0] - boundary),
-        Math.abs(item.angular[1] - boundary),
-      ) < 1e-7,
+if (process.argv.includes("--audit")) {
+  const fixture = reverserContacts(
+    [A.box([0, 0, 0], [4, 4, 4], { name: "fixed.fixture" })],
+    [A.box([2, 0, 0], [6, 4, 4], { name: "moving.fixture" })],
   );
-  host.svg += k.dotsSvg(
-    Array.from({ length: 15 }, (_, i) => k.iso(at(-126 + i * 18), P)),
-    { size: 0.65, tone: "hi" },
-  );
+  if (fixture.sunk.length !== 1)
+    throw new Error(
+      "The reverser contact query missed a known fixed-pose overlap.",
+    );
+  for (const deployment of Array.from({ length: 21 }, (_, i) => i / 20)) {
+    const solids = reverserSolids(deployment).map((s) =>
+      A.prism(s.frame, s.polygon, s.start, s.end, { name: s.name }),
+    );
+    const result = reverserContacts(R.solids, solids);
+    if (result.sunk.length || result.loose.length || result.hanging.length)
+      throw new Error(
+        `Reverser clearance/support at ${deployment}: ${JSON.stringify(result)}`,
+      );
+  }
+  console.log("Reverser clearance/support: 21 transformed-panel poses passed.");
 }
 // The optional full audit solves the same recorded static geometry, not proxies.
 A.settle(R, P);
@@ -473,7 +484,8 @@ for (const item of ordered) {
 const output = await format(
   JSON.stringify(
     {
-      parts: serial + ROTORS.reduce((n, r) => n + r.blades, 0),
+      parts:
+        serial + REVERSER.panels * 2 + ROTORS.reduce((n, r) => n + r.blades, 0),
       origin: k.iso([0, 0, 0], P),
       axes: [
         k.axisVector(P, [1, 0, 0]),
@@ -567,5 +579,5 @@ for (const [destination, content] of outputs) {
   } else writeFileSync(destination, content);
 }
 console.log(
-  `Jet engine: ${serial} fixed parts and ${ROTORS.reduce((n, r) => n + r.blades, 0)} moving blades.`,
+  `Jet engine: ${serial} fixed parts, ${ROTORS.reduce((n, r) => n + r.blades, 0)} moving blades, and ${REVERSER.panels * 2} reverser panels.`,
 );

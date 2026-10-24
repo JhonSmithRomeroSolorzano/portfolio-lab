@@ -1,4 +1,8 @@
-import { airPoint, enginePower } from "../../../domain/playground/jet-engine";
+import {
+  airPoint,
+  enginePower,
+  type ThrustMode,
+} from "../../../domain/playground/jet-engine";
 import {
   DepthIndex,
   visibleLine,
@@ -6,41 +10,51 @@ import {
 } from "../../../domain/playground/engine-depth";
 import { engineFaces, projectDepth, staticTriangles, svgPath } from "./mesh";
 
-let cachedIndex: DepthIndex | undefined;
-let cachedFaces: { shade: number; fill: string; edges: string }[] | undefined;
+type StillScene = {
+  index: DepthIndex;
+  faces: { shade: number; fill: string; edges: string }[];
+};
+const cache = new Map<ThrustMode, StillScene>();
 const xy = (points: readonly (readonly [number, number, number])[]) =>
   points.map((p) => [p[0], p[1]] as const);
-export function stillFaces() {
-  if (cachedFaces) return cachedFaces;
-  const faces = engineFaces(0);
-  const index = (cachedIndex = new DepthIndex([
+function stillScene(mode: ThrustMode) {
+  const cached = cache.get(mode);
+  if (cached) return cached;
+  const faces = engineFaces(0, mode === "reverse" ? 1 : 0);
+  const index = new DepthIndex([
     ...staticTriangles,
     ...faces.flatMap((face) => face.triangles),
-  ]));
-  return (cachedFaces = faces.map((face) => ({
-    shade: face.shade,
-    fill: face.triangles
-      .flatMap((t) => visiblePolygons(t, index))
-      .map((polygon) => svgPath(xy(polygon)) + "Z")
-      .join(""),
-    edges: face.vertices
-      .flatMap((p, i) =>
-        visibleLine(p, face.vertices[(i + 1) % face.vertices.length], index),
-      )
-      .map((segment) => svgPath(xy(segment)))
-      .join(""),
-  })));
+  ]);
+  const scene = {
+    index,
+    faces: faces.map((face) => ({
+      shade: face.shade,
+      fill: face.triangles
+        .flatMap((t) => visiblePolygons(t, index))
+        .map((polygon) => svgPath(xy(polygon)) + "Z")
+        .join(""),
+      edges: face.vertices
+        .flatMap((p, i) =>
+          visibleLine(p, face.vertices[(i + 1) % face.vertices.length], index),
+        )
+        .map((segment) => svgPath(xy(segment)))
+        .join(""),
+    })),
+  };
+  cache.set(mode, scene);
+  return scene;
 }
+export const stillFaces = (mode: ThrustMode = "forward") =>
+  stillScene(mode).faces;
 
-export function stillAir(speed: number) {
-  stillFaces();
-  const index = cachedIndex!;
+export function stillAir(speed: number, mode: ThrustMode = "forward") {
+  const { index } = stillScene(mode);
   const power = enginePower(speed);
   return Array.from(
     { length: speed === 0 ? 0 : Math.round(8 + speed * 0.2) },
     (_, route) => {
-      const points = Array.from({ length: 25 }, (_, i) =>
-        airPoint(route, i / 24, power),
+      const points = Array.from({ length: 65 }, (_, i) =>
+        airPoint(route, i / 64, power, mode),
       );
       const cool: string[] = [],
         hot: string[] = [];

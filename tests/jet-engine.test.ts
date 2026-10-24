@@ -12,6 +12,10 @@ import {
   engineSpeed,
   flowOpacity,
   ROTORS,
+  approachReverser,
+  reverserSolids,
+  reverserVertices,
+  reverserFlowWeight,
 } from "../src/domain/playground/jet-engine";
 import { engineFaces } from "../src/features/playground/jet-engine/mesh";
 
@@ -68,6 +72,71 @@ test("air paths stay continuous, separate bypass from core walls, and fade at bo
   }
 });
 
+test("reverse thrust turns only the bypass forward, never the intake, core exhaust, or rotation", () => {
+  for (const speed of [0, 1, 25, 60, 100]) {
+    const power = enginePower(speed);
+    assert.ok(power.rotation >= 0);
+    for (let route = 0; route < 36; route++) {
+      let previous = airPoint(route, 0, power, "reverse");
+      assert.deepEqual(previous, airPoint(route, 0, power));
+      for (let step = 1; step <= 1000; step++) {
+        const u = step / 1000,
+          p = airPoint(route, u, power, "reverse");
+        assert.ok(p.every(Number.isFinite));
+        assert.ok(Math.hypot(...p.map((v, i) => v - previous[i])) < 3);
+        if (route % 3 === 0) assert.deepEqual(p, airPoint(route, u, power));
+        else {
+          if (u < 0.62) assert.ok(p[0] > previous[0]);
+          if (u > 0.8) assert.ok(p[0] < previous[0]);
+          if (u > 0.78) assert.ok(Math.hypot(p[1], p[2] - ENGINE_CENTER) > 57);
+        }
+        previous = p;
+      }
+    }
+  }
+});
+
+test("reverser panels are rigid, finite, and deploy progressively without changing blade poses", () => {
+  const rest = reverserSolids(0);
+  assert.equal(rest.length, 60);
+  let progress = 0;
+  for (let frame = 0; frame < 150; frame++) {
+    const next = approachReverser(progress, 1, 1 / 60);
+    assert.ok(next >= progress && next <= 1);
+    progress = next;
+  }
+  assert.equal(progress, 1);
+  assert.equal(approachReverser(0.5, 1, 0), 0.5);
+  for (const d of [0, 0.25, 0.5, 0.75, 0.85])
+    assert.equal(reverserFlowWeight(d), 0);
+  assert.equal(reverserFlowWeight(1), 1);
+  let closing = 0.8;
+  for (let i = 0; i < 20; i++) {
+    const next = approachReverser(closing, 0, 1 / 60);
+    assert.ok(next < closing);
+    closing = next;
+  }
+  assert.ok(
+    approachReverser(closing, 1, 1 / 60) > closing,
+    "retargeting continues from the current door pose",
+  );
+  for (const d of [0, 0.1, 0.25, 0.5, 0.75, 1])
+    reverserSolids(d).forEach((solid, i) => {
+      const vertices = reverserVertices(solid),
+        base = reverserVertices(rest[i]);
+      assert.ok(vertices.flat().every(Number.isFinite));
+      for (let a = 0; a < vertices.length; a++)
+        for (let b = a + 1; b < vertices.length; b++)
+          assert.ok(
+            Math.abs(
+              Math.hypot(...vertices[a].map((v, j) => v - vertices[b][j])) -
+                Math.hypot(...base[a].map((v, j) => v - base[b][j])),
+            ) < 1e-8,
+          );
+    });
+  assert.notDeepEqual(engineFaces(0, 0), engineFaces(0, 1));
+});
+
 test("moving blades remain in their radial and axial clearances at every sampled angle", () => {
   for (let i = 0; i < ROTORS.length; i++) {
     const rotor = ROTORS[i],
@@ -92,7 +161,7 @@ test("moving blades remain in their radial and axial clearances at every sampled
 test("Anatomy engine artwork reproduces with measured static depth order and bounded SVG assets", () => {
   execFileSync(
     process.execPath,
-    ["--import", "tsx", "scripts/build-jet-engine.mjs", "--check"],
+    ["--import", "tsx", "scripts/build-jet-engine.mjs", "--audit", "--check"],
     { encoding: "utf8" },
   );
   let bytes = 0;
@@ -105,6 +174,7 @@ test("Anatomy engine artwork reproduces with measured static depth order and bou
       bytes += gzipSync(svg).length;
       assert.match(svg, /viewBox="0 0 1100 480"/);
       assert.doesNotMatch(svg, /<script|https?:\/\/(?!www.w3.org)/);
+      assert.doesNotMatch(svg, /<circle|class="iso-dots"/);
     }
   assert.ok(
     bytes < 80 * 1024,
