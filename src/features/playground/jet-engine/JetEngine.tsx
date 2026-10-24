@@ -6,6 +6,7 @@ import {
 import { useViewportPlayback } from "../../../shared/hooks/useViewportPlayback";
 import { createEngineRenderer } from "./renderer";
 import { stillAir, stillFaces } from "./svg-frame";
+import { engineFeedback } from "./feedback";
 import backLight from "./engine-back-light.svg";
 import backDark from "./engine-back-dark.svg";
 
@@ -321,24 +322,15 @@ export function JetEngine() {
         </li>
       </ol>
       <p className="engine-feedback" role="status" aria-atomic="true">
-        {artFailed
-          ? "Engine paused until its artwork can be reloaded."
-          : !artReady
-            ? "Loading engine casing artwork…"
-            : speed === 0
-              ? "Engine off. Increase engine speed to start the airflow."
-              : reduced
-                ? `Static view at ${speed}%. Reduced motion is on; speed still changes the airflow density and exhaust reach.`
-                : available === undefined
-                  ? "Preparing engine animation…"
-                  : !available
-                    ? `Static SVG view at ${speed}%. Canvas animation is unavailable; the speed control still updates the air paths.`
-                    : running
-                      ? `Running at a ${speed}% setting. Higher speed means faster blades, faster and denser air trails, and a longer exhaust stream.`
-                      : `Paused at ${speed}%. Play the engine or change its speed to see the airflow.`}{" "}
-        {mode === "reverse"
-          ? "Reverse thrust selected. Bypass air redirects forward; engine rotation does not reverse."
-          : "Forward thrust selected."}
+        {engineFeedback({
+          speed,
+          mode,
+          available,
+          artFailed,
+          artReady,
+          reduced,
+          running,
+        })}
       </p>
       <p className="engine-disclaimer">
         Illustrative under-wing turbofan cutaway. The pylon joins the engine to

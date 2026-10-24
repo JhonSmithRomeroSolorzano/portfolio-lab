@@ -151,8 +151,8 @@ export function reverserSolids(deployment: number): ReverserSolid[] {
     const axis: EnginePoint = [0, -Math.sin(mid), Math.cos(mid)];
     for (const kind of ["door", "blocker"] as const) {
       const outer = kind === "door",
-        ri = outer ? 57 : 55.8,
-        ro = outer ? 61 : 57;
+        ri = outer ? REVERSER.inner : REVERSER.inner - 1.2,
+        ro = outer ? REVERSER.outer : REVERSER.inner;
       const inset = outer ? 0 : (b - a) * 0.25;
       const theta = outer ? -0.78 * d : 1.35 * smooth((d - 0.25) / 0.75);
       const hinge: EnginePoint = [
@@ -189,8 +189,8 @@ export function reverserSolids(deployment: number): ReverserSolid[] {
           [ro * Math.cos(b - inset), ro * Math.sin(b - inset)],
           [ri * Math.cos(b - inset), ri * Math.sin(b - inset)],
         ],
-        start: outer ? 92 : 97,
-        end: 120,
+        start: outer ? REVERSER.start : REVERSER.start + 5,
+        end: REVERSER.end,
       });
     }
   }

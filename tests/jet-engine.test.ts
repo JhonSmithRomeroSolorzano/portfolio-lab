@@ -16,6 +16,7 @@ import {
   reverserSolids,
   reverserVertices,
   reverserFlowWeight,
+  REVERSER,
 } from "../src/domain/playground/jet-engine";
 import { engineFaces } from "../src/features/playground/jet-engine/mesh";
 
@@ -99,6 +100,26 @@ test("reverse thrust turns only the bypass forward, never the intake, core exhau
 test("reverser panels are rigid, finite, and deploy progressively without changing blade poses", () => {
   const rest = reverserSolids(0);
   assert.equal(rest.length, 60);
+  for (const solid of rest) {
+    assert.equal(solid.end, REVERSER.end);
+    assert.equal(
+      solid.start,
+      solid.kind === "door" ? REVERSER.start : REVERSER.start + 5,
+    );
+    const radii = solid.polygon.map(([y, z]) => Math.hypot(y, z));
+    assert.ok(
+      Math.abs(
+        Math.max(...radii) -
+          (solid.kind === "door" ? REVERSER.outer : REVERSER.inner),
+      ) < 1e-9,
+    );
+    assert.ok(
+      Math.abs(
+        Math.min(...radii) -
+          (solid.kind === "door" ? REVERSER.inner : REVERSER.inner - 1.2),
+      ) < 1e-9,
+    );
+  }
   let progress = 0;
   for (let frame = 0; frame < 150; frame++) {
     const next = approachReverser(progress, 1, 1 / 60);
