@@ -2,26 +2,41 @@
 
 Jhon Smith Romero’s engineering workspace: explore my stack, inspect a working systems experiment, and read my experience.
 
-**[Explore the portfolio](https://jhonsmithromerosolorzano.github.io/portfolio-lab/)** · **[Case study](CASE_STUDY.md)** · **[GitHub profile](https://github.com/JhonSmithRomeroSolorzano)** · **[Roadmap](ROADMAP.md)**
+**[Explore the portfolio](https://jhonsmithromerosolorzano.github.io/portfolio-lab/)** · **[Technical design](ARCHITECTURE.md)** · **[GitHub profile](https://github.com/JhonSmithRomeroSolorzano)**
 
 ## Documentation map
 
-| Document                                                              | Owns                                                                                         |
-| --------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| [README](README.md)                                                   | Current product behavior, local setup, commands, and deployment operations.                  |
-| [Architecture](ARCHITECTURE.md)                                       | Source map, dependency direction, runtime/build boundaries, and technical decisions.         |
-| [Agent guide](AGENTS.md)                                              | Agent workflow, verification requirements, content safeguards, and delivery rules.           |
-| [Contributing](CONTRIBUTING.md)                                       | Contributor checklist, linked to the owning technical and release guidance.                  |
-| [Roadmap](ROADMAP.md#current-status-and-next-steps)                   | Current status and next steps, followed by dated implementation history.                     |
-| [Jet Engine](docs/JET_ENGINE.md)                                      | Engine model limits, geometry/rendering design, provenance, and authoring commands.          |
-| [Usability review](docs/USABILITY_REVIEW.md)                          | Human review procedures and outstanding visitor/device/screen-reader sessions.               |
-| [Release review](docs/RELEASE_REVIEW.md)                              | Dated frontend/architecture findings, validation evidence, and the completed PR #17 release. |
-| [Local API](server/README.md)                                         | Optional API setup, routes, limits, diagnostics, and contract.                               |
-| [Case study](CASE_STUDY.md) / [archive](archive/signal-lab/README.md) | Historical Signal Lab design and retained reference code—not the current public UI.          |
+| Guide                           | Owns                                                                                                      |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| [README](README.md)             | Product behavior, setup, contributing, release status, human review, and next steps.                      |
+| [Architecture](ARCHITECTURE.md) | Source boundaries, technical decisions, engine model/authoring, optional API, and retained systems model. |
+| [Agent guide](AGENTS.md)        | Agent preparation, verification, content safeguards, and delivery rules.                                  |
 
-Use the owning document for current rules and cross-link rather than repeating them.
-Dated review results and roadmap test counts describe their recorded revision;
-they are not live counters or instructions to restore retired interfaces.
+These are the only three maintained first-party Markdown guides. Cross-link to
+the owner rather than adding overlapping files. Bundled third-party skill guides
+and licenses remain upstream resources, not additional project guides.
+
+## Current status and next steps
+
+The latest verified application release recorded here is [PR #17](https://github.com/JhonSmithRomeroSolorzano/portfolio-lab/pull/17),
+merged as `eb1499b` and published to GitHub Pages on October 24, 2026 (UTC).
+Protected Linux checks passed: 185 code tests, 293 browser passes and one existing
+platform-specific skip, with no retries. The public verifier confirmed the source
+and all 25 listed asset hashes. Local simulated mobile medians were LCP 2.13s,
+CLS 0, and TBT 3.5ms; these are not real-user guarantees. The private Sites preview
+was not republished and its audience is unchanged.
+
+Current priorities:
+
+- Complete the first-time visitor, physical-phone, and screen-reader sessions in [human review](#human-review); all remain outstanding.
+- Add contact details and concrete professional outcomes only when Jhon supplies verified information.
+- Refine existing experiences from reproducible visitor findings or user feedback; do not expand the catalog or restore retired UI without a request.
+- Update the private preview only when requested and authorized, separately from Pages publication.
+
+The [dated implementation history](https://github.com/JhonSmithRomeroSolorzano/portfolio-lab/blob/2421e577b6fe33b49f222d200a4af6683e81aa1c/ROADMAP.md)
+and [detailed release review](https://github.com/JhonSmithRomeroSolorzano/portfolio-lab/blob/2421e577b6fe33b49f222d200a4af6683e81aa1c/docs/RELEASE_REVIEW.md)
+remain in Git. Their counts and old “Next” statements describe those revisions,
+not today's backlog. This consolidation changes documentation, not application behavior.
 
 ## Résumé and presentation
 
@@ -61,7 +76,7 @@ The collection has **seven peer experiences**, reached through illustrated cards
 
 Each experience ends with native Previous/Next links and Back to collection, following the same catalog order without wrapping the first/last boundaries. `#collection` reaches the focusable chooser; existing `#lab` and experience anchors remain unchanged. These links preserve query context, support browser history and keyboard focus, and remain available without JavaScript.
 
-- **[Jet Engine](https://jhonsmithromerosolorzano.github.io/portfolio-lab/#jet-engine)**: change engine speed and watch an under-wing cutaway turbofan respond. A pylon attaches it to a cropped wing section; the intentional open side exposes its internals, while collars close the joints between core housings. The intake fan and six inner blade rows turn faster while air tracers speed up, become denser, and extend farther behind the engine. Blue shows cool intake/bypass air; orange shows heated core air. Idle, Cruise, and Full power presets use the same control. The engine starts as its drawing enters view and suspends offscreen or in hidden tabs. Returning resumes it unless the visitor used Pause, Reset, or set speed to zero; Play or a speed change can restart it. Reduced motion redraws a still composition; canvas denial retains SVG parts and speed-dependent air paths. Four short stage descriptions explain the route without a puzzle. This is a slowed visual illustration, not real engine operating data or a thermodynamic simulation. Built using Anatomy; [design and provenance](docs/JET_ENGINE.md). The former local `#pin-lock` entry redirects here without removing query context.
+- **[Jet Engine](https://jhonsmithromerosolorzano.github.io/portfolio-lab/#jet-engine)**: change engine speed and watch an under-wing cutaway turbofan respond. A pylon attaches it to a cropped wing section; the intentional open side exposes its internals, while collars close the joints between core housings. The intake fan and six inner blade rows turn faster while air tracers speed up, become denser, and extend farther behind the engine. Blue shows cool intake/bypass air; orange shows heated core air. Idle, Cruise, and Full power presets use the same control. The engine starts as its drawing enters view and suspends offscreen or in hidden tabs. Returning resumes it unless the visitor used Pause, Reset, or set speed to zero; Play or a speed change can restart it. Reduced motion redraws a still composition; canvas denial retains SVG parts and speed-dependent air paths. Four short stage descriptions explain the route without a puzzle. This is a slowed visual illustration, not real engine operating data or a thermodynamic simulation. Built using Anatomy; [design and provenance](ARCHITECTURE.md#jet-engine-model-and-authoring). The former local `#pin-lock` entry redirects here without removing query context.
 
 - **[Gravity Loom](https://jhonsmithromerosolorzano.github.io/portfolio-lab/#gravity-loom)**: drag a glowing attractor with mouse or touch to pull the existing threads in real time. Dragging empty space moves the selected point; a stronger held-point pull makes the response perceptible without teleporting particles or clearing trails. The field starts as it enters view. Dragging, arrow-key steering, and movement buttons can also resume it after a pause. Space plays/pauses the focused field and Escape stops it. Native direction buttons and named positions provide alternatives to dragging. Add up to four attractors, choose Orbit or counter-rotating Weave, and adjust strength without restarting the scene. Only Reset rebuilds the live artwork; reduced motion updates static drawings without animated playback, and SVG retains controls without canvas. Offscreen and hidden-tab interruptions release any drag and suspend playback; returning resumes it unless the visitor used Pause, Reset, Escape, or cancelled a drag. Reduced motion always keeps it still. The model is kinetic artwork, not orbital physics. Mobile uses 48 threads and wider screens 96, with bounded trail histories and no graphics dependency.
 
@@ -88,7 +103,7 @@ or a particular aircraft's operating procedure. Static decorative dots are remov
 
 ### Earlier systems experiments
 
-The original Signal Lab dashboard is retired from the public portfolio. Its presentation and browser adapters live in `archive/signal-lab/`; pure models remain in `src/domain/`. The optional API, CLI, and unit/integration coverage are retained. Browser tests now cover the seven current experiences rather than the removed dashboard workflows. The [case study](CASE_STUDY.md) documents that earlier model and its assumptions; the [optional local Node API](server/README.md) and batch CLI can still run it.
+The original Signal Lab dashboard is retired from the public portfolio. Its presentation and browser adapters live in `archive/signal-lab/`; pure models remain in `src/domain/`. The optional API, CLI, and unit/integration coverage are retained. Browser tests cover the seven current experiences rather than the removed dashboard. See the [retained systems model](ARCHITECTURE.md#retained-systems-model) for assumptions and the [optional local API](ARCHITECTURE.md#optional-local-api) for runnable HTTP experiments.
 
 ## Run locally
 
@@ -121,9 +136,9 @@ The companion skills are upstream reference material, not an application setup r
 
 ### Anatomy skill
 
-[Anatomy](https://github.com/wheresryan22/anatomy) is installed for this project at `.opencode/skills/anatomy`, with its MIT license, kit, references, scripts, and examples. Mention `@anatomy` for a detailed interactive isometric figure; restart OpenCode if a running session does not discover it. The pinned upstream revision and illustration design are recorded in [the Jet Engine notes](docs/JET_ENGINE.md). Installation adds no application dependency.
+[Anatomy](https://github.com/wheresryan22/anatomy) is installed for this project at `.opencode/skills/anatomy`, with its MIT license, kit, references, scripts, and examples. Mention `@anatomy` for a detailed interactive isometric figure; restart OpenCode if a running session does not discover it. The pinned upstream revision and illustration design are recorded in [Architecture](ARCHITECTURE.md#jet-engine-model-and-authoring). Installation adds no application dependency.
 
-`npm run build:engine` regenerates Jet Engine's fixed-scene theme SVGs, projection, and visibility data; `npm run build:engine -- --check` verifies them without writing. `npm run build:engine -- --audit` additionally checks the individual fixed draw items and reverser support/intersections at 21 deployment positions. The unit suite also runs audit/reproducibility verification. Moving blades, reverser panels, and air share per-pixel visibility; the SVG fallback clips the same faces and air routes. The kit is authoring/test-only, not part of the browser or `npm run build`. See [the depth/occlusion design](docs/JET_ENGINE.md#rendering-boundaries). Other projects can use the upstream [installation instructions](https://github.com/wheresryan22/anatomy#install).
+`npm run build:engine` regenerates the fixed-scene SVGs and projection/visibility data; `npm run build:engine -- --check` verifies them without writing. `npm run build:engine -- --audit` checks the fixed draw items and reverser support/intersections at 21 positions. The unit suite also runs audit/reproducibility verification. The kit is authoring/test-only, not part of the browser or `npm run build`; [Architecture](ARCHITECTURE.md#jet-engine-model-and-authoring) owns the rendering details. Other projects can use the upstream [installation instructions](https://github.com/wheresryan22/anatomy#install).
 
 ### Résumé downloads
 
@@ -156,9 +171,17 @@ I'm Jhon Smith Romero, a systems and telecommunications engineer with more than 
 
 This repository contains original portfolio work. It does not contain employer code or client data. Features are developed with AI assistance and reviewed through tests, builds, and documented checks.
 
-## Development approach
+## Contributing
 
-Each change should add something useful: a feature, a fix, a meaningful test, or an explanation of a real engineering decision. See [ROADMAP.md](ROADMAP.md) for the next milestone and [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow.
+1. Read the [current priorities](#current-status-and-next-steps) and [Architecture](ARCHITECTURE.md); choose a bounded improvement in the requested scope.
+2. Keep verified career facts and model limitations intact. Use [AGENTS](AGENTS.md) for agent-specific workflow and safeguards.
+3. Keep behavior tests beside the change and run `npm run check` before committing. It includes lint, read-only formatting, strict types, unit/integration tests, résumé generation, production build, and budgets. Use targeted formatting rather than rewriting unrelated files. Tests use Node's runner with `tsx`, not Jest.
+4. For code/build changes, build first, run `npm run test:browser`, and inspect desktop/mobile, themes, keyboard, and reduced motion. Docs-only changes need link/path/command validation and the normal check, not new UI journeys or a browser rerun.
+5. Review the diff, preserve unrelated edits, and commit a coherent change. Submit a branch/PR through [the protected release gates](#deployment); never bypass protection, force-push, backdate, or manufacture activity.
+
+The local source includes original portfolio work and vendored third-party tools
+with their own licenses. Neither consolidation nor publication authorizes private
+interview material, employer code, unverified contact details, or hosting audience changes.
 
 ## Deployment
 
@@ -192,7 +215,7 @@ Cache Rescue, the connection puzzle, Motion Studio, Algorithm Garden, Signal Scu
 
 `npm run test:browser` includes axe accessibility scans for both themes, keyboard journeys, 320px reflow, 200% default text-size checks, direct links, and failed-download recovery. Challenge and traversal controls keep their visible labels consistent with their accessible names, including after selection. Automated scans and accessibility-tree inspection do not replace a human screen-reader assessment.
 
-The mobile recruiter journey covers both résumé downloads and contact navigation. Resource links have at least 44px-high hit areas, contact copy uses the normal 16px body size, and the contact action wraps with enlarged text. Gravity Loom preserves the grab offset when selecting the edge of a point, ignores Space key repeats, and supplies changing position feedback for keyboard moves. The [visitor and accessibility review guide](docs/USABILITY_REVIEW.md) separates these automated checks from the first-time visitor, physical-device, and screen-reader listening sessions that still need human participation.
+The mobile recruiter journey covers both résumé downloads and contact navigation. Resource links have at least 44px-high hit areas, contact copy uses the normal 16px body size, and the contact action wraps with enlarged text. Gravity Loom preserves the grab offset when selecting the edge of a point, ignores Space key repeats, and supplies changing position feedback for keyboard moves. [Human review](#human-review) remains separate from automated/emulated checks.
 
 Gravity Loom's points can travel across the full rectangular field, leaving a 24px margin to keep the handles visible. Trails, pointer input, and the canvas-free illustration share the same width/height mapping, including after resizing; there is no separate center-square drag boundary.
 
@@ -229,3 +252,17 @@ Cache Rescue includes an optional prediction before each round. A whole-number g
 Connection puzzle records completed attempts and separate best rotation counts with and without hints. Rotation counts and hint assistance survive Undo, reloads, and tab synchronization; Start again resets the attempt while keeping records. Earlier saved boards migrate without losing moves, but cannot establish a best until restarted because their rotation/hint history was not recorded. Clearing browser storage removes records. No score is sent to a server.
 
 Each experience has an optional “How I built…” note covering its implementation decision, tradeoff, verification, and source code. The notes describe this repository's original code; they do not introduce employer claims. Their source links share one repository constant with the footer.
+
+## Human review
+
+**Not yet completed:** first-time visitor observation, physical-phone review, and
+human screen-reader listening. Passing axe, browser emulation, release checks, or
+DOM inspection does not complete these sessions.
+
+- **Visitor:** use a willing first-time visitor and neutral goals: find experience, download a résumé, contact the developer, reduce animation, navigate between labs, steer a different Loom point, and redirect the engine's air without reversing the fan. Do not coach; record consented, anonymized findings, not guessed motives, success rates, or private conversations.
+- **Physical phone:** record the actual device/browser; test portrait/landscape, both themes, and 200% text. Check all four Loom corners, off-center grabbing, secondary-pointer cancellation, drag-versus-page-scroll, tab/app interruption, and native non-drag controls. Check motion settings, Escape/focus behavior, neighbor/history links, engine speed/zero/reverse/Pause/Reset, stable framing, and respect for manual pauses.
+- **Screen reader:** preferably use the participant's usual tools (for example VoiceOver/Safari or NVDA/Firefox/Chrome). Record actual versions and what was heard. Check skip/headings/navigation, career dates/qualifications, downloads/contact, motion settings, and neighbor links. Verify native movement controls rather than assuming browse-mode arrows reach custom handlers. Listen to positions, slider values, pressed/disabled states, only the active reverse explanation, and honest static/error feedback—never particle-frame announcements.
+
+For each finding retain environment, task, observed/expected behavior, reproduction,
+severity, fix/test reference, and remaining limitations. Publish only approved
+sanitized summaries; keep participant identities, recordings, and raw notes private.

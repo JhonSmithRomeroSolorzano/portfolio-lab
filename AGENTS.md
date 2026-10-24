@@ -4,9 +4,9 @@ This file owns instructions for agents working in this repository: preparation, 
 
 ## Before editing
 
-- Read [README.md](README.md) for the current product and [ROADMAP's current status and next steps](ROADMAP.md#current-status-and-next-steps) for the latest priorities. Older completed milestones describe retired UI; they are historical context, not a request to restore it.
+- Read [README.md](README.md) for the current product and [current status and next steps](README.md#current-status-and-next-steps). Dated Git history may describe retired UI; it is context, not a request to restore it.
 - Read [ARCHITECTURE.md](ARCHITECTURE.md) before changing code, dependencies, or build configuration. It owns the source map, dependency directions, component responsibilities, runtime boundaries, and technical tradeoffs.
-- Follow [CONTRIBUTING.md](CONTRIBUTING.md) for the contributor workflow. Consult [server/README.md](server/README.md) and [server/openapi.json](server/openapi.json) for optional API work, and [CASE_STUDY.md](CASE_STUDY.md) for the earlier systems model.
+- Follow [README's contributing checklist](README.md#contributing). Consult [the optional API](ARCHITECTURE.md#optional-local-api) and [OpenAPI](server/openapi.json) for API work, and [the retained systems model](ARCHITECTURE.md#retained-systems-model) for historical context.
 - Inspect Git status and preserve unrelated edits. Choose a useful, bounded improvement within the user's current scope; refine the existing experiences rather than expanding the catalog without a request.
 - Preserve the product behavior documented in README, including experience-first ordering, projects within Experience, the single theme toggle, stable stack-map panels, and legacy anchors, unless the user requests a change.
 
@@ -37,6 +37,6 @@ This file owns instructions for agents working in this repository: preparation, 
 
 - Review each diff before committing. Normal commits/pushes of verified portfolio improvements to the configured origin are authorized. Keep each commit coherent, independently reviewable, and buildable, with relevant tests alongside the behavior they verify. Never force-push, backdate, or pad activity with artificial splits, empty commits, or date-only edits.
 - `main` requires the up-to-date GitHub Actions `build` check, including for admins. Publish changes on a branch/PR rather than attempting to bypass protection with a direct push; see [deployment](README.md#deployment) for the release gates and diagnostic reports.
-- Update the document that owns a changed rule in the same change; use [the documentation map](README.md#documentation-map) to find its owner. Cross-link instead of copying rules between guides. Keep current status/next steps at the top of ROADMAP and preserve dated review/milestone evidence rather than rewriting historical test counts. Check commands and technical claims against the implementation and configuration; reconcile discrepancies rather than preserving stale documentation.
+- Maintain only three first-party Markdown guides: README for product/setup/contributing/status, ARCHITECTURE for technical design/API/models, and this file for agent workflow/safeguards. Use [the documentation map](README.md#documentation-map), cross-link rather than duplicating rules, and keep dated work logs/reviews in Git history instead of new files. Preserve third-party skill guides/licenses. Update the owning guide with changed rules, checking claims against implementation/configuration; do not rewrite historical test counts as live counters.
 - Keep daily automation configuration and generated artifacts out of this public repo. Preserve the Sites preview's existing audience. Follow the deployment setup linked from [README](README.md#deployment).
 - If external authentication/publication is blocked, report once and wait for a meaningful change rather than repeatedly committing roadmap edits.

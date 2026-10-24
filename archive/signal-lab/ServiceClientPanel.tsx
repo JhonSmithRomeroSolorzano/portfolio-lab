@@ -195,7 +195,7 @@ export function ServiceClientPanel({ scenario }: { scenario: Scenario }) {
         )}
         <a
           className="text-link"
-          href="https://github.com/JhonSmithRomeroSolorzano/portfolio-lab/blob/main/server/README.md"
+          href="https://github.com/JhonSmithRomeroSolorzano/portfolio-lab/blob/main/ARCHITECTURE.md#optional-local-api"
           target="_blank"
           rel="noreferrer"
         >
