@@ -16,7 +16,6 @@ import {
 } from "../../../domain/playground/engine-depth";
 
 export type Face = {
-  points: [number, number][];
   vertices: DepthPoint[];
   triangles: DepthTriangle[];
   boundaries: readonly (readonly [boolean, boolean, boolean])[];
@@ -32,7 +31,7 @@ export function project(point: EnginePoint): [number, number] {
       point.reduce((sum, value, i) => sum + value * art.axes[i][1], 0),
   ];
 }
-export function depth(point: EnginePoint) {
+function depth(point: EnginePoint) {
   return point.reduce((sum, value, i) => sum + value * art.camera.view[i], 0);
 }
 export function projectDepth(point: EnginePoint): DepthPoint {
@@ -61,11 +60,10 @@ function face(vertices: EnginePoint[], normal: EnginePoint, out: Face[]) {
       }) as [boolean, boolean, boolean],
   );
   out.push({
-    points: projected.map((p) => [p[0], p[1]]),
     vertices: projected,
     triangles,
     boundaries,
-    depth: vertices.reduce((sum, p) => sum + depth(p), 0) / vertices.length,
+    depth: projected.reduce((sum, p) => sum + p[2], 0) / projected.length,
     shade,
   });
 }
@@ -94,7 +92,7 @@ function prism(
 }
 let lastDeployment = NaN;
 let lastReverserFaces: Face[] = [];
-export function reverserFaces(deployment: number): Face[] {
+function reverserFaces(deployment: number): Face[] {
   if (deployment === lastDeployment) return lastReverserFaces;
   const faces: Face[] = [];
   for (const solid of reverserSolids(deployment)) {

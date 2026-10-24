@@ -241,6 +241,38 @@ Production builds enforce compressed entry JS (100 KiB), all JS (140 KiB), CSS (
 
 The audit uses Chromium's `--no-sandbox` launch flag only for the loopback preview on Linux GitHub Actions runners. Audits of hosted URLs and local development retain the browser's default sandbox. Deployment verification requests the canonical directory URL for `index.html`, avoiding Sites' index redirect; all actual redirects remain rejected. For the private Sites origin only, comparison removes the recognized Cloudflare challenge script appended before the closing body. All portfolio content and application scripts must still match their hashes.
 
+### Engine animation profiling
+
+Loading scores do not measure animation smoothness. After a fresh build, start
+`npm run preview -- --port 4183`, then run the following sequentially, without
+other browser/performance workloads:
+
+```sh
+npm run profile:engine -- http://127.0.0.1:4183/ baseline
+# Make and rebuild an optimization, then compare against the saved baseline:
+npm run profile:engine -- http://127.0.0.1:4183/ optimized baseline
+```
+
+The optional Chromium profiler takes three timing samples per thrust mode at
+390px/3× DPR/4× simulated CPU slowdown and 1440px/2× DPR/unthrottled. It records
+engine draw times, frame cadence, whole-page CPU/heap sampling, idle paint checks,
+bundle sizes, source hashes, and twelve fixed composite-frame fingerprints in
+ignored `artifacts/engine-performance/`. The optional reference label rejects
+changed composite fingerprints. Heap allocation samples include collected objects;
+they are estimates, not retained-memory measurements or proof of a leak. Hidden
+policy testing uses a synthetic visibility event, not a physical background-tab test.
+
+The October 24 cleanup reduced total JS gzip from 137,202 to 133,224 bytes and the
+engine chunk from 32,402 to 28,428 bytes. Standalone timing repeats were variable,
+so a separate sequential baseline/optimized/optimized/baseline check used the
+original `8eb039d` build and the final candidate in the same Chromium process.
+Four timing windows per version/mode showed mobile forward/reverse draw P50 near
+40.7/46.5ms → 26.4/28.8ms, roughly 23/21 → 35/33 FPS. Whole-page allocation sampling
+also fell. Twelve composite stills remained identical in both themes/sizes, and
+all idle policies painted zero frames. These are local simulated observations,
+not portable FPS guarantees or a new CI timing threshold. Quality, route density,
+and resolution caps are unchanged.
+
 Motion Studio's “Take this motion with you” panel exports matching curve/duration CSS and example markup, including a reduced-motion end state. Clipboard denial selects the visible CSS for manual copying; changing the settings clears obsolete copy feedback.
 
 Algorithm Garden offers three authored trees: Balanced branches, Deep roots, and Open canopy. Both traversal modes use the selected tree's topology; choosing a different tree starts a new walk, while reselecting the current tree preserves progress.

@@ -86,10 +86,8 @@ export function createEngineRenderer(
     for (const face of faces)
       for (let i = 0; i < face.triangles.length; i++)
         r.metal(face.triangles[i], metal[face.shade], face.boundaries[i]);
-    // Only antialiased fringes need blending; solid visibility never uses a mean-depth sort.
-    for (const face of faces)
-      for (let i = 0; i < face.triangles.length; i++)
-        r.metal(face.triangles[i], metal[face.shade], face.boundaries[i], true);
+    // Queue edge coverage while scanning once, then test it against final depth.
+    r.finishMetal();
     for (const face of faces)
       for (let i = 0; i < face.vertices.length; i++)
         r.line(
