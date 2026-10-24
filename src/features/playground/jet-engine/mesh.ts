@@ -2,11 +2,28 @@ import {
   bladePolygon,
   ENGINE_CENTER,
   ROTORS,
+  reverserSolids,
+  reverserVertices,
   type EnginePoint,
 } from "../../../domain/playground/jet-engine";
 import art from "./engine-art.json";
+import geometry from "./engine-depth.json";
+import {
+  decodeDepthMesh,
+  triangulate,
+  type DepthPoint,
+  type DepthTriangle,
+} from "../../../domain/playground/engine-depth";
 
-export type Face = { points: [number, number][]; depth: number; shade: number };
+export type Face = {
+  points: [number, number][];
+  vertices: DepthPoint[];
+  triangles: DepthTriangle[];
+  boundaries: readonly (readonly [boolean, boolean, boolean])[];
+  depth: number;
+  shade: number;
+};
+export const staticTriangles = decodeDepthMesh(geometry);
 export function project(point: EnginePoint): [number, number] {
   return [
     art.origin[0] +
@@ -18,6 +35,9 @@ export function project(point: EnginePoint): [number, number] {
 export function depth(point: EnginePoint) {
   return point.reduce((sum, value, i) => sum + value * art.camera.view[i], 0);
 }
+export function projectDepth(point: EnginePoint): DepthPoint {
+  return [...project(point), depth(point)];
+}
 function face(vertices: EnginePoint[], normal: EnginePoint, out: Face[]) {
   const length = Math.hypot(...normal) || 1;
   if (normal.reduce((sum, v, i) => sum + v * art.camera.view[i], 0) <= 0)
@@ -27,8 +47,24 @@ function face(vertices: EnginePoint[], normal: EnginePoint, out: Face[]) {
     0,
   );
   const shade = [0, 0.2, 0.42, 0.62].filter((value) => score >= value).length;
+  const projected = vertices.map(projectDepth),
+    triangles = triangulate(projected);
+  const boundaries = triangles.map(
+    (t) =>
+      t.vertices.map((a, i) => {
+        const b = t.vertices[(i + 1) % 3];
+        return projected.some(
+          (p, j) =>
+            (p === a && projected[(j + 1) % projected.length] === b) ||
+            (p === b && projected[(j + 1) % projected.length] === a),
+        );
+      }) as [boolean, boolean, boolean],
+  );
   out.push({
-    points: vertices.map(project),
+    points: projected.map((p) => [p[0], p[1]]),
+    vertices: projected,
+    triangles,
+    boundaries,
     depth: vertices.reduce((sum, p) => sum + depth(p), 0) / vertices.length,
     shade,
   });
@@ -56,10 +92,44 @@ function prism(
     );
   }
 }
-export function engineFaces(angle: number): Face[] {
+let lastDeployment = NaN;
+let lastReverserFaces: Face[] = [];
+export function reverserFaces(deployment: number): Face[] {
+  if (deployment === lastDeployment) return lastReverserFaces;
   const faces: Face[] = [];
-  for (const guide of art.guideMeshes)
-    prism(guide.x, guide.polygon as [number, number][], 2, faces);
+  for (const solid of reverserSolids(deployment)) {
+    const vertices = reverserVertices(solid),
+      count = solid.polygon.length;
+    const surface = (indices: number[]) => {
+      const points = indices.map((i) => vertices[i]),
+        a = points[0],
+        b = points[1],
+        c = points[2];
+      const ab = b.map((v, i) => v - a[i]),
+        ac = c.map((v, i) => v - a[i]);
+      face(
+        points,
+        [
+          ab[1] * ac[2] - ab[2] * ac[1],
+          ab[2] * ac[0] - ab[0] * ac[2],
+          ab[0] * ac[1] - ab[1] * ac[0],
+        ],
+        faces,
+      );
+    };
+    surface([3, 2, 1, 0]);
+    surface([4, 5, 6, 7]);
+    for (let i = 0; i < count; i++) {
+      const j = (i + 1) % count;
+      surface([i, j, j + count, i + count]);
+    }
+  }
+  lastDeployment = deployment;
+  lastReverserFaces = faces;
+  return faces;
+}
+export function engineFaces(angle: number, deployment = 0): Face[] {
+  const faces: Face[] = [];
   for (const rotor of ROTORS) {
     for (let i = 0; i < rotor.blades; i++)
       prism(
@@ -81,7 +151,9 @@ export function engineFaces(angle: number): Face[] {
     );
     prism(rotor.x, hub, 4, faces);
   }
-  return faces.sort((a, b) => a.depth - b.depth);
+  return [...faces, ...reverserFaces(deployment)].sort(
+    (a, b) => a.depth - b.depth,
+  );
 }
 export function svgPath(points: readonly (readonly [number, number])[]) {
   return points

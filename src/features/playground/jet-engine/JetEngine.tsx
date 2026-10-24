@@ -1,16 +1,14 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import {
-  airPoint,
-  enginePower,
   engineSpeed,
+  type ThrustMode,
 } from "../../../domain/playground/jet-engine";
 import { useViewportPlayback } from "../../../shared/hooks/useViewportPlayback";
 import { createEngineRenderer } from "./renderer";
-import { engineFaces, project, svgPath } from "./mesh";
+import { stillAir, stillFaces } from "./svg-frame";
+import { engineFeedback } from "./feedback";
 import backLight from "./engine-back-light.svg";
 import backDark from "./engine-back-dark.svg";
-import frontLight from "./engine-front-light.svg";
-import frontDark from "./engine-front-dark.svg";
 
 const PRESETS = [
   { name: "Idle", value: 25 },
@@ -26,23 +24,28 @@ function subscribeTheme(callback: () => void) {
   return () => observer.disconnect();
 }
 const themeSnapshot = () => document.documentElement.dataset.theme === "dark";
-const staticFaces = engineFaces(0);
 
 export function JetEngine() {
   const [speed, setSpeed] = useState(35);
-  const [available, setAvailable] = useState(false);
+  const [mode, setMode] = useState<ThrustMode>("forward");
+  const [available, setAvailable] = useState<boolean | undefined>(undefined);
   const [artFailed, setArtFailed] = useState(false);
+  const [loadedArt, setLoadedArt] = useState<string>();
   const dark = useSyncExternalStore(subscribeTheme, themeSnapshot, () => false);
+  const artSrc = dark ? backDark : backLight;
+  const artReady = loadedArt === artSrc;
   const stage = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const renderer = useRef<ReturnType<typeof createEngineRenderer>>(undefined);
-  const power = enginePower(speed);
   const {
     playing: running,
     reduced,
     play,
     pause,
-  } = useViewportPlayback(stage, available && speed > 0 && !artFailed);
+  } = useViewportPlayback(
+    stage,
+    !!available && artReady && speed > 0 && !artFailed,
+  );
   useEffect(() => {
     if (!canvas.current) return;
     const view = createEngineRenderer(canvas.current, () => {
@@ -56,8 +59,8 @@ export function JetEngine() {
     };
   }, []);
   useEffect(() => {
-    renderer.current?.configure(speed, reduced);
-  }, [speed, reduced]);
+    renderer.current?.configure(speed, reduced, mode);
+  }, [speed, reduced, mode]);
   useEffect(() => {
     if (running) renderer.current?.play();
     else renderer.current?.pause();
@@ -72,28 +75,14 @@ export function JetEngine() {
   function reset() {
     pause();
     setSpeed(35);
+    setMode("forward");
     renderer.current?.reset(35);
   }
-  const fallbackRoutes = Array.from(
-    { length: speed === 0 ? 0 : Math.round(8 + speed * 0.2) },
-    (_, route) => {
-      const points = Array.from({ length: 45 }, (_, i) =>
-        airPoint(route, i / 44, power),
-      );
-      return {
-        route,
-        cool: svgPath(
-          points.filter((p) => route % 3 !== 0 || p[0] <= -8).map(project),
-        ),
-        hot:
-          route % 3 === 0
-            ? svgPath(points.filter((p) => p[0] >= -20).map(project))
-            : "",
-      };
-    },
-  );
+  const fallbackRoutes =
+    available === false && artReady ? stillAir(speed, mode) : [];
+  const fallbackFaces = available === false && artReady ? stillFaces(mode) : [];
   return (
-    <div className="jet-engine" data-playing={running}>
+    <div className="jet-engine" data-playing={running} data-thrust={mode}>
       <header className="engine-heading">
         <div>
           <span className="play-kicker">01 / ANATOMY · AIR IN MOTION</span>
@@ -121,19 +110,62 @@ export function JetEngine() {
           Heated core air
         </span>
       </div>
+      <div className="engine-thrust-control">
+        <button
+          type="button"
+          aria-pressed={mode === "reverse"}
+          aria-describedby="engine-thrust-help"
+          onClick={() => setMode(mode === "forward" ? "reverse" : "forward")}
+        >
+          Reverse thrust{" "}
+          <span aria-hidden="true">{mode === "reverse" ? "On" : "Off"}</span>
+        </button>
+        <div className="engine-thrust-help">
+          <p
+            id={mode === "forward" ? "engine-thrust-help" : undefined}
+            aria-hidden={mode !== "forward"}
+          >
+            Try the landing reverser: deploy doors to turn bypass air forward,
+            not reverse the engine’s rotation.
+          </p>
+          <p
+            id={mode === "reverse" ? "engine-thrust-help" : undefined}
+            aria-hidden={mode !== "reverse"}
+          >
+            Landing illustration: doors redirect blue bypass air forward. The
+            fan keeps spinning normally; orange core exhaust still exits
+            rearward.
+          </p>
+        </div>
+      </div>
       <div
         className="engine-stage"
         ref={stage}
         role="img"
-        aria-label={`Cutaway aircraft turbofan at ${speed} percent speed. ${running ? "Fan, core rotors and airflow are moving." : "Still engine and airflow view."}`}
+        aria-label={
+          artFailed
+            ? "Engine artwork unavailable."
+            : !artReady
+              ? "Loading the cutaway aircraft engine artwork."
+              : `Wing-mounted cutaway aircraft turbofan at ${speed} percent speed. ${mode === "reverse" ? "Reverse thrust selected: bypass air redirects forward; core exhaust and blade rotation retain their normal direction." : "Forward thrust selected."} ${running ? "Fan, core rotors and airflow are moving." : "Still engine and airflow view."}`
+        }
       >
         <img
           className="engine-rear"
           width="1100"
           height="480"
-          src={dark ? backDark : backLight}
+          src={artSrc}
           alt=""
           draggable="false"
+          onLoad={(event) => {
+            const image = event.currentTarget;
+            if (
+              image.complete &&
+              image.naturalWidth > 0 &&
+              image.currentSrc === new URL(artSrc, document.baseURI).href
+            )
+              setLoadedArt(artSrc);
+          }}
           onError={() => {
             setArtFailed(true);
           }}
@@ -142,43 +174,46 @@ export function JetEngine() {
           className="engine-fallback engine-layer"
           viewBox="0 0 1100 480"
           aria-hidden="true"
-          style={{ visibility: available ? "hidden" : "visible" }}
+          style={{
+            visibility:
+              available === false && artReady && !artFailed
+                ? "visible"
+                : "hidden",
+          }}
         >
+          {fallbackFaces.map((face, index) => (
+            <g key={index}>
+              <path
+                className="engine-blade"
+                data-shade={face.shade}
+                d={face.fill}
+              />
+              <path className="engine-blade-outline" d={face.edges} />
+            </g>
+          ))}
           {fallbackRoutes.map(({ route, cool, hot }) => (
             <g key={route}>
               <path className="fallback-cool" d={cool} />
               <path className="fallback-hot" d={hot} />
             </g>
           ))}
-          {staticFaces.map((face, index) => (
-            <path
-              key={index}
-              className="engine-blade"
-              data-shade={face.shade}
-              d={svgPath(face.points) + "Z"}
-            />
-          ))}
         </svg>
         <canvas
           className="engine-layer engine-canvas"
           ref={canvas}
           aria-hidden="true"
-          style={{ visibility: available ? "visible" : "hidden" }}
-        />
-        <img
-          className="engine-layer engine-front"
-          width="1100"
-          height="480"
-          src={dark ? frontDark : frontLight}
-          alt=""
-          draggable="false"
-          onError={() => {
-            setArtFailed(true);
+          style={{
+            visibility:
+              available && artReady && !artFailed ? "visible" : "hidden",
           }}
         />
       </div>
       <div className="engine-view-caption" aria-hidden="true">
-        <span>ENGINE CUTAWAY</span>
+        <span>
+          {mode === "reverse"
+            ? "REVERSE THRUST · BYPASS FORWARD"
+            : "UNDER-WING CUTAWAY"}
+        </span>
         <span>
           {running
             ? "AIRFLOW LIVE"
@@ -230,7 +265,7 @@ export function JetEngine() {
           <div className="engine-playback">
             <button
               className="engine-play"
-              disabled={!available || reduced || artFailed}
+              disabled={!available || !artReady || reduced || artFailed}
               onClick={() => {
                 if (running) pause();
                 else {
@@ -276,24 +311,34 @@ export function JetEngine() {
           </span>
         </li>
         <li>
-          <strong>4 · Exhaust</strong>
-          <span>The core and bypass streams meet behind the engine.</span>
+          <strong>
+            {mode === "reverse" ? "4 · Reverse thrust" : "4 · Exhaust"}
+          </strong>
+          <span>
+            {mode === "reverse"
+              ? "Blocker flaps redirect bypass air through open doors toward the front; core exhaust continues rearward."
+              : "The core and bypass streams meet behind the engine."}
+          </span>
         </li>
       </ol>
       <p className="engine-feedback" role="status" aria-atomic="true">
-        {speed === 0
-          ? "Engine off. Increase engine speed to start the airflow."
-          : reduced
-            ? `Static view at ${speed}%. Reduced motion is on; speed still changes the airflow density and exhaust reach.`
-            : !available
-              ? `Static SVG view at ${speed}%. Canvas animation is unavailable; the speed control still updates the air paths.`
-              : running
-                ? `Running at a ${speed}% setting. Higher speed means faster blades, faster and denser air trails, and a longer exhaust stream.`
-                : `Paused at ${speed}%. Play the engine or change its speed to see the airflow.`}
+        {engineFeedback({
+          speed,
+          mode,
+          available,
+          artFailed,
+          artReady,
+          reduced,
+          running,
+        })}
       </p>
       <p className="engine-disclaimer">
-        Illustrative turbofan cutaway. Rotation is slowed; colors reveal air
-        routes and heating. Not real engine data or a thermodynamic simulation.
+        Illustrative under-wing turbofan cutaway. The pylon joins the engine to
+        the wing; the open side exposes its internals. Rotation is slowed;
+        colors reveal air routes and heating. Not real engine data or a
+        thermodynamic simulation. The reverser is a simplified cold-stream
+        landing illustration, not a particular aircraft’s mechanism or operating
+        procedure.
       </p>
     </div>
   );
