@@ -1,5 +1,10 @@
 # Jet Engine · Anatomy Hero
 
+This document owns the current engine model, rendering design, provenance, and
+authoring workflow. For general setup, use [README](../README.md#run-locally);
+for application boundaries, use [Architecture](../ARCHITECTURE.md); for dated
+verification/publication evidence, use [the release record](RELEASE_REVIEW.md).
+
 ## Concept and scope
 
 A cutaway aircraft turbofan replaces Pin & bolt, following the user's request for
@@ -59,8 +64,10 @@ mass-flow or bypass ratio. The shared pure model owns all visual speed mappings.
 
 ## Rendering boundaries
 
-Anatomy authors one complete static SVG per theme, in the measured global painter's
-order. Each convex casing panel is an independent audited draw item; panels are
+Anatomy authors one complete fixed-scene SVG per theme, in the measured global
+painter's order. Moving rotors and reverser panels are composited above that base
+in canvas or the SVG-only fallback; the base alone is not the complete engine.
+Each convex casing panel is an independent audited draw item; panels are
 not hidden inside a group with an unchecked internal order. Wing seams and access
 panel outlines paint with their actual host rather than on a universal
 foreground overlay. Guide vanes are fixed parts, not duplicate canvas geometry.

@@ -2,6 +2,10 @@
 
 The portfolio is a small React application with seven optional experiences. Its architecture separates reasons to change without adding a framework, service container, or inheritance hierarchy.
 
+This is the current technical design, not a release checklist or historical case
+study. Use [the documentation map](README.md#documentation-map) for document owners
+and [the roadmap summary](ROADMAP.md#current-status-and-next-steps) for active work.
+
 This document owns technical structure, dependency contracts, and design rationale. For agent workflow, verification commands, content safeguards, and delivery instructions, see [AGENTS.md](AGENTS.md).
 
 ## Source map
@@ -23,7 +27,7 @@ src/
       algorithm-garden/            UI and CSS
       signal-sculpture/            Controls, canvas renderer, CSS
       gravity-loom/                Field controls, trail renderer, CSS
-      jet-engine/                  Speed controls, canvas mesh/air renderer, SVG layers, CSS
+      jet-engine/                  Speed/thrust controls, depth-tested canvas, SVG base/fallback, CSS
   domain/
     playground/                    Pure cache/puzzle/traversal models
     simulation/                    Maintained systems models used by API and CLI

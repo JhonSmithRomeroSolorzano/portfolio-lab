@@ -7,6 +7,7 @@ This is a repeatable review guide, not a claim of completed human testing. Autom
 - The October 15 implementation review reproduced point jumps on off-center grabs, secondary-pointer cancellation ending the primary drag, repeated Space toggles, unchanged arrow-movement status text, small résumé links, and 11px mobile contact copy. Regression coverage lives in `e2e/review-journeys.spec.ts`.
 - Chromium and WebKit can exercise keyboard, layout, native touch taps, downloads, and semantic checks. Native touch-move/scroll injection in the new review test uses Chromium CDP and is explicitly skipped in WebKit. Neither desktop engine emulation is a physical iPhone assessment.
 - **Still pending:** a new visitor attempting the tasks below, physical-device touch review, and a human screen-reader listening session. Do not mark these complete based on automated results.
+- The [October 23 review and completed PR #17 release](RELEASE_REVIEW.md) record automated/visual evidence for the centered engine, reverse thrust, and the public portfolio. Successful deployment does not complete any human session below.
 
 | Session                 | Status  | Evidence needed                                                       |
 | ----------------------- | ------- | --------------------------------------------------------------------- |
@@ -28,6 +29,7 @@ Start on Overview, without pointing out controls. Give goals rather than gesture
 4. In Gravity Loom: “Make the drawing change direction.”
 5. “Control a different point.”
 6. “Stop it, then continue.”
+7. In Jet Engine: “Change how the air leaves the engine without making the fan spin backward.”
 
 Observe their first action, whether they find the controllable points and selected-point feedback, where they hesitate, and whether they recover unaided. Afterwards ask what they expected and what felt surprising. Keep only consented, anonymized issue summaries; do not invent success rates or participants. Turn reproducible problems into focused fixes and tests.
 
@@ -45,6 +47,7 @@ Use a small phone in light/dark themes, portrait/landscape, and with larger text
 - Use Motion settings to choose Reduce animation, then scroll through the map and all three autoplay drawings. They should remain still, with controls and static explanations available. Reload, change the preference in another tab, and test Follow device with the OS reduced-motion setting both on and off.
 - Enable reduced motion: move points and use native controls without continuous animation. Test the settings disclosure at enlarged text sizes and verify it does not cover the control that has keyboard focus after closing.
 - Use Previous/Next and Back to collection in portrait and landscape, including 200% text. Links should remain readable and at least 44px high, preserve the page's query context, and land at the expected heading or chooser.
+- In Jet Engine, try speed presets, zero speed, Reverse thrust, Pause, and Reset in both themes. Check that the frame stays centered/stable, the fan keeps its normal direction, blue bypass air redirects forward, and orange core exhaust stays rearward. Mode changes should preserve the selected speed and a manual pause; Reset restores forward thrust at 35%, paused. Repeat with reduced motion and larger text; this is an illustration, not an aircraft operating procedure.
 
 ## Screen-reader listening session
 
@@ -57,7 +60,8 @@ Prefer a tester using their usual assistive technology. Suggested combinations a
 5. Select a point, move it repeatedly, change strength/flow, pause, and reset. Listen for meaningful changing positions, selected/disabled states, lost focus, silence, duplicates, or excessive announcements. No particle frame should be a live announcement.
 6. Find Motion settings and operate its native radio group. Listen to selected preference and effective motion feedback, including when the device itself requests reduced motion. Escape should close the disclosure and return focus to its summary; Tab must remain free to leave it.
 7. Use an experience's Previous/Next and Back to collection links. Check the link's destination name, heading/chooser focus, reading order, browser Back, and the first/last boundaries. No focus trap or loop is expected.
-8. Repeat key actions with reduced motion and enlarged text. Separate what was heard from what was only inspected in the DOM.
+8. Enter Jet Engine. Listen to the named speed slider and its value, the Reverse thrust button's pressed state, and only the active mode explanation. Check meaningful feedback for off, paused, reduced-motion, and unavailable-canvas views without per-frame announcements or any implication of negative rotor speed.
+9. Repeat key actions with reduced motion and enlarged text. Separate what was heard from what was only inspected in the DOM.
 
 ## Recruiter path
 

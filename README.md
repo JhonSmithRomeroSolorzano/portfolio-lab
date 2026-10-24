@@ -4,6 +4,25 @@ Jhon Smith Romero’s engineering workspace: explore my stack, inspect a working
 
 **[Explore the portfolio](https://jhonsmithromerosolorzano.github.io/portfolio-lab/)** · **[Case study](CASE_STUDY.md)** · **[GitHub profile](https://github.com/JhonSmithRomeroSolorzano)** · **[Roadmap](ROADMAP.md)**
 
+## Documentation map
+
+| Document                                                              | Owns                                                                                         |
+| --------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| [README](README.md)                                                   | Current product behavior, local setup, commands, and deployment operations.                  |
+| [Architecture](ARCHITECTURE.md)                                       | Source map, dependency direction, runtime/build boundaries, and technical decisions.         |
+| [Agent guide](AGENTS.md)                                              | Agent workflow, verification requirements, content safeguards, and delivery rules.           |
+| [Contributing](CONTRIBUTING.md)                                       | Contributor checklist, linked to the owning technical and release guidance.                  |
+| [Roadmap](ROADMAP.md#current-status-and-next-steps)                   | Current status and next steps, followed by dated implementation history.                     |
+| [Jet Engine](docs/JET_ENGINE.md)                                      | Engine model limits, geometry/rendering design, provenance, and authoring commands.          |
+| [Usability review](docs/USABILITY_REVIEW.md)                          | Human review procedures and outstanding visitor/device/screen-reader sessions.               |
+| [Release review](docs/RELEASE_REVIEW.md)                              | Dated frontend/architecture findings, validation evidence, and the completed PR #17 release. |
+| [Local API](server/README.md)                                         | Optional API setup, routes, limits, diagnostics, and contract.                               |
+| [Case study](CASE_STUDY.md) / [archive](archive/signal-lab/README.md) | Historical Signal Lab design and retained reference code—not the current public UI.          |
+
+Use the owning document for current rules and cross-link rather than repeating them.
+Dated review results and roadmap test counts describe their recorded revision;
+they are not live counters or instructions to restore retired interfaces.
+
 ## Résumé and presentation
 
 The [résumé section](https://jhonsmithromerosolorzano.github.io/portfolio-lab/#resume) includes selected employment, education, and certifications verified against [my LinkedIn profile](https://www.linkedin.com/in/jhonsmithr) on October 6, 2026. Dates are preserved as listed, including overlapping roles; descriptions do not imply unverified employer relationships or outcomes. Public professional content lives in `src/features/portfolio/data/profile.ts`.
@@ -104,7 +123,7 @@ The companion skills are upstream reference material, not an application setup r
 
 [Anatomy](https://github.com/wheresryan22/anatomy) is installed for this project at `.opencode/skills/anatomy`, with its MIT license, kit, references, scripts, and examples. Mention `@anatomy` for a detailed interactive isometric figure; restart OpenCode if a running session does not discover it. The pinned upstream revision and illustration design are recorded in [the Jet Engine notes](docs/JET_ENGINE.md). Installation adds no application dependency.
 
-`npm run build:engine` regenerates Jet Engine's complete theme SVGs, projection, and visibility data; `npm run build:engine -- --check` verifies them without writing, and `npm run build:engine -- --audit` checks the actual individual fixed draw items. Moving blades and air share per-pixel visibility against that geometry; the SVG fallback clips the same faces and air routes. The kit runs only in authoring, not in the browser or ordinary builds. See [the depth/occlusion design](docs/JET_ENGINE.md#rendering-boundaries). Other projects can use the upstream [installation instructions](https://github.com/wheresryan22/anatomy#install).
+`npm run build:engine` regenerates Jet Engine's fixed-scene theme SVGs, projection, and visibility data; `npm run build:engine -- --check` verifies them without writing. `npm run build:engine -- --audit` additionally checks the individual fixed draw items and reverser support/intersections at 21 deployment positions. The unit suite also runs audit/reproducibility verification. Moving blades, reverser panels, and air share per-pixel visibility; the SVG fallback clips the same faces and air routes. The kit is authoring/test-only, not part of the browser or `npm run build`. See [the depth/occlusion design](docs/JET_ENGINE.md#rendering-boundaries). Other projects can use the upstream [installation instructions](https://github.com/wheresryan22/anatomy#install).
 
 ### Résumé downloads
 
@@ -185,7 +204,13 @@ The build prerenders the same React page into HTML, then hydrates its controls i
 
 ### Deployment integrity
 
-Every build writes `release.json` with its source commit and SHA-256 asset hashes. The Pages workflow verifies the served commit and every listed asset after deployment. Run `npm run verify:deployment -- <public-url> <private-preview-url> --private-stdin` to compare both hosts after publication; supply `{ "token": "..." }` through stdin only using the authorized Sites access token. The verifier scopes that header to the existing private preview and rejects redirects. Never put tokens in arguments, files, or logs. PDFs have variable generation metadata, so the manifest covers their shared plain-text source export instead. This check runs after both publishes; it does not automatically deploy the private preview or change its audience.
+Every build writes `release.json` with its source commit and SHA-256 asset hashes. The Pages workflow automatically verifies the public release after deployment:
+
+```sh
+npm run verify:deployment -- https://jhonsmithromerosolorzano.github.io/portfolio-lab/
+```
+
+The expected source defaults to the checked-out commit, or `GITHUB_SHA` in CI. The private Sites preview is published separately; the Pages workflow neither republishes it nor changes its audience. To compare both hosts after separately publishing the same validated build, run `npm run verify:deployment -- <public-url> <private-preview-url> --private-stdin`; supply `{ "token": "..." }` through stdin only using the authorized Sites access token. The verifier scopes that header to the existing private preview and rejects redirects. Never put tokens in arguments, files, or logs. PDFs have variable generation metadata, so the manifest covers their shared plain-text source export instead.
 
 ### Performance gates
 

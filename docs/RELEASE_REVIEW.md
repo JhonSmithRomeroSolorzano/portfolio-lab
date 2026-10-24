@@ -3,6 +3,11 @@
 Reviewed on October 23, 2026, starting from `aa46721`, for
 [PR #17](https://github.com/JhonSmithRomeroSolorzano/portfolio-lab/pull/17).
 
+This is a dated review/release record, not a live deployment tracker. Current
+product/setup guidance lives in [README](../README.md), technical design in
+[Architecture](../ARCHITECTURE.md), and priorities in
+[the roadmap summary](../ROADMAP.md#current-status-and-next-steps).
+
 The source review focuses on Jet Engine and its domain/shared boundaries; the
 browser release matrix covers the public portfolio. Unchanged archived experiments
 and the optional API are not claimed as an exhaustive source or security review.
@@ -55,7 +60,7 @@ scheme advisories. The lockfile-only fix updates `zod` from 4.6.5 to 4.6.7 and
 dependency declarations, audit thresholds, or runtime dependencies changed.
 A clean `npm ci` and dependency audit report zero vulnerabilities.
 
-## Release gates
+## Validation evidence
 
 Local candidate validation passed:
 
@@ -67,9 +72,20 @@ Local candidate validation passed:
 - Three sequential simulated mobile Lighthouse samples: median LCP 2.13s, CLS 0,
   TBT 3.5ms. These are local regression measurements, not real-user guarantees.
 
-The final candidate must pass `npm run check`, the complete Chromium/WebKit suite,
-the sequential mobile performance gate, and the up-to-date protected Linux `build`
-check. The Pages workflow then deploys its validated artifact and verifies the
-served commit and asset hashes. Publication does not weaken protection or alter
-the existing private preview's audience. See [deployment](../README.md#deployment)
-and the completed validation record in [the roadmap](../ROADMAP.md).
+## Published release
+
+The reviewed candidate was committed as `6fed9dc`. The protected
+[PR validation run](https://github.com/JhonSmithRomeroSolorzano/portfolio-lab/actions/runs/40060881337)
+passed before PR #17 merged as `eb1499b`. The
+[main release workflow](https://github.com/JhonSmithRomeroSolorzano/portfolio-lab/actions/runs/40062033703)
+completed its `build`, `deploy`, and `verify` jobs on October 24, 2026 (UTC).
+Both Linux browser runs passed 293 cases with the existing platform-specific skip
+and no retries.
+
+Independent verification confirmed the served source `eb1499b` and all 25 listed
+asset hashes. Hosted light/desktop and dark/phone smoke checks exercised reverse
+thrust without observed page errors or horizontal overflow.
+
+This publication updated **GitHub Pages only**. The private Sites preview was not
+republished and its audience was not changed. Current publication and verification
+procedures belong in [README's deployment guidance](../README.md#deployment).

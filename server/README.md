@@ -2,6 +2,10 @@
 
 The browser demo runs independently. This optional Node HTTP service evaluates the same pure TypeScript model. It does not start Redis or a database, and it does not turn modeled results into real performance measurements.
 
+Run the commands below from the repository root using the Node.js version in
+[the main setup guide](../README.md#run-locally). This file owns the API contract
+and operations; [Architecture](../ARCHITECTURE.md) owns its application boundaries.
+
 ```sh
 npm ci
 npm run api

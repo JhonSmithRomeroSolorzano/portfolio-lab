@@ -111,4 +111,4 @@ Versioned configuration links validate all fields before applying them and alway
 - [`scripts/replay.ts`](scripts/replay.ts): batch execution.
 - [`tests/`](tests/): behavior and boundary checks.
 
-Features were developed with AI assistance and checked through tests, builds, and browser inspection. All code and examples in this project are original portfolio work; no employer code, client data, or private interview material is included.
+Features were developed with AI assistance and checked through tests, builds, and browser inspection. The first-party simulation models, API, CLI, and dashboard examples described here are original portfolio work. Bundled third-party skills and drawing kits retain their upstream licenses and provenance; see [README's skill setup](README.md#opencode-uiux-skill) and [Anatomy provenance](docs/JET_ENGINE.md#provenance-and-regeneration). No employer code, client data, or private interview material is included.

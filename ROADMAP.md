@@ -2,6 +2,33 @@
 
 Aim: show practical full-stack engineering through working features and clear explanations.
 
+## Current status and next steps
+
+The public portfolio has seven experiences, including the centered under-wing Jet
+Engine with a separate cold-stream Reverse thrust mode. Product behavior belongs
+in [README](README.md#labs--play); technical boundaries belong in
+[Architecture](ARCHITECTURE.md).
+
+Latest verified application release recorded here: [PR #17](https://github.com/JhonSmithRomeroSolorzano/portfolio-lab/pull/17),
+merged as `eb1499b` and published to GitHub Pages on October 24, 2026 (UTC).
+Protected Linux validation, deployment, and served-asset verification passed:
+185 code checks, 293 browser passes and one existing platform-specific skip,
+with all 25 manifest assets verified. See [the dated release record](docs/RELEASE_REVIEW.md#published-release).
+The private Sites preview was not republished by this release; its audience is unchanged.
+
+Current follow-ups:
+
+- [ ] Conduct the first-time visitor, physical-phone, and human screen-reader sessions in [the review guide](docs/USABILITY_REVIEW.md). Automated/emulated checks do not complete those sessions.
+- [ ] Add direct contact details and concrete professional feature examples/outcomes only when Jhon supplies verified information.
+- [ ] Refine the existing experiences from reproducible visitor findings or new user feedback; do not restore retired UI or expand the catalog without a request.
+- [ ] If a private-preview update is requested, publish and verify it separately using authorized access; do not infer that a Pages deployment updated both hosts.
+
+## Reading the work log
+
+Everything below is dated implementation history. Older “Next” statements and
+validation totals describe the milestone when written, not today's backlog or
+live test counts. Use the current summary above for priorities.
+
 ## Completed — 2026-10-05
 
 ### Portfolio and repeatable experiments
@@ -32,7 +59,7 @@ Aim: show practical full-stack engineering through working features and clear ex
 
 The API is a local teaching service. The public browser demo is static and does not connect to a live cache or database. Expiry and queue experiments are separate from the steady-state model.
 
-## Résumé and visual refresh — current priority
+## Résumé and visual refresh — October 6
 
 Requested October 6; complete these before expanding the backend lab.
 
@@ -252,9 +279,11 @@ Next: finish the full browser and visual review; professional details remain dep
 - [x] Checked 320px and desktop layouts without horizontal page overflow. Measured primary/muted text contrast: light 11.34:1 / 5.05:1; dark 14.82:1 / 9.56:1. Lab text pairs range from 7.79:1 to 13.55:1.
 - [x] The expanded browser suite contains 42 Chromium/WebKit checks. Its download cleanup assertion now targets temporary blob links and preserves both permanent résumé downloads.
 
-The currently specified implementation milestones are complete. Career/contact additions still require verified details. Proposed next milestone: a guided, reproducible failure investigation that connects a shared workload, API result, and written engineering explanation, rather than adding more standalone controls. Confirm that direction before expanding the lab again.
+At this milestone, the specified implementation work was complete. The proposed next investigation below belonged to the original systems dashboard; it is not a request to expand the current public collection. Use [the current summary](#current-status-and-next-steps) for today's follow-ups.
 
 ## Next useful milestones
+
+Historical planning snapshot for the original systems dashboard, not the current backlog.
 
 1. **Browser regression suite — established:** extend the existing recruiter, comparison, library, and keyboard journeys as behavior changes; keep fixtures deterministic.
 2. **Comparison reports — complete:** persisted baselines, readable reports, versioned JSON, and links for both setups.
@@ -267,9 +296,11 @@ The currently specified implementation milestones are complete. Career/contact a
 
 ## Working rule
 
-Take the next useful, bounded task, validate it, and commit a complete change. Keep relevant tests with the feature. Follow the user's current daily scope without padding commit counts. Never create empty commits, backdate changes, or manufacture activity. Preserve unrelated edits and existing history. If external authentication or publication is blocked, report it once; do not repeatedly edit this roadmap for activity.
-
-Read README.md, CASE_STUDY.md, and AGENTS.md before continuing. Update this roadmap when real work changes its status. When these milestones are complete, propose the next worthwhile improvement.
+This historical heading is retained for context, not as a second instruction set.
+Current agent workflow and safeguards belong in [AGENTS](AGENTS.md); contributor
+verification and publication follow [CONTRIBUTING](CONTRIBUTING.md) and
+[README's deployment guidance](README.md#deployment). Active work is listed in
+[the current summary](#current-status-and-next-steps).
 
 ## Recruiter-first page and compact labs — October 8 feedback
 
@@ -785,3 +816,10 @@ Protected Linux PR validation remains the merge gate. Physical-device and human 
 - [x] Keep the existing domain/feature/shared boundaries rather than adding artificial classes or frameworks. Derive moving reverser dimensions from the same configuration as the authored opening, and isolate status-message priority in a small readonly-input, feature-local policy with focused tests.
 - [x] Resolve the release audit without changing direct dependency declarations or thresholds: lockfile-only compatible patches for transitive `zod` 4.6.5 → 4.6.7 and `fast-uri` 3.1.8 → 3.1.9. A clean `npm ci` and dependency audit report zero vulnerabilities.
 - [x] Pass local candidate validation with 185 code checks, strict types, production generation, unchanged budgets, and 293 Chromium/WebKit passes plus the existing platform-specific skip, without retries. Pass the sequential mobile performance gate with median LCP 2.13s, CLS 0, and TBT 3.5ms. Protected Linux validation and served-asset verification remain mandatory publication gates.
+
+## Documentation alignment — October 24
+
+- [x] Review all 11 first-party Markdown guides against the current product, source/configuration, and completed PR #17 release. Add a document-ownership map, make the current roadmap summary authoritative, and label older milestones/plans as historical without rewriting their test counts.
+- [x] Record the completed public release and separate automatic Pages verification from separately authorized private-preview publication. Keep human review sessions explicitly outstanding, and extend their guide to the current engine/reverser controls.
+- [x] Align contributor/agent cross-links, engine authoring/audit descriptions, optional API setup context, and the case study's first-party/third-party authorship distinction. Leave vendored skill documents and application behavior unchanged.
+- [x] Pass documentation link/path/command checks and `npm run check` with all 185 tests, strict types, production generation, and asset budgets. No browser rerun is needed for this documentation-only change.
