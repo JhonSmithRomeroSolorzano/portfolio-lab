@@ -21,6 +21,7 @@ import {
   projectDepth,
 } from "../src/features/playground/jet-engine/mesh";
 import geometry from "../src/features/playground/jet-engine/engine-depth.json";
+import audit from "../scripts/fixtures/engine-audit.json";
 import art from "../src/features/playground/jet-engine/engine-art.json";
 
 test("the wing/engine assembly stays centered and within the fixed frame across deployment", () => {
@@ -46,7 +47,7 @@ test("the wing/engine assembly stays centered and within the fixed frame across 
 });
 
 test("wing-mounted engine has sealed core shoulders and no test-stand geometry", () => {
-  const names = geometry.groups.map((group) => group.name);
+  const names = audit.groups.map((group) => group.name);
   assert.ok(!names.some((name) => name.startsWith("stand.")));
   for (const prefix of [
     "wing.skin.",
@@ -61,7 +62,7 @@ test("wing-mounted engine has sealed core shoulders and no test-stand geometry",
     [112, 116, 30],
   ].entries()) {
     const joint = new DepthIndex(
-      geometry.groups
+      audit.groups
         .filter((g) => g.name.startsWith(`core.joint.${i}.`))
         .flatMap((g) =>
           staticTriangles.slice(g.start / 3, (g.start + g.count) / 3),
@@ -91,6 +92,7 @@ test("wing-mounted engine has sealed core shoulders and no test-stand geometry",
 });
 
 test("the SVG's actual individual paint sequence matches the measured geometry order", () => {
+  assert.equal(geometry.version, audit.version);
   assert.equal(geometry.triangles.length, staticTriangles.length * 3);
   for (const theme of ["light", "dark"]) {
     const source = readFileSync(
@@ -100,8 +102,8 @@ test("the SVG's actual individual paint sequence matches the measured geometry o
     const fills = [...source.matchAll(/class="iso-fill" d="([^"]+)"/g)].map(
       (match) => match[1],
     );
-    assert.equal(fills.length, geometry.groups.length);
-    geometry.groups.forEach((group, index) => {
+    assert.equal(fills.length, audit.groups.length);
+    audit.groups.forEach((group, index) => {
       const triangles = staticTriangles.slice(
         group.start / 3,
         (group.start + group.count) / 3,
@@ -198,6 +200,7 @@ test("crossing depth planes render correctly in either draw order, unlike averag
     if (reverse) objects.reverse();
     for (const object of objects)
       raster.metal(object.t, object.color, [true, true, true]);
+    raster.finishMetal();
     const pixel = (x: number, y: number) => [
       ...raster.pixels.slice((y * 1100 + x) * 4, (y * 1100 + x) * 4 + 4),
     ];
@@ -219,6 +222,7 @@ test("metal, air segments and hot-air volumes all respect the same static depth"
   ])!;
   const raster = new EngineRaster(1100, 480, [cover]);
   raster.metal(hidden, [220, 20, 20], [true, true, true]);
+  raster.finishMetal();
   raster.line([120, 120, 1], [160, 120, 1], [0, 150, 250], 3, 1);
   raster.volume(hidden, [250, 120, 20], () => 0.7);
   const at = (120 * 1100 + 140) * 4;
@@ -252,8 +256,69 @@ test("acute reverser tips cannot paint an antialiasing miter beyond the physical
     [589.638, 267.72, 25],
   ])!;
   const raster = new EngineRaster(1100, 480, []);
-  raster.metal(tip, [100, 120, 160], [true, true, false], true);
+  raster.metal(tip, [100, 120, 160], [true, true, false]);
+  raster.finishMetal();
   assert.equal(raster.pixels[(257 * 1100 + 579) * 4 + 3], 0);
+});
+
+test("queued metal fringes resolve against final opaque depth, flush once, and clear between frames", () => {
+  const blue = triangle([
+    [90, 90, 5],
+    [320, 90, 5],
+    [90, 320, 5],
+  ])!;
+  const at = (100 * 1100 + 140) * 4;
+  for (const depth of [1, 10])
+    for (const reverse of [false, true]) {
+      const red = triangle([
+        [100, 100.6, depth],
+        [300, 100.6, depth],
+        [100, 300, depth],
+      ])!;
+      const raster = new EngineRaster(1100, 480, []),
+        objects = [
+          { t: red, color: [220, 0, 0] as const },
+          { t: blue, color: [0, 0, 220] as const },
+        ];
+      if (reverse) objects.reverse();
+      for (const object of objects)
+        raster.metal(object.t, object.color, [true, true, true]);
+      raster.finishMetal();
+      const expected = depth === 10 ? [88, 0, 132, 255] : [0, 0, 220, 255];
+      assert.deepEqual([...raster.pixels.slice(at, at + 4)], expected);
+      raster.finishMetal();
+      assert.deepEqual([...raster.pixels.slice(at, at + 4)], expected);
+      raster.begin();
+      raster.metal(red, [220, 0, 0], [true, true, true]);
+      raster.begin();
+      raster.finishMetal();
+      assert.equal(raster.pixels[at + 3], 0);
+    }
+});
+
+test("fringes are not prematurely rejected before later epsilon-tied opaque surfaces", () => {
+  const raster = new EngineRaster(1100, 480, []);
+  const opaque = (z: number) =>
+    triangle([
+      [90, 90, z],
+      [320, 90, z],
+      [90, 320, z],
+    ])!;
+  raster.metal(opaque(5), [0, 0, 220], [true, true, true]);
+  raster.metal(
+    triangle([
+      [100, 100.6, 4.9967],
+      [300, 100.6, 4.9967],
+      [100, 300, 4.9967],
+    ])!,
+    [220, 0, 0],
+    [true, true, true],
+  );
+  raster.metal(opaque(4.9983), [0, 0, 220], [true, true, true]);
+  raster.metal(opaque(4.9966), [0, 0, 220], [true, true, true]);
+  raster.finishMetal();
+  const at = (100 * 1100 + 140) * 4;
+  assert.deepEqual([...raster.pixels.slice(at, at + 4)], [88, 0, 132, 255]);
 });
 
 test("SVG fallback clips polygons and individual line intervals rather than assigning a whole front layer", () => {
@@ -299,6 +364,7 @@ test("cached guide coverage is retested against the current moving metal", () =>
     [100, 300, 8],
   ])!;
   raster.metal(cover, [200, 30, 30], [true, true, true]);
+  raster.finishMetal();
   raster.samples(samples);
   const at = (120 * 1100 + 140) * 4;
   assert.deepEqual([...raster.pixels.slice(at, at + 4)], [200, 30, 30, 255]);
@@ -310,7 +376,7 @@ test("cached guide coverage is retested against the current moving metal", () =>
 test("real engine poses reproduce both old layering errors and pass pixel/ray visibility checks", () => {
   const fixed = new DepthIndex(staticTriangles);
   const oldFront = new DepthIndex(
-    geometry.groups
+    audit.groups
       .filter((g) => g.legacyLayer === "front")
       .flatMap((g) =>
         staticTriangles.slice(g.start / 3, (g.start + g.count) / 3),
@@ -336,14 +402,7 @@ test("real engine poses reproduce both old layering errors and pass pixel/ray vi
     for (const face of faces)
       for (let i = 0; i < face.triangles.length; i++)
         raster.metal(face.triangles[i], [60, 100, 150], face.boundaries[i]);
-    for (const face of faces)
-      for (let i = 0; i < face.triangles.length; i++)
-        raster.metal(
-          face.triangles[i],
-          [60, 100, 150],
-          face.boundaries[i],
-          true,
-        );
+    raster.finishMetal();
     for (const t of moving) {
       const p: DepthPoint = [0, 1, 2].map(
         (axis) => t.vertices.reduce((sum, v) => sum + v[axis], 0) / 3,

@@ -317,6 +317,69 @@ test("canvas-free reverse mode updates doors and clipped air, remains off at zer
   await expect(page.locator(".fallback-cool")).toHaveCount(0);
 });
 
+test("inactive engine policies stop painting rather than repeatedly repainting identical pixels", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 1000 });
+  await page.addInitScript(() => {
+    const native = CanvasRenderingContext2D.prototype.putImageData;
+    CanvasRenderingContext2D.prototype.putImageData = function (
+      this: CanvasRenderingContext2D,
+      ...args: [ImageData, number, number, ...number[]]
+    ) {
+      if (this.canvas.matches(".engine-canvas"))
+        this.canvas.dataset.testPaints = String(
+          Number(this.canvas.dataset.testPaints || 0) + 1,
+        );
+      Reflect.apply(native, this, args);
+    };
+  });
+  await page.goto("/#jet-engine");
+  const canvas = page.locator(".engine-canvas"),
+    state = page.locator(".jet-engine");
+  const paints = async () =>
+    Number(await canvas.getAttribute("data-test-paints"));
+  const active = async () => {
+    await expect(state).toHaveAttribute("data-playing", "true");
+    const before = await paints();
+    await expect.poll(paints).toBeGreaterThan(before);
+  };
+  const idle = async () => {
+    await expect(state).toHaveAttribute("data-playing", "false");
+    await page.evaluate(
+      () =>
+        new Promise<void>((resolve) =>
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+        ),
+    );
+    const before = await paints();
+    await page.waitForTimeout(180);
+    expect(await paints()).toBe(before);
+  };
+  await active();
+  await page.getByRole("button", { name: "Pause engine", exact: true }).click();
+  await idle();
+  await page.getByRole("button", { name: "Play engine", exact: true }).click();
+  await page.locator(".engine-stage").scrollIntoViewIfNeeded();
+  await active();
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await idle();
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await active();
+  await page.locator("#resume").scrollIntoViewIfNeeded();
+  await idle();
+  await page.locator(".engine-stage").scrollIntoViewIfNeeded();
+  await active();
+  await page.evaluate(() => {
+    Object.defineProperty(document, "hidden", {
+      configurable: true,
+      value: true,
+    });
+    document.dispatchEvent(new Event("visibilitychange"));
+  });
+  await idle();
+});
+
 async function pixels(page: Page) {
   return page.locator(".engine-canvas").evaluate((node: HTMLCanvasElement) => {
     const data = node

@@ -11,7 +11,10 @@ const sizes: AssetSizes = {
   portrait: (await readFile("dist/jhon-smith-romero.jpg")).length,
 };
 for (const file of await readdir("dist/assets")) {
-  const bytes = gzipSync(await readFile(`dist/assets/${file}`)).length;
+  const source = await readFile(`dist/assets/${file}`);
+  if (/^JetEngine-.*\.js$/.test(file) && source.includes("legacyLayer"))
+    throw new Error("Audit-only mesh metadata leaked into the engine bundle.");
+  const bytes = gzipSync(source).length;
   if (file.endsWith(".js")) sizes.allJsGzip += bytes;
   if (/^index-.*\.js$/.test(file)) sizes.entryJsGzip += bytes;
   if (file.endsWith(".css")) sizes.cssGzip += bytes;

@@ -2,6 +2,10 @@
 
 The portfolio is a small React application with seven optional experiences. Its architecture separates reasons to change without adding a framework, service container, or inheritance hierarchy.
 
+This is the current technical design, not a release checklist or historical case
+study. Use [the documentation map](README.md#documentation-map) for document owners
+and [README's current priorities](README.md#current-status-and-next-steps) for active work.
+
 This document owns technical structure, dependency contracts, and design rationale. For agent workflow, verification commands, content safeguards, and delivery instructions, see [AGENTS.md](AGENTS.md).
 
 ## Source map
@@ -23,7 +27,7 @@ src/
       algorithm-garden/            UI and CSS
       signal-sculpture/            Controls, canvas renderer, CSS
       gravity-loom/                Field controls, trail renderer, CSS
-      jet-engine/                  Speed controls, canvas mesh/air renderer, SVG layers, CSS
+      jet-engine/                  Speed/thrust controls, depth-tested canvas, SVG base/fallback, CSS
   domain/
     playground/                    Pure cache/puzzle/traversal models
     simulation/                    Maintained systems models used by API and CLI
@@ -46,7 +50,7 @@ e2e/                               Production Chromium and WebKit journeys
 
 The Node API imports the simulation domain. The résumé generator imports verified `features/portfolio/data` without importing presentation components. The archive may use maintained modules, but maintained application/server/scripts code must never depend on the archive. Tests can import either side to retain coverage of historical portable formats and adapters.
 
-The authoring-only `scripts/build-jet-engine.mjs` has explicit dependency exceptions for Anatomy's `iso-kit.mjs`, `lathe.mjs`, and `audit.mjs`. It records the actual fixed prisms, individual convex casing panels, and turned profiles, solves the global static draw order, and writes a complete SVG per theme plus projection/visibility metadata. Surface marks belong to their hosts. Indexed visibility triangles come from those same recorded surfaces and are delta-encoded in the existing lazy bundle; no skill code enters the app. Ordinary builds do not run the authoring tool. See [the engine design and provenance](docs/JET_ENGINE.md).
+The authoring-only `scripts/build-jet-engine.mjs` has explicit dependency exceptions for Anatomy's `iso-kit.mjs`, `lathe.mjs`, and `audit.mjs`. It records the actual fixed prisms, individual convex casing panels, and turned profiles, solves the global static draw order, and writes a complete fixed-scene SVG per theme plus projection/visibility metadata. Surface marks belong to their hosts. Indexed visibility triangles come from those same recorded surfaces and are delta-encoded in the existing lazy bundle; no skill code enters the app. Diagnostic item names, group ranges, and legacy layer labels live separately in `scripts/fixtures/engine-audit.json`, used only by authoring/tests. Unit and build guards prevent audit metadata leaking back into the runtime payload. Ordinary builds do not run the authoring tool. See [engine model and authoring](#jet-engine-model-and-authoring).
 
 The engine's fixed structural boundary is a cropped wing section, with a contacting pylon and curved saddle rather than a floor stand. Three sectioned shoulder collars seal the core's differing casing diameters, leaving the intentional cutaway open. Subpixel matching-color SVG surface strokes close raster cracks between tangent panels, not physical gaps or depth-order mistakes. Reframing regenerates the one shared projection; browser visibility probes use physical points rather than obsolete screen coordinates.
 
@@ -66,6 +70,17 @@ These checks validate explicit source imports under the current relative-import 
 
 Jet Engine replaces the earlier lock. Its pure model maps a normalized speed setting to deliberately slowed rotation, tracer flow/density, heat, and exhaust reach; these are visual parameters, not operating data. Its imperative 2D canvas uses a cached static depth buffer and per-pixel moving-face depth above the complete SVG base. Every air segment/head and exhaust patch tests the same nearest opaque depth; interpolated depth planes replace the old average-depth sort and unconditional foreground image. Concave blade caps use ear clipping. Settled guide samples are cached but retested against current moving depth. The SVG-only fallback clips faces and line intervals against the same geometry and is computed only when needed. Static audit, pixel/ray probes over a full fan/core pattern period, and browser composite samples cover different boundaries rather than claiming that a fixed-parts audit proves the mixed render.
 
+Metal triangles are scanned once: opaque interiors establish depth immediately,
+while partial-coverage edge samples enter a reusable numeric buffer. `finishMetal`
+retests only those queued samples against final opaque depth, preserving their
+original blend order before outlines and air render. The hot pixel loop dispatches
+static depth, metal, and volume work directly rather than invoking a visitor
+callback at every covered pixel. `begin`/`finishMetal` clear queue length, so fringes
+cannot repeat or bleed between frames; regression tests cover foreground and
+occluded fringes in either surface submission order, including epsilon-tied opaque
+updates. Edge samples must not be discarded against intermediate depth. No triangle density, tracer
+density, antialiasing policy, or resolution cap was reduced for this optimization.
+
 Reverse thrust is an independent feature-local mode: the domain owns rigid tangential-hinge outer doors/blocker flaps and continuous forward-directed bypass exit curves. Core routes and nonnegative rotor-speed mappings are unchanged. The fixed SVG/depth mesh excludes the reverser opening; moving stowed panels close it in both canvas and SVG-only views. Running deployment eases in the renderer and crossfades routes after the doors open; paused/reduced-motion mode changes settle immediately without enabling playback or resetting the rotor phase. Guide caches include deployment, and lazy fallback caches are bounded to the two modes. Reset restores forward thrust. Intermediate-pose depth tests, 21-position transformed-prism clearances, real airflow pixel probes, and an acute-tip antialiasing regression cover the new boundary. This is a conceptual cold-stream landing illustration, not certified aircraft geometry or an operating/interlock model. Decorative dots are omitted from static artwork.
 
 Both door sets hinge on the fixed aft rim; circumferential blocker edge clearance prevents intermediate-pose intersections. The authoring sweep uses the kit's fixed-pose sink/support query, with a known-overlap rejection fixture, rather than its equal-offset-skipping flight routine. Nearby fixed geometry is the anchored boundary of the independently audited full scene. Unit checks run the actual sweep; no per-frame audit or skill code enters the browser. Reverser faces cache only the latest settled pose; air-route guide caches remain keyed by deployment, and reverse flow fades in only above 85% opening. Retargeting and retraction keep the current pose and the forward rotor clock.
@@ -73,6 +88,45 @@ Both door sets hinge on the fixed aft rim; circumferential blocker edge clearanc
 `REVERSER` is the single source for the opening and moving panels' axial/radial dimensions; the blocker offset and thickness derive from it, rather than repeating independent dimensions in authoring and runtime. `jet-engine/feedback.ts` owns the pure presentation policy for loading, failure, off, motion, fallback, and thrust-selection messages. It stays in the feature, not the domain, so UI wording does not leak into the geometry model; React only displays its result. Small readonly inputs and explicit renderer methods are sufficient contracts—no inheritance or dependency-injection framework is needed.
 
 React owns engine settings and playback, not per-frame updates. The opt-in shared `useViewportPlayback` gates playback on the drawing’s actual intersection, document visibility, renderer availability, and reduced motion. Its separate requested-playback state starts enabled; Pause, Reset, and zero speed disable it until an explicit Play or speed change. Offscreen/hidden interruptions preserve that intent. When intersection changes arrive in a batch, the latest entry owns viewport state. The hook cleans up its observer and listeners and uses geometry checks on scroll/resize without IntersectionObserver. Reduced motion redraws a still at the selected setting. Canvas denial retains depth-clipped SVG blade faces and air routes; missing art stops playback and offers a reload. Pixel ratio remains capped at 1.5 and frame catch-up at 50ms, with observers/listeners/frames released on cleanup. Static SVG sizes and visibility data stay within their existing art/JavaScript budgets. Cache Rescue retains its original request map.
+
+### Jet Engine model and authoring
+
+The centered illustration hangs from a cropped wing and pylon; the longitudinal
+cutaway intentionally exposes the internals. Three collars close the core's axial
+joints. It has eighteen fan blades, four ten-blade compressor rows, two ten-blade
+turbine rows, their hubs, and six stationary guide vanes. Thirty outer reverser
+panels and thirty narrower blocker flaps hinge on the aft rim. Clearances, paths,
+counts, and colors are illustration choices—not a particular aircraft, operating
+procedure, measured speed, mass-flow/bypass ratio, or thermodynamic simulation.
+Orange means heated core air, not an afterburner.
+
+The static base is not a standalone complete engine: moving rotors/doors are
+composited above it in canvas or the SVG-only fallback. The generator writes
+`engine-back-{light,dark}.svg`, `engine-art.json`, and `engine-depth.json`. Screen
+positions share the kit's 0.1px rounding; depth uses 0.001 world units. Projection
+metadata uses eight decimals to avoid platform-dependent trailing bits. Both theme
+SVG sources together have an 80 KiB compressed regression budget; visibility data
+counts toward the normal JavaScript budget. Theme changes select one base image.
+
+```sh
+npm run build:engine
+npm run build:engine -- --check
+npm run build:engine -- --audit
+```
+
+The unit suite runs the audit and reproducibility check; ordinary `npm run build`
+does not regenerate art. The fixed-item audit, 21-position reverser support/sink
+sweep, rotating pixel/ray probes, and static line-end checks cover different
+boundaries. Review desktop/mobile and 4× junctions in both themes and opening/
+closing sequences with confirmed deployment/rotor readouts when changing geometry.
+
+[Anatomy](https://github.com/wheresryan22/anatomy) is vendored unchanged under
+`.opencode/skills/anatomy` at revision
+`e9488296a44211c42701ff71705b7901470ec78f`, with its included MIT license. The engine
+design, pure model, canvas renderer, and portfolio controls are first-party work;
+the kit is not. The conceptual reverser follows the
+[cold-stream blocker principle](https://patents.google.com/patent/US9447749B2/en)
+and [separate fan/core airflow](https://www.grc.nasa.gov/WWW/K-12/airplane/turbfan.html).
 
 ## Failure boundaries and styling
 
@@ -98,7 +152,7 @@ CSS belongs to the relevant feature, with global tokens/base elements and app la
 
 [Profile data](src/features/portfolio/data/profile.ts) and [technology data](src/features/portfolio/data/technology-stack.ts) supply both the portfolio and [résumé generator](scripts/build-resume.ts). PDFKit is confined to generation scripts; generated downloads in `public/resume/` enter the static build without adding PDFKit to the browser bundle.
 
-[Vite](vite.config.ts) uses `base: "./"` so relative asset/download URLs work on both GitHub Pages project paths and root hosting. The [Pages workflow](.github/workflows/deploy.yml) and [Sites manifest](.openai/hosting.json) publish `dist/` only; neither deploys the Node API. The `/local-api` proxy exists only in Vite development, not in the built preview or hosted page. Optional API runtime details live in [server/README.md](server/README.md).
+[Vite](vite.config.ts) uses `base: "./"` so relative asset/download URLs work on both GitHub Pages project paths and root hosting. The [Pages workflow](.github/workflows/deploy.yml) and [Sites manifest](.openai/hosting.json) publish `dist/` only; neither deploys the Node API. The `/local-api` proxy exists only in Vite development, not in the built preview or hosted page. See [optional local API](#optional-local-api) for runtime details.
 
 The build-only `src/app/prerender.tsx` entry renders App through React DOM's server renderer. `scripts/prerender.ts` is the explicit script-to-app exception enforced by the dependency test. It fills the built HTML root; the browser hydrates it (or uses a new root in development). Browser-only controls use a shared hydration readiness snapshot, and the pre-paint theme bootstrap remains authoritative until hydration. The server renderer never enters the client bundle.
 
@@ -123,3 +177,65 @@ The active Loom gesture retains its initial pointer-to-point offset, so grabbing
 Flow and strength settings affect future Loom simulation steps. In normal motion mode, changing only these settings preserves the canvas pixels until the next frame; it does not repaint identical paused paths. Attractor changes and reduced-motion settings still redraw immediately. This also avoids small rasterization differences on repeated WebKit paints without relaxing pixel-stability checks.
 
 Loom's feature-local `viewport.ts` maps normalized coordinates independently across the rectangle's width and height, with a 24px handle inset (reduced only for very small fields). Canvas painting, pointer conversion/hit testing, and the resized SVG fallback share that mapping. Pointer conversion excludes the stage border. Attractors and particles are bounded to ±1 on each axis, with soft steering near the outer edge rather than a central square, so edge-positioned handles remain useful to the live field. Resizing preserves normalized positions and trajectory history; SVG observes its container only while canvas is unavailable.
+
+## Optional local API
+
+From the repository root, start `npm run api`. In a second terminal:
+
+```sh
+curl http://127.0.0.1:3001/health
+curl -X POST http://127.0.0.1:3001/v1/simulate \
+  -H 'Content-Type: application/json' \
+  -d '{"requestsPerSecond":120,"cacheEnabled":true,"database":"normal"}'
+```
+
+The [launcher](server/start.ts) binds to loopback on port 3001 (`PORT` overrides it)
+and allows five seconds for shutdown on SIGINT/SIGTERM. There is no Redis/database,
+authentication, CORS permission, or public service hosting. A public API needs a
+separate hosting/security design. [OpenAPI](server/openapi.json) owns the full
+machine-readable contract; `GET /openapi.json` serves the same document.
+
+- `GET /health` returns process/model readiness, without probing external services.
+- `POST /v1/simulate` requires integer `requestsPerSecond` (1–600), boolean `cacheEnabled`, and `database` (`normal`, `slow`, `offline`). Optional integer fields are `cacheHitPercent` (0–100), `databaseConnections` (1–32), and `writePercent` (0–100); unknown fields fail validation. Success returns `model`, `scenario`, `result`, and an explicit simulation `notice`.
+- JSON errors cover malformed input (400), unknown routes (404), wrong methods (405), bodies over 16 KiB (413), unsupported media (415), invalid scenarios (422), and exhausted request budgets (429). Responses are `no-store`; request/header timeouts are five seconds.
+- All simulation POSTs, including invalid ones, share 60 requests per fixed 60-second process window. Health/contract reads do not consume it. Headers expose limit/remaining and a whole-second `Retry-After` on rejection; restarting resets this teaching budget, not a distributed limiter.
+- Responses get fresh `X-Request-Id` values; incoming IDs are ignored. Completion logs contain only generated ID, UTC timestamp, normalized route, method, status, and duration—not bodies, queries, cookies, headers, or client addresses. Optional logger failures cannot change responses.
+
+Integration tests use ephemeral loopback ports and compare OpenAPI with actual
+responses. The retained archived client sends only explicit snapshots, omits
+credentials, rejects redirects, bounds replies to 64 KiB, validates model/settings/
+results, cancels obsolete work, and distinguishes transport timing from simulated
+latency. Its old controls are not mounted in the current app. The development-only
+proxy is not a production API connection. Use the HTTP commands above or the
+[batch CLI](README.md#batch-experiments) to run the maintained model.
+
+## Retained systems model
+
+The Signal Lab dashboard was retired on October 10, 2026. Its UI, styles, and
+browser adapters remain in `archive/signal-lab/` as reference, not another active
+application layer. The archive may import maintained models/shared primitives;
+active `src/`, `server/`, and `scripts/` must not import it. Tests retain portable
+format and adapter coverage; no archived styles enter the public bundle.
+
+The [pure steady-state model](src/domain/simulation/simulation.ts) shares input
+validation with the API and CLI. Offered work is conserved: cache hits + served
+database work + failed work = offered load. Database capacity is
+`connections × 1000 / database latency` while online. Defaults of 120 req/s,
+80% read-cache hits, zero writes, and eight 80ms connections give 100 req/s database
+capacity and 34.4ms mean modeled response time, including failures where applicable.
+This is not p95/p99, a running service, or a performance claim; fractional rates
+represent steady-state averages rather than fractional requests.
+
+Separate models keep their own assumptions: TTL hits do not renew expiry;
+background refresh retains the version captured when fetching starts. The bounded
+queue conserves completed/rejected/waiting work and never resurrects rejections.
+The FIFO scheduler prioritizes completions/old queued work at ties and succeeds
+exactly at a deadline; retry experiments use bounded budgets, exponential backoff,
+and seeded jitter, excluding network latency/capacity. Async search, debounce/
+throttle, circuit breaking, rate windows, eviction, and concurrent writes remain
+independent illustrations rather than one combined production system.
+
+The [original detailed case study](https://github.com/JhonSmithRomeroSolorzano/portfolio-lab/blob/2421e577b6fe33b49f222d200a4af6683e81aa1c/CASE_STUDY.md)
+is preserved at its dated Git revision. These first-party models/examples are
+original portfolio work; vendored skills/kits retain upstream licenses and
+provenance. No employer code, client data, or private interview material is included.

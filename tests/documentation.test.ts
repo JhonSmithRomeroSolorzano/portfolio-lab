@@ -5,13 +5,26 @@ import test from "node:test";
 
 const root = resolve(import.meta.dirname, "..");
 const read = (path: string) => readFileSync(resolve(root, path), "utf8");
+function markdownIn(directory: string): string[] {
+  if (!existsSync(resolve(root, directory))) return [];
+  return readdirSync(resolve(root, directory), { withFileTypes: true }).flatMap(
+    (entry) => {
+      if (entry.name.startsWith(".") || entry.name === "node_modules")
+        return [];
+      const path = `${directory}/${entry.name}`;
+      return entry.isDirectory()
+        ? markdownIn(path)
+        : entry.isFile() && entry.name.endsWith(".md")
+          ? [path]
+          : [];
+    },
+  );
+}
 const documents = [
   ...readdirSync(root).filter((file) => file.endsWith(".md")),
-  ...readdirSync(resolve(root, "docs"))
-    .filter((file) => file.endsWith(".md"))
-    .map((file) => `docs/${file}`),
-  "server/README.md",
-  "archive/signal-lab/README.md",
+  ...["src", "server", "scripts", "tests", "e2e", "archive", "docs"].flatMap(
+    markdownIn,
+  ),
 ];
 
 /** Match the simple inline links and ATX headings used by repository docs. */
@@ -45,7 +58,12 @@ function checkLinks(path: string): string[] {
   return problems;
 }
 
-test("first-party documentation links and npm script names match the repository", () => {
+test("the three first-party guides have valid links and npm script names", () => {
+  assert.deepEqual([...documents].sort(), [
+    "AGENTS.md",
+    "ARCHITECTURE.md",
+    "README.md",
+  ]);
   const { scripts } = JSON.parse(read("package.json")) as {
     scripts: Record<string, string>;
   };
