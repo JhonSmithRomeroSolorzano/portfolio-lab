@@ -146,6 +146,13 @@ The Connection puzzle's feature controller owns progress, visit-local Undo/hints
 
 CSS belongs to the relevant feature, with global tokens/base elements and app layout kept separate. Retired dashboard styles are outside the public bundle. Game styles remain eager, while JavaScript stays lazy. Native dynamic imports are used without Vite module preloading: preloading a shared optional dependency caused failed-download recovery to remain broken in WebKit. Browser tests cover both aborted downloads and HTTP 503, plus runtime render/effect failures.
 
+The stack tour, like viewport autoplay, uses the latest entry in each batch for its
+single observed drawing. An earlier visible entry must not retain the interval when
+the final entry is offscreen. The lifecycle browser regression injects that ordering
+and checks both interval release and resumption. Test-only resource accounting lives
+under `e2e/helpers/`, outside the application bundle; its scope and memory-measurement
+limitations are documented in [the lifecycle audit](README.md#automated-lifecycle-stability-audit).
+
 ## Runtime and build boundaries
 
 [The browser entry](src/main.tsx) hydrates the prerendered [App](src/app/App.tsx), or mounts it into an empty root in development. App composes the career content and optional experiences. The retired dashboard is outside this entry graph; its retained API and CLI use maintained domain models independently of the public page.

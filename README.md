@@ -298,3 +298,51 @@ DOM inspection does not complete these sessions.
 For each finding retain environment, task, observed/expected behavior, reproduction,
 severity, fix/test reference, and remaining limitations. Publish only approved
 sanitized summaries; keep participant identities, recordings, and raw notes private.
+
+### Physical iPhone performance session
+
+This requires a real iPhone and user-approved setup; Playwright WebKit is not iOS
+Safari evidence. Record the phone model, iOS/Safari and Mac Safari versions, tested
+release (`release.json`), orientation, theme, Reduce Motion/Low Power Mode, brightness,
+charging state, and whether the phone is already warm. Keep other workloads quiet.
+
+1. Follow WebKit's [Web Inspector setup](https://webkit.org/web-inspector/enabling-web-inspector/): enable Web Inspector under Safari's Advanced settings on the phone (Safari may be under Settings → Apps), enable developer features in Mac Safari's Advanced settings, connect the phone, and approve Trust only if you intend to trust that Mac. Select the phone's portfolio tab from Safari's Develop menu. Do not install tools, change device settings, or publish a preview just for this test without approval.
+2. Open the public portfolio in iPhone Safari. Warm up each of Jet Engine, Gravity Loom, and Signal Sculpture for ten seconds. For the engine, compare full-power forward and fully deployed reverse. Use three separate 20-second recordings per case in [Timelines](https://webkit.org/web-inspector/timelines-tab/), inspecting Frames, JavaScript/Rendering, and CPU activity. Repeat portrait/landscape and both themes. Record stalls and control response; frame-rate reference lines are not measured average FPS. Do a separate unrecorded visual pass because inspection adds overhead.
+3. Record ten-second intervals after Pause, scrolling to Résumé, and device/site motion reduction. There should be no sustained renderer work after transitions settle. Actually switch apps/lock and return; don't substitute synthetic visibility events. Manual Pause must survive the return. Test the overview's stack tour stopping offscreen too.
+4. In a separate memory recording, warm all seven experiences, then repeat six navigation/resize/theme/motion cycles, ending at Résumé. Compare equivalent idle checkpoints in Memory/JavaScript Allocations where supported; inspect retainers for growing detached objects. Keep memory recording separate from frame timing because it adds overhead. Export sanitized recordings privately for analysis, not into this public repository.
+5. Keep any energy assessment separate: short CPU traces or a battery-percent change cannot establish battery cost. If doing a longer manual check, use consistent brightness, power mode, network, charging and thermal conditions with a same-duration idle control; report duration, observations, and uncertainty rather than a fabricated drain rate.
+
+Until device details and actual recordings/observations are available, this session
+remains pending. Desktop timings and automated lifecycle checks do not complete it.
+
+### Automated lifecycle stability audit
+
+After `npm run build`, run:
+
+```sh
+npm run test:browser -- e2e/lifecycle-stability.spec.ts --workers=1 --output=artifacts/lifecycle-audit
+# Optional longer Chromium memory soak, run separately from other browser work:
+LIFECYCLE_CYCLES=24 npm run test:browser -- e2e/lifecycle-stability.spec.ts --project=chromium --grep 'warm lifecycle' --workers=1 --output=artifacts/lifecycle-soak
+```
+
+The default six measured cycles follow two warmup cycles at each width (390/1440px).
+They visit all seven experiences, exercise engine reversal and explicit-run labs,
+switch themes, resize to landscape and back, change motion preferences, and return
+to the same idle Résumé checkpoint. Reports live in each test's output directory
+and are attached to browser reports. The audit fails on growing tracked persistent
+subscriptions/observer targets or intervals, pending idle frames, continuing idle
+canvas work, or page errors. One-shot reveal targets may legitimately decrease.
+An intentional-retention fixture verifies the counters detect resources and cleanup;
+a batched-intersection regression verifies the stack tour stops its interval.
+
+Chromium additionally records forced-GC JS heap, backing storage, DOM and listener
+counters as diagnostic trends, not brittle cross-machine memory thresholds. WebKit
+has no equivalent heap measurement in this audit. Instrumentation uses weak target/
+observer keys and no DOM-node reports, but still adds overhead; it is not an FPS
+benchmark or proof that the page is leak-free. It does not measure GPU/native process
+memory, one-shot timeouts, DOM property handlers, or arbitrary detached-object
+retainers by default. Set `LIFECYCLE_HEAP_SNAPSHOTS=1` for optional Chromium warm/final
+heap snapshots in the test output directory; these can be large and must stay private
+and ignored. Persistent window/document/media listeners are tracked; once/AbortSignal
+listeners are reported as a coverage gap rather than emulated. Investigate persistent
+heap growth with native heap snapshots before calling it a leak or claiming a fix.
