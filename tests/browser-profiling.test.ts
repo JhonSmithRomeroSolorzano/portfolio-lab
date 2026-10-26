@@ -74,3 +74,39 @@ test("frame diagnostics bound retained samples and report overflow instead of hi
   assert.equal(result.droppedFrames, 100);
   assert.equal(result.paints, 10100);
 });
+
+test("completed and failed frame captures release page-side sample arrays", async () => {
+  for (const fail of [false, true]) {
+    const profile = {
+      durations: [],
+      times: [],
+      paints: 0,
+      droppedFrames: 0,
+      recording: false,
+    };
+    const context = {
+      __frameProfile: profile,
+      performance: { now: () => 1 },
+      setTimeout: (callback: () => void) => {
+        Object.assign(profile, { durations: [2, 3], times: [4, 5], paints: 2 });
+        if (fail) throw new Error("timer failed");
+        callback();
+      },
+    };
+    const page = {
+      evaluate: (callback: (duration: number) => unknown, duration: number) =>
+        runInNewContext(`(${callback.toString()})(${duration})`, context),
+    };
+    const capture = () => helpers.measureFrames(page, 1);
+    if (fail) await assert.rejects(capture, /timer failed/);
+    else {
+      const result = await capture();
+      assert.deepEqual(Array.from(result.durations), [2, 3]);
+      assert.deepEqual(Array.from(result.times), [4, 5]);
+      assert.equal(result.recording, false);
+    }
+    assert.equal(profile.recording, false);
+    assert.equal(profile.durations.length, 0);
+    assert.equal(profile.times.length, 0);
+  }
+});

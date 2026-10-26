@@ -81,10 +81,14 @@ export async function measureFrames(page, milliseconds) {
     p.recording = true;
     try {
       await new Promise((resolve) => setTimeout(resolve, duration));
+      return { ...p, recording: false, elapsed: performance.now() - start };
     } finally {
       p.recording = false;
+      // The returned sample owns these arrays; idle pages need not retain them
+      // until another capture (and failed captures should release them too).
+      p.durations = [];
+      p.times = [];
     }
-    return { ...p, elapsed: performance.now() - start };
   }, milliseconds);
 }
 

@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { writeFile } from "node:fs/promises";
+import { openSync, writeFileSync, closeSync } from "node:fs";
 import {
   installLifecycleProbe,
   readLifecycleSnapshot,
@@ -145,17 +146,25 @@ for (const width of [390, 1440])
     if (cdp) await cdp.send("Performance.enable");
     const heapSnapshot = async (label: string) => {
       if (!cdp || process.env.LIFECYCLE_HEAP_SNAPSHOTS !== "1") return;
-      const chunks: string[] = [];
-      const chunk = (event: { chunk: string }) => chunks.push(event.chunk);
+      // Stream diagnostic chunks directly to disk instead of retaining the
+      // complete snapshot plus a second joined copy in the test runner heap.
+      const file = openSync(info.outputPath(`${label}.heapsnapshot`), "w");
+      let writeError: unknown;
+      const chunk = (event: { chunk: string }) => {
+        if (writeError) return;
+        try {
+          writeFileSync(file, event.chunk);
+        } catch (error) {
+          writeError = error;
+        }
+      };
       cdp.on("HeapProfiler.addHeapSnapshotChunk", chunk);
       try {
         await cdp.send("HeapProfiler.takeHeapSnapshot");
-        await writeFile(
-          info.outputPath(`${label}.heapsnapshot`),
-          chunks.join(""),
-        );
+        if (writeError) throw writeError;
       } finally {
         cdp.off("HeapProfiler.addHeapSnapshotChunk", chunk);
+        closeSync(file);
       }
     };
     const memory = async () => {

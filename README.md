@@ -193,6 +193,13 @@ Actions are pinned to upstream commit SHAs, with weekly npm and Actions update P
 
 CI retains HTML/JSON browser reports, failed-attempt traces/screenshots, and available Lighthouse reports for 14 days in `validation-diagnostics-<run>-<attempt>`, even when validation fails. The existing single CI retry remains; inspect flaky cases in the report even if the retry passes. Superseded PR runs may be cancelled, but main runs finish deployment and verification before another main run starts. Jobs have bounded timeouts. Only the deploy job has Pages/OIDC write permissions; dependency installation and deployed-asset verification run in read-only jobs. No gates use `continue-on-error`.
 
+Successful Lighthouse samples are retained as `lighthouse-run-1.json` through
+`lighthouse-run-3.json`, plus the latest HTML report. Moving each completed JSON
+avoids uploading a duplicate of the final sample. Failed/incomplete reports keep
+their original name and remain covered by the diagnostic upload. Raw browser
+outputs are retained alongside the HTML report: attachment copies overlap, but raw
+failure context and report links must remain useful independently.
+
 Release jobs explicitly use `ubuntu-24.04`; OS upgrades require a reviewed workflow change rather than following `ubuntu-latest`. Validation runs inside the [official Playwright image](https://playwright.dev/docs/docker), pinned by version and immutable digest. Its preinstalled browsers and Linux libraries avoid repeated Ubuntu package downloads, which previously timed out before browser validation. Node 24 is still selected explicitly, and `npm ci` installs the project's dependencies. Update the image tag/digest together with `@playwright/test`; a toolchain check rejects version mismatches. The full Chromium/WebKit and Lighthouse gates remain within the existing 20-minute build limit. Publication and verification use separate jobs outside this browser container.
 
 ## Batch experiments
@@ -270,6 +277,9 @@ These remain whole-page sampling estimates, not exact per-tracer allocations.
 Frame buffers cap at 10,000 samples and report overflow; CPU/heap samplers stop even
 when measurement fails. Once capture starts, errors preserve a failed/partial JSON
 report rather than silently presenting incomplete measurements as successful.
+Completed or failed frame windows release page-side timing arrays immediately;
+returned samples remain available to the caller without keeping another idle-page
+reference until the next recording.
 
 The October 24 cleanup reduced total JS gzip from 137,202 to 133,224 bytes and the
 engine chunk from 32,402 to 28,428 bytes. Standalone timing repeats were variable,
@@ -331,7 +341,7 @@ After `npm run build`, run:
 ```sh
 npm run test:browser -- e2e/lifecycle-stability.spec.ts --workers=1 --output=artifacts/lifecycle-audit
 # Optional longer Chromium memory soak, run separately from other browser work:
-LIFECYCLE_CYCLES=24 npm run test:browser -- e2e/lifecycle-stability.spec.ts --project=chromium --grep 'warm lifecycle' --workers=1 --output=artifacts/lifecycle-soak
+LIFECYCLE_CYCLES=60 npm run test:browser -- e2e/lifecycle-stability.spec.ts --project=chromium --grep 'warm lifecycle' --workers=1 --output=artifacts/lifecycle-soak
 ```
 
 The default six measured cycles follow two warmup cycles at each width (390/1440px).
@@ -355,6 +365,9 @@ heap snapshots in the test output directory; these can be large and must stay pr
 and ignored. Persistent window/document/media listeners are tracked; once/AbortSignal
 listeners are reported as a coverage gap rather than emulated. Investigate persistent
 heap growth with native heap snapshots before calling it a leak or claiming a fix.
+Snapshot chunks are written directly to disk, avoiding a complete in-memory string
+array and joined copy in the test runner; this does not reduce the browser's own
+snapshot-generation overhead.
 
 ### DevTools mobile runtime and theme-cache audits
 
@@ -383,6 +396,18 @@ window is available; it still must observe `visibilityState === "hidden"` to cla
 that measurement. Physical-device/app-switching, native hiding when unsupported,
 and energy/thermal checks remain pending. Other automated visibility-policy tests
 use synthetic events and are a different layer of evidence.
+
+Inspect the browser's GPU feature status before interpreting painting costs. A
+focused local landscape trace reported software canvas rasterization/compositing
+and SwiftShader, not hardware GPU rendering. Loom and Sculpture spent most traced
+time in native path/arc painting despite short JavaScript callbacks; Engine was
+instead dominated by JavaScript rasterization. Landscape increased backing-canvas
+area, and a fresh mount above 600px selected the existing larger thread/point
+counts. These observations explain why callback duration alone understates frame
+cost; they do not isolate each factor or establish a phone/GPU bottleneck. Inclusive
+trace events overlap and must not be summed as exclusive CPU percentages. Compare
+separate untraced frame windows, since tracing itself changes cadence. No quality,
+density, resolution, or compositing-layer policy was changed from this evidence.
 
 The theme-cache journey warms both SVGs, switches eight more times and revisits the
 engine. It checks successful image loading, two stable asset URLs and transferred
