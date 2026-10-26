@@ -2,31 +2,29 @@ import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { gzipSync } from "node:zlib";
 import { chromium } from "@playwright/test";
+import {
+  installFrameProbe,
+  measureFrames,
+  percentile,
+  sampleProfiles,
+  verifyPreviewBuild,
+} from "./browser-profiling.mjs";
 
 const target = new URL(process.argv[2] ?? "http://127.0.0.1:4183/");
 if (!["http:", "https:"].includes(target.protocol))
   throw new Error("Provide an HTTP(S) production preview URL.");
 target.hash = "jet-engine";
 const label = process.argv[3] ?? "profile";
-if (!/^[a-z\d-]+$/i.test(label))
+if (!/^[a-z\d-]{1,64}$/i.test(label))
   throw new Error("Use a simple alphanumeric profile label.");
 const referenceLabel = process.argv[4];
-if (referenceLabel && !/^[a-z\d-]+$/i.test(referenceLabel))
+if (referenceLabel && !/^[a-z\d-]{1,64}$/i.test(referenceLabel))
   throw new Error("Use a simple alphanumeric reference label.");
 if (referenceLabel === label)
   throw new Error("Output and reference labels must differ.");
 const directory = "artifacts/engine-performance";
 await mkdir(directory, { recursive: true });
-const release = JSON.parse(await readFile("dist/release.json", "utf8"));
-const servedResponse = await fetch(new URL("release.json", target));
-if (!servedResponse.ok)
-  throw new Error("The preview release manifest is unavailable.");
-const served = await servedResponse.json();
-const fingerprint = (value) => JSON.stringify(Object.entries(value).sort());
-if (fingerprint(release.files) !== fingerprint(served.files))
-  throw new Error(
-    "The preview is not serving the current local production build.",
-  );
+const release = await verifyPreviewBuild(target);
 const files = await readdir("dist/assets");
 const bundle = {
   allJsGzip: 0,
@@ -49,19 +47,20 @@ for (const file of [
   "renderer.ts",
   "mesh.ts",
   "raster.ts",
+  "tracers.ts",
   "engine-depth.json",
 ]) {
   sourceHashes[file] = createHash("sha256")
     .update(await readFile(`src/features/playground/jet-engine/${file}`))
     .digest("hex");
 }
+sourceHashes["domain/jet-engine.ts"] = createHash("sha256")
+  .update(await readFile("src/domain/playground/jet-engine.ts"))
+  .digest("hex");
 const browser = await chromium.launch();
 const results = [];
 const snapshots = [];
-const percentile = (values, ratio) =>
-  [...values].sort((a, b) => a - b)[
-    Math.min(values.length - 1, Math.floor(values.length * ratio))
-  ] ?? 0;
+let captureFailure;
 try {
   for (const device of [
     { name: "mobile", width: 390, height: 844, dpr: 3, cpu: 4 },
@@ -74,44 +73,7 @@ try {
       reducedMotion: "no-preference",
     });
     const page = await context.newPage();
-    await page.addInitScript(() => {
-      const root = globalThis,
-        nativeFrame = root.requestAnimationFrame.bind(root);
-      const nativePaint = root.CanvasRenderingContext2D.prototype.putImageData;
-      let active;
-      root.__engineProfile = {
-        recording: false,
-        durations: [],
-        times: [],
-        paints: 0,
-      };
-      root.CanvasRenderingContext2D.prototype.putImageData = function (
-        ...args
-      ) {
-        if (this.canvas.matches(".engine-canvas")) {
-          if (active) active.painted = true;
-          if (root.__engineProfile.recording) root.__engineProfile.paints++;
-        }
-        return nativePaint.apply(this, args);
-      };
-      root.requestAnimationFrame = (callback) =>
-        nativeFrame((time) => {
-          const sample = { painted: false },
-            start = root.performance.now();
-          active = sample;
-          try {
-            callback(time);
-          } finally {
-            active = undefined;
-            if (sample.painted && root.__engineProfile.recording) {
-              root.__engineProfile.durations.push(
-                root.performance.now() - start,
-              );
-              root.__engineProfile.times.push(time);
-            }
-          }
-        });
-    });
+    await page.addInitScript(installFrameProbe, ".engine-canvas");
     const cdp = await context.newCDPSession(page);
     await cdp.send("Emulation.setCPUThrottlingRate", { rate: device.cpu });
     await page.goto(target.href);
@@ -125,24 +87,7 @@ try {
       null,
       { timeout: 30000 },
     );
-    const measure = async (milliseconds) =>
-      page.evaluate(async (duration) => {
-        const root = globalThis,
-          profile = root.__engineProfile;
-        profile.durations = [];
-        profile.times = [];
-        profile.paints = 0;
-        const start = root.performance.now();
-        profile.recording = true;
-        await new Promise((resolve) => root.setTimeout(resolve, duration));
-        profile.recording = false;
-        return {
-          durations: profile.durations,
-          times: profile.times,
-          paints: profile.paints,
-          elapsed: root.performance.now() - start,
-        };
-      }, milliseconds);
+    const measure = (milliseconds) => measureFrames(page, milliseconds);
     for (const mode of ["forward", "reverse"]) {
       if (mode === "reverse") {
         await page
@@ -164,7 +109,7 @@ try {
               .playing === "true",
         );
         const sample = await measure(2500);
-        if (sample.durations.length < 5)
+        if (sample.durations.length < 5 || sample.droppedFrames)
           throw new Error("Too few active engine frames to profile.");
         const intervals = sample.times
           .slice(1)
@@ -177,16 +122,11 @@ try {
           intervalP95Ms: percentile(intervals, 0.95),
         });
       }
-      await cdp.send("Profiler.enable");
-      await cdp.send("Profiler.start");
-      await cdp.send("HeapProfiler.startSampling", {
-        samplingInterval: 32768,
-        includeObjectsCollectedByMajorGC: true,
-        includeObjectsCollectedByMinorGC: true,
-      });
-      await page.waitForTimeout(2000);
-      const { profile: cpu } = await cdp.send("Profiler.stop");
-      const { profile: heap } = await cdp.send("HeapProfiler.stopSampling");
+      const {
+        cpu,
+        heap,
+        sample: allocationFrames,
+      } = await sampleProfiles(cdp, () => measure(2000));
       const names = new Map(
           cpu.nodes.map((node) => [
             node.id,
@@ -225,6 +165,10 @@ try {
           (sum, sample) => sum + sample.size,
           0,
         ),
+        allocationSamplePaints: allocationFrames.paints,
+        sampledBytesPerPaint:
+          heap.samples.reduce((sum, sample) => sum + sample.size, 0) /
+          Math.max(1, allocationFrames.paints),
         hotAllocators: [...allocations]
           .sort((a, b) => b[1] - a[1])
           .slice(0, 8)
@@ -361,6 +305,8 @@ try {
       }
       await context.close();
     }
+} catch (error) {
+  captureFailure = error;
 } finally {
   await browser.close();
 }
@@ -377,15 +323,24 @@ if (referenceLabel) {
     reference: referenceLabel,
     stillsCompared: snapshots.length,
     changedStills: changed,
+    complete: snapshots.length === 12 && reference.snapshots?.length === 12,
     allJsBytesSaved: reference.bundle.allJsGzip - bundle.allJsGzip,
     engineJsBytesSaved: reference.bundle.engineJsGzip - bundle.engineJsGzip,
   };
 }
+const framesChanged =
+  comparison && (comparison.changedStills.length > 0 || !comparison.complete);
 await writeFile(
   `${directory}/${label}.json`,
   JSON.stringify(
     {
       label,
+      status: captureFailure || framesChanged ? "failed" : "passed",
+      error:
+        captureFailure?.message ??
+        (framesChanged
+          ? "Composite engine still comparison failed."
+          : undefined),
       browser: "Chromium",
       browserVersion: browser.version(),
       runtime: {
@@ -396,6 +351,7 @@ await writeFile(
       simulatedCpuThrottling: true,
       syntheticHiddenEvent: true,
       bundle,
+      release,
       sourceHashes,
       results,
       snapshots,
@@ -406,9 +362,10 @@ await writeFile(
   ),
 );
 console.log(JSON.stringify({ label, bundle }));
+if (captureFailure) throw captureFailure;
 if (comparison) {
   console.log(JSON.stringify(comparison));
-  if (comparison.changedStills.length)
+  if (comparison.changedStills.length || !comparison.complete)
     throw new Error(
       "Composite engine stills changed from the performance reference.",
     );

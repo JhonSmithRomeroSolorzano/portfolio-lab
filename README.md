@@ -262,6 +262,15 @@ changed composite fingerprints. Heap allocation samples include collected object
 they are estimates, not retained-memory measurements or proof of a leak. Hidden
 policy testing uses a synthetic visibility event, not a physical background-tab test.
 
+Engine and runtime profiling share `scripts/browser-profiling.mjs`: build-manifest
+validation, bounded frame sampling, percentile calculations, and sampler cleanup.
+Allocation reports include sampled bytes per observed engine draw so a faster run
+is not mistaken for an allocation regression just because it drew more frames.
+These remain whole-page sampling estimates, not exact per-tracer allocations.
+Frame buffers cap at 10,000 samples and report overflow; CPU/heap samplers stop even
+when measurement fails. Once capture starts, errors preserve a failed/partial JSON
+report rather than silently presenting incomplete measurements as successful.
+
 The October 24 cleanup reduced total JS gzip from 137,202 to 133,224 bytes and the
 engine chunk from 32,402 to 28,428 bytes. Standalone timing repeats were variable,
 so a separate sequential baseline/optimized/optimized/baseline check used the
@@ -346,3 +355,38 @@ heap snapshots in the test output directory; these can be large and must stay pr
 and ignored. Persistent window/document/media listeners are tracked; once/AbortSignal
 listeners are reported as a coverage gap rather than emulated. Investigate persistent
 heap growth with native heap snapshots before calling it a leak or claiming a fix.
+
+### DevTools mobile runtime and theme-cache audits
+
+Without a physical phone, use this separately from other browser workloads:
+
+```sh
+npm run profile:runtime -- http://127.0.0.1:4173/ mobile-devtools
+npm run test:browser -- e2e/theme-cache.spec.ts --workers=1 --output=artifacts/theme-cache-audit
+```
+
+Build first and start `npm run preview -- --port 4173` for the profiler. The runtime
+audit uses Chromium DevTools Protocol with touch/3× DPR, 4× simulated CPU slowdown,
+390×844 and 844×390 viewports, and both themes. It checks Jet Engine (including
+reverse), Gravity Loom, and Signal Sculpture, then Pause, reduced motion, and
+offscreen states. Short 1.5-second windows record frame/canvas activity and renderer
+ScriptDuration/TaskDuration deltas; those are not OS CPU percentages or battery
+measurements. Sampled profiles are retained for portrait/light, with forced-GC heap
+usage at the final reduced-motion checkpoint. Reports stay in ignored
+`artifacts/runtime-diagnostics/`; no results are sent to a service.
+
+Chromium mobile emulation is neither iPhone hardware nor Safari. The script attempts
+native page switching without redefining `document.hidden`, but automation may keep
+both pages visible. In that case it explicitly records native hidden CPU as unsupported,
+not as a pass. `RUNTIME_HEADFUL=1` permits another browser-level check where a desktop
+window is available; it still must observe `visibilityState === "hidden"` to claim
+that measurement. Physical-device/app-switching, native hiding when unsupported,
+and energy/thermal checks remain pending. Other automated visibility-policy tests
+use synthetic events and are a different layer of evidence.
+
+The theme-cache journey warms both SVGs, switches eight more times and revisits the
+engine. It checks successful image loading, two stable asset URLs and transferred
+bytes using same-origin Resource Timing. Chromium additionally summarizes image-
+decode-related trace events (not exclusive decode time or proof of decoded/GPU
+retention). HTTP-cache hits do not imply zero decoding. Local preview cache results
+do not establish CDN behavior or justify eagerly retaining decoded images.
