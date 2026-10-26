@@ -52,9 +52,20 @@ export function airPoint(
   power: ReturnType<typeof enginePower>,
   mode: ThrustMode = "forward",
 ): EnginePoint {
+  return writeAirPoint([0, 0, 0], route, progress, power, mode);
+}
+
+/** Explicit caller-owned buffer for renderers; the allocating API stays pure. */
+export function writeAirPoint(
+  out: [number, number, number],
+  route: number,
+  progress: number,
+  power: ReturnType<typeof enginePower>,
+  mode: ThrustMode = "forward",
+): [number, number, number] {
   const u = Math.max(0, Math.min(1, progress));
   if (mode === "reverse" && route % 3 !== 0)
-    return reverseAirPoint(route, u, power);
+    return reverseAirPoint(out, route, u, power);
   const x = -225 + u * (370 + power.reach);
   const bypass = route % 3 !== 0;
   const angle = route * 2.399963229728653;
@@ -80,29 +91,35 @@ export function airPoint(
   }
   const twist =
     x < -144 ? 0 : (0.2 + power.throttle * 0.7) * smooth((x + 144) / 240);
-  return [
-    x,
-    Math.cos(angle + twist) * radius * spread,
-    ENGINE_CENTER + Math.sin(angle + twist) * radius * spread,
-  ];
+  out[0] = x;
+  out[1] = Math.cos(angle + twist) * radius * spread;
+  out[2] = ENGINE_CENTER + Math.sin(angle + twist) * radius * spread;
+  return out;
 }
+
+const cubic = (a: number, b: number, c: number, d: number, t: number) =>
+  a * (1 - t) ** 3 +
+  3 * b * t * (1 - t) ** 2 +
+  3 * c * t * t * (1 - t) +
+  d * t ** 3;
 
 /** Cold-stream illustration: intake stays forward; only bypass flow turns out/front. */
 function reverseAirPoint(
+  out: [number, number, number],
   route: number,
   u: number,
   power: ReturnType<typeof enginePower>,
-): EnginePoint {
-  const entry = airPoint(route, 315 / (370 + power.reach), power);
+): [number, number, number] {
   if (u <= 0.62)
-    return airPoint(route, (315 * u) / 0.62 / (370 + power.reach), power);
+    return writeAirPoint(
+      out,
+      route,
+      (315 * u) / 0.62 / (370 + power.reach),
+      power,
+    );
+  const entry = writeAirPoint(out, route, 315 / (370 + power.reach), power);
   const angle = Math.atan2(entry[2] - ENGINE_CENTER, entry[1]);
   const spread = 0.84 + ((route * 17) % 11) / 70;
-  const cubic = (a: number, b: number, c: number, d: number, t: number) =>
-    a * (1 - t) ** 3 +
-    3 * b * t * (1 - t) ** 2 +
-    3 * c * t * t * (1 - t) +
-    d * t ** 3;
   let x: number, radius: number;
   if (u <= 0.78) {
     const t = (u - 0.62) / 0.16;
@@ -113,11 +130,10 @@ function reverseAirPoint(
     x = cubic(94, 74, 65 - power.reach, 40 - power.reach, t);
     radius = cubic(70, 88, 96, 96 + power.reach * 0.08, t) * spread;
   }
-  return [
-    x,
-    Math.cos(angle) * radius,
-    ENGINE_CENTER + Math.sin(angle) * radius,
-  ];
+  out[0] = x;
+  out[1] = Math.cos(angle) * radius;
+  out[2] = ENGINE_CENTER + Math.sin(angle) * radius;
+  return out;
 }
 
 export function approachReverser(current: number, target: number, dt: number) {

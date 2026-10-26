@@ -91,6 +91,17 @@ tracers are not cached or quantized. Exhaust triangles and their fade function c
 only the latest spool setting. Rotor angle and reverser deployment do not change
 that core-exhaust shape; palette and raster changes still use current color/depth.
 
+Moving tracers reuse a renderer-owned pool: at most two modes × 22 slots per route
+(up to 36 routes). World/projected point and color buffers retain their identities;
+each frame recomputes exact curves and restores stream/slot order before the stable
+depth sort. No previous-frame positions are reused or quantized. `writeAirPoint`
+explicitly writes to a caller-owned tuple; `airPoint` still allocates a fresh result
+and preserves the pure API. Projection output buffers avoid temporary XY tuples.
+Golden model samples and an allocating reference compare geometry, colors, alpha,
+zero speed, partial reversal, palette changes and sort order, while fixed composite
+hashes verify the drawing. Scratch storage is bounded by the largest active pose,
+not by elapsed frames, and belongs to the renderer's normal disposal lifetime.
+
 Reverse thrust is an independent feature-local mode: the domain owns rigid tangential-hinge outer doors/blocker flaps and continuous forward-directed bypass exit curves. Core routes and nonnegative rotor-speed mappings are unchanged. The fixed SVG/depth mesh excludes the reverser opening; moving stowed panels close it in both canvas and SVG-only views. Running deployment eases in the renderer and crossfades routes after the doors open; paused/reduced-motion mode changes settle immediately without enabling playback or resetting the rotor phase. Guide caches include deployment, and lazy fallback caches are bounded to the two modes. Reset restores forward thrust. Intermediate-pose depth tests, 21-position transformed-prism clearances, real airflow pixel probes, and an acute-tip antialiasing regression cover the new boundary. This is a conceptual cold-stream landing illustration, not certified aircraft geometry or an operating/interlock model. Decorative dots are omitted from static artwork.
 
 Both door sets hinge on the fixed aft rim; circumferential blocker edge clearance prevents intermediate-pose intersections. The authoring sweep uses the kit's fixed-pose sink/support query, with a known-overlap rejection fixture, rather than its equal-offset-skipping flight routine. Nearby fixed geometry is the anchored boundary of the independently audited full scene. Unit checks run the actual sweep; no per-frame audit or skill code enters the browser. Reverser faces cache only the latest settled pose; air-route guide caches remain keyed by deployment, and reverse flow fades in only above 85% opening. Retargeting and retraction keep the current pose and the forward rotor clock.

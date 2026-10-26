@@ -4,7 +4,6 @@ import {
   approachReverser,
   reverserFlowWeight,
   enginePower,
-  flowOpacity,
   ENGINE_CENTER,
   type ThrustMode,
 } from "../../../domain/playground/jet-engine";
@@ -15,6 +14,7 @@ import {
 } from "../../../domain/playground/engine-depth";
 import { engineFaces, projectDepth, staticTriangles } from "./mesh";
 import { EngineRaster, type Ink, type InkSample } from "./raster";
+import { createTracerPool } from "./tracers";
 
 /** Opaque surfaces establish depth first; every air sample tests that same depth. */
 export function createEngineRenderer(
@@ -24,6 +24,7 @@ export function createEngineRenderer(
   const ctx = canvas.getContext("2d");
   if (!ctx) return undefined;
   const routes = window.matchMedia("(max-width: 600px)").matches ? 18 : 36;
+  const tracerPool = createTracerPool(routes);
   let target = 35,
     spool = 35,
     angle = 0,
@@ -139,13 +140,6 @@ export function createEngineRenderer(
       }
       for (const t of exhaust) r.volume(t, hot, exhaustAlpha);
     }
-    const traces: {
-      points: DepthPoint[];
-      alpha: number;
-      color: Ink;
-      depth: number;
-      width: number;
-    }[] = [];
     const drawGuides = (collect?: InkSample[]) => {
       if (power.throttle > 0)
         for (const { route, mode, weight } of streams) {
@@ -179,30 +173,15 @@ export function createEngineRenderer(
       }
       r.samples(guides);
     } else drawGuides();
-    for (const { route, mode, weight } of streams) {
-      for (let slot = 0; slot < 22; slot++) {
-        const density = Math.max(0, Math.min(1, power.density - slot));
-        if (!density) continue;
-        const u = (((slot / 22 + route * 0.037 + clock * 0.085) % 1) + 1) % 1,
-          point = airPoint(route, u, power, mode),
-          trail = (0.008 + power.throttle * 0.025) * (still ? 0.7 : 1);
-        const points = Array.from({ length: 3 }, (_, i) =>
-          projectDepth(
-            airPoint(route, Math.max(0, u - trail * (1 - i / 2)), power, mode),
-          ),
-        );
-        traces.push({
-          points,
-          alpha:
-            density * flowOpacity(u) * (0.38 + power.throttle * 0.38) * weight,
-          color: ink(route, point[0]),
-          depth: points[points.length - 1][2],
-          width: route % 3 === 0 ? 1.5 : 1.05,
-        });
-      }
-    }
     // Air is transparent, but its per-pixel visibility is still tested against all metal.
-    traces.sort((a, b) => a.depth - b.depth);
+    const traces = tracerPool.sample(
+      power,
+      clock,
+      still,
+      reverseWeight,
+      cool,
+      hot,
+    );
     for (const trace of traces) {
       for (let i = 0; i < trace.points.length - 1; i++)
         r.line(
