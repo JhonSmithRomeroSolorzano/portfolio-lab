@@ -15,6 +15,7 @@ import {
 import { engineFaces, projectDepth, staticTriangles } from "./mesh";
 import { EngineRaster, type Ink, type InkSample } from "./raster";
 import { createTracerPool } from "./tracers";
+import { observeCanvas } from "../../../shared/canvas/observe-canvas";
 
 /** Opaque surfaces establish depth first; every air sample tests that same depth. */
 export function createEngineRenderer(
@@ -224,40 +225,25 @@ export function createEngineRenderer(
     draw();
     if (playing) frame = requestAnimationFrame(tick);
   }
-  function resize() {
-    const box = canvas.getBoundingClientRect(),
-      ratio = Math.min(window.devicePixelRatio || 1, 1.5);
-    const width = Math.max(1, Math.round(box.width * ratio)),
-      height = Math.max(1, Math.round(box.height * ratio));
-    if (!image || canvas.width !== width || canvas.height !== height) {
-      canvas.width = width;
-      canvas.height = height;
-      image = ctx!.createImageData(width, height);
-      raster = new EngineRaster(width, height, staticTriangles, image.data);
-    }
-    draw();
-  }
-  const observer =
-    typeof ResizeObserver !== "undefined"
-      ? new ResizeObserver(resize)
-      : undefined;
-  observer?.observe(canvas);
-  window.addEventListener("resize", resize);
-  const themeObserver = new MutationObserver(() => {
-    palette();
-    draw();
-  });
-  themeObserver.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ["data-theme"],
-  });
+  const stopObserving = observeCanvas(
+    canvas,
+    ctx,
+    () => {
+      const { width, height } = canvas;
+      palette();
+      if (!image || image.width !== width || image.height !== height) {
+        image = ctx!.createImageData(width, height);
+        raster = new EngineRaster(width, height, staticTriangles, image.data);
+      }
+      draw();
+    },
+    1.5,
+  );
   const lost = () => {
     pause();
     onFailure();
   };
   canvas.addEventListener("contextlost", lost);
-  palette();
-  resize();
   return {
     configure(speed: number, reduced: boolean, mode: ThrustMode = "forward") {
       target = speed;
@@ -286,9 +272,7 @@ export function createEngineRenderer(
     },
     dispose() {
       pause();
-      observer?.disconnect();
-      themeObserver.disconnect();
-      window.removeEventListener("resize", resize);
+      stopObserving();
       canvas.removeEventListener("contextlost", lost);
     },
   };

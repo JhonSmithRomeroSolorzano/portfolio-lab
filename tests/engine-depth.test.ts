@@ -10,6 +10,7 @@ import {
   visibleLine,
   visiblePolygons,
   type DepthPoint,
+  type DepthTriangleBuffer,
 } from "../src/domain/playground/engine-depth";
 import {
   EngineRaster,
@@ -23,6 +24,47 @@ import {
 import geometry from "../src/features/playground/jet-engine/engine-depth.json";
 import audit from "../scripts/fixtures/engine-audit.json";
 import art from "../src/features/playground/jet-engine/engine-art.json";
+
+test("triangle scratch matches allocating bounds, winding and planes without replacing buffers", () => {
+  const out: DepthTriangleBuffer = {
+    vertices: [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+    ],
+    bounds: [0, 0, 0, 0],
+    plane: [0, 0, 0],
+  };
+  const buffers = [out.vertices, out.bounds, out.plane];
+  let seed = 54;
+  const rand = () =>
+    (seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) / 2 ** 32;
+  for (let i = 0; i < 500; i++) {
+    const vertices: [DepthPoint, DepthPoint, DepthPoint] = Array.from(
+      { length: 3 },
+      () => [rand() * 100, rand() * 100, rand() * 100] as DepthPoint,
+    ) as [DepthPoint, DepthPoint, DepthPoint];
+    const copy = structuredClone(vertices),
+      expected = triangle(vertices);
+    assert.equal(triangle(vertices, out), out);
+    assert.deepEqual(out, expected);
+    assert.deepEqual(vertices, copy);
+    assert.equal(out.vertices, buffers[0]);
+    assert.equal(out.bounds, buffers[1]);
+    assert.equal(out.plane, buffers[2]);
+    assert.equal(
+      triangle(
+        [
+          [0, 0, 0],
+          [0, 0, 1],
+          [0, 0, 2],
+        ],
+        out,
+      ),
+      undefined,
+    );
+  }
+});
 
 test("the wing/engine assembly stays centered and within the fixed frame across deployment", () => {
   for (const d of [0, 0.25, 0.5, 0.75, 1]) {
@@ -375,6 +417,10 @@ test("cached guide coverage is retested against the current moving metal", () =>
 
 test("real engine poses reproduce both old layering errors and pass pixel/ray visibility checks", () => {
   const fixed = new DepthIndex(staticTriangles);
+  // All poses share immutable fixed geometry. Exercise the real per-frame reset
+  // instead of rebuilding its static z-buffer for every independent pose.
+  const raster = new EngineRaster(1100, 480, staticTriangles),
+    fixedDepth = raster.staticDepth.slice();
   const oldFront = new DepthIndex(
     audit.groups
       .filter((g) => g.legacyLayer === "front")
@@ -395,10 +441,10 @@ test("real engine poses reproduce both old layering errors and pass pixel/ray vi
     ),
   ];
   for (const { angle, deployment } of poses) {
+    raster.begin();
     const faces = engineFaces(angle, deployment),
       moving = faces.flatMap((face) => face.triangles),
       index = new DepthIndex([...staticTriangles, ...moving]);
-    const raster = new EngineRaster(1100, 480, staticTriangles);
     for (const face of faces)
       for (let i = 0; i < face.triangles.length; i++)
         raster.metal(face.triangles[i], [60, 100, 150], face.boundaries[i]);
@@ -481,6 +527,7 @@ test("real engine poses reproduce both old layering errors and pass pixel/ray vi
         assert.ok(index.nearest(x, y) - planeDepth(t, x, y) < 0.003);
       }
   }
+  assert.deepEqual(raster.staticDepth, fixedDepth);
   assert.ok(
     falseFront > 10,
     "the old front SVG incorrectly covered near fan surfaces",

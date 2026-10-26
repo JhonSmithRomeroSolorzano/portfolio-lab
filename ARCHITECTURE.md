@@ -33,6 +33,7 @@ src/
     simulation/                    Maintained systems models used by API and CLI
   shared/
     hooks/                         Browser media queries and playback interruption
+    canvas/                        Coalesced environmental size/theme invalidation
     motion/                        Effective device/site motion preference and subscriptions
     ui/                            Arrow and theme control
     theme/                         Theme preference policy
@@ -80,6 +81,14 @@ cannot repeat or bleed between frames; regression tests cover foreground and
 occluded fringes in either surface submission order, including epsilon-tied opaque
 updates. Edge samples must not be discarded against intermediate depth. No triangle density, tracer
 density, antialiasing policy, or resolution cap was reduced for this optimization.
+
+Each raster also owns three projected vertices, one mutable triangle bounds/plane
+buffer, and three edge records. Synchronous scans overwrite these fixed-size
+buffers instead of allocating them per face. `triangle(vertices, out)` preserves
+the original arithmetic and winding; omitting `out` retains the allocating API.
+Scratch results must not be retained as mesh faces. Seeded equivalence tests check
+bounds/planes, winding, unchanged input, degenerate rejection, and buffer identity;
+the existing pixel/ray tests and composite fingerprints cover rendering behavior.
 
 Line rasterization intersects each pixel row with a conservative bounding interval
 of the same capsule, rather than scanning its entire diagonal rectangle. Coverage,
@@ -170,6 +179,15 @@ Each game has an independent download placeholder and runtime error boundary. An
 
 Intersection observation enhances loading/playback but is not required. Reduced motion, page visibility, and (where appropriate) navigation/offscreen changes interrupt playback. Effects release listeners, observers, and animation frames on cleanup.
 
+The three canvas experiences share `shared/canvas/observe-canvas.ts` for environmental
+invalidation only. ResizeObserver, window resize, and theme notifications coalesce
+into one frame; unchanged logical size, capped pixel ratio, and theme do not clear
+or redraw paused pixels. Initialization stays synchronous, real changes preserve
+the existing 2× Loom/Sculpture and 1.5× Engine resolution caps, and disposal cancels pending invalidation as well
+as observers/listeners. Explicit controls and animation clocks are not debounced.
+Engine still owns palette/guide invalidation and creates a new raster only when
+backing dimensions change; artwork-loading policy remains in its feature.
+
 For an uninterrupted, focused direct entry, `DeferredExperiment` observes the containing main element's size and coalesces landing alignment into animation frames. This covers layout changes from neighboring lazy imports and WebKit's deferred focus adjustment. Alignment checks the current hash, focus, and existing input-interruption flag before scrolling; its observer disconnects once that ownership is lost or the effect cleans up. Without resize observation, one deferred alignment still runs. It does not intercept normal scrolling or move focus.
 
 The Connection puzzle's feature controller owns progress, visit-local Undo/hints, and reconciliation of validated browser saves. Storage/focus events refresh boards without changing the current selection; reads before writes guard against delayed notifications. The last observed save remains separate from unsaved play so quota failures do not reset the session. This is best-effort synchronization of localStorage snapshots, not an atomic transaction across simultaneous tabs; progress is never shared between hosting origins.
@@ -208,6 +226,18 @@ Connection progress uses schema version 2 under the existing storage key, preser
 Signal Sculpture's pure domain geometry supplies stable particle identities and deterministic morphing. Its feature-local canvas renderer owns projection and an imperative animation clock; React owns controls and announcements, not per-frame state. Drawing resolution is capped at 2× device pixel ratio and the point count is chosen at mount (720 for small screens, 1,800 otherwise). Resize and theme changes redraw paused artwork. A static SVG replaces unavailable canvas. The shared `useViewportPlayback` hook starts its clock in view and suspends it offscreen or in hidden tabs without clearing playback intent. Manual Pause and Reset clear that intent; reduced motion also settles the current form without pointer influence. The pure view projection applies bounded yaw/pitch after object rotation, with a small depth-independent pan to keep pointer feedback perceptible at different angles. Time-based exponential easing runs inside the existing frame loop. Pointer exit targets the neutral view; pause freezes the current drawing and clears the target for a smooth return on resume. Reset and reduced motion clear both view and target. No graphics library or build configuration change is needed.
 
 Gravity Loom uses a separate pure field model: softened attraction, tangential swirl, damping, a speed cap, and reflected safety boundaries. Its fixed 1/60-second steps illustrate kinetic art, not physical orbits. The feature-local renderer caps frame catch-up, keeps at most 90 points per thread, and uses 48 mobile/96 desktop threads with drawing resolution capped at 2×. Live configuration edits preserve particles, velocities, and histories; only Reset rebuilds them. Initial previews retain their final velocities and positions so Play does not jump back to seeds. Held points receive a stronger radial pull, briefly retained after release or a keyboard nudge. Pointer capture owns drag continuation; coordinates update the renderer through a ref and commit to React on release, avoiding control-tree renders on every pointer move. Native movement controls and focused-field arrow keys provide non-drag alternatives. Interruption clears the gesture and capture as well as playback. Reduced motion instead rebuilds deterministic static drawings on input, and SVG covers unavailable canvas. Resize/theme subscriptions and animation frames are released on cleanup. Gravity Loom shares `useViewportPlayback` with Jet Engine. Its effect also observes individual visibility/motion signals to release a captured gesture during interruptions even when the reduced-motion drawing is already static. Pause, Reset, Escape, and pointer cancellation clear playback intent; drag/steering or Play enables it. Frame updates stay in the feature renderer.
+
+Each depth-sorted Sculpture particle paints its translucent halo, then its core,
+separately. Combining particles into a single filled path changes overlap
+compositing and is not an equivalent optimization. A cached unit-circle path can
+preserve pixels, but transform/save/restore overhead outweighed its benefit in the
+focused local readback experiment; native arcs remain. That software-rendering
+observation is not a hardware GPU or application FPS guarantee.
+
+Loom trail histories still append ordinary points and discard the oldest past the
+bound. Focused allocation/GC sampling did not establish a worthwhile GC reduction
+from pooling those points; allocation counts alone are not a reason to add a ring
+buffer or change the pure, allocating field model.
 
 The active Loom gesture retains its initial pointer-to-point offset, so grabbing a handle off-center does not reposition it. Cancellation is scoped to that gesture's pointer ID; a secondary pointer cannot cancel the primary grab. Space ignores auto-repeat while arrows retain repeated movement. Position descriptions are shared by the visible fine-control readout and the single atomic status, updating on user commands/releases rather than animation frames.
 

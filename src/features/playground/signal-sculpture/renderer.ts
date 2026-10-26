@@ -5,6 +5,7 @@ import {
   sculpturePoints,
   type SculptureForm,
 } from "../../../domain/playground/signal-sculpture";
+import { observeCanvas } from "../../../shared/canvas/observe-canvas";
 
 /** Canvas owns pixels and the clock; React owns controls, not per-frame state. */
 export function createSculptureRenderer(canvas: HTMLCanvasElement) {
@@ -95,28 +96,11 @@ export function createSculptureRenderer(canvas: HTMLCanvasElement) {
     // Preserve frozen pixels; a later Play eases back from the saved view.
     pointerTarget = { x: 0, y: 0 };
   }
-  function resize() {
-    const box = canvas.getBoundingClientRect();
-    width = Math.max(1, box.width);
-    height = Math.max(1, box.height);
-    const ratio = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = Math.round(width * ratio);
-    canvas.height = Math.round(height * ratio);
-    ctx?.setTransform(ratio, 0, 0, ratio, 0, 0);
+  const stopObserving = observeCanvas(canvas, ctx, (nextWidth, nextHeight) => {
+    width = nextWidth;
+    height = nextHeight;
     draw();
-  }
-  const resizeObserver =
-    typeof ResizeObserver !== "undefined"
-      ? new ResizeObserver(resize)
-      : undefined;
-  resizeObserver?.observe(canvas);
-  window.addEventListener("resize", resize);
-  const themeObserver = new MutationObserver(draw);
-  themeObserver.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ["data-theme"],
   });
-  resize();
   return {
     settle() {
       points = destination;
@@ -157,9 +141,7 @@ export function createSculptureRenderer(canvas: HTMLCanvasElement) {
     },
     dispose() {
       pause();
-      resizeObserver?.disconnect();
-      themeObserver.disconnect();
-      window.removeEventListener("resize", resize);
+      stopObserving();
     },
   };
 }
