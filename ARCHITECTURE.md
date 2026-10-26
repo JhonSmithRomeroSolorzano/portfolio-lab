@@ -90,6 +90,13 @@ Scratch results must not be retained as mesh faces. Seeded equivalence tests che
 bounds/planes, winding, unchanged input, degenerate rejection, and buffer identity;
 the existing pixel/ray tests and composite fingerprints cover rendering behavior.
 
+The seven hub meshes are angle/deployment-invariant in this illustration, so their
+read-only faces are constructed once. Each `engineFaces` call still builds moving
+blades and a fresh sorted draw list, placing cached hubs in the same rotor/source
+order before the stable sort. They are still painted and depth-tested every frame;
+this is construction reuse, not baked visibility or skipped occlusion. An allocating
+mesh reference checks every face, boundary, shade and ordering across poses.
+
 Line rasterization intersects each pixel row with a conservative bounding interval
 of the same capsule, rather than scanning its entire diagonal rectangle. Coverage,
 depth interpolation, compositing order, widths and alpha are unchanged. A full-image
@@ -233,6 +240,15 @@ compositing and is not an equivalent optimization. A cached unit-circle path can
 preserve pixels, but transform/save/restore overhead outweighed its benefit in the
 focused local readback experiment; native arcs remain. That software-rendering
 observation is not a hardware GPU or application FPS guarantee.
+
+Sculpture projection uses a renderer-owned fixed-size record pool (one per point,
+plus a source-order and sorted array). Each draw recomputes the exact pulse and
+projection into those records, restoring source order before the stable depth sort
+so ties cannot inherit the preceding frame's order. No previous positions are
+reused or quantized. `projectSculpturePoint` accepts an optional caller-owned output;
+without it, the allocating domain API still returns a fresh result. Independent
+original formulas verify coordinates/order, while the unchanged halo/core drawing
+derives the same radii, alpha and color from depth and point identity.
 
 Loom trail histories still append ordinary points and discard the oldest past the
 bound. Focused allocation/GC sampling did not establish a worthwhile GC reduction

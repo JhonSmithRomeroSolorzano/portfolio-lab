@@ -16,11 +16,11 @@ import {
 } from "../../../domain/playground/engine-depth";
 
 type Face = {
-  vertices: DepthPoint[];
-  triangles: DepthTriangle[];
-  boundaries: readonly (readonly [boolean, boolean, boolean])[];
-  depth: number;
-  shade: number;
+  readonly vertices: readonly DepthPoint[];
+  readonly triangles: readonly DepthTriangle[];
+  readonly boundaries: readonly (readonly [boolean, boolean, boolean])[];
+  readonly depth: number;
+  readonly shade: number;
 };
 export const staticTriangles = decodeDepthMesh(geometry);
 function depth(point: EnginePoint) {
@@ -136,9 +136,24 @@ function reverserFaces(deployment: number): Face[] {
   lastReverserFaces = faces;
   return faces;
 }
+// Hubs do not rotate or deploy in this illustration. Cache construction, not
+// their painting/depth: moving blades and air still test them every frame.
+const hubFaces = ROTORS.map((rotor) => {
+  const faces: Face[] = [];
+  const hub = Array.from(
+    { length: 16 },
+    (_, i) =>
+      [
+        Math.cos((i * Math.PI) / 8) * 9,
+        Math.sin((i * Math.PI) / 8) * 9,
+      ] as const,
+  );
+  prism(rotor.x, hub, 4, faces);
+  return faces;
+});
 export function engineFaces(angle: number, deployment = 0): Face[] {
   const faces: Face[] = [];
-  for (const rotor of ROTORS) {
+  for (const [rotorIndex, rotor] of ROTORS.entries()) {
     for (let i = 0; i < rotor.blades; i++)
       prism(
         rotor.x,
@@ -149,15 +164,7 @@ export function engineFaces(angle: number, deployment = 0): Face[] {
         2,
         faces,
       );
-    const hub = Array.from(
-      { length: 16 },
-      (_, i) =>
-        [
-          Math.cos((i * Math.PI) / 8) * 9,
-          Math.sin((i * Math.PI) / 8) * 9,
-        ] as const,
-    );
-    prism(rotor.x, hub, 4, faces);
+    faces.push(...hubFaces[rotorIndex]);
   }
   return [...faces, ...reverserFaces(deployment)].sort(
     (a, b) => a.depth - b.depth,

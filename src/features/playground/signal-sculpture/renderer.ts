@@ -1,17 +1,18 @@
 import {
   approachSculptureView,
   morphPoint,
-  projectSculpturePoint,
   sculpturePoints,
   type SculptureForm,
 } from "../../../domain/playground/signal-sculpture";
 import { observeCanvas } from "../../../shared/canvas/observe-canvas";
+import { createSculptureProjection } from "./projection";
 
 /** Canvas owns pixels and the clock; React owns controls, not per-frame state. */
 export function createSculptureRenderer(canvas: HTMLCanvasElement) {
   const ctx = canvas.getContext("2d");
   if (!ctx) return undefined;
   const count = window.matchMedia("(max-width: 600px)").matches ? 720 : 1800;
+  const projection = createSculptureProjection(count);
   let form: SculptureForm = "monogram";
   let points = sculpturePoints(form, count);
   let from = points;
@@ -31,29 +32,17 @@ export function createSculptureRenderer(canvas: HTMLCanvasElement) {
     if (!ctx) return;
     const dark = document.documentElement.dataset.theme === "dark";
     ctx.clearRect(0, 0, width, height);
-    const scale = Math.min(width * 0.46, height * 0.73);
     // A full, slow turn makes the monogram's perspective/depth perceptible.
     // The same paused clock keeps rotation frozen between explicit plays.
     const tilt = elapsed * (form === "monogram" ? 0.24 : 0.14);
-    const projected = points
-      .map((point, i) => {
-        const wave =
-          Math.exp(
-            -Math.pow((Math.hypot(point.x, point.y) - pulse * 0.65) * 9, 2),
-          ) * 0.12;
-        const projected = projectSculpturePoint(
-          { ...point, z: point.z + wave },
-          tilt,
-          pointer,
-        );
-        return {
-          x: width / 2 + projected.x * scale,
-          y: height / 2 + projected.y * scale,
-          depth: projected.depth,
-          i,
-        };
-      })
-      .sort((a, b) => a.depth - b.depth);
+    const projected = projection.sample(
+      points,
+      width,
+      height,
+      tilt,
+      pointer,
+      pulse,
+    );
     for (const p of projected) {
       const amber = p.i % 19 === 0;
       ctx.fillStyle = amber
