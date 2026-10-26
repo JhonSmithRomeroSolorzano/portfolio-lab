@@ -1,4 +1,5 @@
 import { readFile } from "node:fs/promises";
+import { withTimeout } from "./profile-capture.mjs";
 /** Shared test/diagnostic helpers; never imported by the application. */
 export async function verifyPreviewBuild(target) {
   const local = JSON.parse(await readFile("dist/release.json", "utf8"));
@@ -71,58 +72,69 @@ export function installFrameProbe(selector) {
 }
 
 export async function measureFrames(page, milliseconds) {
-  return page.evaluate(async (duration) => {
-    const p = globalThis.__frameProfile;
-    p.durations = [];
-    p.times = [];
-    p.paints = 0;
-    p.droppedFrames = 0;
-    const start = performance.now();
-    p.recording = true;
-    try {
-      await new Promise((resolve) => setTimeout(resolve, duration));
-      return { ...p, recording: false, elapsed: performance.now() - start };
-    } finally {
-      p.recording = false;
-      // The returned sample owns these arrays; idle pages need not retain them
-      // until another capture (and failed captures should release them too).
+  return withTimeout(
+    page.evaluate(async (duration) => {
+      const p = globalThis.__frameProfile;
       p.durations = [];
       p.times = [];
-    }
-  }, milliseconds);
+      p.paints = 0;
+      p.droppedFrames = 0;
+      const start = performance.now();
+      p.recording = true;
+      try {
+        await new Promise((resolve) => setTimeout(resolve, duration));
+        return { ...p, recording: false, elapsed: performance.now() - start };
+      } finally {
+        p.recording = false;
+        // The returned sample owns these arrays; idle pages need not retain them
+        // until another capture (and failed captures should release them too).
+        p.durations = [];
+        p.times = [];
+      }
+    }, milliseconds),
+    milliseconds + 15000,
+    "Frame window",
+  );
 }
 
 /** Stop every sampler that started, including when measurement/another stop fails. */
-export async function sampleProfiles(cdp, measure) {
+export async function sampleProfiles(cdp, measure, timeoutMs = 15000) {
   let cpuStarted = false,
     heapStarted = false,
     cpu,
     heap,
     sample;
   const errors = [];
+  const command = (name, params) =>
+    withTimeout(cdp.send(name, params), timeoutMs, name);
   try {
-    await cdp.send("Profiler.enable");
-    await cdp.send("Profiler.start");
+    await command("Profiler.enable");
+    // A failed/timed-out start has uncertain remote state. Attempt its stop too.
     cpuStarted = true;
-    await cdp.send("HeapProfiler.startSampling", {
+    await command("Profiler.start");
+    heapStarted = true;
+    await command("HeapProfiler.startSampling", {
       samplingInterval: 32768,
       includeObjectsCollectedByMajorGC: true,
       includeObjectsCollectedByMinorGC: true,
     });
-    heapStarted = true;
-    sample = await measure();
+    sample = await withTimeout(
+      Promise.resolve().then(measure),
+      timeoutMs * 2,
+      "Profile measurement",
+    );
   } catch (error) {
     errors.push(error);
   } finally {
     if (cpuStarted)
       try {
-        ({ profile: cpu } = await cdp.send("Profiler.stop"));
+        ({ profile: cpu } = await command("Profiler.stop"));
       } catch (error) {
         errors.push(error);
       }
     if (heapStarted)
       try {
-        ({ profile: heap } = await cdp.send("HeapProfiler.stopSampling"));
+        ({ profile: heap } = await command("HeapProfiler.stopSampling"));
       } catch (error) {
         errors.push(error);
       }

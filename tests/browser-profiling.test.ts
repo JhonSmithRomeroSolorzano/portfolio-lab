@@ -30,11 +30,46 @@ test("sampling diagnostics stop every started sampler on success and failures", 
       });
     if (fail) await assert.rejects(capture, AggregateError);
     else assert.equal((await capture()).sample.paints, 5);
-    const cpuStarted = fail !== "Profiler.enable" && fail !== "Profiler.start";
+    const cpuStarted = fail !== "Profiler.enable";
     assert.equal(commands.includes("Profiler.stop"), cpuStarted);
     assert.equal(
       commands.includes("HeapProfiler.stopSampling"),
-      cpuStarted && fail !== "HeapProfiler.startSampling",
+      cpuStarted && fail !== "Profiler.start",
+    );
+  }
+});
+
+test("indeterminate sampler starts and hung measurements still attempt bounded stops", async () => {
+  for (const hang of [
+    "Profiler.start",
+    "HeapProfiler.startSampling",
+    "measure",
+    "Profiler.stop",
+    "HeapProfiler.stopSampling",
+  ]) {
+    const commands: string[] = [];
+    const cdp = {
+      send: async (name: string) => {
+        commands.push(name);
+        if (name === hang) return new Promise(() => {});
+        return { profile: {} };
+      },
+    };
+    await assert.rejects(
+      helpers.sampleProfiles(
+        cdp,
+        () =>
+          hang === "measure"
+            ? new Promise(() => {})
+            : Promise.resolve({ paints: 5 }),
+        10,
+      ),
+      AggregateError,
+    );
+    assert.ok(commands.includes("Profiler.stop"));
+    assert.equal(
+      commands.includes("HeapProfiler.stopSampling"),
+      hang !== "Profiler.start",
     );
   }
 });

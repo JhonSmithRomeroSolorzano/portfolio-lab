@@ -281,6 +281,30 @@ Completed or failed frame windows release page-side timing arrays immediately;
 returned samples remain available to the caller without keeping another idle-page
 reference until the next recording.
 
+Both profilers use `scripts/profile-capture.mjs` for failure ownership. Browser
+startup/connection each have a 30-second limit, ordinary actions/navigation 15
+seconds, and the capture an eight-minute deadline. Frame windows allow 15 seconds
+of scheduling slack; sampler commands allow 15 seconds and sampler measurement 30.
+Context/page/browser cleanup waits are bounded at ten seconds. A loopback-only
+Playwright browser server provides an owned force-kill backstop if normal close
+fails; SIGINT/SIGTERM/SIGHUP request cleanup and a failed report rather than success.
+These optional profiler limits do not change application or CI browser-test limits.
+
+Reports are marked running before preflight/launch and committed atomically after
+cleanup, with start/finish timestamps. Missing/invalid references, launch/capture/
+cleanup failures preserve partial results and error chains; reference captures must
+be complete and passed. Failed writes exit nonzero and attempt to invalidate stale
+success under that output label. If the filesystem also refuses removal, an old
+file can remain: respect the command failure and timestamps, not just its old status.
+Each capture has a unique run ID; CPU/heap filenames include it, and the report's
+`artifacts` list includes only fully written files from that run. Use that list
+rather than assuming an older raw file with a similar label belongs to a failed
+capture. Raw profiles are atomically committed too; historical captures are not
+automatically deleted.
+Tests exercise failures, interruption, indeterminate sampler starts, hung protocol/
+cleanup operations and report-write failures. Raw profiles and temporary reports
+remain local/ignored; no service or private preview is published.
+
 The October 24 cleanup reduced total JS gzip from 137,202 to 133,224 bytes and the
 engine chunk from 32,402 to 28,428 bytes. Standalone timing repeats were variable,
 so a separate sequential baseline/optimized/optimized/baseline check used the
