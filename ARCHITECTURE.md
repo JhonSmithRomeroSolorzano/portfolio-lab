@@ -130,6 +130,15 @@ and [separate fan/core airflow](https://www.grc.nasa.gov/WWW/K-12/airplane/turbf
 
 ## Failure boundaries and styling
 
+React's effective-motion subscription and snapshot use one lazily created browser
+source, including the same underlying MediaQueryList. Creating a fresh query per
+snapshot can disagree with the subscribed instance during notification and miss a
+React update. Lazy creation avoids browser access during prerendering; per-subscriber
+cleanup is unchanged. A deterministic cross-instance-lag fixture covers a stuck
+Loom Play control, and native rapid-transition tests attach query/root/control
+diagnostics for future failures. This contract regression models an event-ordering
+hazard; it is not proof of the cause of a particular historical Linux WebKit failure.
+
 `shared/motion/motion-preference.ts` owns the effective motion policy: device reduction OR the site's saved reduction. A small MediaQuery-like source combines device changes, same-document preference events, and validated local-storage events; React's `useReducedMotion`/`useMotionPreference` snapshots and the imperative navigation/reveal observers consume that same source. The HTML motion bootstrap restores the choice before paint, and the root's `data-motion` attribute gates CSS effects. Root attributes retain a visit-local choice if storage is denied. Subscriptions remove their device/window listeners on cleanup. The UI uses a native disclosure and radio group; it cannot enable animation against a device preference. Playback controllers retain their existing manual-pause intent or explicit-replay policy.
 
 The portfolio's `useStackFlow` owns the stack map's nine-step request tour, with one cleaned-up interval rather than React updates per frame. SVG stroke animation moves packets along the same paths used for connections; node activity and the readout come from that step list. `useStackConnections` measures actual card edges with a cleaned-up resize observer, keeping packet travel visible in the gaps after reflow or text zoom instead of hiding most of it behind cards. The readout reserves all labels' intrinsic heights, independently of the selected experience panel. A feature-local intersection observer, document-visibility listener, reduced-motion subscription, and keyboard-focus state gate automatic playback; returning starts a new request so the CSS packet and step clock stay aligned. Motion Studio and Cache Rescue retain explicit replay; Jet Engine, Gravity Loom, and Signal Sculpture opt into viewport autoplay. Selected details use a neutral border and textual marker, active processing uses blue, and infrastructure has a persistent tint/dashed border. Node text and fill switch together; only shadow changes transition, avoiding transient white-on-light labels in either direction. The caption stays in normal flow so larger text can wrap without covering cards. CSS suppresses decorative motion under reduced motion, including before hydration. No network request or new graphics dependency is involved.

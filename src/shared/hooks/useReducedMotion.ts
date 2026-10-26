@@ -2,19 +2,26 @@ import { useSyncExternalStore } from "react";
 import {
   currentMotionPreference,
   motionQuery,
+  type MotionQuery,
 } from "../motion/motion-preference";
 import type { MotionPreference } from "../motion/motion-preference";
 
+let source: MotionQuery | undefined;
+// Browser-only lazy creation keeps prerendering safe. Subscriptions and React
+// snapshots must read the same MediaQueryList, not fresh instances per snapshot.
+function motionSource() {
+  return (source ??= motionQuery());
+}
 function subscribe(change: () => void) {
-  const source = motionQuery();
-  source.addEventListener("change", change);
-  return () => source.removeEventListener("change", change);
+  const query = motionSource();
+  query.addEventListener("change", change);
+  return () => query.removeEventListener("change", change);
 }
 
 export function useReducedMotion() {
   return useSyncExternalStore(
     subscribe,
-    () => motionQuery().matches,
+    () => motionSource().matches,
     () => false,
   );
 }
