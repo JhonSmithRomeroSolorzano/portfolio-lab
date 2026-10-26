@@ -7,7 +7,7 @@ import {
 } from "../../../domain/playground/engine-depth";
 
 export type Ink = readonly [number, number, number];
-export type EdgeMask = readonly [boolean, boolean, boolean];
+type EdgeMask = readonly [boolean, boolean, boolean];
 export type InkSample = {
   index: number;
   depth: number;
@@ -243,8 +243,17 @@ export class EngineRaster {
         this.height - 1,
         Math.ceil(Math.max(ay, by) + radius + 1),
       );
-    for (let y = top; y <= bottom; y++)
-      for (let x = left; x <= right; x++) {
+    const reach = radius + 0.5;
+    for (let y = top; y <= bottom; y++) {
+      // Restrict the capsule's bounding box to this row. Do not change its
+      // coverage/depth formula or approximate moving airflow geometry.
+      const u0 = dy ? clamp((y + 0.5 - reach - ay) / dy) : 0;
+      const u1 = dy ? clamp((y + 0.5 + reach - ay) / dy) : 1;
+      const x0 = ax + dx * u0,
+        x1 = ax + dx * u1;
+      const rowLeft = Math.max(left, Math.floor(Math.min(x0, x1) - reach));
+      const rowRight = Math.min(right, Math.ceil(Math.max(x0, x1) + reach));
+      for (let x = rowLeft; x <= rowRight; x++) {
         const u = length
           ? clamp(((x + 0.5 - ax) * dx + (y + 0.5 - ay) * dy) / length)
           : 0;
@@ -263,6 +272,7 @@ export class EngineRaster {
           else this.blend(index, color, alpha * coverage);
         }
       }
+    }
   }
   samples(samples: readonly InkSample[]) {
     for (const sample of samples)

@@ -11,6 +11,7 @@ import {
 import {
   triangulate,
   type DepthPoint,
+  type DepthTriangle,
 } from "../../../domain/playground/engine-depth";
 import { engineFaces, projectDepth, staticTriangles } from "./mesh";
 import { EngineRaster, type Ink, type InkSample } from "./raster";
@@ -38,6 +39,9 @@ export function createEngineRenderer(
   let guideSpool = NaN,
     guideRaster: EngineRaster | undefined,
     guides: InkSample[] = [];
+  let exhaustSpool = NaN;
+  let exhaust: DepthTriangle[] = [];
+  let exhaustAlpha: (x: number) => number = () => 0;
   let cool: Ink = [36, 122, 185],
     hot: Ink = [195, 91, 32],
     edge: Ink = [81, 110, 128],
@@ -99,34 +103,41 @@ export function createEngineRenderer(
           0.008,
         );
     if (power.throttle > 0) {
-      const start = projectDepth([145, 0, ENGINE_CENTER]),
-        end = projectDepth([145 + power.reach, 0, ENGINE_CENTER]);
-      const alpha = (x: number) =>
-        Math.max(0, 1 - (x - start[0]) / (end[0] - start[0])) *
-        (0.13 + power.heat * 0.08);
-      const top: DepthPoint[] = [],
-        bottom: DepthPoint[] = [];
-      for (let i = 0; i <= 30; i++) {
-        const u = i / 30,
-          radius =
-            (11 + power.throttle * 10) *
-            Math.sin(Math.PI * (0.12 + u * 0.88)) *
-            (1 - u * 0.4);
-        top.push(
-          projectDepth([145 + power.reach * u, 0, ENGINE_CENTER + radius]),
-        );
-        bottom.push(
-          projectDepth([145 + power.reach * u, 0, ENGINE_CENTER - radius]),
-        );
+      // Exhaust shape depends on spool only, not the rotor clock, thrust mode,
+      // raster size or palette. Retain one latest pose, not a growing cache.
+      if (exhaustSpool !== spool) {
+        exhaustSpool = spool;
+        exhaust = [];
+        const start = projectDepth([145, 0, ENGINE_CENTER]),
+          end = projectDepth([145 + power.reach, 0, ENGINE_CENTER]);
+        exhaustAlpha = (x: number) =>
+          Math.max(0, 1 - (x - start[0]) / (end[0] - start[0])) *
+          (0.13 + power.heat * 0.08);
+        const top: DepthPoint[] = [],
+          bottom: DepthPoint[] = [];
+        for (let i = 0; i <= 30; i++) {
+          const u = i / 30,
+            radius =
+              (11 + power.throttle * 10) *
+              Math.sin(Math.PI * (0.12 + u * 0.88)) *
+              (1 - u * 0.4);
+          top.push(
+            projectDepth([145 + power.reach * u, 0, ENGINE_CENTER + radius]),
+          );
+          bottom.push(
+            projectDepth([145 + power.reach * u, 0, ENGINE_CENTER - radius]),
+          );
+        }
+        for (let i = 0; i < 30; i++)
+          for (const t of triangulate([
+            top[i],
+            top[i + 1],
+            bottom[i + 1],
+            bottom[i],
+          ]))
+            exhaust.push(t);
       }
-      for (let i = 0; i < 30; i++)
-        for (const t of triangulate([
-          top[i],
-          top[i + 1],
-          bottom[i + 1],
-          bottom[i],
-        ]))
-          r.volume(t, hot, alpha);
+      for (const t of exhaust) r.volume(t, hot, exhaustAlpha);
     }
     const traces: {
       points: DepthPoint[];
