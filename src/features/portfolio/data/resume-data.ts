@@ -9,7 +9,7 @@ import {
 } from "./profile";
 import { languages, stackLayers, testing } from "./technology-stack";
 
-export const resumeTechnologyGroups = [
+const resumeTechnologyGroups = [
   { name: "Languages", items: [...languages] },
   ...stackLayers.map((layer) => ({
     name: layer.name,

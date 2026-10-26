@@ -15,7 +15,7 @@ import {
   type DepthTriangle,
 } from "../../../domain/playground/engine-depth";
 
-export type Face = {
+type Face = {
   vertices: DepthPoint[];
   triangles: DepthTriangle[];
   boundaries: readonly (readonly [boolean, boolean, boolean])[];
@@ -23,7 +23,7 @@ export type Face = {
   shade: number;
 };
 export const staticTriangles = decodeDepthMesh(geometry);
-export function project(point: EnginePoint): [number, number] {
+function project(point: EnginePoint): [number, number] {
   return [
     art.origin[0] +
       point.reduce((sum, value, i) => sum + value * art.axes[i][0], 0),
