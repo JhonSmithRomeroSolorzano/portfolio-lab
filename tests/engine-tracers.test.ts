@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createHash } from "node:crypto";
 import {
   airPoint,
   writeAirPoint,
@@ -12,10 +11,10 @@ import {
 import { createTracerPool } from "../src/features/playground/jet-engine/tracers";
 import art from "../src/features/playground/jet-engine/engine-art.json";
 import type { Ink } from "../src/features/playground/jet-engine/raster";
+import { referenceAirPoint } from "./helpers/engine-air-reference";
 
 test("caller-owned air points preserve the original allocating model at flow boundaries", () => {
-  const values: EnginePoint[] = [],
-    buffer: [number, number, number] = [0, 0, 0];
+  const buffer: [number, number, number] = [0, 0, 0];
   for (const speed of [0, 1, 35, 60, 100])
     for (const mode of ["forward", "reverse"] as const)
       for (let route = 0; route < 36; route++)
@@ -28,13 +27,11 @@ test("caller-owned air points preserve the original allocating model at flow bou
             buffer,
           );
           assert.deepEqual(buffer, point);
-          values.push(point);
+          assert.deepEqual(
+            point,
+            referenceAirPoint(route, u, enginePower(speed), mode),
+          );
         }
-  // Recorded from 782accc before introducing the output-buffer API.
-  assert.equal(
-    createHash("sha256").update(JSON.stringify(values)).digest("hex"),
-    "8a71537842ee44e4eda60672adaace2468e63852e4137d53749f0321c5761661",
-  );
 });
 
 function reference(

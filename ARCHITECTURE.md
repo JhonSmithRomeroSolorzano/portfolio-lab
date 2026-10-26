@@ -97,7 +97,7 @@ each frame recomputes exact curves and restores stream/slot order before the sta
 depth sort. No previous-frame positions are reused or quantized. `writeAirPoint`
 explicitly writes to a caller-owned tuple; `airPoint` still allocates a fresh result
 and preserves the pure API. Projection output buffers avoid temporary XY tuples.
-Golden model samples and an allocating reference compare geometry, colors, alpha,
+Original allocating formulas run on each platform and compare geometry, colors, alpha,
 zero speed, partial reversal, palette changes and sort order, while fixed composite
 hashes verify the drawing. Scratch storage is bounded by the largest active pose,
 not by elapsed frames, and belongs to the renderer's normal disposal lifetime.
