@@ -17,7 +17,7 @@ test("career content loads without downloading the optional experiments", async 
   await expect(page.getByLabel("Core technologies")).toBeVisible();
   await page
     .getByRole("navigation", { name: "Main navigation" })
-    .getByRole("link", { name: "Résumé", exact: true })
+    .getByRole("link", { name: "Experience", exact: true })
     .press("Enter");
   await expect(page.locator("#resume")).toBeInViewport();
   expect(chunks).toEqual([]);
@@ -76,7 +76,7 @@ for (const failure of ["aborted", "unavailable"] as const) {
     ).toBeVisible();
     await page
       .getByRole("navigation", { name: "Main navigation" })
-      .getByRole("link", { name: "Résumé", exact: true })
+      .getByRole("link", { name: "Experience", exact: true })
       .press("Enter");
     await expect(
       page.getByRole("link", { name: "Download PDF", exact: true }),
@@ -149,7 +149,7 @@ for (const phase of ["render", "effect"] as const) {
     await expect(page.locator("#rescue-title")).toHaveText("Cache Rescue");
     await page
       .getByRole("navigation", { name: "Main navigation" })
-      .getByRole("link", { name: "Résumé", exact: true })
+      .getByRole("link", { name: "Experience", exact: true })
       .press("Enter");
     await expect(
       page.getByRole("link", { name: "Download PDF", exact: true }),

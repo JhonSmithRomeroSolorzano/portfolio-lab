@@ -40,7 +40,9 @@ for (const theme of ["light", "dark"] as const) {
       .include(".identity-rail")
       .analyze();
     expect(audit.violations).toEqual([]);
-    await nav.getByRole("link", { name: "Résumé", exact: true }).press("Enter");
+    await nav
+      .getByRole("link", { name: "Experience", exact: true })
+      .press("Enter");
     await expect(page.locator("#resume")).toBeFocused();
     await expect(page).toHaveURL(/review=mobile#resume$/);
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
@@ -113,7 +115,9 @@ test("desktop keeps visible navigation without a duplicate introduction action",
   await expect(
     page.getByRole("link", { name: "Explore my experience" }),
   ).toHaveCount(0);
-  await nav.getByRole("link", { name: "Résumé", exact: true }).press("Enter");
+  await nav
+    .getByRole("link", { name: "Experience", exact: true })
+    .press("Enter");
   await expect(page.locator("#resume")).toBeFocused();
 });
 
@@ -131,7 +135,7 @@ test("mobile section links remain available without JavaScript", async ({
   ).not.toBeVisible();
   const nav = page.getByRole("navigation", { name: "Main navigation" });
   await expect(nav.getByRole("link")).toHaveCount(4);
-  await nav.getByRole("link", { name: "Résumé", exact: true }).click();
+  await nav.getByRole("link", { name: "Experience", exact: true }).click();
   await expect(page).toHaveURL(/#resume$/);
   await context.close();
 });

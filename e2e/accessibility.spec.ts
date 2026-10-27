@@ -93,7 +93,7 @@ test("200 percent text remains readable and usable on a narrow screen", async ({
   await openMainNavigation(page);
   await page
     .getByRole("navigation", { name: "Main navigation" })
-    .getByRole("link", { name: "Résumé", exact: true })
+    .getByRole("link", { name: "Experience", exact: true })
     .press("Enter");
   expect(
     await page

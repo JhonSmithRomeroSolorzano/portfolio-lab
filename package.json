@@ -11,6 +11,7 @@
     "dev": "vite --host 127.0.0.1",
     "build:resume": "node --import tsx scripts/build-resume.ts",
     "build:engine": "node --import tsx scripts/build-jet-engine.mjs",
+    "build:lab-previews": "node --import tsx scripts/build-lab-previews.ts",
     "build": "npm run typecheck && npm run build:resume && vite build && node --import tsx scripts/prerender.ts && node --import tsx scripts/build-release.ts && node --import tsx scripts/check-assets.ts",
     "preview": "vite preview --host 127.0.0.1",
     "test": "node --import tsx --test tests/*.test.ts",

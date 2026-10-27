@@ -208,6 +208,10 @@ and checks both interval release and resumption. Test-only resource accounting l
 under `e2e/helpers/`, outside the application bundle; its scope and memory-measurement
 limitations are documented in [the lifecycle audit](README.md#automated-lifecycle-stability-audit).
 
+### Collection previews
+
+The catalog owns each card's engineering descriptor; the original playful copy and stable lazy loader remain separate. `PlaygroundSection` uses decorative, dimensioned, lazy `<img>` elements from `public/lab-previews/`, not mounted lab components. Cards therefore work before hydration and without JavaScript, and do not start extra renderers. The optional `scripts/build-lab-previews.ts` captures the actual seven stages from an explicitly started loopback production preview in reduced motion, with fixed scene palettes. It resizes them to 480×300 WebP stills; ordinary builds consume the checked-in assets without launching a browser. Capture output can vary with browser/platform, so regeneration requires visual review rather than a claim of byte-identical reproduction. Authoring and unit checks cap each image at 20 KiB and the group at 120 KiB. Release manifests include WebP hashes. See [the product workflow](README.md#labs--play).
+
 ## Runtime and build boundaries
 
 [The browser entry](src/main.tsx) hydrates the prerendered [App](src/app/App.tsx), or mounts it into an empty root in development. App composes the career content and optional experiences. The retired dashboard is outside this entry graph; its retained API and CLI use maintained domain models independently of the public page.

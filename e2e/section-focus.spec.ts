@@ -16,7 +16,7 @@ for (const theme of ["light", "dark"] as const) {
       const nav = page.getByRole("navigation", { name: "Main navigation" });
 
       for (const [label, id] of [
-        ["Résumé", "resume"],
+        ["Experience", "resume"],
         ["Contact", "contact"],
       ]) {
         await openMainNavigation(page);

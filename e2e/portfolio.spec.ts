@@ -13,7 +13,7 @@ test("recruiter can navigate by keyboard and download the verified resume", asyn
   const navigation = page.getByRole("navigation", { name: "Main navigation" });
   await expect(navigation.getByRole("link")).toHaveCount(4);
   await navigation
-    .getByRole("link", { name: "Résumé", exact: true })
+    .getByRole("link", { name: "Experience", exact: true })
     .press("Enter");
   await expect(page.locator("#resume")).toBeFocused();
   await expect(page).toHaveURL(/traffic=300#resume$/);
@@ -85,7 +85,7 @@ test("experience and contact precede the lab in document and menu order", async 
   ).toEqual(["#workbench", "#resume", "#contact", "#lab"]);
   await page
     .getByRole("navigation", { name: "Main navigation" })
-    .getByRole("link", { name: "Résumé", exact: true })
+    .getByRole("link", { name: "Experience", exact: true })
     .press("Enter");
   await expect(page.locator("#resume")).toBeInViewport();
 });

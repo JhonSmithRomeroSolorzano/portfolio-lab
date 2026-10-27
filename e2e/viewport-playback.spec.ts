@@ -63,7 +63,7 @@ for (const exhibit of exhibits) {
       await openMainNavigation(page);
       await page
         .getByRole("navigation", { name: "Main navigation", exact: true })
-        .getByRole("link", { name: "Résumé", exact: true })
+        .getByRole("link", { name: "Experience", exact: true })
         .press("Enter");
       await expect(stage).not.toBeInViewport();
       await expect(state).toHaveAttribute("data-playing", "false");
@@ -133,7 +133,7 @@ for (const exhibit of exhibits) {
     await expect(state).toHaveAttribute("data-playing", "true");
     await page
       .getByRole("navigation", { name: "Main navigation", exact: true })
-      .getByRole("link", { name: "Résumé", exact: true })
+      .getByRole("link", { name: "Experience", exact: true })
       .press("Enter");
     await expect(state).toHaveAttribute("data-playing", "false");
     await page
@@ -180,7 +180,7 @@ test("sculpture uses the latest entry when viewport changes are delivered togeth
   await expect(stage).toHaveAttribute("data-playing", "true");
   await page
     .getByRole("navigation", { name: "Main navigation", exact: true })
-    .getByRole("link", { name: "Résumé", exact: true })
+    .getByRole("link", { name: "Experience", exact: true })
     .press("Enter");
   await expect(stage).not.toBeInViewport();
   await expect(stage).toHaveAttribute("data-playing", "false");

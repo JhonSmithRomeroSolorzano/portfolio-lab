@@ -87,7 +87,7 @@ export function App() {
               <span aria-hidden="true">⌘</span> Overview
             </a>
             <a href="#resume">
-              <span aria-hidden="true">↗</span> Résumé
+              <span aria-hidden="true">↗</span> Experience
             </a>
             <a href="#contact">
               <span aria-hidden="true">@</span> Contact

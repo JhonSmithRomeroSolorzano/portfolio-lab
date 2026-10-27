@@ -33,7 +33,7 @@ for (const width of [1280, 390]) {
         await openMainNavigation(page);
         await page
           .getByRole("navigation", { name: "Main navigation", exact: true })
-          .getByRole("link", { name: "Résumé", exact: true })
+          .getByRole("link", { name: "Experience", exact: true })
           .press("Enter");
       } else {
         // Native wheel distances differ across engines. Observe an actual

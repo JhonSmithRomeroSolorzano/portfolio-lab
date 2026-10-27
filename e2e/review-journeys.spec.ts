@@ -201,7 +201,7 @@ for (const theme of ["light", "dark"] as const) {
     const menu = page.getByRole("navigation", { name: "Main navigation" });
     await openMainNavigation(page);
     await menu
-      .getByRole("link", { name: "Résumé", exact: true })
+      .getByRole("link", { name: "Experience", exact: true })
       .press("Enter");
     await expect(page.locator("#resume")).toBeFocused();
     await expect(

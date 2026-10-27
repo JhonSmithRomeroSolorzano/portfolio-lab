@@ -183,34 +183,20 @@
   transform: translateY(-4px);
   border-color: var(--accent);
 }
-.collection-mini {
-  height: 68px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
+.collection-preview {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 8 / 5;
+  object-fit: contain;
   border-radius: 8px;
-  font: 30px var(--mono);
+  border: 1px solid var(--line);
   margin-bottom: 10px;
 }
-.collection-mini b {
-  font-weight: 400;
-}
-.mini-rescue {
-  background: #152b50;
-  color: #ffd59a;
-}
-.mini-route {
-  background: #f1e1ca;
-  color: #9e351b;
-}
-.mini-motion {
-  background: #e8ddfa;
-  color: #6238a5;
-}
-.mini-garden {
-  background: #ffeac4;
-  color: #73410a;
+.collection-descriptor {
+  color: var(--accent);
+  font-size: 0.875rem;
+  line-height: 1.5;
 }
 .collection-number {
   font: 0.5625rem/1.6 var(--mono);
@@ -246,26 +232,12 @@
     margin-bottom: 32px;
   }
   .collection-card {
-    display: grid;
-    grid-template-columns: 64px minmax(0, 1fr);
-    gap: 6px 16px;
+    gap: 8px;
     padding: 16px;
     border-radius: 10px;
   }
   .collection-card strong {
     font-size: 1.125rem;
-  }
-  .collection-mini {
-    grid-column: 1;
-    grid-row: 1 / 5;
-    height: auto;
-    min-height: 64px;
-    margin: 0;
-    gap: 2px;
-    font-size: 16px;
-  }
-  .collection-card > :not(.collection-mini) {
-    grid-column: 2;
   }
   .collection-number {
     font-size: 0.625rem;

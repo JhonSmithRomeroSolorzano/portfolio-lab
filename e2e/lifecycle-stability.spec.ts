@@ -132,7 +132,7 @@ for (const width of [390, 1440])
       await openMainNavigation(page);
       await page
         .getByRole("navigation", { name: "Main navigation", exact: true })
-        .getByRole("link", { name: "Résumé", exact: true })
+        .getByRole("link", { name: "Experience", exact: true })
         .press("Enter");
       await settle(page);
     };
@@ -302,7 +302,7 @@ test("stack tour releases its interval when a batched intersection ends offscree
   await expect(stage).toHaveAttribute("data-playing", "true");
   await page
     .getByRole("navigation", { name: "Main navigation", exact: true })
-    .getByRole("link", { name: "Résumé", exact: true })
+    .getByRole("link", { name: "Experience", exact: true })
     .press("Enter");
   await expect(stage).not.toBeInViewport();
   await expect(stage).toHaveAttribute("data-playing", "false");
