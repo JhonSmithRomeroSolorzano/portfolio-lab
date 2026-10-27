@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   experience,
   education,
+  recentPractice,
 } from "../src/features/portfolio/data/profile.ts";
 import {
   resumeGroups,
@@ -27,6 +28,10 @@ test("resume exports preserve each period, its contributions, accents, and quali
   assert.ok(text.includes("Next.js (some experience)"));
   assert.ok(text.includes("AWS (some experience)"));
   assert.ok(text.includes("NoSQL (strongest)"));
+  assert.ok(text.includes(recentPractice.title));
+  for (const paragraph of recentPractice.paragraphs)
+    assert.ok(text.includes(paragraph));
+  assert.ok(text.indexOf("RECENT PRACTICE") < text.indexOf("EXPERIENCE"));
   assert.ok(!/[\u2010-\u2015]/.test(text));
 });
 
@@ -34,7 +39,7 @@ test("PDF generation is valid, bounded, and rejects sections that would be clipp
   const pdf = await resumePdf();
   assert.equal(pdf.bytes.subarray(0, 5).toString(), "%PDF-");
   assert.ok(pdf.bytes.subarray(-20).toString().includes("%%EOF"));
-  assert.ok(pdf.pages >= 2 && pdf.pages <= 3);
+  assert.equal(pdf.pages, 2);
   // Count the PDF's actual page objects, including any added implicitly by text overflow.
   assert.equal(
     (pdf.bytes.toString("latin1").match(/\/Type \/Page\b/g) ?? []).length,

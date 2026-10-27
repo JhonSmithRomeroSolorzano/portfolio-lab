@@ -26,6 +26,24 @@
 .resume-layout {
   min-width: 0;
 }
+.recent-practice {
+  margin-bottom: 40px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--line);
+}
+.recent-practice h3 {
+  font-size: 1.3125rem;
+  line-height: 1.4;
+  font-weight: 500;
+  margin: 10px 0 14px;
+}
+.recent-practice p {
+  max-width: 72ch;
+  margin: 10px 0 0;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--muted);
+}
 .experience-list > li > article {
   display: grid;
   grid-template-columns: minmax(190px, 0.8fr) minmax(0, 1.7fr);
