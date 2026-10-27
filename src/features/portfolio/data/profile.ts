@@ -26,6 +26,16 @@ export const professionalProfile = {
   portfolio: "https://jhonsmithromerosolorzano.github.io/portfolio-lab/",
 } as const;
 
+// Recent practice confirmed directly by Jhon on 2026-10-27; no employer or
+// exact start date was supplied, so keep it separate from employment entries.
+export const recentPractice = {
+  title: "AI-assisted development",
+  paragraphs: [
+    "In recent months, I’ve used Codex, OpenCode, and ChatGPT regularly for AI-assisted development and started coordinating agents for focused implementation, testing, and review tasks.",
+    "I define requirements and context, review the changes, and validate the results with automated tests and checks in the application.",
+  ],
+} as const;
+
 type ExperienceProject = {
   name: string;
   description: string;
