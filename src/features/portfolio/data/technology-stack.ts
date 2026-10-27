@@ -22,11 +22,10 @@ export const stackLayers = [
     aiAssisted: true,
     title: "Interfaces, components, and styling.",
     description:
-      "Product interfaces built from design handoff through reusable components, styling, and service integration.",
+      "From Figma designs to reusable interfaces, styling, and service integration.",
     groups: [
-      { label: "UI libraries", items: ["React", "Mithril.js"] },
+      { label: "UI libraries", items: ["React", "Mithril.js", "Material UI"] },
       { label: "Framework", items: ["Next.js (some experience)"] },
-      { label: "Components", items: ["Material UI"] },
       { label: "Styling", items: ["Tailwind CSS", "CSS"] },
       { label: "Design handoff", items: ["Figma"] },
     ],
@@ -40,7 +39,7 @@ export const stackLayers = [
     aiAssisted: true,
     title: "Services behind the interface.",
     description:
-      "I use JavaScript and TypeScript with the Node.js runtime and Express framework to build backend services. My work includes REST APIs and real-time communication with WebSockets.",
+      "JavaScript and TypeScript services with Node.js and Express, connecting REST APIs and real-time WebSockets.",
     groups: [
       { label: "Runtime", items: ["Node.js"] },
       { label: "Framework", items: ["Express"] },
@@ -56,7 +55,7 @@ export const stackLayers = [
     aiAssisted: false,
     title: "Strongest in NoSQL. Experienced in SQL.",
     description:
-      "NoSQL is my strongest area of database experience, alongside work with SQL databases. I also use Redis for caching, connecting data and fast repeated reads to the services that need them.",
+      "NoSQL is my strongest database experience, alongside SQL and Redis caching for fast repeated reads.",
     groups: [
       { label: "Databases", items: ["NoSQL (strongest)", "SQL"] },
       { label: "Cache", items: ["Redis"] },
@@ -71,7 +70,7 @@ export const stackLayers = [
     aiAssisted: false,
     title: "From a change to a deployment.",
     description:
-      "I have experience with Linux, PM2 process management, and Docker. I use GitHub Actions for CI/CD and have cloud experience with Azure and some AWS.",
+      "Linux, PM2, Docker, and GitHub Actions for delivery, with Azure cloud experience and some AWS.",
     groups: [
       { label: "Operating systems", items: ["Linux"] },
       { label: "Process management", items: ["PM2"] },

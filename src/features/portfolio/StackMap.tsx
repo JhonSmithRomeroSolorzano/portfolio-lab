@@ -120,11 +120,15 @@ export function StackMap() {
                   Details
                 </span>
               </span>
-              <strong>{item.name}</strong>
+              <strong>
+                {item.name}
+                {item.aiAssisted && (
+                  <span className="stack-ai-cue">
+                    AI<span className="sr-only">-assisted</span>
+                  </span>
+                )}
+              </strong>
               <span>{item.caption}</span>
-              {item.aiAssisted && (
-                <span className="stack-ai-cue">AI-assisted</span>
-              )}
               <span className="map-node-activity" aria-hidden="true">
                 {item.id === "infrastructure"
                   ? "Hosting the flow"
@@ -190,7 +194,7 @@ export function StackMap() {
                 </div>
               ))}
               {layer.aiAssisted && (
-                <div>
+                <div className="stack-ai-facts">
                   <dt>{aiDevelopment.label}</dt>
                   <dd>
                     {aiDevelopment.tools.join(" · ")} · {aiDevelopment.workflow}

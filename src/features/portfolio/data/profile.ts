@@ -22,7 +22,7 @@ export const professionalProfile = {
   role: "Senior Full-Stack Engineer · AI-assisted development",
   location: "Pereira, Colombia",
   summary:
-    "7+ years building interfaces, services, and data-driven applications. Today, I combine full-stack engineering with AI-assisted development and multi-agent workflows, from implementation through testing and review.",
+    "7+ years across interfaces, services, and data. My recent work includes AI-assisted development and multi-agent implementation, testing, and review.",
   portfolio: "https://jhonsmithromerosolorzano.github.io/portfolio-lab/",
 } as const;
 
