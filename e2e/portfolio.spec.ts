@@ -16,12 +16,13 @@ test("recruiter can navigate by keyboard and download the verified resume", asyn
     .press("Enter");
   await expect(page.locator("#resume")).toBeFocused();
   await expect(page).toHaveURL(/traffic=300#resume$/);
-  const recentPractice = page.getByRole("complementary", {
-    name: "AI-assisted development",
-  });
-  await expect(recentPractice).toContainText("Codex, OpenCode, and ChatGPT");
-  await expect(recentPractice).toContainText("automated tests and checks");
-  await expect(page.locator(".experience-list")).not.toContainText("Codex");
+  const currentRole = page.locator(".experience-list > li").first();
+  await expect(currentRole).toContainText("Antecursor");
+  await expect(currentRole).toContainText("Codex, OpenCode, and ChatGPT");
+  await expect(currentRole).toContainText("automated tests and checks");
+  await expect(page.getByText("RECENT PRACTICE", { exact: true })).toHaveCount(
+    0,
+  );
   const downloaded = page.waitForEvent("download");
   await page.getByRole("link", { name: "Download PDF", exact: true }).click();
   const pdf = await downloaded;

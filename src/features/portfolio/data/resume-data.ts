@@ -5,10 +5,14 @@ import {
   GITHUB,
   LINKEDIN,
   professionalProfile,
-  recentPractice,
   verifiedContactDetails,
 } from "./profile";
-import { languages, stackLayers, testing } from "./technology-stack";
+import {
+  aiDevelopment,
+  languages,
+  stackLayers,
+  testing,
+} from "./technology-stack";
 
 export const resumeTechnologyGroups = [
   { name: "Languages", items: [...languages] },
@@ -17,6 +21,10 @@ export const resumeTechnologyGroups = [
     items: layer.groups.flatMap((group) => [...group.items]),
   })),
   { name: "Testing", items: [...testing.tools, ...testing.levels] },
+  {
+    name: aiDevelopment.label,
+    items: [...aiDevelopment.tools, aiDevelopment.workflow],
+  },
 ];
 
 export const resumeData = {
@@ -25,7 +33,6 @@ export const resumeData = {
   github: GITHUB,
   contactDetails: verifiedContactDetails,
   technologies: resumeTechnologyGroups,
-  recentPractice,
   experience,
   education,
   certifications,

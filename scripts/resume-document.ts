@@ -52,11 +52,6 @@ export function resumeGroups(data = resumeData): ResumeGroup[] {
         after: 5,
       })),
     ],
-    [
-      heading("RECENT PRACTICE"),
-      { text: data.recentPractice.title, bold: true, size: 11, after: 7 },
-      ...data.recentPractice.paragraphs.map((text) => ({ text, after: 7 })),
-    ],
   ];
   for (const [index, job] of data.experience.entries()) {
     groups.push([

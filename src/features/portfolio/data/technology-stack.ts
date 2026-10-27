@@ -7,11 +7,19 @@ export const testing = {
   levels: ["Integration", "End-to-end (E2E)"],
 } as const;
 
+// AI-assisted frontend/backend practice confirmed directly by Jhon.
+export const aiDevelopment = {
+  label: "AI-assisted development",
+  tools: ["Codex", "OpenCode", "ChatGPT"],
+  workflow: "Multi-agent workflows",
+} as const;
+
 export const stackLayers = [
   {
     id: "frontend",
     name: "Frontend",
     caption: "UI + styling",
+    aiAssisted: true,
     title: "Interfaces, components, and styling.",
     description:
       "Product interfaces built from design handoff through reusable components, styling, and service integration.",
@@ -29,6 +37,7 @@ export const stackLayers = [
     id: "backend",
     name: "Backend",
     caption: "APIs + real time",
+    aiAssisted: true,
     title: "Services behind the interface.",
     description:
       "I use JavaScript and TypeScript with the Node.js runtime and Express framework to build backend services. My work includes REST APIs and real-time communication with WebSockets.",
@@ -44,6 +53,7 @@ export const stackLayers = [
     id: "data",
     name: "Data",
     caption: "Databases + cache",
+    aiAssisted: false,
     title: "Strongest in NoSQL. Experienced in SQL.",
     description:
       "NoSQL is my strongest area of database experience, alongside work with SQL databases. I also use Redis for caching, connecting data and fast repeated reads to the services that need them.",
@@ -58,6 +68,7 @@ export const stackLayers = [
     id: "infrastructure",
     name: "Infrastructure",
     caption: "Containers + delivery",
+    aiAssisted: false,
     title: "From a change to a deployment.",
     description:
       "I have experience with Linux, PM2 process management, and Docker. I use GitHub Actions for CI/CD and have cloud experience with Azure and some AWS.",
