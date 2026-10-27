@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { openMainNavigation } from "./helpers/main-navigation";
 
 async function hideDocument(page: Page, hidden: boolean) {
   await page.evaluate((value) => {
@@ -59,6 +60,7 @@ for (const exhibit of exhibits) {
         path: `artifacts/autoplay-${exhibit.id}-${width}.png`,
       });
 
+      await openMainNavigation(page);
       await page
         .getByRole("navigation", { name: "Main navigation", exact: true })
         .getByRole("link", { name: "Résumé", exact: true })
