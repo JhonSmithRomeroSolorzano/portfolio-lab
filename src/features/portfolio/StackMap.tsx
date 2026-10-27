@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useClientReady } from "../../shared/hooks/useClientReady";
 
-import { stackLayers } from "./data/technology-stack";
+import { aiDevelopment, stackLayers } from "./data/technology-stack";
 import { stackFlowSteps, useStackFlow } from "./useStackFlow";
 import { useStackConnections } from "./useStackConnections";
 
@@ -120,7 +120,14 @@ export function StackMap() {
                   Details
                 </span>
               </span>
-              <strong>{item.name}</strong>
+              <strong>
+                {item.name}
+                {item.aiAssisted && (
+                  <span className="stack-ai-cue">
+                    AI<span className="sr-only">-assisted</span>
+                  </span>
+                )}
+              </strong>
               <span>{item.caption}</span>
               <span className="map-node-activity" aria-hidden="true">
                 {item.id === "infrastructure"
@@ -186,6 +193,14 @@ export function StackMap() {
                   <dd>{group.items.join(" · ")}</dd>
                 </div>
               ))}
+              {layer.aiAssisted && (
+                <div className="stack-ai-facts">
+                  <dt>{aiDevelopment.label}</dt>
+                  <dd>
+                    {aiDevelopment.tools.join(" · ")} · {aiDevelopment.workflow}
+                  </dd>
+                </div>
+              )}
             </dl>
             <a href={layer.destination}>
               {layer.action} <span aria-hidden="true">↗</span>

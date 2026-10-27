@@ -26,24 +26,6 @@
 .resume-layout {
   min-width: 0;
 }
-.recent-practice {
-  margin-bottom: 40px;
-  padding-bottom: 28px;
-  border-bottom: 1px solid var(--line);
-}
-.recent-practice h3 {
-  font-size: 1.3125rem;
-  line-height: 1.4;
-  font-weight: 500;
-  margin: 10px 0 14px;
-}
-.recent-practice p {
-  max-width: 72ch;
-  margin: 10px 0 0;
-  font-size: 1rem;
-  line-height: 1.7;
-  color: var(--muted);
-}
 .experience-list > li > article {
   display: grid;
   grid-template-columns: minmax(190px, 0.8fr) minmax(0, 1.7fr);
@@ -310,6 +292,8 @@
   color: var(--muted);
 }
 .workbench-intro .intro-role {
+  max-width: none;
+  text-wrap: balance;
   font-size: clamp(19px, 2.1vw, 25px);
   line-height: 1.35;
   font-weight: 500;
@@ -419,6 +403,10 @@
   transition: box-shadow 0.15s;
 }
 .stack-node strong {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
   font-weight: 500;
   font-size: 1rem;
 }
@@ -434,6 +422,14 @@
   gap: 8px;
   width: 100%;
   color: inherit;
+}
+.stack-node .stack-ai-cue {
+  padding: 1px 4px;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.2;
 }
 .map-node-selection {
   visibility: hidden;
@@ -586,6 +582,9 @@ html[data-motion="reduce"] .experience-list > li[data-traced="true"]::before {
   margin: 0;
   font-size: 0.875rem;
   line-height: 1.6;
+}
+.stack-ai-facts {
+  grid-column: 1 / -1;
 }
 .stack-detail > a {
   margin-top: auto;
@@ -864,8 +863,8 @@ html[data-motion="reduce"] .experience-list > li[data-traced="true"]::before {
 @media (max-width: 600px) {
   .workbench-intro {
     grid-template-columns: minmax(0, 1fr) 72px;
-    gap: 14px;
-    padding-block: 22px;
+    gap: 12px;
+    padding-block: 16px;
   }
   .intro-copy {
     display: contents;
