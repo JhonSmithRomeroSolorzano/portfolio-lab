@@ -3,6 +3,7 @@ import {
   education,
   experience,
   LINKEDIN,
+  recentPractice,
 } from "./data/profile";
 import { resumeDownloads } from "./data/resume-data";
 
@@ -49,6 +50,17 @@ export function ResumeSection() {
           </a>
         </div>
       </div>
+      <aside
+        className="recent-practice"
+        aria-labelledby="recent-practice-title"
+        data-reveal="0"
+      >
+        <span className="eyebrow">RECENT PRACTICE</span>
+        <h3 id="recent-practice-title">{recentPractice.title}</h3>
+        {recentPractice.paragraphs.map((paragraph) => (
+          <p key={paragraph}>{paragraph}</p>
+        ))}
+      </aside>
       <div className="resume-layout">
         <div className="resume-experience">
           <h3 className="resume-list-title">Selected experience</h3>
