@@ -3,6 +3,8 @@ import {
   education,
   experience,
   LINKEDIN,
+  volunteering,
+  spokenLanguages,
 } from "./data/profile";
 import { resumeDownloads } from "./data/resume-data";
 
@@ -114,7 +116,7 @@ export function ResumeSection() {
       </div>
       <aside
         className="resume-education"
-        aria-label="Education and certifications"
+        aria-label="Education, certifications, and volunteering"
       >
         <div className="resume-study">
           <h3>Education</h3>
@@ -136,6 +138,17 @@ export function ResumeSection() {
               <h4>{item.title}</h4>
             </article>
           ))}
+        </div>
+        <div className="resume-study">
+          <h3>Volunteering & languages</h3>
+          {volunteering.map((item) => (
+            <article key={item.organization}>
+              <p className="resume-period">{item.period}</p>
+              <h4>{item.role}</h4>
+              <p>{item.organization}</p>
+            </article>
+          ))}
+          <p>{spokenLanguages.join(" · ")}</p>
         </div>
       </aside>
     </section>

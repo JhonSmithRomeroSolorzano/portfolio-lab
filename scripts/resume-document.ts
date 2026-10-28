@@ -1,5 +1,5 @@
-import PDFDocument from "pdfkit";
 import { resumeData } from "../src/features/portfolio/data/resume-data.ts";
+export { resumePdf } from "./resume-pdf.ts";
 
 type ResumeLine = {
   text: string;
@@ -11,7 +11,6 @@ type ResumeLine = {
   link?: string;
 };
 export type ResumeGroup = readonly ResumeLine[];
-const ink = "#17283D";
 const blue = "#245C96";
 const muted = "#475569";
 const normalize = (text: string) => text.replace(/[\u2010-\u2015]/g, "-");
@@ -63,7 +62,7 @@ export function resumeGroups(data = resumeData): ResumeGroup[] {
         color: muted,
         after: 7,
       },
-      { text: job.summary, after: 7 },
+      { text: job.resumeSummary, after: 7 },
       ...(job.highlights ?? []).map((text) => ({
         text: `- ${text}`,
         indent: 8,
@@ -112,6 +111,14 @@ export function resumeGroups(data = resumeData): ResumeGroup[] {
         },
       ]),
     ],
+    [
+      heading("VOLUNTEER EXPERIENCE"),
+      ...data.volunteering.flatMap((item) => [
+        { text: item.role, bold: true, after: 3 },
+        { text: `${item.organization} | ${item.period}`, after: 7 },
+      ]),
+    ],
+    [heading("SPOKEN LANGUAGES"), { text: data.spokenLanguages.join(" · ") }],
   );
   return groups;
 }
@@ -123,116 +130,4 @@ export function resumeText(groups: readonly ResumeGroup[] = resumeGroups()) {
       .map((group) => group.map((line) => normalize(line.text)).join("\n"))
       .join("\n\n") + "\n"
   );
-}
-
-export async function resumePdf(
-  groups: readonly ResumeGroup[] = resumeGroups(),
-) {
-  const doc = new PDFDocument({
-    size: "A4",
-    margin: 48,
-    autoFirstPage: false,
-    bufferPages: true,
-    info: {
-      Title: `${resumeData.name} - Resume`,
-      Author: resumeData.name,
-      Subject: resumeData.role,
-    },
-  });
-  const chunks: Buffer[] = [];
-  const result = new Promise<Buffer>((resolve, reject) => {
-    doc.on("data", (chunk: Buffer) => chunks.push(chunk));
-    doc.on("end", () => resolve(Buffer.concat(chunks)));
-    doc.on("error", reject);
-  });
-  const left = 48;
-  const width = 595.28 - 2 * left;
-  const top = 66;
-  // Reserve space for a footer inside PDFKit's normal printable area.
-  const bottom = 766;
-  let y = top;
-  let pages = 0;
-  const setFont = (line: ResumeLine) =>
-    doc
-      .font(line.bold ? "Helvetica-Bold" : "Helvetica")
-      .fontSize(line.size ?? 10);
-  const options = (line: ResumeLine) => ({
-    width: width - (line.indent ?? 0),
-    lineGap: 2,
-  });
-  const heights = groups.map((group) =>
-    group.map((line) => {
-      setFont(line);
-      return (
-        doc.heightOfString(normalize(line.text), options(line)) +
-        (line.after ?? 4)
-      );
-    }),
-  );
-  // Fail the build visibly if future content needs a different layout; never clip it.
-  if (
-    heights.some(
-      (group) => group.reduce((sum, height) => sum + height, 0) > bottom - top,
-    )
-  ) {
-    throw new Error(
-      "A resume section exceeds one page. Split it into smaller coherent sections before publishing.",
-    );
-  }
-  function addPage() {
-    doc.addPage();
-    pages++;
-    y = pages === 1 ? 48 : top;
-    if (pages > 1) {
-      doc
-        .font("Helvetica")
-        .fontSize(9)
-        .fillColor(muted)
-        .text(`${resumeData.name} | Resume`, left, 36, {
-          width,
-          lineBreak: false,
-        });
-      doc
-        .moveTo(left, 54)
-        .lineTo(left + width, 54)
-        .lineWidth(0.5)
-        .strokeColor("#CBD5E1")
-        .stroke();
-    }
-  }
-  addPage();
-  groups.forEach((group, groupIndex) => {
-    const height = heights[groupIndex].reduce((sum, value) => sum + value, 0);
-    if (y + height > bottom) addPage();
-    group.forEach((line, lineIndex) => {
-      setFont(line);
-      doc
-        .fillColor(line.color ?? ink)
-        .text(normalize(line.text), left + (line.indent ?? 0), y, {
-          ...options(line),
-          ...(line.link ? { link: line.link, underline: true } : {}),
-        });
-      y += heights[groupIndex][lineIndex];
-    });
-    y += 6;
-  });
-  for (let index = 0; index < pages; index++) {
-    doc.switchToPage(index);
-    doc
-      .font("Helvetica")
-      .fontSize(8)
-      .fillColor(muted)
-      .text(`${index + 1} / ${pages}`, left, 780, {
-        width,
-        align: "right",
-        lineBreak: false,
-      });
-  }
-  if (doc.bufferedPageRange().count !== pages) {
-    throw new Error(
-      "Resume content created an unexpected page. Review the layout before publishing.",
-    );
-  }
-  doc.end();
-  return { bytes: await result, pages };
 }

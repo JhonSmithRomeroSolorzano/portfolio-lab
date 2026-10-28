@@ -1,7 +1,10 @@
 // Experience confirmed by Jhon and his LinkedIn profile on October 6, 2026.
 // Linux and PM2 confirmed directly by Jhon on October 17, 2026.
 // Preserve his distinction between Azure experience and some AWS experience.
+// Jhon confirmed Next.js and Remix experience without a Next.js qualifier.
 export const languages = ["JavaScript", "TypeScript"] as const;
+// Jhon clarified Python is used for scripting and removed the earlier Go claim.
+export const additionalLanguages = ["Python (scripting)"] as const;
 export const testing = {
   tools: ["Jest", "Playwright", "Mocha"],
   levels: ["Integration", "End-to-end (E2E)"],
@@ -25,7 +28,10 @@ export const stackLayers = [
       "From Figma designs to reusable interfaces, styling, and service integration.",
     groups: [
       { label: "UI libraries", items: ["React", "Mithril.js", "Material UI"] },
-      { label: "Framework", items: ["Next.js (some experience)"] },
+      {
+        label: "Frameworks",
+        items: ["Remix", "Next.js"],
+      },
       { label: "Styling", items: ["Tailwind CSS", "CSS"] },
       { label: "Design handoff", items: ["Figma"] },
     ],
@@ -43,6 +49,7 @@ export const stackLayers = [
     groups: [
       { label: "Runtime", items: ["Node.js"] },
       { label: "Framework", items: ["Express"] },
+      { label: "Additional languages", items: [...additionalLanguages] },
       { label: "Communication", items: ["REST APIs", "WebSockets"] },
     ],
     destination: "#lab",
@@ -75,6 +82,7 @@ export const stackLayers = [
       { label: "Operating systems", items: ["Linux"] },
       { label: "Process management", items: ["PM2"] },
       { label: "Containers", items: ["Docker"] },
+      { label: "Version control", items: ["Git"] },
       { label: "CI/CD", items: ["GitHub Actions"] },
       { label: "Cloud", items: ["Azure", "AWS (some experience)"] },
     ],

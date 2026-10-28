@@ -245,6 +245,16 @@ for (const theme of ["light", "dark"] as const) {
       .press("Enter");
     await expect(page.locator("#contact")).toBeFocused();
     const contact = page.locator("#contact");
+    for (const [label, href] of [
+      ["jhon.smith@ucp.edu.co", "mailto:jhon.smith@ucp.edu.co"],
+      ["+57 3202065522", "tel:+573202065522"],
+    ]) {
+      const link = contact.getByRole("link", { name: label, exact: true });
+      await expect(link).toHaveAttribute("href", href);
+      expect((await link.boundingBox())?.height).toBeGreaterThanOrEqual(44);
+      await link.focus();
+      await expect(link).toBeFocused();
+    }
     expect(
       await contact
         .locator("p")
