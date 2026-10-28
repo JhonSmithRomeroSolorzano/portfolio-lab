@@ -21,6 +21,13 @@ test("recruiter can navigate by keyboard and download the verified resume", asyn
   await expect(currentRole).toContainText("Antecursor");
   await expect(currentRole).toContainText("Codex, OpenCode, and ChatGPT");
   await expect(currentRole).toContainText("automated tests and checks");
+  await expect(page.locator(".experience-list > li")).toHaveCount(6);
+  await expect(page.locator(".experience-list > li").last()).toContainText(
+    "Nov 2013",
+  );
+  await expect(page.locator(".experience-list > li").nth(1)).toContainText(
+    "Remix",
+  );
   await expect(page.getByText("RECENT PRACTICE", { exact: true })).toHaveCount(
     0,
   );
@@ -33,6 +40,14 @@ test("recruiter can navigate by keyboard and download the verified resume", asyn
   expect(plain.ok()).toBeTruthy();
   expect(await plain.text()).toContain("Nimrod | https://nimrod.io/");
   expect(await plain.text()).toContain("Codex, OpenCode, and ChatGPT");
+  expect(await plain.text()).toContain("mailto:jhon.smith@ucp.edu.co");
+  const pdfResponse = await page.request.get(
+    "/resume/jhon-smith-romero-resume.pdf",
+  );
+  const pdfSource = (await pdfResponse.body()).toString("latin1");
+  expect(pdfSource.match(/\/Type \/Page\b/g)).toHaveLength(1);
+  expect(pdfSource).toContain("/URI (mailto:jhon.smith@ucp.edu.co)");
+  expect(pdfSource).toContain("/URI (tel:+573202065522)");
 });
 
 test("theme selection survives reload and a small viewport stays usable", async ({

@@ -22,7 +22,7 @@ export function ContactSection() {
               href={detail.href}
               rel="noreferrer"
             >
-              {detail.label} <Arrow diagonal />
+              <span>{detail.label}</span> <Arrow diagonal />
             </a>
           ))}
           <a
@@ -31,7 +31,7 @@ export function ContactSection() {
             target="_blank"
             rel="noreferrer"
           >
-            Find me on LinkedIn <Arrow diagonal />
+            <span>Find me on LinkedIn</span> <Arrow diagonal />
           </a>
         </div>
       </div>

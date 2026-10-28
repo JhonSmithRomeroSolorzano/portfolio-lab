@@ -6,6 +6,8 @@ import {
   LINKEDIN,
   professionalProfile,
   verifiedContactDetails,
+  volunteering,
+  spokenLanguages,
 } from "./profile";
 import {
   aiDevelopment,
@@ -36,6 +38,8 @@ export const resumeData = {
   experience,
   education,
   certifications,
+  volunteering,
+  spokenLanguages,
 };
 
 export const resumeDownloads = {

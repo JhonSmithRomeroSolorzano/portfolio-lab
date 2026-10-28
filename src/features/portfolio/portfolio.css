@@ -645,6 +645,10 @@ html[data-motion="reduce"] .experience-list > li[data-traced="true"]::before {
   gap: 12px;
   font-size: 0.875rem;
 }
+.contact-actions .primary-button > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
 @media (min-width: 1600px) {
   .workbench {
     padding-top: 48px;
