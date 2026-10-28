@@ -33,7 +33,7 @@ export const professionalProfile = {
   role: "Senior Full-Stack Engineer · AI-assisted development",
   location: "Pereira, Colombia",
   summary:
-    "9+ years across interfaces, services, and data. My recent work includes AI-assisted development and multi-agent implementation, testing, and review.",
+    "Systems and Telecommunications Engineer with 9+ years of full-stack development experience. I build and maintain web applications with JavaScript, TypeScript, React, Next.js, Remix, and Node.js, connecting intuitive interfaces with reliable backend services. I integrate AI-assisted development and multi-agent workflows into implementation, testing, and code review, while owning requirements, technical decisions, and validation. I work closely with teams and clients to translate complex requirements into maintainable software.",
   portfolio: "https://jhonsmithromerosolorzano.github.io/portfolio-lab/",
 } as const;
 
@@ -54,6 +54,7 @@ type ExperienceEntry = {
   context: string;
   summary: string;
   resumeSummary: string;
+  resumeLocation?: string;
   highlights?: readonly string[];
   projects?: readonly ExperienceProject[];
 };
@@ -70,11 +71,11 @@ export const experience: readonly ExperienceEntry[] = [
     summary:
       "Full-stack development of Nimrod, a building-management platform for monitoring, configuring, and automating connected equipment.",
     resumeSummary:
-      "Develop React/Mithril.js and Node.js building automation: BACnet, dashboards, equipment/network workflows, alarms, reporting, cloud authentication, and tests. Use Codex, OpenCode, and ChatGPT; recently began coordinating agents for implementation, testing, and review, owning requirements, context, and validation.",
+      "I develop and maintain a building-management platform for monitoring, configuring, and automating connected equipment. I deliver React/Mithril.js interfaces and Node.js services on Linux for BACnet integrations, dashboards, equipment/network workflows, alarms, reporting, cloud authentication, and automated tests. I use Codex, OpenCode, and ChatGPT and coordinate agents for implementation, testing, and review, owning requirements, context, and validation.",
     // Jhon confirmed these recent responsibilities belong to his current role.
     highlights: [
       "Use Codex, OpenCode, and ChatGPT regularly for AI-assisted frontend and backend development.",
-      "Recently started coordinating agents for focused implementation, testing, and review. I define requirements and context, review changes, and validate results with automated tests and checks in the application.",
+      "Coordinate agents for focused implementation, testing, and review. I define requirements and context, review changes, and validate results with automated tests and checks in the application.",
     ],
     projects: [
       {
@@ -84,7 +85,7 @@ export const experience: readonly ExperienceEntry[] = [
         contributions: [
           "Take features from design through implementation across database models, backend services, and frontend interfaces.",
           "Build features with React and Mithril.js, connected to Node.js services and NoSQL databases.",
-          "Work with Azure and GitHub Actions for cloud delivery and CI/CD.",
+          "Work with Linux, Azure, and GitHub Actions for cloud delivery and CI/CD.",
           "Develop BACnet integrations, dynamic dashboards, equipment and network workflows, alarms, reporting, cloud authentication, and automated tests.",
         ],
       },
@@ -98,10 +99,11 @@ export const experience: readonly ExperienceEntry[] = [
     end: "2024-11",
     endLabel: "Nov 2024",
     context: "Full-time · Remote · Utah, United States",
+    resumeLocation: "Remote (USA)",
     summary:
-      "Full-stack development for a sports and recreation SaaS, including Remix/SSR interfaces, shared components, and Go services with relational databases.",
+      "Full-stack development for a sports and recreation SaaS, including React, Next.js, and Remix interfaces, shared components, and services with relational databases.",
     resumeSummary:
-      "Delivered route-driven Remix/SSR interfaces, shared components, and Go services with relational databases. Supported unit tests, code quality, and agile delivery; implemented React/TypeScript features from Figma, with some Next.js experience.",
+      "I contributed to complex frontend and backend applications using React, Next.js, and Remix. I delivered route-driven interfaces, shared UI components, and services with relational databases, supporting unit tests, code quality, and agile delivery.",
     projects: [
       {
         name: "Athletify SaaS",
@@ -109,8 +111,8 @@ export const experience: readonly ExperienceEntry[] = [
         url: "https://www.athletify.com/",
         contributions: [
           "Developed frontend features for the product with React and TypeScript.",
-          "Translated Figma designs into working product interfaces and gained some experience with Next.js.",
-          "Built route-driven Remix interfaces with server-side rendering, shared components, and Go services backed by relational databases.",
+          "Translated Figma designs into working React, TypeScript, and Next.js product interfaces.",
+          "Built route-driven Remix interfaces with server-side rendering, shared components, and services backed by relational databases.",
           "Supported unit tests, code quality, and agile delivery.",
         ],
       },
@@ -124,10 +126,11 @@ export const experience: readonly ExperienceEntry[] = [
     end: "2024-07",
     endLabel: "Jul 2024",
     context: "Full-time · Remote · United States",
+    resumeLocation: "Remote (USA)",
     summary:
       "Full-stack development and ongoing maintenance of Nimrod’s building-management automation workflows.",
     resumeSummary:
-      "Built responsive React/Mithril.js interfaces and Node.js services with NoSQL databases. Delivered full-stack features, refactored code, improved performance, and supported continuous delivery for end users.",
+      "I built responsive React and Mithril.js interfaces and robust Node.js services backed by NoSQL databases. My work spanned new features across the stack, refactoring, performance improvements, and the continuous delivery of solutions for end users.",
     projects: [
       {
         name: "Nimrod",
@@ -148,10 +151,11 @@ export const experience: readonly ExperienceEntry[] = [
     end: "2021-07",
     endLabel: "Jul 2021",
     context: "Full-time · Remote · United States",
+    resumeLocation: "Remote (USA)",
     summary:
       "Full-stack web development connecting JavaScript interfaces with backend services and NoSQL data.",
     resumeSummary:
-      "Developed React/Mithril.js, Node.js, and NoSQL applications. Delivered user-focused features, improved performance, and maintained code quality in an agile environment.",
+      "I developed full-stack applications using React, Mithril.js, Node.js, and NoSQL databases. I delivered user-focused features, improved system performance, and maintained code quality in an agile environment.",
     highlights: [
       "Developed frontend and backend features with React, Mithril.js, Node.js, and NoSQL databases.",
     ],
@@ -164,10 +168,11 @@ export const experience: readonly ExperienceEntry[] = [
     end: "2020-07",
     endLabel: "Jul 2020",
     context: "Full-time · Pasto, Colombia",
+    resumeLocation: "Pasto, Nariño",
     summary:
       "Web application development spanning user interfaces, backend logic, SQL data models, and application architecture.",
     resumeSummary:
-      "Delivered HTML, CSS, JavaScript/jQuery, Node.js, and SQL applications. Implemented full-stack features, optimized data handling, and supported agile releases.",
+      "I delivered end-to-end applications using HTML, CSS, JavaScript/jQuery, Node.js, and SQL databases. I implemented and updated features across the stack, optimized data handling, and supported agile releases.",
     highlights: [
       "Built web applications with HTML, CSS, JavaScript, jQuery, Node.js, and SQL.",
       "Worked on data models, application architecture, and code optimization.",
@@ -181,10 +186,11 @@ export const experience: readonly ExperienceEntry[] = [
     end: "2016-11",
     endLabel: "Nov 2016",
     context: "Pereira, Colombia",
+    resumeLocation: "Pereira",
     summary:
       "Web application development, code analysis, and data-model and architecture design around client requirements.",
     resumeSummary:
-      "Built HTML, CSS, JavaScript/jQuery, Node.js, and SQL applications. Analyzed code, optimized resources, and designed data models and architectures around client requirements.",
+      "I built complete web applications with HTML, CSS, JavaScript/jQuery, Node.js, and SQL databases. I also analyzed code, optimized resources, and designed data models and architectures around client requirements.",
     highlights: [
       "Built complete web applications across interfaces, backend services, and SQL data.",
       "Analyzed code, optimized resources, and designed data models and architectures around client requirements.",
@@ -197,6 +203,8 @@ export const education = [
     school: "Universidad Católica de Pereira",
     qualification: "Systems and Telecommunications Engineering",
     period: "2010–2015",
+    resumePeriod: "01/2010 - 12/2015",
+    resumeLocation: "Pereira",
   },
   {
     school: "Fundec",
@@ -212,6 +220,8 @@ export const volunteering = [
     role: "Missionary (Volunteering)",
     organization: "Church of Jesus Christ of Latter-day Saints",
     period: "Nov 2016 - Nov 2018",
+    start: "2016-11",
+    end: "2018-11",
   },
 ] as const;
 

@@ -1,9 +1,10 @@
 // Experience confirmed by Jhon and his LinkedIn profile on October 6, 2026.
 // Linux and PM2 confirmed directly by Jhon on October 17, 2026.
 // Preserve his distinction between Azure experience and some AWS experience.
+// Jhon confirmed Next.js and Remix experience without a Next.js qualifier.
 export const languages = ["JavaScript", "TypeScript"] as const;
-// Additional languages and Remix/SSR confirmed in Jhon's updated résumé.
-export const additionalLanguages = ["Python", "Go"] as const;
+// Jhon clarified Python is used for scripting and removed the earlier Go claim.
+export const additionalLanguages = ["Python (scripting)"] as const;
 export const testing = {
   tools: ["Jest", "Playwright", "Mocha"],
   levels: ["Integration", "End-to-end (E2E)"],
@@ -29,7 +30,7 @@ export const stackLayers = [
       { label: "UI libraries", items: ["React", "Mithril.js", "Material UI"] },
       {
         label: "Frameworks",
-        items: ["Remix (SSR)", "Next.js (some experience)"],
+        items: ["Remix", "Next.js"],
       },
       { label: "Styling", items: ["Tailwind CSS", "CSS"] },
       { label: "Design handoff", items: ["Figma"] },

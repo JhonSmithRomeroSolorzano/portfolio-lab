@@ -1,0 +1,4 @@
+Lato fonts, SIL Open Font License 1.1 (see OFL.txt).
+Source: https://github.com/google/fonts/tree/5d3b76120a319730fda218cc7410174a462b32cb/ofl/lato
+Files: Lato-Regular.ttf, Lato-Italic.ttf, Lato-Bold.ttf
+Vendored for build-time PDF embedding only; not copied to the website assets.

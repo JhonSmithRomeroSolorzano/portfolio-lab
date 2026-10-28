@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { openMainNavigation } from "./helpers/main-navigation";
+import { professionalProfile } from "../src/features/portfolio/data/profile";
 
 test.beforeEach(async ({ page }) => {
   await page.route("https://fonts.googleapis.com/**", (route) => route.abort());
@@ -10,6 +11,9 @@ test("recruiter can navigate by keyboard and download the verified resume", asyn
   page,
 }) => {
   await page.goto("/?traffic=300#workbench");
+  await expect(page.locator("#workbench")).toContainText(
+    professionalProfile.summary,
+  );
   const navigation = page.getByRole("navigation", { name: "Main navigation" });
   await expect(navigation.getByRole("link")).toHaveCount(4);
   await navigation
@@ -27,6 +31,12 @@ test("recruiter can navigate by keyboard and download the verified resume", asyn
   );
   await expect(page.locator(".experience-list > li").nth(1)).toContainText(
     "Remix",
+  );
+  await expect(page.locator(".experience-list > li").nth(1)).toContainText(
+    "Next.js",
+  );
+  await expect(page.locator("#resume")).not.toContainText(
+    "some experience with Next.js",
   );
   await expect(page.getByText("RECENT PRACTICE", { exact: true })).toHaveCount(
     0,
