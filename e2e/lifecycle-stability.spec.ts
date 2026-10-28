@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { openMainNavigation } from "./helpers/main-navigation";
 import { writeFile } from "node:fs/promises";
 import { openSync, writeFileSync, closeSync } from "node:fs";
 import {
@@ -128,9 +129,10 @@ for (const width of [390, 1440])
         await page
           .getByRole("button", { name: "Switch to light theme" })
           .press("Enter");
+      await openMainNavigation(page);
       await page
         .getByRole("navigation", { name: "Main navigation", exact: true })
-        .getByRole("link", { name: "Résumé", exact: true })
+        .getByRole("link", { name: "Experience", exact: true })
         .press("Enter");
       await settle(page);
     };
@@ -300,7 +302,7 @@ test("stack tour releases its interval when a batched intersection ends offscree
   await expect(stage).toHaveAttribute("data-playing", "true");
   await page
     .getByRole("navigation", { name: "Main navigation", exact: true })
-    .getByRole("link", { name: "Résumé", exact: true })
+    .getByRole("link", { name: "Experience", exact: true })
     .press("Enter");
   await expect(stage).not.toBeInViewport();
   await expect(stage).toHaveAttribute("data-playing", "false");

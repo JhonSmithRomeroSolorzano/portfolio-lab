@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { openMainNavigation } from "./helpers/main-navigation";
 import AxeBuilder from "@axe-core/playwright";
 
 for (const theme of ["light", "dark"] as const) {
@@ -89,9 +90,10 @@ test("200 percent text remains readable and usable on a narrow screen", async ({
         card.contentHeight <= card.height + 1,
     ),
   ).toBeTruthy();
+  await openMainNavigation(page);
   await page
     .getByRole("navigation", { name: "Main navigation" })
-    .getByRole("link", { name: "Résumé", exact: true })
+    .getByRole("link", { name: "Experience", exact: true })
     .press("Enter");
   expect(
     await page

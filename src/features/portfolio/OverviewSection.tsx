@@ -42,9 +42,6 @@ export function OverviewSection() {
       <StackMap />
       <div className="workbench-caption">
         <span>The tools I use. The work behind them.</span>
-        <a href="#resume">
-          Explore my experience <span aria-hidden="true">↓</span>
-        </a>
       </div>
     </section>
   );

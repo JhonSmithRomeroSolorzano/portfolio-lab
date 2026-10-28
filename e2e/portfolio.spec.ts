@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { openMainNavigation } from "./helpers/main-navigation";
 
 test.beforeEach(async ({ page }) => {
   await page.route("https://fonts.googleapis.com/**", (route) => route.abort());
@@ -12,7 +13,7 @@ test("recruiter can navigate by keyboard and download the verified resume", asyn
   const navigation = page.getByRole("navigation", { name: "Main navigation" });
   await expect(navigation.getByRole("link")).toHaveCount(4);
   await navigation
-    .getByRole("link", { name: "Résumé", exact: true })
+    .getByRole("link", { name: "Experience", exact: true })
     .press("Enter");
   await expect(page.locator("#resume")).toBeFocused();
   await expect(page).toHaveURL(/traffic=300#resume$/);
@@ -91,12 +92,13 @@ test("experience and contact precede the lab in document and menu order", async 
       .evaluateAll((nodes) => nodes.map((n) => n.getAttribute("href"))),
   ).toEqual(["#workbench", "#resume", "#contact", "#lab"]);
   await page
-    .getByRole("link", { name: "Explore my experience", exact: false })
+    .getByRole("navigation", { name: "Main navigation" })
+    .getByRole("link", { name: "Experience", exact: true })
     .press("Enter");
   await expect(page.locator("#resume")).toBeInViewport();
 });
 
-test("mobile overview prioritizes the stack and uses a balanced menu", async ({
+test("mobile overview avoids duplicate actions and uses a compact menu", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
@@ -104,6 +106,13 @@ test("mobile overview prioritizes the stack and uses a balanced menu", async ({
   await expect(page.getByLabel("Core technologies")).toHaveText(
     "React · TypeScript · Node.js · Azure",
   );
+  await expect(
+    page.getByRole("button", { name: "Menu", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("navigation", { name: "Main navigation" }),
+  ).not.toBeVisible();
+  await openMainNavigation(page);
   const links = page
     .getByRole("navigation", { name: "Main navigation" })
     .getByRole("link");
@@ -114,15 +123,14 @@ test("mobile overview prioritizes the stack and uses a balanced menu", async ({
       return { y: r.y, height: r.height };
     }),
   );
-  expect(rects[0].y).toBe(rects[1].y);
-  expect(rects[2].y).toBe(rects[3].y);
+  expect(rects[0].y).toBeLessThan(rects[1].y);
+  expect(rects[1].y).toBeLessThan(rects[2].y);
+  expect(rects[2].y).toBeLessThan(rects[3].y);
   expect(rects.every((rect) => rect.height >= 44)).toBeTruthy();
   await page.evaluate(() => document.fonts.ready);
-  expect(
-    await page
-      .locator("#resume")
-      .evaluate((node) => node.getBoundingClientRect().top + scrollY),
-  ).toBeLessThan(1500);
+  await expect(
+    page.getByRole("link", { name: "Explore my experience" }),
+  ).toHaveCount(0);
   expect(
     await page
       .locator(".experience-project li")

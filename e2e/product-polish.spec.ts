@@ -19,7 +19,7 @@ for (const theme of ["light", "dark"])
         .click();
       await page
         .getByText("See how this traversal works", { exact: true })
-        .click();
+        .press("Enter");
       for (const id of ["A", "B"])
         await page
           .getByRole("button", { name: `Node ${id}`, exact: true })
@@ -27,9 +27,20 @@ for (const theme of ["light", "dark"])
       await page
         .locator('.collection-index a[href="#connection-game"]')
         .click();
-      await page.getByText("Your puzzle records", { exact: true }).click();
+      await page
+        .getByText("Your puzzle records", { exact: true })
+        .press("Enter");
       await page.locator('.collection-index a[href="#cache-rescue"]').click();
-      await page.getByText("Predict before you play", { exact: true }).click();
+      // This expanded-state accessibility journey uses native keyboard
+      // activation, avoiding a coordinate click racing neighboring lab layout.
+      // Pointer prediction behavior is covered separately in cache-rescue.spec.
+      await page
+        .getByText("Predict before you play", { exact: true })
+        .press("Enter");
+      await expect(page.locator(".cache-prediction")).toHaveAttribute(
+        "open",
+        "",
+      );
       await page.getByLabel("How many database reads?").fill("1");
       await page
         .getByRole("button", { name: "Send & see the result", exact: true })
@@ -37,7 +48,7 @@ for (const theme of ["light", "dark"])
       await page.locator('.collection-index a[href="#motion-studio"]').click();
       await page
         .getByText("Take this motion with you", { exact: true })
-        .click();
+        .press("Enter");
       await mkdir("artifacts/review-oct13", { recursive: true });
       for (const [id, title] of [
         ["cache-rescue", "Cache Rescue"],
@@ -68,6 +79,7 @@ for (const theme of ["light", "dark"])
           ),
         ).toBeTruthy();
         await section.screenshot({
+          animations: "disabled",
           path: `artifacts/review-oct13/${info.project.name}-${theme}-${width}-${id}.png`,
         });
       }

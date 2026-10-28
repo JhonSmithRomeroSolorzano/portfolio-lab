@@ -36,18 +36,22 @@ export function PlaygroundSection() {
             href={`#${experience.id}`}
             className={`collection-card card-${experience.style}`}
           >
-            <span
-              className={`collection-mini mini-${experience.style}`}
-              aria-hidden="true"
-            >
-              {experience.artwork[0]}
-              <b>{experience.artwork[1]}</b>
-              {experience.artwork[2]}
-            </span>
+            <img
+              className="collection-preview"
+              src={`./lab-previews/${experience.id}.webp`}
+              alt=""
+              width="480"
+              height="300"
+              loading="lazy"
+              decoding="async"
+            />
             <span className="collection-number">
               {String(index + 1).padStart(2, "0")} / {experience.category}
             </span>
             <strong>{experience.title}</strong>
+            <span className="collection-descriptor">
+              {experience.descriptor}
+            </span>
             <span className="collection-description">
               {experience.description}
             </span>

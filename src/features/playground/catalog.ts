@@ -6,8 +6,8 @@ export type Experience = {
   titleId: string;
   category: string;
   description: string;
+  descriptor: string;
   action: string;
-  artwork: readonly [string, string, string];
   style: string;
   engineering: {
     decision: string;
@@ -27,8 +27,8 @@ export const experiences: readonly Experience[] = [
     titleId: "engine-title",
     category: "AIR IN MOTION",
     description: "Change the speed. See the air respond.",
+    descriptor: "Depth-aware canvas rendering",
     action: "Run the engine ↗",
-    artwork: ["≋", "◉", "→"],
     style: "engine",
     engineering: {
       decision:
@@ -49,8 +49,8 @@ export const experiences: readonly Experience[] = [
     titleId: "loom-title",
     category: "KINETIC ART",
     description: "Place a pull. Weave the light.",
+    descriptor: "Fixed-step particle simulation",
     action: "Shape the current ↗",
-    artwork: ["∿", "⊙", "∿"],
     style: "loom",
     engineering: {
       decision:
@@ -70,8 +70,8 @@ export const experiences: readonly Experience[] = [
     titleId: "sculpture-title",
     category: "GENERATIVE ART",
     description: "A thousand signals. One living form.",
+    descriptor: "Particle morphing & projection",
     action: "Shape the signals ↗",
-    artwork: ["·", "JSR", "·"],
     style: "sculpture",
     engineering: {
       decision:
@@ -93,8 +93,8 @@ export const experiences: readonly Experience[] = [
     titleId: "motion-title",
     category: "FEEL",
     description: "Same journey. Different feeling.",
+    descriptor: "Animation timing & easing",
     action: "Make it move ↗",
-    artwork: ["○", "↝", "●"],
     style: "motion",
     engineering: {
       decision:
@@ -116,8 +116,8 @@ export const experiences: readonly Experience[] = [
     titleId: "route-title",
     category: "LOGIC",
     description: "A few turns. One bright idea.",
+    descriptor: "Graph connectivity & local state",
     action: "Find a path ↗",
-    artwork: ["┌", "┘", "─"],
     style: "route",
     engineering: {
       decision:
@@ -139,8 +139,8 @@ export const experiences: readonly Experience[] = [
     titleId: "rescue-title",
     category: "STRATEGY",
     description: "Beat the rush. Share the work.",
+    descriptor: "Cache-stampede coordination",
     action: "Play with requests ↗",
-    artwork: ["···", "↘", "●"],
     style: "rescue",
     engineering: {
       decision:
@@ -160,8 +160,8 @@ export const experiences: readonly Experience[] = [
     titleId: "garden-title",
     category: "DISCOVERY",
     description: "Light up a different way to think.",
+    descriptor: "Breadth-first & depth-first traversal",
     action: "Explore the tree ↗",
-    artwork: ["●", "⋏", "●"],
     style: "garden",
     engineering: {
       decision:

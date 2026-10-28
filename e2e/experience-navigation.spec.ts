@@ -1,5 +1,70 @@
 import { test, expect } from "@playwright/test";
 
+for (const theme of ["light", "dark"] as const) {
+  test(`lab wayfinding has ordered, readable rows on phones in ${theme}`, async ({
+    page,
+    browserName,
+  }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.addInitScript(
+      (value) => localStorage.setItem("portfolio-theme", value),
+      theme,
+    );
+    await page.goto("/");
+    for (const width of [320, 390, 844]) {
+      await page.setViewportSize({ width, height: 900 });
+      for (const fontSize of ["100%", "200%"]) {
+        await page.evaluate((size) => {
+          document.documentElement.style.fontSize = size;
+        }, fontSize);
+        for (const id of ["jet-engine", "cache-rescue", "algorithm-garden"]) {
+          const nav = page.locator(`#${id} .experience-navigation`);
+          const cards = await nav
+            .locator("a:not(.experience-nav-collection)")
+            .all();
+          const back = await nav
+            .locator(".experience-nav-collection")
+            .boundingBox();
+          const navBox = await nav.boundingBox();
+          expect(back!.width).toBeCloseTo(navBox!.width, 0);
+          for (const card of cards) {
+            const box = await card.boundingBox();
+            expect(box!.y + box!.height).toBeLessThanOrEqual(back!.y);
+            expect(box!.height).toBeGreaterThanOrEqual(44);
+            expect(
+              await card.evaluate(
+                (node) => node.scrollWidth <= node.clientWidth,
+              ),
+            ).toBe(true);
+            if (cards.length === 1)
+              expect(box!.width).toBeCloseTo(navBox!.width, 0);
+          }
+          const order = await nav
+            .locator("a")
+            .evaluateAll((nodes) => nodes.map((node) => node.className));
+          expect(order.at(-1)).toBe("experience-nav-collection");
+        }
+        expect(
+          await page.evaluate(
+            () => document.documentElement.scrollWidth <= innerWidth,
+          ),
+        ).toBe(true);
+      }
+    }
+    const links = page.locator("#cache-rescue .experience-navigation a");
+    await links.nth(0).focus();
+    // macOS WebKit uses Option+Tab to include links in sequential navigation.
+    const forward =
+      browserName === "webkit" && process.platform === "darwin"
+        ? "Alt+Tab"
+        : "Tab";
+    await page.keyboard.press(forward);
+    await expect(links.nth(1)).toBeFocused();
+    await page.keyboard.press(forward);
+    await expect(links.nth(2)).toBeFocused();
+  });
+}
+
 test("each experience links to its actual neighbors and the collection without wrapping the ends", async ({
   page,
 }) => {

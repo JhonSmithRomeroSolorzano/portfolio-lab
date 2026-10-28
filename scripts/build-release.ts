@@ -10,7 +10,7 @@ async function collect(directory = "") {
     const name = `${directory}${entry.name}`;
     if (entry.isDirectory()) await collect(`${name}/`);
     // PDFs contain generation metadata; verify their source through the commit and the shared text export.
-    else if (/\.(html|js|css|woff2|jpg|svg|txt)$/.test(name))
+    else if (/\.(html|js|css|woff2|jpg|svg|webp|txt)$/.test(name))
       files[name] = digest(await readFile(`dist/${name}`));
   }
 }

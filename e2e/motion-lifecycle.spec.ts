@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { openMainNavigation } from "./helpers/main-navigation";
 
 for (const width of [1280, 390]) {
   for (const exit of ["navigation", "scrolling"] as const) {
@@ -29,9 +30,10 @@ for (const width of [1280, 390]) {
       );
 
       if (exit === "navigation") {
+        await openMainNavigation(page);
         await page
           .getByRole("navigation", { name: "Main navigation", exact: true })
-          .getByRole("link", { name: "Résumé", exact: true })
+          .getByRole("link", { name: "Experience", exact: true })
           .press("Enter");
       } else {
         // Native wheel distances differ across engines. Observe an actual

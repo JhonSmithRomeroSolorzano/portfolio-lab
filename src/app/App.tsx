@@ -12,9 +12,11 @@ import { MotionSettings } from "../shared/ui/MotionSettings";
 import { BrandMark } from "../features/portfolio/BrandMark";
 
 import { SOURCE_REPOSITORY } from "../shared/project";
+import { useMobileNavigation } from "./useMobileNavigation";
 export function App() {
   const mainRef = useRef<HTMLElement>(null);
   const navRef = useRef<HTMLElement>(null);
+  const menu = useMobileNavigation(navRef);
   useLayoutEffect(() => {
     const legacyDestination =
       window.location.hash === "#signal-lab"
@@ -52,7 +54,11 @@ export function App() {
       </a>
       <div className="portfolio-frame">
         <span className="reading-progress" aria-hidden="true" />
-        <header className="identity-rail">
+        <header
+          className="identity-rail"
+          data-menu-ready={menu.ready}
+          data-menu-open={menu.open}
+        >
           <a
             className="rail-brand"
             href="#"
@@ -70,13 +76,18 @@ export function App() {
             <br />
             PORTFOLIO
           </p>
-          <nav aria-label="Main navigation" ref={navRef}>
+          <nav
+            id="main-navigation"
+            aria-label="Main navigation"
+            ref={navRef}
+            onClick={menu.navigate}
+          >
             <span className="nav-cursor" aria-hidden="true" />
             <a href="#workbench">
               <span aria-hidden="true">⌘</span> Overview
             </a>
             <a href="#resume">
-              <span aria-hidden="true">↗</span> Résumé
+              <span aria-hidden="true">↗</span> Experience
             </a>
             <a href="#contact">
               <span aria-hidden="true">@</span> Contact
@@ -101,6 +112,31 @@ export function App() {
             </div>
             <ThemeSwitcher />
             <MotionSettings />
+            <button
+              className="mobile-menu-toggle"
+              type="button"
+              ref={menu.button}
+              hidden={!menu.ready}
+              aria-label="Menu"
+              title="Menu"
+              aria-expanded={menu.open}
+              aria-controls="main-navigation"
+              onClick={menu.toggle}
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                aria-hidden="true"
+              >
+                <path
+                  d={menu.open ? "M6 6l12 12M6 18L18 6" : "M4 8h16M4 16h16"}
+                />
+              </svg>
+            </button>
           </div>
         </header>
         <div className="portfolio-content">

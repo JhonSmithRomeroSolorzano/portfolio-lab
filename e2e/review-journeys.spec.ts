@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { openMainNavigation } from "./helpers/main-navigation";
 import { LINKEDIN } from "../src/features/portfolio/data/profile";
 import {
   loomViewport,
@@ -198,8 +199,9 @@ for (const theme of ["light", "dark"] as const) {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/?review=recruiter");
     const menu = page.getByRole("navigation", { name: "Main navigation" });
+    await openMainNavigation(page);
     await menu
-      .getByRole("link", { name: "Résumé", exact: true })
+      .getByRole("link", { name: "Experience", exact: true })
       .press("Enter");
     await expect(page.locator("#resume")).toBeFocused();
     await expect(
@@ -237,6 +239,7 @@ for (const theme of ["light", "dark"] as const) {
         expect(await response.text()).toContain("Nimrod | https://nimrod.io/");
       }
     }
+    await openMainNavigation(page);
     await menu
       .getByRole("link", { name: "Contact", exact: true })
       .press("Enter");
