@@ -214,6 +214,8 @@ limitations are documented in [the lifecycle audit](README.md#automated-lifecycl
 
 [Profile data](src/features/portfolio/data/profile.ts) and [technology data](src/features/portfolio/data/technology-stack.ts) supply both the portfolio and [résumé generator](scripts/build-resume.ts). PDFKit is confined to generation scripts; generated downloads in `public/resume/` enter the static build without adding PDFKit to the browser bundle.
 
+The introduction and résumé share the profile headline and summary. AI tooling is defined once in technology data, shown for the applicable stack layers, and exported once in the résumé's technology list. These labels describe the development workflow; the illustrative request-flow model remains independent.
+
 [Vite](vite.config.ts) uses `base: "./"` so relative asset/download URLs work on both GitHub Pages project paths and root hosting. The [Pages workflow](.github/workflows/deploy.yml) and [Sites manifest](.openai/hosting.json) publish `dist/` only; neither deploys the Node API. The `/local-api` proxy exists only in Vite development, not in the built preview or hosted page. See [optional local API](#optional-local-api) for runtime details.
 
 The build-only `src/app/prerender.tsx` entry renders App through React DOM's server renderer. `scripts/prerender.ts` is the explicit script-to-app exception enforced by the dependency test. It fills the built HTML root; the browser hydrates it (or uses a new root in development). Browser-only controls use a shared hydration readiness snapshot, and the pre-paint theme bootstrap remains authoritative until hydration. The server renderer never enters the client bundle.

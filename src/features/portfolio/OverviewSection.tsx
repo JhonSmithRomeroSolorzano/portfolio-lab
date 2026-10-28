@@ -1,5 +1,6 @@
 import { StackMap } from "./StackMap";
 import { TechnologyOverview } from "./TechnologyOverview";
+import { professionalProfile } from "./data/profile";
 
 export function OverviewSection() {
   return (
@@ -22,15 +23,11 @@ export function OverviewSection() {
           <h1 id="intro-title">
             Jhon Smith Romero<span>.</span>
           </h1>
-          <p className="intro-role">Senior Full-stack Engineer</p>
+          <p className="intro-role">{professionalProfile.role}</p>
           <p className="intro-stack" aria-label="Core technologies">
             React · TypeScript · Node.js · Azure
           </p>
-          <p>
-            7+ years connecting thoughtful interfaces with the services and data
-            behind them. From feature design to full-stack implementation and
-            cloud delivery.
-          </p>
+          <p>{professionalProfile.summary}</p>
         </div>
         <img
           className="profile-portrait"

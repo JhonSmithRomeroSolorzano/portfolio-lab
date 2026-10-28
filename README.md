@@ -70,7 +70,7 @@ Anchor destinations accept focus without entering the Tab order. Keyboard naviga
 
 Each experience entry includes a short role summary alongside its detailed contributions. These summaries use the responsibilities already confirmed for that employer and period, and appear in both résumé downloads. They do not add unverified project outcomes or metrics. Optional direct contact fields remain unpublished until exact details are supplied; LinkedIn remains available.
 
-Recent AI-assisted development practice appears above employment history and in both résumé downloads, using the same verified profile data. Jhon confirmed regular use of Codex, OpenCode, and ChatGPT, recent agent coordination for implementation/testing/review, and his responsibility for requirements, context, review, and validation. This is professional practice without an inferred employer, exact start date, or model-training claim.
+AI-assisted development is integrated into the existing introduction, Frontend/Backend stack-map layers, and current Antecursor experience, with matching résumé downloads. Jhon confirmed regular use of Codex, OpenCode, and ChatGPT, recent agent coordination for implementation/testing/review, and his responsibility for requirements, context, review, and validation. The headline distinguishes his senior full-stack experience from his recent AI practice; there is no separate practice section or model-training claim.
 
 ## Labs & play
 
