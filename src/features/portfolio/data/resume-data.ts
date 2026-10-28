@@ -7,7 +7,12 @@ import {
   professionalProfile,
   verifiedContactDetails,
 } from "./profile";
-import { languages, stackLayers, testing } from "./technology-stack";
+import {
+  aiDevelopment,
+  languages,
+  stackLayers,
+  testing,
+} from "./technology-stack";
 
 const resumeTechnologyGroups = [
   { name: "Languages", items: [...languages] },
@@ -16,6 +21,10 @@ const resumeTechnologyGroups = [
     items: layer.groups.flatMap((group) => [...group.items]),
   })),
   { name: "Testing", items: [...testing.tools, ...testing.levels] },
+  {
+    name: aiDevelopment.label,
+    items: [...aiDevelopment.tools, aiDevelopment.workflow],
+  },
 ];
 
 export const resumeData = {

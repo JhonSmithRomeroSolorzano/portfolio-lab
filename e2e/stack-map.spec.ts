@@ -8,6 +8,10 @@ for (const width of [1920, 1440, 900, 390]) {
     await page.goto("/");
     await page.evaluate(() => document.fonts.ready);
     const map = page.locator(".stack-map");
+    await expect(page.locator(".intro-role")).toContainText(
+      "AI-assisted development",
+    );
+    await expect(map.locator(".stack-ai-cue")).toHaveCount(2);
     const initial = await map.evaluate(
       (el) => el.getBoundingClientRect().height,
     );
@@ -22,6 +26,12 @@ for (const width of [1920, 1440, 900, 390]) {
       await expect(region.getByRole("heading")).toHaveCount(1);
       await expect(region.getByRole("link")).toHaveCount(1);
       const selected = page.locator('.stack-detail[aria-hidden="false"]');
+      if (name === "Frontend" || name === "Backend") {
+        await expect(selected).toContainText("Codex · OpenCode · ChatGPT");
+        await expect(selected).toContainText("Multi-agent workflows");
+      } else {
+        await expect(selected).not.toContainText("AI-assisted development");
+      }
       expect(
         await selected.evaluate((el) => el.scrollHeight <= el.clientHeight + 1),
       ).toBeTruthy();

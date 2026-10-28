@@ -19,10 +19,10 @@ type VerifiedContactDetail = {
 export const verifiedContactDetails: readonly VerifiedContactDetail[] = [];
 export const professionalProfile = {
   name: "Jhon Smith Romero",
-  role: "Senior full-stack developer",
+  role: "Senior Full-Stack Engineer · AI-assisted development",
   location: "Pereira, Colombia",
   summary:
-    "7+ years in software development, connecting JavaScript interfaces with the services and data behind them.",
+    "7+ years across interfaces, services, and data. My recent work includes AI-assisted development and multi-agent implementation, testing, and review.",
   portfolio: "https://jhonsmithromerosolorzano.github.io/portfolio-lab/",
 } as const;
 
@@ -57,6 +57,11 @@ export const experience: readonly ExperienceEntry[] = [
     context: "Freelance · Remote · Orlando, United States",
     summary:
       "Full-stack feature design and implementation for Nimrod, from data models and backend services to interfaces and cloud delivery.",
+    // Jhon confirmed these recent responsibilities belong to his current role.
+    highlights: [
+      "Use Codex, OpenCode, and ChatGPT regularly for AI-assisted frontend and backend development.",
+      "Recently started coordinating agents for focused implementation, testing, and review. I define requirements and context, review changes, and validate results with automated tests and checks in the application.",
+    ],
     projects: [
       {
         name: "Nimrod",

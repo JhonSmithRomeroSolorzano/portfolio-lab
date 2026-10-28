@@ -158,7 +158,7 @@ export async function resumePdf(
       .fontSize(line.size ?? 10);
   const options = (line: ResumeLine) => ({
     width: width - (line.indent ?? 0),
-    lineGap: 2.5,
+    lineGap: 2,
   });
   const heights = groups.map((group) =>
     group.map((line) => {
@@ -214,7 +214,7 @@ export async function resumePdf(
         });
       y += heights[groupIndex][lineIndex];
     });
-    y += 13;
+    y += 6;
   });
   for (let index = 0; index < pages; index++) {
     doc.switchToPage(index);
