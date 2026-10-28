@@ -4,10 +4,11 @@ import {
   triangle,
   type DepthPoint,
   type DepthTriangle,
+  type DepthTriangleBuffer,
 } from "../../../domain/playground/engine-depth";
 
 export type Ink = readonly [number, number, number];
-export type EdgeMask = readonly [boolean, boolean, boolean];
+type EdgeMask = readonly [boolean, boolean, boolean];
 export type InkSample = {
   index: number;
   depth: number;
@@ -26,6 +27,27 @@ export class EngineRaster {
   private fringe = new Float64Array(0);
   private fringeCount = 0;
   private fringeColor: [number, number, number] = [0, 0, 0];
+  private readonly projected: [
+    [number, number, number],
+    [number, number, number],
+    [number, number, number],
+  ] = [
+    [0, 0, 0],
+    [0, 0, 0],
+    [0, 0, 0],
+  ];
+  private readonly scanTriangle: DepthTriangleBuffer = {
+    vertices: [this.projected[0], this.projected[1], this.projected[2]],
+    bounds: [0, 0, 0, 0],
+    plane: [0, 0, 0],
+  };
+  private readonly edges = Array.from({ length: 3 }, () => ({
+    a: 0,
+    b: 0,
+    c: 0,
+    length: 0,
+    left: false,
+  }));
   constructor(
     readonly width: number,
     readonly height: number,
@@ -64,10 +86,14 @@ export class EngineRaster {
     this.pixels[at + 3] = total * 255;
   }
   private scaled(t: DepthTriangle) {
-    const points = t.vertices.map(
-      (p) => [p[0] * this.sx, p[1] * this.sy, p[2]] as DepthPoint,
-    );
-    return triangle([points[0], points[1], points[2]]);
+    for (let i = 0; i < 3; i++) {
+      const point = t.vertices[i],
+        out = this.projected[i];
+      out[0] = point[0] * this.sx;
+      out[1] = point[1] * this.sy;
+      out[2] = point[2];
+    }
+    return triangle(this.projected, this.scanTriangle);
   }
   private scan(
     source: DepthTriangle,
@@ -78,20 +104,20 @@ export class EngineRaster {
   ) {
     const t = this.scaled(source);
     if (!t) return;
-    const [a, b, c] = t.vertices,
-      v = [a, b, c];
-    const edges = v.map((p, i) => {
+    const v = t.vertices,
+      edges = this.edges;
+    for (let i = 0; i < 3; i++) {
+      const p = v[i];
       const q = v[(i + 1) % 3],
         dx = q[0] - p[0],
         dy = q[1] - p[1];
-      return {
-        a: -dy,
-        b: dx,
-        c: dy * p[0] - dx * p[1],
-        length: Math.hypot(dx, dy),
-        left: dy < 0 || (Math.abs(dy) < 1e-9 && dx > 0),
-      };
-    });
+      const edge = edges[i];
+      edge.a = -dy;
+      edge.b = dx;
+      edge.c = dy * p[0] - dx * p[1];
+      edge.length = Math.hypot(dx, dy);
+      edge.left = dy < 0 || (Math.abs(dy) < 1e-9 && dx > 0);
+    }
     const pad = padding * Math.max(this.sx, this.sy),
       left = Math.max(0, Math.floor(t.bounds[0] - pad)),
       right = Math.min(this.width - 1, Math.ceil(t.bounds[2] + pad)),
@@ -243,8 +269,17 @@ export class EngineRaster {
         this.height - 1,
         Math.ceil(Math.max(ay, by) + radius + 1),
       );
-    for (let y = top; y <= bottom; y++)
-      for (let x = left; x <= right; x++) {
+    const reach = radius + 0.5;
+    for (let y = top; y <= bottom; y++) {
+      // Restrict the capsule's bounding box to this row. Do not change its
+      // coverage/depth formula or approximate moving airflow geometry.
+      const u0 = dy ? clamp((y + 0.5 - reach - ay) / dy) : 0;
+      const u1 = dy ? clamp((y + 0.5 + reach - ay) / dy) : 1;
+      const x0 = ax + dx * u0,
+        x1 = ax + dx * u1;
+      const rowLeft = Math.max(left, Math.floor(Math.min(x0, x1) - reach));
+      const rowRight = Math.min(right, Math.ceil(Math.max(x0, x1) + reach));
+      for (let x = rowLeft; x <= rowRight; x++) {
         const u = length
           ? clamp(((x + 0.5 - ax) * dx + (y + 0.5 - ay) * dy) / length)
           : 0;
@@ -263,6 +298,7 @@ export class EngineRaster {
           else this.blend(index, color, alpha * coverage);
         }
       }
+    }
   }
   samples(samples: readonly InkSample[]) {
     for (const sample of samples)

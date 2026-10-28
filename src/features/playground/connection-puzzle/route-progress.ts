@@ -22,7 +22,7 @@ export type RouteProgress = {
   records: PuzzleRecord[];
 };
 type StorageAccess = () => Pick<Storage, "getItem" | "setItem">;
-export type ProgressStatus = "new" | "saved" | "invalid" | "unavailable";
+type ProgressStatus = "new" | "saved" | "invalid" | "unavailable";
 
 export function freshProgress(): RouteProgress {
   return {

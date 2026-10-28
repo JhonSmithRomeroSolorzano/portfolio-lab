@@ -5,6 +5,12 @@ export type DepthTriangle = {
   bounds: readonly [number, number, number, number];
   plane: readonly [number, number, number];
 };
+/** Explicit mutable scratch for synchronous consumers; never a cached mesh face. */
+export type DepthTriangleBuffer = {
+  vertices: [DepthPoint, DepthPoint, DepthPoint];
+  bounds: [number, number, number, number];
+  plane: [number, number, number];
+};
 export const DEPTH_EPSILON = 0.002;
 const cross = (a: DepthPoint, b: DepthPoint, p: DepthPoint) =>
   (b[0] - a[0]) * (p[1] - a[1]) - (b[1] - a[1]) * (p[0] - a[0]);
@@ -26,6 +32,7 @@ const interpolate = (a: DepthPoint, b: DepthPoint, t: number): DepthPoint => [
 
 export function triangle(
   vertices: readonly [DepthPoint, DepthPoint, DepthPoint],
+  out?: DepthTriangleBuffer,
 ): DepthTriangle | undefined {
   const [a, b, c] = vertices,
     area = cross(a, b, c);
@@ -34,6 +41,19 @@ export function triangle(
     ((b[2] - a[2]) * (c[1] - a[1]) - (c[2] - a[2]) * (b[1] - a[1])) / area;
   const dy =
     ((b[0] - a[0]) * (c[2] - a[2]) - (c[0] - a[0]) * (b[2] - a[2])) / area;
+  if (out) {
+    out.vertices[0] = a;
+    out.vertices[1] = area > 0 ? b : c;
+    out.vertices[2] = area > 0 ? c : b;
+    out.bounds[0] = Math.min(a[0], b[0], c[0]);
+    out.bounds[1] = Math.min(a[1], b[1], c[1]);
+    out.bounds[2] = Math.max(a[0], b[0], c[0]);
+    out.bounds[3] = Math.max(a[1], b[1], c[1]);
+    out.plane[0] = dx;
+    out.plane[1] = dy;
+    out.plane[2] = a[2] - dx * a[0] - dy * a[1];
+    return out;
+  }
   return {
     vertices: area > 0 ? vertices : [a, c, b],
     bounds: [

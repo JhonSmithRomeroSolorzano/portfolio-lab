@@ -50,7 +50,11 @@ export function useStackFlow() {
       typeof IntersectionObserver === "undefined"
         ? undefined
         : new IntersectionObserver((entries) => {
-            setInView(entries.some((entry) => entry.isIntersecting));
+            // This observer owns one drawing. Older entries in a delivered
+            // batch must not keep its interval alive after it leaves view.
+            const latest = entries[entries.length - 1];
+            if (latest)
+              setInView(latest.isIntersecting && latest.intersectionRatio > 0);
           });
     if (target.current) observer?.observe(target.current);
     return () => {

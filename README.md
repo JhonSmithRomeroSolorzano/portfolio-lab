@@ -195,6 +195,13 @@ Actions are pinned to upstream commit SHAs, with weekly npm and Actions update P
 
 CI retains HTML/JSON browser reports, failed-attempt traces/screenshots, and available Lighthouse reports for 14 days in `validation-diagnostics-<run>-<attempt>`, even when validation fails. The existing single CI retry remains; inspect flaky cases in the report even if the retry passes. Superseded PR runs may be cancelled, but main runs finish deployment and verification before another main run starts. Jobs have bounded timeouts. Only the deploy job has Pages/OIDC write permissions; dependency installation and deployed-asset verification run in read-only jobs. No gates use `continue-on-error`.
 
+Successful Lighthouse samples are retained as `lighthouse-run-1.json` through
+`lighthouse-run-3.json`, plus the latest HTML report. Moving each completed JSON
+avoids uploading a duplicate of the final sample. Failed/incomplete reports keep
+their original name and remain covered by the diagnostic upload. Raw browser
+outputs are retained alongside the HTML report: attachment copies overlap, but raw
+failure context and report links must remain useful independently.
+
 Release jobs explicitly use `ubuntu-24.04`; OS upgrades require a reviewed workflow change rather than following `ubuntu-latest`. Validation runs inside the [official Playwright image](https://playwright.dev/docs/docker), pinned by version and immutable digest. Its preinstalled browsers and Linux libraries avoid repeated Ubuntu package downloads, which previously timed out before browser validation. Node 24 is still selected explicitly, and `npm ci` installs the project's dependencies. Update the image tag/digest together with `@playwright/test`; a toolchain check rejects version mismatches. The full Chromium/WebKit and Lighthouse gates remain within the existing 20-minute build limit. Publication and verification use separate jobs outside this browser container.
 
 ## Batch experiments
@@ -264,6 +271,42 @@ changed composite fingerprints. Heap allocation samples include collected object
 they are estimates, not retained-memory measurements or proof of a leak. Hidden
 policy testing uses a synthetic visibility event, not a physical background-tab test.
 
+Engine and runtime profiling share `scripts/browser-profiling.mjs`: build-manifest
+validation, bounded frame sampling, percentile calculations, and sampler cleanup.
+Allocation reports include sampled bytes per observed engine draw so a faster run
+is not mistaken for an allocation regression just because it drew more frames.
+These remain whole-page sampling estimates, not exact per-tracer allocations.
+Frame buffers cap at 10,000 samples and report overflow; CPU/heap samplers stop even
+when measurement fails. Once capture starts, errors preserve a failed/partial JSON
+report rather than silently presenting incomplete measurements as successful.
+Completed or failed frame windows release page-side timing arrays immediately;
+returned samples remain available to the caller without keeping another idle-page
+reference until the next recording.
+
+Both profilers use `scripts/profile-capture.mjs` for failure ownership. Browser
+startup/connection each have a 30-second limit, ordinary actions/navigation 15
+seconds, and the capture an eight-minute deadline. Frame windows allow 15 seconds
+of scheduling slack; sampler commands allow 15 seconds and sampler measurement 30.
+Context/page/browser cleanup waits are bounded at ten seconds. A loopback-only
+Playwright browser server provides an owned force-kill backstop if normal close
+fails; SIGINT/SIGTERM/SIGHUP request cleanup and a failed report rather than success.
+These optional profiler limits do not change application or CI browser-test limits.
+
+Reports are marked running before preflight/launch and committed atomically after
+cleanup, with start/finish timestamps. Missing/invalid references, launch/capture/
+cleanup failures preserve partial results and error chains; reference captures must
+be complete and passed. Failed writes exit nonzero and attempt to invalidate stale
+success under that output label. If the filesystem also refuses removal, an old
+file can remain: respect the command failure and timestamps, not just its old status.
+Each capture has a unique run ID; CPU/heap filenames include it, and the report's
+`artifacts` list includes only fully written files from that run. Use that list
+rather than assuming an older raw file with a similar label belongs to a failed
+capture. Raw profiles are atomically committed too; historical captures are not
+automatically deleted.
+Tests exercise failures, interruption, indeterminate sampler starts, hung protocol/
+cleanup operations and report-write failures. Raw profiles and temporary reports
+remain local/ignored; no service or private preview is published.
+
 The October 24 cleanup reduced total JS gzip from 137,202 to 133,224 bytes and the
 engine chunk from 32,402 to 28,428 bytes. Standalone timing repeats were variable,
 so a separate sequential baseline/optimized/optimized/baseline check used the
@@ -300,3 +343,101 @@ DOM inspection does not complete these sessions.
 For each finding retain environment, task, observed/expected behavior, reproduction,
 severity, fix/test reference, and remaining limitations. Publish only approved
 sanitized summaries; keep participant identities, recordings, and raw notes private.
+
+### Physical iPhone performance session
+
+This requires a real iPhone and user-approved setup; Playwright WebKit is not iOS
+Safari evidence. Record the phone model, iOS/Safari and Mac Safari versions, tested
+release (`release.json`), orientation, theme, Reduce Motion/Low Power Mode, brightness,
+charging state, and whether the phone is already warm. Keep other workloads quiet.
+
+1. Follow WebKit's [Web Inspector setup](https://webkit.org/web-inspector/enabling-web-inspector/): enable Web Inspector under Safari's Advanced settings on the phone (Safari may be under Settings → Apps), enable developer features in Mac Safari's Advanced settings, connect the phone, and approve Trust only if you intend to trust that Mac. Select the phone's portfolio tab from Safari's Develop menu. Do not install tools, change device settings, or publish a preview just for this test without approval.
+2. Open the public portfolio in iPhone Safari. Warm up each of Jet Engine, Gravity Loom, and Signal Sculpture for ten seconds. For the engine, compare full-power forward and fully deployed reverse. Use three separate 20-second recordings per case in [Timelines](https://webkit.org/web-inspector/timelines-tab/), inspecting Frames, JavaScript/Rendering, and CPU activity. Repeat portrait/landscape and both themes. Record stalls and control response; frame-rate reference lines are not measured average FPS. Do a separate unrecorded visual pass because inspection adds overhead.
+3. Record ten-second intervals after Pause, scrolling to Résumé, and device/site motion reduction. There should be no sustained renderer work after transitions settle. Actually switch apps/lock and return; don't substitute synthetic visibility events. Manual Pause must survive the return. Test the overview's stack tour stopping offscreen too.
+4. In a separate memory recording, warm all seven experiences, then repeat six navigation/resize/theme/motion cycles, ending at Résumé. Compare equivalent idle checkpoints in Memory/JavaScript Allocations where supported; inspect retainers for growing detached objects. Keep memory recording separate from frame timing because it adds overhead. Export sanitized recordings privately for analysis, not into this public repository.
+5. Keep any energy assessment separate: short CPU traces or a battery-percent change cannot establish battery cost. If doing a longer manual check, use consistent brightness, power mode, network, charging and thermal conditions with a same-duration idle control; report duration, observations, and uncertainty rather than a fabricated drain rate.
+
+Until device details and actual recordings/observations are available, this session
+remains pending. Desktop timings and automated lifecycle checks do not complete it.
+
+### Automated lifecycle stability audit
+
+After `npm run build`, run:
+
+```sh
+npm run test:browser -- e2e/lifecycle-stability.spec.ts --workers=1 --output=artifacts/lifecycle-audit
+# Optional longer Chromium memory soak, run separately from other browser work:
+LIFECYCLE_CYCLES=60 npm run test:browser -- e2e/lifecycle-stability.spec.ts --project=chromium --grep 'warm lifecycle' --workers=1 --output=artifacts/lifecycle-soak
+```
+
+The default six measured cycles follow two warmup cycles at each width (390/1440px).
+They visit all seven experiences, exercise engine reversal and explicit-run labs,
+switch themes, resize to landscape and back, change motion preferences, and return
+to the same idle Résumé checkpoint. Reports live in each test's output directory
+and are attached to browser reports. The audit fails on growing tracked persistent
+subscriptions/observer targets or intervals, pending idle frames, continuing idle
+canvas work, or page errors. One-shot reveal targets may legitimately decrease.
+An intentional-retention fixture verifies the counters detect resources and cleanup;
+a batched-intersection regression verifies the stack tour stops its interval.
+
+Chromium additionally records forced-GC JS heap, backing storage, DOM and listener
+counters as diagnostic trends, not brittle cross-machine memory thresholds. WebKit
+has no equivalent heap measurement in this audit. Instrumentation uses weak target/
+observer keys and no DOM-node reports, but still adds overhead; it is not an FPS
+benchmark or proof that the page is leak-free. It does not measure GPU/native process
+memory, one-shot timeouts, DOM property handlers, or arbitrary detached-object
+retainers by default. Set `LIFECYCLE_HEAP_SNAPSHOTS=1` for optional Chromium warm/final
+heap snapshots in the test output directory; these can be large and must stay private
+and ignored. Persistent window/document/media listeners are tracked; once/AbortSignal
+listeners are reported as a coverage gap rather than emulated. Investigate persistent
+heap growth with native heap snapshots before calling it a leak or claiming a fix.
+Snapshot chunks are written directly to disk, avoiding a complete in-memory string
+array and joined copy in the test runner; this does not reduce the browser's own
+snapshot-generation overhead.
+
+### DevTools mobile runtime and theme-cache audits
+
+Without a physical phone, use this separately from other browser workloads:
+
+```sh
+npm run profile:runtime -- http://127.0.0.1:4173/ mobile-devtools
+npm run test:browser -- e2e/theme-cache.spec.ts --workers=1 --output=artifacts/theme-cache-audit
+```
+
+Build first and start `npm run preview -- --port 4173` for the profiler. The runtime
+audit uses Chromium DevTools Protocol with touch/3× DPR, 4× simulated CPU slowdown,
+390×844 and 844×390 viewports, and both themes. It checks Jet Engine (including
+reverse), Gravity Loom, and Signal Sculpture, then Pause, reduced motion, and
+offscreen states. Short 1.5-second windows record frame/canvas activity and renderer
+ScriptDuration/TaskDuration deltas; those are not OS CPU percentages or battery
+measurements. Sampled profiles are retained for portrait/light, with forced-GC heap
+usage at the final reduced-motion checkpoint. Reports stay in ignored
+`artifacts/runtime-diagnostics/`; no results are sent to a service.
+
+Chromium mobile emulation is neither iPhone hardware nor Safari. The script attempts
+native page switching without redefining `document.hidden`, but automation may keep
+both pages visible. In that case it explicitly records native hidden CPU as unsupported,
+not as a pass. `RUNTIME_HEADFUL=1` permits another browser-level check where a desktop
+window is available; it still must observe `visibilityState === "hidden"` to claim
+that measurement. Physical-device/app-switching, native hiding when unsupported,
+and energy/thermal checks remain pending. Other automated visibility-policy tests
+use synthetic events and are a different layer of evidence.
+
+Inspect the browser's GPU feature status before interpreting painting costs. A
+focused local landscape trace reported software canvas rasterization/compositing
+and SwiftShader, not hardware GPU rendering. Loom and Sculpture spent most traced
+time in native path/arc painting despite short JavaScript callbacks; Engine was
+instead dominated by JavaScript rasterization. Landscape increased backing-canvas
+area, and a fresh mount above 600px selected the existing larger thread/point
+counts. These observations explain why callback duration alone understates frame
+cost; they do not isolate each factor or establish a phone/GPU bottleneck. Inclusive
+trace events overlap and must not be summed as exclusive CPU percentages. Compare
+separate untraced frame windows, since tracing itself changes cadence. No quality,
+density, resolution, or compositing-layer policy was changed from this evidence.
+
+The theme-cache journey warms both SVGs, switches eight more times and revisits the
+engine. It checks successful image loading, two stable asset URLs and transferred
+bytes using same-origin Resource Timing. Chromium additionally summarizes image-
+decode-related trace events (not exclusive decode time or proof of decoded/GPU
+retention). HTTP-cache hits do not imply zero decoding. Local preview cache results
+do not establish CDN behavior or justify eagerly retaining decoded images.

@@ -33,6 +33,7 @@ src/
     simulation/                    Maintained systems models used by API and CLI
   shared/
     hooks/                         Browser media queries and playback interruption
+    canvas/                        Coalesced environmental size/theme invalidation
     motion/                        Effective device/site motion preference and subscriptions
     ui/                            Arrow and theme control
     theme/                         Theme preference policy
@@ -80,6 +81,42 @@ cannot repeat or bleed between frames; regression tests cover foreground and
 occluded fringes in either surface submission order, including epsilon-tied opaque
 updates. Edge samples must not be discarded against intermediate depth. No triangle density, tracer
 density, antialiasing policy, or resolution cap was reduced for this optimization.
+
+Each raster also owns three projected vertices, one mutable triangle bounds/plane
+buffer, and three edge records. Synchronous scans overwrite these fixed-size
+buffers instead of allocating them per face. `triangle(vertices, out)` preserves
+the original arithmetic and winding; omitting `out` retains the allocating API.
+Scratch results must not be retained as mesh faces. Seeded equivalence tests check
+bounds/planes, winding, unchanged input, degenerate rejection, and buffer identity;
+the existing pixel/ray tests and composite fingerprints cover rendering behavior.
+
+The seven hub meshes are angle/deployment-invariant in this illustration, so their
+read-only faces are constructed once. Each `engineFaces` call still builds moving
+blades and a fresh sorted draw list, placing cached hubs in the same rotor/source
+order before the stable sort. They are still painted and depth-tested every frame;
+this is construction reuse, not baked visibility or skipped occlusion. An allocating
+mesh reference checks every face, boundary, shade and ordering across poses.
+
+Line rasterization intersects each pixel row with a conservative bounding interval
+of the same capsule, rather than scanning its entire diagonal rectangle. Coverage,
+depth interpolation, compositing order, widths and alpha are unchanged. A full-image
+reference test compares collected samples and moving-depth composition over seeded
+horizontal/vertical/diagonal/zero-length/clipped segments at several scales. Settled
+air guides already cache static-visible samples and retest moving depth; moving
+tracers are not cached or quantized. Exhaust triangles and their fade function cache
+only the latest spool setting. Rotor angle and reverser deployment do not change
+that core-exhaust shape; palette and raster changes still use current color/depth.
+
+Moving tracers reuse a renderer-owned pool: at most two modes × 22 slots per route
+(up to 36 routes). World/projected point and color buffers retain their identities;
+each frame recomputes exact curves and restores stream/slot order before the stable
+depth sort. No previous-frame positions are reused or quantized. `writeAirPoint`
+explicitly writes to a caller-owned tuple; `airPoint` still allocates a fresh result
+and preserves the pure API. Projection output buffers avoid temporary XY tuples.
+Original allocating formulas run on each platform and compare geometry, colors, alpha,
+zero speed, partial reversal, palette changes and sort order, while fixed composite
+hashes verify the drawing. Scratch storage is bounded by the largest active pose,
+not by elapsed frames, and belongs to the renderer's normal disposal lifetime.
 
 Reverse thrust is an independent feature-local mode: the domain owns rigid tangential-hinge outer doors/blocker flaps and continuous forward-directed bypass exit curves. Core routes and nonnegative rotor-speed mappings are unchanged. The fixed SVG/depth mesh excludes the reverser opening; moving stowed panels close it in both canvas and SVG-only views. Running deployment eases in the renderer and crossfades routes after the doors open; paused/reduced-motion mode changes settle immediately without enabling playback or resetting the rotor phase. Guide caches include deployment, and lazy fallback caches are bounded to the two modes. Reset restores forward thrust. Intermediate-pose depth tests, 21-position transformed-prism clearances, real airflow pixel probes, and an acute-tip antialiasing regression cover the new boundary. This is a conceptual cold-stream landing illustration, not certified aircraft geometry or an operating/interlock model. Decorative dots are omitted from static artwork.
 
@@ -130,6 +167,15 @@ and [separate fan/core airflow](https://www.grc.nasa.gov/WWW/K-12/airplane/turbf
 
 ## Failure boundaries and styling
 
+React's effective-motion subscription and snapshot use one lazily created browser
+source, including the same underlying MediaQueryList. Creating a fresh query per
+snapshot can disagree with the subscribed instance during notification and miss a
+React update. Lazy creation avoids browser access during prerendering; per-subscriber
+cleanup is unchanged. A deterministic cross-instance-lag fixture covers a stuck
+Loom Play control, and native rapid-transition tests attach query/root/control
+diagnostics for future failures. This contract regression models an event-ordering
+hazard; it is not proof of the cause of a particular historical Linux WebKit failure.
+
 `shared/motion/motion-preference.ts` owns the effective motion policy: device reduction OR the site's saved reduction. A small MediaQuery-like source combines device changes, same-document preference events, and validated local-storage events; React's `useReducedMotion`/`useMotionPreference` snapshots and the imperative navigation/reveal observers consume that same source. The HTML motion bootstrap restores the choice before paint, and the root's `data-motion` attribute gates CSS effects. Root attributes retain a visit-local choice if storage is denied. Subscriptions remove their device/window listeners on cleanup. The UI uses a native disclosure and radio group; it cannot enable animation against a device preference. Playback controllers retain their existing manual-pause intent or explicit-replay policy.
 
 The portfolio's `useStackFlow` owns the stack map's nine-step request tour, with one cleaned-up interval rather than React updates per frame. SVG stroke animation moves packets along the same paths used for connections; node activity and the readout come from that step list. `useStackConnections` measures actual card edges with a cleaned-up resize observer, keeping packet travel visible in the gaps after reflow or text zoom instead of hiding most of it behind cards. The readout reserves all labels' intrinsic heights, independently of the selected experience panel. A feature-local intersection observer, document-visibility listener, reduced-motion subscription, and keyboard-focus state gate automatic playback; returning starts a new request so the CSS packet and step clock stay aligned. Motion Studio and Cache Rescue retain explicit replay; Jet Engine, Gravity Loom, and Signal Sculpture opt into viewport autoplay. Selected details use a neutral border and textual marker, active processing uses blue, and infrastructure has a persistent tint/dashed border. Node text and fill switch together; only shadow changes transition, avoiding transient white-on-light labels in either direction. The caption stays in normal flow so larger text can wrap without covering cards. CSS suppresses decorative motion under reduced motion, including before hydration. No network request or new graphics dependency is involved.
@@ -140,11 +186,27 @@ Each game has an independent download placeholder and runtime error boundary. An
 
 Intersection observation enhances loading/playback but is not required. Reduced motion, page visibility, and (where appropriate) navigation/offscreen changes interrupt playback. Effects release listeners, observers, and animation frames on cleanup.
 
+The three canvas experiences share `shared/canvas/observe-canvas.ts` for environmental
+invalidation only. ResizeObserver, window resize, and theme notifications coalesce
+into one frame; unchanged logical size, capped pixel ratio, and theme do not clear
+or redraw paused pixels. Initialization stays synchronous, real changes preserve
+the existing 2× Loom/Sculpture and 1.5× Engine resolution caps, and disposal cancels pending invalidation as well
+as observers/listeners. Explicit controls and animation clocks are not debounced.
+Engine still owns palette/guide invalidation and creates a new raster only when
+backing dimensions change; artwork-loading policy remains in its feature.
+
 For an uninterrupted, focused direct entry, `DeferredExperiment` observes the containing main element's size and coalesces landing alignment into animation frames. This covers layout changes from neighboring lazy imports and WebKit's deferred focus adjustment. Alignment checks the current hash, focus, and existing input-interruption flag before scrolling; its observer disconnects once that ownership is lost or the effect cleans up. Without resize observation, one deferred alignment still runs. It does not intercept normal scrolling or move focus.
 
 The Connection puzzle's feature controller owns progress, visit-local Undo/hints, and reconciliation of validated browser saves. Storage/focus events refresh boards without changing the current selection; reads before writes guard against delayed notifications. The last observed save remains separate from unsaved play so quota failures do not reset the session. This is best-effort synchronization of localStorage snapshots, not an atomic transaction across simultaneous tabs; progress is never shared between hosting origins.
 
 CSS belongs to the relevant feature, with global tokens/base elements and app layout kept separate. Retired dashboard styles are outside the public bundle. Game styles remain eager, while JavaScript stays lazy. Native dynamic imports are used without Vite module preloading: preloading a shared optional dependency caused failed-download recovery to remain broken in WebKit. Browser tests cover both aborted downloads and HTTP 503, plus runtime render/effect failures.
+
+The stack tour, like viewport autoplay, uses the latest entry in each batch for its
+single observed drawing. An earlier visible entry must not retain the interval when
+the final entry is offscreen. The lifecycle browser regression injects that ordering
+and checks both interval release and resumption. Test-only resource accounting lives
+under `e2e/helpers/`, outside the application bundle; its scope and memory-measurement
+limitations are documented in [the lifecycle audit](README.md#automated-lifecycle-stability-audit).
 
 ## Runtime and build boundaries
 
@@ -173,6 +235,27 @@ Connection progress uses schema version 2 under the existing storage key, preser
 Signal Sculpture's pure domain geometry supplies stable particle identities and deterministic morphing. Its feature-local canvas renderer owns projection and an imperative animation clock; React owns controls and announcements, not per-frame state. Drawing resolution is capped at 2× device pixel ratio and the point count is chosen at mount (720 for small screens, 1,800 otherwise). Resize and theme changes redraw paused artwork. A static SVG replaces unavailable canvas. The shared `useViewportPlayback` hook starts its clock in view and suspends it offscreen or in hidden tabs without clearing playback intent. Manual Pause and Reset clear that intent; reduced motion also settles the current form without pointer influence. The pure view projection applies bounded yaw/pitch after object rotation, with a small depth-independent pan to keep pointer feedback perceptible at different angles. Time-based exponential easing runs inside the existing frame loop. Pointer exit targets the neutral view; pause freezes the current drawing and clears the target for a smooth return on resume. Reset and reduced motion clear both view and target. No graphics library or build configuration change is needed.
 
 Gravity Loom uses a separate pure field model: softened attraction, tangential swirl, damping, a speed cap, and reflected safety boundaries. Its fixed 1/60-second steps illustrate kinetic art, not physical orbits. The feature-local renderer caps frame catch-up, keeps at most 90 points per thread, and uses 48 mobile/96 desktop threads with drawing resolution capped at 2×. Live configuration edits preserve particles, velocities, and histories; only Reset rebuilds them. Initial previews retain their final velocities and positions so Play does not jump back to seeds. Held points receive a stronger radial pull, briefly retained after release or a keyboard nudge. Pointer capture owns drag continuation; coordinates update the renderer through a ref and commit to React on release, avoiding control-tree renders on every pointer move. Native movement controls and focused-field arrow keys provide non-drag alternatives. Interruption clears the gesture and capture as well as playback. Reduced motion instead rebuilds deterministic static drawings on input, and SVG covers unavailable canvas. Resize/theme subscriptions and animation frames are released on cleanup. Gravity Loom shares `useViewportPlayback` with Jet Engine. Its effect also observes individual visibility/motion signals to release a captured gesture during interruptions even when the reduced-motion drawing is already static. Pause, Reset, Escape, and pointer cancellation clear playback intent; drag/steering or Play enables it. Frame updates stay in the feature renderer.
+
+Each depth-sorted Sculpture particle paints its translucent halo, then its core,
+separately. Combining particles into a single filled path changes overlap
+compositing and is not an equivalent optimization. A cached unit-circle path can
+preserve pixels, but transform/save/restore overhead outweighed its benefit in the
+focused local readback experiment; native arcs remain. That software-rendering
+observation is not a hardware GPU or application FPS guarantee.
+
+Sculpture projection uses a renderer-owned fixed-size record pool (one per point,
+plus a source-order and sorted array). Each draw recomputes the exact pulse and
+projection into those records, restoring source order before the stable depth sort
+so ties cannot inherit the preceding frame's order. No previous positions are
+reused or quantized. `projectSculpturePoint` accepts an optional caller-owned output;
+without it, the allocating domain API still returns a fresh result. Independent
+original formulas verify coordinates/order, while the unchanged halo/core drawing
+derives the same radii, alpha and color from depth and point identity.
+
+Loom trail histories still append ordinary points and discard the oldest past the
+bound. Focused allocation/GC sampling did not establish a worthwhile GC reduction
+from pooling those points; allocation counts alone are not a reason to add a ring
+buffer or change the pure, allocating field model.
 
 The active Loom gesture retains its initial pointer-to-point offset, so grabbing a handle off-center does not reposition it. Cancellation is scoped to that gesture's pointer ID; a secondary pointer cannot cancel the primary grab. Space ignores auto-repeat while arrows retain repeated movement. Position descriptions are shared by the visible fine-control readout and the single atomic status, updating on user commands/releases rather than animation frames.
 

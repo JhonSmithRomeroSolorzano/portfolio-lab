@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { readFile, copyFile } from "node:fs/promises";
+import { readFile, rename } from "node:fs/promises";
 import { preview } from "vite";
 import {
   assertPerformanceBudget,
@@ -35,7 +35,10 @@ try {
       cls: report.audits["cumulative-layout-shift"].numericValue,
       tbt: report.audits["total-blocking-time"].numericValue,
     });
-    await copyFile(
+    // Keep all three samples without retaining a fourth, duplicate final JSON.
+    // The latest HTML remains available; failed/incomplete reports keep their
+    // original name and are still captured by the workflow's diagnostic glob.
+    await rename(
       "artifacts/lighthouse.report.json",
       `artifacts/lighthouse-run-${run}.json`,
     );

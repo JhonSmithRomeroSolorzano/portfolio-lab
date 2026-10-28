@@ -15,27 +15,37 @@ import {
   type DepthTriangle,
 } from "../../../domain/playground/engine-depth";
 
-export type Face = {
-  vertices: DepthPoint[];
-  triangles: DepthTriangle[];
-  boundaries: readonly (readonly [boolean, boolean, boolean])[];
-  depth: number;
-  shade: number;
+type Face = {
+  readonly vertices: readonly DepthPoint[];
+  readonly triangles: readonly DepthTriangle[];
+  readonly boundaries: readonly (readonly [boolean, boolean, boolean])[];
+  readonly depth: number;
+  readonly shade: number;
 };
 export const staticTriangles = decodeDepthMesh(geometry);
-export function project(point: EnginePoint): [number, number] {
-  return [
-    art.origin[0] +
-      point.reduce((sum, value, i) => sum + value * art.axes[i][0], 0),
-    art.origin[1] +
-      point.reduce((sum, value, i) => sum + value * art.axes[i][1], 0),
-  ];
-}
 function depth(point: EnginePoint) {
   return point.reduce((sum, value, i) => sum + value * art.camera.view[i], 0);
 }
 export function projectDepth(point: EnginePoint): DepthPoint {
-  return [...project(point), depth(point)];
+  return projectDepthInto([0, 0, 0], point);
+}
+export function projectDepthInto(
+  out: [number, number, number],
+  point: EnginePoint,
+) {
+  // Preserve the original left-to-right dot-product operation order.
+  out[0] =
+    art.origin[0] +
+    (point[0] * art.axes[0][0] +
+      point[1] * art.axes[1][0] +
+      point[2] * art.axes[2][0]);
+  out[1] =
+    art.origin[1] +
+    (point[0] * art.axes[0][1] +
+      point[1] * art.axes[1][1] +
+      point[2] * art.axes[2][1]);
+  out[2] = depth(point);
+  return out;
 }
 function face(vertices: EnginePoint[], normal: EnginePoint, out: Face[]) {
   const length = Math.hypot(...normal) || 1;
@@ -126,9 +136,24 @@ function reverserFaces(deployment: number): Face[] {
   lastReverserFaces = faces;
   return faces;
 }
+// Hubs do not rotate or deploy in this illustration. Cache construction, not
+// their painting/depth: moving blades and air still test them every frame.
+const hubFaces = ROTORS.map((rotor) => {
+  const faces: Face[] = [];
+  const hub = Array.from(
+    { length: 16 },
+    (_, i) =>
+      [
+        Math.cos((i * Math.PI) / 8) * 9,
+        Math.sin((i * Math.PI) / 8) * 9,
+      ] as const,
+  );
+  prism(rotor.x, hub, 4, faces);
+  return faces;
+});
 export function engineFaces(angle: number, deployment = 0): Face[] {
   const faces: Face[] = [];
-  for (const rotor of ROTORS) {
+  for (const [rotorIndex, rotor] of ROTORS.entries()) {
     for (let i = 0; i < rotor.blades; i++)
       prism(
         rotor.x,
@@ -139,15 +164,7 @@ export function engineFaces(angle: number, deployment = 0): Face[] {
         2,
         faces,
       );
-    const hub = Array.from(
-      { length: 16 },
-      (_, i) =>
-        [
-          Math.cos((i * Math.PI) / 8) * 9,
-          Math.sin((i * Math.PI) / 8) * 9,
-        ] as const,
-    );
-    prism(rotor.x, hub, 4, faces);
+    faces.push(...hubFaces[rotorIndex]);
   }
   return [...faces, ...reverserFaces(deployment)].sort(
     (a, b) => a.depth - b.depth,

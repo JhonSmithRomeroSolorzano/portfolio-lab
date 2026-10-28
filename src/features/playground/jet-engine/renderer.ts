@@ -4,16 +4,18 @@ import {
   approachReverser,
   reverserFlowWeight,
   enginePower,
-  flowOpacity,
   ENGINE_CENTER,
   type ThrustMode,
 } from "../../../domain/playground/jet-engine";
 import {
   triangulate,
   type DepthPoint,
+  type DepthTriangle,
 } from "../../../domain/playground/engine-depth";
 import { engineFaces, projectDepth, staticTriangles } from "./mesh";
 import { EngineRaster, type Ink, type InkSample } from "./raster";
+import { createTracerPool } from "./tracers";
+import { observeCanvas } from "../../../shared/canvas/observe-canvas";
 
 /** Opaque surfaces establish depth first; every air sample tests that same depth. */
 export function createEngineRenderer(
@@ -23,6 +25,7 @@ export function createEngineRenderer(
   const ctx = canvas.getContext("2d");
   if (!ctx) return undefined;
   const routes = window.matchMedia("(max-width: 600px)").matches ? 18 : 36;
+  const tracerPool = createTracerPool(routes);
   let target = 35,
     spool = 35,
     angle = 0,
@@ -38,6 +41,9 @@ export function createEngineRenderer(
   let guideSpool = NaN,
     guideRaster: EngineRaster | undefined,
     guides: InkSample[] = [];
+  let exhaustSpool = NaN;
+  let exhaust: DepthTriangle[] = [];
+  let exhaustAlpha: (x: number) => number = () => 0;
   let cool: Ink = [36, 122, 185],
     hot: Ink = [195, 91, 32],
     edge: Ink = [81, 110, 128],
@@ -99,42 +105,42 @@ export function createEngineRenderer(
           0.008,
         );
     if (power.throttle > 0) {
-      const start = projectDepth([145, 0, ENGINE_CENTER]),
-        end = projectDepth([145 + power.reach, 0, ENGINE_CENTER]);
-      const alpha = (x: number) =>
-        Math.max(0, 1 - (x - start[0]) / (end[0] - start[0])) *
-        (0.13 + power.heat * 0.08);
-      const top: DepthPoint[] = [],
-        bottom: DepthPoint[] = [];
-      for (let i = 0; i <= 30; i++) {
-        const u = i / 30,
-          radius =
-            (11 + power.throttle * 10) *
-            Math.sin(Math.PI * (0.12 + u * 0.88)) *
-            (1 - u * 0.4);
-        top.push(
-          projectDepth([145 + power.reach * u, 0, ENGINE_CENTER + radius]),
-        );
-        bottom.push(
-          projectDepth([145 + power.reach * u, 0, ENGINE_CENTER - radius]),
-        );
+      // Exhaust shape depends on spool only, not the rotor clock, thrust mode,
+      // raster size or palette. Retain one latest pose, not a growing cache.
+      if (exhaustSpool !== spool) {
+        exhaustSpool = spool;
+        exhaust = [];
+        const start = projectDepth([145, 0, ENGINE_CENTER]),
+          end = projectDepth([145 + power.reach, 0, ENGINE_CENTER]);
+        exhaustAlpha = (x: number) =>
+          Math.max(0, 1 - (x - start[0]) / (end[0] - start[0])) *
+          (0.13 + power.heat * 0.08);
+        const top: DepthPoint[] = [],
+          bottom: DepthPoint[] = [];
+        for (let i = 0; i <= 30; i++) {
+          const u = i / 30,
+            radius =
+              (11 + power.throttle * 10) *
+              Math.sin(Math.PI * (0.12 + u * 0.88)) *
+              (1 - u * 0.4);
+          top.push(
+            projectDepth([145 + power.reach * u, 0, ENGINE_CENTER + radius]),
+          );
+          bottom.push(
+            projectDepth([145 + power.reach * u, 0, ENGINE_CENTER - radius]),
+          );
+        }
+        for (let i = 0; i < 30; i++)
+          for (const t of triangulate([
+            top[i],
+            top[i + 1],
+            bottom[i + 1],
+            bottom[i],
+          ]))
+            exhaust.push(t);
       }
-      for (let i = 0; i < 30; i++)
-        for (const t of triangulate([
-          top[i],
-          top[i + 1],
-          bottom[i + 1],
-          bottom[i],
-        ]))
-          r.volume(t, hot, alpha);
+      for (const t of exhaust) r.volume(t, hot, exhaustAlpha);
     }
-    const traces: {
-      points: DepthPoint[];
-      alpha: number;
-      color: Ink;
-      depth: number;
-      width: number;
-    }[] = [];
     const drawGuides = (collect?: InkSample[]) => {
       if (power.throttle > 0)
         for (const { route, mode, weight } of streams) {
@@ -168,30 +174,15 @@ export function createEngineRenderer(
       }
       r.samples(guides);
     } else drawGuides();
-    for (const { route, mode, weight } of streams) {
-      for (let slot = 0; slot < 22; slot++) {
-        const density = Math.max(0, Math.min(1, power.density - slot));
-        if (!density) continue;
-        const u = (((slot / 22 + route * 0.037 + clock * 0.085) % 1) + 1) % 1,
-          point = airPoint(route, u, power, mode),
-          trail = (0.008 + power.throttle * 0.025) * (still ? 0.7 : 1);
-        const points = Array.from({ length: 3 }, (_, i) =>
-          projectDepth(
-            airPoint(route, Math.max(0, u - trail * (1 - i / 2)), power, mode),
-          ),
-        );
-        traces.push({
-          points,
-          alpha:
-            density * flowOpacity(u) * (0.38 + power.throttle * 0.38) * weight,
-          color: ink(route, point[0]),
-          depth: points[points.length - 1][2],
-          width: route % 3 === 0 ? 1.5 : 1.05,
-        });
-      }
-    }
     // Air is transparent, but its per-pixel visibility is still tested against all metal.
-    traces.sort((a, b) => a.depth - b.depth);
+    const traces = tracerPool.sample(
+      power,
+      clock,
+      still,
+      reverseWeight,
+      cool,
+      hot,
+    );
     for (const trace of traces) {
       for (let i = 0; i < trace.points.length - 1; i++)
         r.line(
@@ -234,40 +225,25 @@ export function createEngineRenderer(
     draw();
     if (playing) frame = requestAnimationFrame(tick);
   }
-  function resize() {
-    const box = canvas.getBoundingClientRect(),
-      ratio = Math.min(window.devicePixelRatio || 1, 1.5);
-    const width = Math.max(1, Math.round(box.width * ratio)),
-      height = Math.max(1, Math.round(box.height * ratio));
-    if (!image || canvas.width !== width || canvas.height !== height) {
-      canvas.width = width;
-      canvas.height = height;
-      image = ctx!.createImageData(width, height);
-      raster = new EngineRaster(width, height, staticTriangles, image.data);
-    }
-    draw();
-  }
-  const observer =
-    typeof ResizeObserver !== "undefined"
-      ? new ResizeObserver(resize)
-      : undefined;
-  observer?.observe(canvas);
-  window.addEventListener("resize", resize);
-  const themeObserver = new MutationObserver(() => {
-    palette();
-    draw();
-  });
-  themeObserver.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ["data-theme"],
-  });
+  const stopObserving = observeCanvas(
+    canvas,
+    ctx,
+    () => {
+      const { width, height } = canvas;
+      palette();
+      if (!image || image.width !== width || image.height !== height) {
+        image = ctx!.createImageData(width, height);
+        raster = new EngineRaster(width, height, staticTriangles, image.data);
+      }
+      draw();
+    },
+    1.5,
+  );
   const lost = () => {
     pause();
     onFailure();
   };
   canvas.addEventListener("contextlost", lost);
-  palette();
-  resize();
   return {
     configure(speed: number, reduced: boolean, mode: ThrustMode = "forward") {
       target = speed;
@@ -296,9 +272,7 @@ export function createEngineRenderer(
     },
     dispose() {
       pause();
-      observer?.disconnect();
-      themeObserver.disconnect();
-      window.removeEventListener("resize", resize);
+      stopObserving();
       canvas.removeEventListener("contextlost", lost);
     },
   };

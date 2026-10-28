@@ -6,6 +6,7 @@ import {
   type LoomPoint,
 } from "../../../domain/playground/gravity-loom";
 import { loomViewport, projectLoomPoint } from "./viewport";
+import { observeCanvas } from "../../../shared/canvas/observe-canvas";
 
 /** Bounded histories retain the woven trails without persistent canvas overdraw. */
 export function createLoomRenderer(canvas: HTMLCanvasElement) {
@@ -126,28 +127,11 @@ export function createLoomRenderer(canvas: HTMLCanvasElement) {
     boost = undefined;
     boostRemaining = 0;
   }
-  function resize() {
-    const box = canvas.getBoundingClientRect();
-    width = Math.max(1, box.width);
-    height = Math.max(1, box.height);
-    const ratio = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = Math.round(width * ratio);
-    canvas.height = Math.round(height * ratio);
-    ctx?.setTransform(ratio, 0, 0, ratio, 0, 0);
+  const stopObserving = observeCanvas(canvas, ctx, (nextWidth, nextHeight) => {
+    width = nextWidth;
+    height = nextHeight;
     draw();
-  }
-  const observer =
-    typeof ResizeObserver === "undefined"
-      ? undefined
-      : new ResizeObserver(resize);
-  observer?.observe(canvas);
-  window.addEventListener("resize", resize);
-  const theme = new MutationObserver(draw);
-  theme.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ["data-theme"],
   });
-  resize();
   return {
     configure(
       next: readonly LoomPoint[],
@@ -204,9 +188,7 @@ export function createLoomRenderer(canvas: HTMLCanvasElement) {
     pause,
     dispose() {
       pause();
-      observer?.disconnect();
-      theme.disconnect();
-      window.removeEventListener("resize", resize);
+      stopObserving();
     },
   };
 }

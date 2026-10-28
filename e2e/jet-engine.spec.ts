@@ -185,7 +185,11 @@ test("live reverser eases through deployment while rotors continue forward; Paus
   const phase = Number(await canvas.getAttribute("data-phase"));
   await recordDeployment(page);
   await toggle.click();
-  await expect(canvas).toHaveAttribute("data-reverser", "1.000");
+  // Linux software rendering may need more than five seconds to settle every
+  // eased frame. Keep the exact endpoint and intermediate-frame assertions.
+  await expect(canvas).toHaveAttribute("data-reverser", "1.000", {
+    timeout: 10000,
+  });
   const opening = await deploymentTrace(page);
   expect(opening.some((d) => d > 0.05 && d < 0.95)).toBeTruthy();
   expect(opening.every((d, i) => i === 0 || d >= opening[i - 1])).toBeTruthy();
@@ -198,7 +202,9 @@ test("live reverser eases through deployment while rotors continue forward; Paus
   await recordDeployment(page, true);
   await toggle.click();
   await expect(canvas).toHaveAttribute("data-retargeted", "true");
-  await expect(canvas).toHaveAttribute("data-reverser", "1.000");
+  await expect(canvas).toHaveAttribute("data-reverser", "1.000", {
+    timeout: 10000,
+  });
   const retargeting = await deploymentTrace(page);
   expect(Math.min(...retargeting)).toBeGreaterThan(0.1);
   expect(retargeting.some((d) => d < 0.8)).toBeTruthy();
@@ -289,12 +295,16 @@ test("the actual opaque assembly remains centered in forward and reverse configu
 test("canvas-free reverse mode updates doors and clipped air, remains off at zero, and handles rapid selection", async ({
   page,
 }) => {
+  test.setTimeout(60000);
   await page.addInitScript(() => {
     HTMLCanvasElement.prototype.getContext = () => null;
   });
   await page.goto("/#jet-engine");
   await expect(page.locator(".engine-feedback")).toContainText(
     "Canvas animation is unavailable",
+    // Cold depth-clipped SVG construction exceeded five seconds in Linux
+    // WebKit; wait for the real ready state rather than sleeping or skipping it.
+    { timeout: 15000 },
   );
   const svg = page.locator(".engine-fallback"),
     toggle = page.getByRole("button", { name: "Reverse thrust", exact: true }),
@@ -639,12 +649,14 @@ for (const theme of ["light", "dark"] as const)
 test("SVG-only fallback preserves the same near/far visibility", async ({
   page,
 }) => {
+  test.setTimeout(60000);
   await page.addInitScript(() => {
     HTMLCanvasElement.prototype.getContext = () => null;
   });
   await page.goto("/#jet-engine");
   await expect(page.locator(".engine-feedback")).toContainText(
     "Canvas animation is unavailable",
+    { timeout: 15000 },
   );
   await page
     .getByRole("slider", { name: "Engine speed", exact: true })

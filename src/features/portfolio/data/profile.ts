@@ -10,7 +10,7 @@ export const GITHUB = "https://github.com/JhonSmithRomeroSolorzano";
 
 // Direct contact channels are intentionally empty until Jhon supplies verified
 // details. They never fall back to account metadata or placeholder values.
-export type VerifiedContactDetail = {
+type VerifiedContactDetail = {
   kind: "email" | "phone" | "calendar";
   label: string;
   href: string;
