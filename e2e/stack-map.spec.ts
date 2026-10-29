@@ -9,7 +9,7 @@ for (const width of [1920, 1440, 900, 390]) {
     await page.evaluate(() => document.fonts.ready);
     const map = page.locator(".stack-map");
     await expect(page.locator(".intro-role")).toContainText(
-      "AI-assisted development",
+      "AI Agent Workflows",
     );
     await expect(map.locator(".stack-ai-cue")).toHaveCount(2);
     const initial = await map.evaluate(
@@ -30,7 +30,7 @@ for (const width of [1920, 1440, 900, 390]) {
         await expect(selected).toContainText("Codex · OpenCode · ChatGPT");
         await expect(selected).toContainText("Multi-agent workflows");
       } else {
-        await expect(selected).not.toContainText("AI-assisted development");
+        await expect(selected).not.toContainText("AI Agent Workflows");
       }
       expect(
         await selected.evaluate((el) => el.scrollHeight <= el.clientHeight + 1),

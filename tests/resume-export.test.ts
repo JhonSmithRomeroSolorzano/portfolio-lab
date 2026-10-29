@@ -137,6 +137,66 @@ test("exports use Jhon's corrected career periods without moving recent AI into 
   assert.ok(text.includes("Dec 2018 - Jul 2020"));
   assert.ok(text.includes("Nov 2013 - Nov 2016"));
   assert.ok(!text.includes("Aug 2020 - Jul 2024"));
+  assert.deepEqual(
+    experience.map(({ employer, role, start, end }) => ({
+      employer,
+      role,
+      start,
+      end,
+    })),
+    [
+      {
+        employer: "Antecursor",
+        role: "Full-Stack Senior Developer",
+        start: "2024-11",
+        end: null,
+      },
+      {
+        employer: "Athletify",
+        role: "Full-Stack Senior Developer",
+        start: "2024-08",
+        end: "2024-11",
+      },
+      {
+        employer: "Antecursor",
+        role: "Full-Stack Mid Developer",
+        start: "2021-08",
+        end: "2024-07",
+      },
+      {
+        employer: "Solvo Global",
+        role: "Full-Stack Mid Developer",
+        start: "2020-08",
+        end: "2021-07",
+      },
+      {
+        employer: "Business Consultants Corporation S.A.S.",
+        role: "Full-Stack Mid Developer",
+        start: "2018-12",
+        end: "2020-07",
+      },
+      {
+        employer: "Business Consultants Corporation S.A.S.",
+        role: "Full-Stack Mid Developer",
+        start: "2013-11",
+        end: "2016-11",
+      },
+      {
+        employer: "Jaivana",
+        role: "Software Developer",
+        start: "2013-03",
+        end: "2013-08",
+      },
+      {
+        employer: "Oceanic S.A.",
+        role: "Software Developer",
+        start: "2011-06",
+        end: "2012-06",
+      },
+    ],
+  );
+  assert.ok(text.includes("Play Framework and Node.js"));
+  assert.ok(text.includes("Visual Basic and C#"));
   assert.ok(text.includes("Remix"));
   assert.ok(!text.includes("Remix/SSR"));
   assert.ok(text.includes("services with relational databases"));
@@ -149,7 +209,7 @@ test("exports use Jhon's corrected career periods without moving recent AI into 
     assert.ok(text.includes(detail.href));
 });
 
-test("single-page PDF lays out all six roles and selectable linked contact text without collisions", async () => {
+test("single-page PDF lays out all eight roles and selectable linked contact text without collisions", async () => {
   const { layout, bytes, circles, pageWidth, pageHeight } = await resumePdf();
   const verticalScale = pageHeight / 841.89;
   assert.ok(Math.abs(pageWidth / pageHeight - 1323 / 1783) < 0.00001);
@@ -167,7 +227,7 @@ test("single-page PDF lays out all six roles and selectable linked contact text 
       "Italic",
     );
   }
-  assert.equal(experience.length, 6);
+  assert.equal(experience.length, 8);
   for (const block of layout) {
     assert.ok(block.x >= 25 && block.x + block.width <= 588);
     assert.ok(
@@ -197,7 +257,8 @@ test("single-page PDF lays out all six roles and selectable linked contact text 
     assert.ok(layout.some((block) => block.link === href));
     assert.ok(bytes.toString("latin1").includes(`/URI (${href})`));
   }
-  assert.ok(text.includes("AI-assisted development"));
+  assert.ok(text.includes("AI Agent Workflows"));
+  assert.ok(!text.includes("AI-assisted development"));
   assert.ok(layout.some((block) => block.text === professionalProfile.summary));
   assert.ok(text.includes("Next.js"));
   assert.ok(text.includes("Remix"));
@@ -221,9 +282,7 @@ test("single-page PDF lays out all six roles and selectable linked contact text 
       `${label} uses Jhon's confirmed four-dot rating`,
     );
   }
-  const aiRow = layout.find(
-    (block) => block.text === "AI-assisted development",
-  )!;
+  const aiRow = layout.find((block) => block.text === "AI Agent Workflows")!;
   assert.deepEqual(
     circles
       .filter((circle) => circle.y === aiRow.y + 6)
@@ -291,7 +350,7 @@ test("PDF self-rating values remain the supplied reference values, not inferred 
   assert.deepEqual(
     resumeData.skillRatings.map((row) => [row.label, row.filled]),
     [
-      ["AI-assisted development", 5],
+      ["AI Agent Workflows", 5],
       ["Javascript", 5],
       ["TypeScript", 4],
       ["ReactJS", 4],
