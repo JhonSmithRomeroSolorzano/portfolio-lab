@@ -1,5 +1,7 @@
 // Jhon confirmed the supplied résumé's corrected roles/dates on 2026-10-28.
 // That correction supersedes the LinkedIn snapshot from 2026-10-06.
+// Jhon confirmed Mid roles at Solvo/earlier Antecursor and Senior from Athletify.
+// Jhon also confirmed Jaivana (Play + Node.js) and Oceanic (Visual Basic + C#).
 // Current Antecursor and Athletify responsibilities confirmed directly by Jhon.
 // Athletify product context: https://www.linkedin.com/company/athletifyofficial
 // Jhon confirmed Nimrod belongs to both Antecursor roles on 2026-10-07.
@@ -30,10 +32,10 @@ export const verifiedContactDetails: readonly VerifiedContactDetail[] = [
 ];
 export const professionalProfile = {
   name: "Jhon Smith Romero",
-  role: "Senior Full-Stack Engineer · AI-assisted development",
+  role: "Senior Full-Stack Engineer · AI Agent Workflows",
   location: "Pereira, Colombia",
   summary:
-    "Systems and Telecommunications Engineer with 9+ years of full-stack development experience. I build and maintain web applications with JavaScript, TypeScript, React, Next.js, Remix, and Node.js, connecting intuitive interfaces with reliable backend services. I integrate AI-assisted development and multi-agent workflows into implementation, testing, and code review, while owning requirements, technical decisions, and validation. I work closely with teams and clients to translate complex requirements into maintainable software.",
+    "Systems and Telecommunications Engineer with 9+ years of full-stack development experience. I build and maintain web applications with JavaScript, TypeScript, React, Next.js, Remix, and Node.js, connecting intuitive interfaces with reliable backend services. I coordinate AI coding agents across implementation, testing, and code review, while retaining ownership of requirements, technical decisions, and validation. I work closely with teams and clients to translate complex requirements into maintainable software.",
   portfolio: "https://jhonsmithromerosolorzano.github.io/portfolio-lab/",
 } as const;
 
@@ -71,10 +73,10 @@ export const experience: readonly ExperienceEntry[] = [
     summary:
       "Full-stack development of Nimrod, a building-management platform for monitoring, configuring, and automating connected equipment.",
     resumeSummary:
-      "I develop and maintain a building-management platform for monitoring, configuring, and automating connected equipment. I deliver React/Mithril.js interfaces and Node.js services on Linux for BACnet integrations, dashboards, equipment/network workflows, alarms, reporting, cloud authentication, and automated tests. I use Codex, OpenCode, and ChatGPT and coordinate agents for implementation, testing, and review, owning requirements, context, and validation.",
+      "I develop Nimrod with React/Mithril.js, Node.js, Linux, and BACnet integrations. I use Codex, OpenCode, and ChatGPT and coordinate agents for implementation, testing, and review, owning requirements and validation.",
     // Jhon confirmed these recent responsibilities belong to his current role.
     highlights: [
-      "Use Codex, OpenCode, and ChatGPT regularly for AI-assisted frontend and backend development.",
+      "Use Codex, OpenCode, and ChatGPT regularly in AI agent workflows for frontend and backend development.",
       "Coordinate agents for focused implementation, testing, and review. I define requirements and context, review changes, and validate results with automated tests and checks in the application.",
     ],
     projects: [
@@ -103,7 +105,7 @@ export const experience: readonly ExperienceEntry[] = [
     summary:
       "Full-stack development for a sports and recreation SaaS, including React, Next.js, and Remix interfaces, shared components, and services with relational databases.",
     resumeSummary:
-      "I contributed to complex frontend and backend applications using React, Next.js, and Remix. I delivered route-driven interfaces, shared UI components, and services with relational databases, supporting unit tests, code quality, and agile delivery.",
+      "I built React, Next.js, and Remix interfaces and services with relational databases for a sports-management SaaS, supporting unit tests and agile delivery.",
     projects: [
       {
         name: "Athletify SaaS",
@@ -120,7 +122,7 @@ export const experience: readonly ExperienceEntry[] = [
   },
   {
     employer: "Antecursor",
-    role: "Full-Stack Senior Developer",
+    role: "Full-Stack Mid Developer",
     start: "2021-08",
     startLabel: "Aug 2021",
     end: "2024-07",
@@ -130,7 +132,7 @@ export const experience: readonly ExperienceEntry[] = [
     summary:
       "Full-stack development and ongoing maintenance of Nimrod’s building-management automation workflows.",
     resumeSummary:
-      "I built responsive React and Mithril.js interfaces and robust Node.js services backed by NoSQL databases. My work spanned new features across the stack, refactoring, performance improvements, and the continuous delivery of solutions for end users.",
+      "I built and maintained Nimrod features with React, Mithril.js, Node.js, and NoSQL, including interfaces, services, and refactoring.",
     projects: [
       {
         name: "Nimrod",
@@ -145,7 +147,7 @@ export const experience: readonly ExperienceEntry[] = [
   },
   {
     employer: "Solvo Global",
-    role: "Full-Stack Senior Developer",
+    role: "Full-Stack Mid Developer",
     start: "2020-08",
     startLabel: "Aug 2020",
     end: "2021-07",
@@ -155,9 +157,10 @@ export const experience: readonly ExperienceEntry[] = [
     summary:
       "Full-stack web development connecting JavaScript interfaces with backend services and NoSQL data.",
     resumeSummary:
-      "I developed full-stack applications using React, Mithril.js, Node.js, and NoSQL databases. I delivered user-focused features, improved system performance, and maintained code quality in an agile environment.",
+      "I developed and maintained full-stack applications with React, Mithril.js, Node.js, and NoSQL through agile iterations.",
     highlights: [
       "Developed frontend and backend features with React, Mithril.js, Node.js, and NoSQL databases.",
+      "Maintained and refactored application code and collaborated in agile iterations to deliver user-focused functionality and maintain code quality.",
     ],
   },
   {
@@ -172,7 +175,7 @@ export const experience: readonly ExperienceEntry[] = [
     summary:
       "Web application development spanning user interfaces, backend logic, SQL data models, and application architecture.",
     resumeSummary:
-      "I delivered end-to-end applications using HTML, CSS, JavaScript/jQuery, Node.js, and SQL databases. I implemented and updated features across the stack, optimized data handling, and supported agile releases.",
+      "I built HTML/CSS, JavaScript/jQuery, Node.js, and SQL applications, working on features, data models, and architecture.",
     highlights: [
       "Built web applications with HTML, CSS, JavaScript, jQuery, Node.js, and SQL.",
       "Worked on data models, application architecture, and code optimization.",
@@ -190,10 +193,46 @@ export const experience: readonly ExperienceEntry[] = [
     summary:
       "Web application development, code analysis, and data-model and architecture design around client requirements.",
     resumeSummary:
-      "I built complete web applications with HTML, CSS, JavaScript/jQuery, Node.js, and SQL databases. I also analyzed code, optimized resources, and designed data models and architectures around client requirements.",
+      "I built HTML/CSS, JavaScript/jQuery, Node.js, and SQL applications and analyzed code, data models, and architecture.",
     highlights: [
       "Built complete web applications across interfaces, backend services, and SQL data.",
       "Analyzed code, optimized resources, and designed data models and architectures around client requirements.",
+      "Contributed to a customer-loyalty application, including requirements gathering, final testing with the client, and collecting user feedback.",
+    ],
+  },
+  {
+    employer: "Jaivana",
+    role: "Software Developer",
+    start: "2013-03",
+    startLabel: "Mar 2013",
+    end: "2013-08",
+    endLabel: "Aug 2013",
+    context: "Pereira, Colombia",
+    resumeLocation: "Pereira",
+    summary:
+      "Junior development work connecting web interfaces with backend functionality and databases.",
+    resumeSummary:
+      "I contributed to web applications with HTML, CSS, jQuery, Play Framework, and Node.js as a junior team member.",
+    highlights: [
+      "Built frontend functionality with HTML, CSS, and jQuery.",
+      "Worked with Play Framework and Node.js and supported data exchange between application interfaces and databases as a junior team member.",
+    ],
+  },
+  {
+    employer: "Oceanic S.A.",
+    role: "Software Developer",
+    start: "2011-06",
+    startLabel: "Jun 2011",
+    end: "2012-06",
+    endLabel: "Jun 2012",
+    context: "Pereira, Colombia",
+    resumeLocation: "Pereira",
+    summary:
+      "Junior software development using Visual Basic and C# in the .NET ecosystem.",
+    resumeSummary:
+      "I contributed to application development with Visual Basic and C# in the .NET ecosystem as a junior team member.",
+    highlights: [
+      "Contributed to application development using Visual Basic and C# in the .NET ecosystem as a junior member of the development team.",
     ],
   },
 ] as const;

@@ -10,9 +10,9 @@ export const testing = {
   levels: ["Integration", "End-to-end (E2E)"],
 } as const;
 
-// AI-assisted frontend/backend practice confirmed directly by Jhon.
+// AI agent workflows for frontend/backend work confirmed directly by Jhon.
 export const aiDevelopment = {
-  label: "AI-assisted development",
+  label: "AI Agent Workflows",
   tools: ["Codex", "OpenCode", "ChatGPT"],
   workflow: "Multi-agent workflows",
 } as const;

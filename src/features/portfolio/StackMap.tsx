@@ -124,7 +124,7 @@ export function StackMap() {
                 {item.name}
                 {item.aiAssisted && (
                   <span className="stack-ai-cue">
-                    AI<span className="sr-only">-assisted</span>
+                    AI<span className="sr-only"> Agent Workflows</span>
                   </span>
                 )}
               </strong>

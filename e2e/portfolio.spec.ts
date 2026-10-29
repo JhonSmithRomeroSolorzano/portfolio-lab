@@ -25,9 +25,24 @@ test("recruiter can navigate by keyboard and download the verified resume", asyn
   await expect(currentRole).toContainText("Antecursor");
   await expect(currentRole).toContainText("Codex, OpenCode, and ChatGPT");
   await expect(currentRole).toContainText("automated tests and checks");
-  await expect(page.locator(".experience-list > li")).toHaveCount(6);
-  await expect(page.locator(".experience-list > li").last()).toContainText(
+  await expect(page.locator(".experience-list > li")).toHaveCount(8);
+  await expect(page.locator(".experience-list > li").nth(5)).toContainText(
     "Nov 2013",
+  );
+  await expect(page.locator(".experience-list > li").nth(2)).toContainText(
+    "Full-Stack Mid Developer",
+  );
+  await expect(page.locator(".experience-list > li").nth(3)).toContainText(
+    "Full-Stack Mid Developer",
+  );
+  await expect(page.locator(".experience-list > li").nth(6)).toContainText(
+    "Jaivana",
+  );
+  await expect(page.locator(".experience-list > li").nth(6)).toContainText(
+    "Play Framework and Node.js",
+  );
+  await expect(page.locator(".experience-list > li").last()).toContainText(
+    "Visual Basic and C#",
   );
   await expect(page.locator(".experience-list > li").nth(1)).toContainText(
     "Remix",

@@ -62,7 +62,7 @@ export const resumeData = {
   // confirmed AI at five dots and Next.js, Remix, TypeScript, and Linux at four.
   skillRatings: [
     {
-      label: "AI-assisted development",
+      label: "AI Agent Workflows",
       filled: 5,
     },
     resumeSkillRatings[0],
@@ -80,7 +80,7 @@ export const resumeData = {
     { label: "Spanish", filled: 5 },
   ],
   headline:
-    "Senior Full Stack Software Engineer | AI-assisted development | JavaScript | TypeScript | React | Mithril.js | Next.js | Node.js | NoSQL & SQL | Git | Docker | Linux",
+    "Senior Full-Stack Engineer | React · TypeScript · Node.js | AI Agent Workflows",
   introduction: professionalProfile.summary,
 };
 
