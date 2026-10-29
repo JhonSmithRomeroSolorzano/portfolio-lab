@@ -10,6 +10,28 @@ export const privatePreview =
 export const digest = (data: string | Uint8Array) =>
   createHash("sha256").update(data).digest("hex");
 
+/** Recognize the observed origin-aware loader, with only request IDs varying. */
+function isOriginAwareChallenge(code: string): boolean {
+  const parameters = code.match(
+    /window\.__CF\$cv\$params=\{r:'([a-f0-9]{16})',t:'([A-Za-z0-9+/]{1,64}={0,2})'\};/,
+  );
+  if (!parameters) return false;
+  const [, ray, timestamp] = parameters;
+  return (
+    code ===
+    "(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);" +
+      "if(b){var d=b.createElement('script');" +
+      `d.innerHTML="window.__CF$cv$params={r:'${ray}',t:'${timestamp}'};` +
+      "var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}" +
+      `var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=${ray}',a=document.createElement('script');` +
+      "a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);\";" +
+      "b.getElementsByTagName('head')[0].appendChild(d)}}" +
+      "if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);" +
+      "if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);" +
+      "else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();"
+  );
+}
+
 /** Sites adds this Cloudflare challenge immediately before the closing body. */
 function withoutSitesChallenge(data: Uint8Array): string {
   return new TextDecoder()
@@ -17,11 +39,12 @@ function withoutSitesChallenge(data: Uint8Array): string {
     .replace(
       /<script>((?:(?!<\/script>)[\s\S])*)<\/script>(?=\s*<\/body>)/,
       (script: string, code: string) =>
-        code.startsWith("(function(){function c(){var b=a.contentDocument") &&
-        code.includes("window.__CF$cv$params=") &&
-        code.includes(
-          "a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';",
-        )
+        (code.startsWith("(function(){function c(){var b=a.contentDocument") &&
+          code.includes("window.__CF$cv$params=") &&
+          code.includes(
+            "a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';",
+          )) ||
+        isOriginAwareChallenge(code)
           ? ""
           : script,
     );
