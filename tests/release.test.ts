@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
 import { once } from "node:events";
+import { readFileSync } from "node:fs";
 import {
   digest,
   parseRelease,
@@ -106,6 +107,61 @@ test("private verification authenticates assets and tolerates only the provider 
   );
   await assert.rejects(
     verifyRelease(new URL(`${privatePreview}/`), source, "fixture-token"),
+    /does not match release: index.html/,
+  );
+});
+
+test("private verification recognizes the origin-aware provider loader without ignoring page edits", async (t) => {
+  // Captured from Sites; request-specific values are replaced with fixture values.
+  const challenge = readFileSync(
+    new URL("./fixtures/sites-origin-challenge.txt", import.meta.url),
+    "utf8",
+  ).trim();
+  let html = entryHtml;
+  t.mock.method(globalThis, "fetch", async (input: string | URL | Request) => {
+    const path = new URL(String(input)).pathname;
+    return new Response(
+      path === "/release.json"
+        ? JSON.stringify(good)
+        : path === "/"
+          ? html
+          : "code",
+    );
+  });
+  const verify = () => verifyRelease(new URL(`${privatePreview}/`), source);
+  const append = (script: string) =>
+    entryHtml.replace("</body>", `${script}</body>`);
+
+  for (const script of [
+    challenge,
+    challenge
+      .replaceAll("0123456789abcdef", "fedcba9876543210")
+      .replace("MTIzNDU2Nzg5MA==", "OTg3NjU0MzIxMA=="),
+  ]) {
+    html = append(script);
+    assert.deepEqual(await verify(), good);
+  }
+
+  for (const altered of [
+    append(challenge).replace("portfolio", "unexpected content"),
+    append(challenge).replace(
+      challenge,
+      `<script>changedApplication()</script>${challenge}`,
+    ),
+    append(challenge.replace("?ray=0123456789abcdef", "?ray=fedcba9876543210")),
+    append(challenge.replace("/cdn-cgi/", "https://example.com/")),
+    append(challenge.replace("/jsd/main.js", "/jsd/unknown.js")),
+    append(challenge.replace("</script>", "changedApplication();</script>")),
+    append(challenge.replace("</script>", "/* extra content */</script>")),
+    entryHtml.replace("portfolio", `${challenge}portfolio`),
+  ]) {
+    html = altered;
+    await assert.rejects(verify(), /does not match release: index.html/);
+  }
+
+  html = append(challenge);
+  await assert.rejects(
+    verifyRelease(new URL("https://example.com/"), source),
     /does not match release: index.html/,
   );
 });
