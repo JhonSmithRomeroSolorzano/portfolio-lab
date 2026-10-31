@@ -12,7 +12,7 @@ export function OverviewSection() {
     >
       <span className="section-signal" aria-hidden="true" />
       <div className="workspace-topline">
-        <span>ENGINEERING PORTFOLIO</span>
+        <span>FULL-STACK ENGINEERING</span>
         <span className="opportunity">
           <i aria-hidden="true" />
           Open to opportunities
@@ -21,7 +21,8 @@ export function OverviewSection() {
       <div className="workbench-intro">
         <div className="intro-copy" id="about" tabIndex={-1}>
           <h1 id="intro-title">
-            Jhon Smith Romero<span>.</span>
+            <span className="intro-given-name">Jhon Smith</span> Romero
+            <span className="heading-dot">.</span>
           </h1>
           <p className="intro-role">{professionalProfile.role}</p>
           <p className="intro-stack" aria-label="Core technologies">

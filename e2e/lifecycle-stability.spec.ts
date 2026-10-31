@@ -51,6 +51,10 @@ for (const width of [390, 1440])
     const errors: string[] = [];
     page.on("pageerror", (error) => errors.push(error.message));
     await page.goto("/#jet-engine");
+    // Isolate the lab lifecycle from the independently user-controlled ambient rain.
+    await page
+      .getByRole("button", { name: "Pause background", exact: true })
+      .press("Enter");
     const release = await (await page.request.get("/release.json")).json();
     const exhibits = [
       ["jet-engine", ".jet-engine", ".engine-stage"],

@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Arrow } from "../shared/ui/Arrow";
 import { PlaygroundSection } from "../features/playground/PlaygroundSection";
 import { observeScrollReveals } from "./scroll-reveals";
@@ -9,7 +9,8 @@ import { ResumeSection } from "../features/portfolio/ResumeSection";
 import { GITHUB, LINKEDIN } from "../features/portfolio/data/profile";
 import { ThemeSwitcher } from "../shared/ui/ThemeSwitcher";
 import { MotionSettings } from "../shared/ui/MotionSettings";
-import { BrandMark } from "../features/portfolio/BrandMark";
+import { useReducedMotion } from "../shared/hooks/useReducedMotion";
+import { MatrixBackdrop } from "./MatrixBackdrop";
 
 import { SOURCE_REPOSITORY } from "../shared/project";
 import { useMobileNavigation } from "./useMobileNavigation";
@@ -17,7 +18,18 @@ export function App() {
   const mainRef = useRef<HTMLElement>(null);
   const navRef = useRef<HTMLElement>(null);
   const menu = useMobileNavigation(navRef);
+  const reducedMotion = useReducedMotion();
+  const [backgroundPaused, setBackgroundPaused] = useState(false);
+  const [backgroundAvailable, setBackgroundAvailable] = useState(true);
+  const backgroundLabel = !backgroundAvailable
+    ? "Static background"
+    : reducedMotion
+      ? "Background animation reduced"
+      : backgroundPaused
+        ? "Resume background"
+        : "Pause background";
   useLayoutEffect(() => {
+    if (!menu.ready) return;
     const legacyDestination =
       window.location.hash === "#signal-lab"
         ? "lab"
@@ -37,7 +49,7 @@ export function App() {
       target.focus({ preventScroll: true });
       target.scrollIntoView({ behavior: "instant", block: "start" });
     }
-  }, []);
+  }, [menu.ready]);
   useEffect(
     () => (mainRef.current ? observeScrollReveals(mainRef.current) : undefined),
     [],
@@ -53,29 +65,22 @@ export function App() {
         Skip to content
       </a>
       <div className="portfolio-frame">
+        <MatrixBackdrop
+          paused={!menu.ready || backgroundPaused || reducedMotion}
+          onAvailabilityChange={setBackgroundAvailable}
+        />
         <span className="reading-progress" aria-hidden="true" />
         <header
           className="identity-rail"
           data-menu-ready={menu.ready}
           data-menu-open={menu.open}
         >
-          <a
-            className="rail-brand"
-            href="#"
-            aria-label="Jhon Smith Romero, home"
-          >
-            <BrandMark />
+          <a className="rail-brand" href="#" aria-label="jhon.romero, home">
             <span>
-              Jhon Smith
-              <br />
-              <strong>Romero</strong>
+              jhon<span className="wordmark-dot">.</span>
+              <span className="wordmark-surname">romero</span>
             </span>
           </a>
-          <p className="rail-caption">
-            ENGINEERING
-            <br />
-            PORTFOLIO
-          </p>
           <nav
             id="main-navigation"
             aria-label="Main navigation"
@@ -84,32 +89,44 @@ export function App() {
           >
             <span className="nav-cursor" aria-hidden="true" />
             <a href="#workbench">
-              <span aria-hidden="true">⌘</span> Overview
+              <span aria-hidden="true">01</span> Overview
             </a>
             <a href="#resume">
-              <span aria-hidden="true">↗</span> Experience
+              <span aria-hidden="true">02</span> Experience
             </a>
             <a href="#contact">
-              <span aria-hidden="true">@</span> Contact
+              <span aria-hidden="true">03</span> Contact
             </a>
             <a href="#lab">
-              <span aria-hidden="true">↯</span> Labs & play
+              <span aria-hidden="true">04</span> Labs & play
             </a>
           </nav>
           <div className="rail-bottom">
-            <p>
-              Based in Pereira,
-              <br />
-              Colombia.
-            </p>
-            <div className="rail-socials">
-              <a href={GITHUB} target="_blank" rel="noreferrer">
-                GitHub ↗
-              </a>
-              <a href={LINKEDIN} target="_blank" rel="noreferrer">
-                LinkedIn ↗
-              </a>
-            </div>
+            <button
+              className="background-toggle"
+              type="button"
+              disabled={!menu.ready || reducedMotion || !backgroundAvailable}
+              aria-label={backgroundLabel}
+              title={backgroundLabel}
+              onClick={() => setBackgroundPaused((value) => !value)}
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                aria-hidden="true"
+              >
+                {backgroundPaused || reducedMotion ? (
+                  <path d="m9 5 10 7-10 7Z" />
+                ) : (
+                  <path d="M8 5v14M16 5v14" />
+                )}
+              </svg>
+              <span>{backgroundLabel}</span>
+            </button>
             <ThemeSwitcher />
             <MotionSettings />
             <button
@@ -148,6 +165,13 @@ export function App() {
           </main>
           <footer className="site-footer wrap">
             <span>© 2026 Jhon Smith Romero</span>
+            <span>Pereira, Colombia</span>
+            <a href={GITHUB} target="_blank" rel="noreferrer">
+              GitHub ↗
+            </a>
+            <a href={LINKEDIN} target="_blank" rel="noreferrer">
+              LinkedIn ↗
+            </a>
             <a href="#workbench">Back to overview ↑</a>
             <a href={SOURCE_REPOSITORY} target="_blank" rel="noreferrer">
               View source <Arrow diagonal />

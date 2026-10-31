@@ -20,7 +20,7 @@
 .resume-actions .resume-download {
   padding: 10px 14px;
   border: 1px solid var(--accent);
-  border-radius: 4px;
+  border-radius: 0;
   color: var(--accent);
 }
 .resume-layout {
@@ -44,6 +44,10 @@
   margin-top: 54px;
   padding-top: 32px;
   border-top: 1px solid var(--line);
+}
+.resume-education > * {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .resume-study h3,
 .resume-list-title {
@@ -144,10 +148,10 @@
 }
 .experience-project {
   margin-top: 20px;
-  padding: 18px;
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  background: var(--soft);
+  padding: 0 0 0 18px;
+  border: 0;
+  border-left: 2px solid var(--line);
+  background: transparent;
 }
 .experience-project .eyebrow {
   font-size: 0.6875rem;
@@ -242,13 +246,14 @@
 }
 .workbench {
   padding-top: 36px;
+  padding-bottom: 128px;
 }
 .workspace-topline {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  font: 10px/1.5 var(--mono);
+  font: 0.6875rem/1.5 var(--mono);
   color: var(--muted);
   letter-spacing: 0.5px;
 }
@@ -268,21 +273,29 @@
 }
 .workbench-intro {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 160px;
+  grid-template-columns: minmax(0, 1fr) 192px;
   align-items: center;
   justify-content: space-between;
-  gap: 30px;
-  padding: 39px 0 33px;
+  gap: 64px;
+  padding: 60px 0 48px;
 }
 .workbench h1 {
-  font-size: clamp(32px, 3.8vw, 54px);
-  font-weight: 500;
-  line-height: 1.12;
-  letter-spacing: -2px;
-  margin: 0 0 16px;
+  font-size: clamp(56px, 7.6vw, 104px);
+  font-weight: 600;
+  line-height: 0.98;
+  letter-spacing: -5px;
+  margin: 0 0 28px;
+  overflow-wrap: anywhere;
 }
-.workbench h1 > span {
+.workbench h1 > .heading-dot {
   color: var(--electric);
+}
+.intro-given-name {
+  display: block;
+}
+.intro-copy {
+  background: var(--reading-surface);
+  box-shadow: 0 0 42px 24px var(--reading-surface);
 }
 .workbench-intro p {
   max-width: 560px;
@@ -290,6 +303,7 @@
   font-size: 0.9375rem;
   line-height: 1.65;
   color: var(--muted);
+  overflow-wrap: anywhere;
 }
 .workbench-intro .intro-role {
   max-width: none;
@@ -306,7 +320,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1.7fr) minmax(240px, 0.9fr);
   border: 1px solid var(--line);
-  border-radius: 6px;
+  border-radius: 0;
   overflow: clip;
 }
 .stack-drawing {
@@ -395,8 +409,8 @@
   border: 1px solid var(--line);
   background: var(--node);
   color: var(--ink);
-  border-radius: 4px;
-  box-shadow: 5px 5px 0 color-mix(in srgb, var(--electric) 8%, transparent);
+  border-radius: 0;
+  box-shadow: 3px 3px 0 color-mix(in srgb, var(--electric) 8%, transparent);
   text-align: left;
   overflow-wrap: anywhere;
   /* Text and background switch together; fading only the fill loses contrast. */
@@ -469,15 +483,15 @@
   opacity: 0.3;
 }
 .stack-node[data-flow-active="true"] {
-  color: #fff;
-  background: #255ad5;
-  border-color: #255ad5;
+  color: var(--flow-ink);
+  background: var(--flow-fill);
+  border-color: var(--flow-fill);
   outline: 2px solid var(--electric);
   outline-offset: 3px;
 }
 .stack-node[data-flow-active="true"] > span,
 .stack-node[data-flow-active="true"] svg {
-  color: #fff;
+  color: var(--flow-ink);
 }
 .stack-node:focus-visible {
   outline: 3px solid var(--focus);
@@ -546,6 +560,7 @@ html[data-motion="reduce"] .experience-list > li[data-traced="true"]::before {
   padding: 28px 25px;
   border-left: 1px solid var(--line);
   min-width: 0;
+  background: var(--node);
 }
 .stack-detail[aria-hidden="true"] {
   visibility: hidden;
@@ -698,6 +713,7 @@ html[data-motion="reduce"] .experience-list > li[data-traced="true"]::before {
 @media (max-width: 900px) {
   .workbench {
     padding-top: 26px;
+    padding-bottom: 48px;
   }
   .workbench-intro {
     padding-block: 28px;
@@ -818,16 +834,18 @@ html[data-motion="reduce"] .experience-list > li[data-traced="true"]::before {
 }
 .profile-portrait {
   display: block;
-  width: 160px;
-  height: 160px;
+  width: 192px;
+  height: 240px;
   object-fit: cover;
-  border-radius: 12px;
+  border-radius: 0;
   border: 4px solid var(--paper);
   outline: 1px solid var(--line);
+  filter: grayscale(1);
 }
 .technology-overview {
   margin: 0 0 28px;
   border-block: 1px solid var(--line);
+  background: var(--reading-surface);
 }
 .stack-languages,
 .stack-testing {
@@ -840,7 +858,7 @@ html[data-motion="reduce"] .experience-list > li[data-traced="true"]::before {
 }
 .technology-label {
   color: var(--accent);
-  font: 9px/1.6 var(--mono);
+  font: 0.6875rem/1.6 var(--mono);
   text-transform: uppercase;
   letter-spacing: 0.6px;
 }
@@ -1070,4 +1088,50 @@ html[data-motion="reduce"] .experience-list > li[data-traced="true"]::before {
 .experience-project p,
 .contact-section p {
   max-inline-size: 68ch;
+}
+
+.resume-section {
+  padding-inline: 40px;
+  background: var(--reading-surface);
+  border: 0;
+}
+.workspace-topline {
+  padding-block: 16px;
+  border-bottom: 1px solid var(--line);
+  background: var(--reading-surface);
+}
+.contact-section {
+  margin-top: 48px;
+  background: var(--node);
+}
+.lab-collection > .section-heading,
+.play-exhibit > .section-heading {
+  background: var(--reading-surface);
+}
+.collection-card {
+  background: var(--reading-surface);
+}
+@media (max-width: 600px) {
+  .workbench-intro {
+    padding-block: 36px;
+    row-gap: 20px;
+  }
+  .workbench-intro h1 {
+    font-size: clamp(2.25rem, 10vw, 3.75rem);
+    letter-spacing: -1.8px;
+  }
+  .workbench-intro .intro-role {
+    margin: 0;
+  }
+  .workbench-intro p {
+    background: var(--reading-surface);
+    box-shadow: 0 0 16px 8px var(--reading-surface);
+  }
+  .resume-section {
+    padding-inline: 0;
+    border-inline: 0;
+  }
+  .contact-section {
+    margin-top: 32px;
+  }
 }

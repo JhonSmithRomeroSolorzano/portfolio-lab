@@ -43,7 +43,7 @@ export function ThemeSwitcher() {
       );
     document
       .querySelector('meta[name="theme-color"]')
-      ?.setAttribute("content", theme === "dark" ? "#0e1b2d" : "#f4f3ec");
+      ?.setAttribute("content", theme === "dark" ? "#080d0a" : "#f0f3ed");
   }, [theme, ready]);
   function toggle() {
     const next = nextTheme(preference, systemDark);
