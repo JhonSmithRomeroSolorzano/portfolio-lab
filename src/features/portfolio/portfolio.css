@@ -295,7 +295,7 @@
 }
 .intro-copy {
   background: var(--reading-surface);
-  box-shadow: 0 0 42px 24px var(--reading-surface);
+  box-shadow: none;
 }
 .workbench-intro p {
   max-width: 560px;
@@ -464,7 +464,7 @@
   border-style: dashed;
 }
 .stack-node:hover {
-  box-shadow: 5px 5px 0 color-mix(in srgb, var(--electric) 35%, transparent);
+  box-shadow: 3px 3px 0 color-mix(in srgb, var(--electric) 15%, transparent);
 }
 .stack-node .map-node-activity {
   display: flex;
@@ -483,15 +483,14 @@
   opacity: 0.3;
 }
 .stack-node[data-flow-active="true"] {
-  color: var(--flow-ink);
-  background: var(--flow-fill);
-  border-color: var(--flow-fill);
-  outline: 2px solid var(--electric);
-  outline-offset: 3px;
+  color: var(--ink);
+  background: var(--map-active);
+  border-color: var(--lab-wire);
+  box-shadow: inset 3px 0 0 var(--accent);
 }
 .stack-node[data-flow-active="true"] > span,
 .stack-node[data-flow-active="true"] svg {
-  color: var(--flow-ink);
+  color: var(--ink);
 }
 .stack-node:focus-visible {
   outline: 3px solid var(--focus);
@@ -840,7 +839,6 @@ html[data-motion="reduce"] .experience-list > li[data-traced="true"]::before {
   border-radius: 0;
   border: 4px solid var(--paper);
   outline: 1px solid var(--line);
-  filter: grayscale(1);
 }
 .technology-overview {
   margin: 0 0 28px;
@@ -1102,7 +1100,7 @@ html[data-motion="reduce"] .experience-list > li[data-traced="true"]::before {
 }
 .contact-section {
   margin-top: 48px;
-  background: var(--node);
+  background: var(--reading-surface);
 }
 .lab-collection > .section-heading,
 .play-exhibit > .section-heading {
@@ -1125,7 +1123,7 @@ html[data-motion="reduce"] .experience-list > li[data-traced="true"]::before {
   }
   .workbench-intro p {
     background: var(--reading-surface);
-    box-shadow: 0 0 16px 8px var(--reading-surface);
+    box-shadow: none;
   }
   .resume-section {
     padding-inline: 0;

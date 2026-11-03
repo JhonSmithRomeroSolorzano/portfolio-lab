@@ -18,7 +18,7 @@ export function MotionRecipe({
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: #6350a5;
+  background: #21643b;
   animation: portfolio-travel ${duration}ms ${CURVES[curve].easing} forwards;
 }
 @keyframes portfolio-travel {

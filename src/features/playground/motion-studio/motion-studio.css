@@ -9,13 +9,11 @@
   max-width: 330px;
 }
 .motion-studio {
-  --focus: #d8c8ff;
-  background: #241f37;
-  color: #f4efff;
+  background: var(--lab-surface);
+  color: var(--ink);
   border-radius: 4px 32px 4px 32px;
   padding: 42px;
-  border: 1px solid #504563;
-  color-scheme: dark;
+  border: 1px solid var(--line);
 }
 .motion-intro {
   display: grid;
@@ -25,23 +23,23 @@
 }
 .motion-intro .play-kicker {
   grid-column: 1 / -1;
-  color: #d0bcf5;
+  color: var(--accent);
 }
 .motion-intro h3 {
   margin: 24px 0 28px;
 }
 .motion-intro h3 em {
-  color: #d1b7ff;
+  color: var(--accent);
   font-style: normal;
 }
 .motion-intro p {
   margin: 0 0 28px;
-  color: #c8bfd7;
+  color: var(--muted);
 }
 .motion-workspace {
   display: grid;
   grid-template-columns: 1.3fr 1fr;
-  border-top: 1px solid #635575;
+  border-top: 1px solid var(--line);
 }
 .motion-stage {
   padding: 30px 36px 14px 0;
@@ -52,7 +50,7 @@
   justify-content: space-between;
   font: 9px var(--mono);
   letter-spacing: 1px;
-  color: #c8bfd7;
+  color: var(--muted);
 }
 .motion-lane-label {
   display: flex;
@@ -67,15 +65,15 @@
 }
 .motion-lane-label > span {
   font: 9px/1.6 var(--mono);
-  color: #c8bfd7;
+  color: var(--muted);
 }
 .motion-lane.is-reference .motion-runner {
   background: transparent;
-  border: 2px solid #e1d8ec;
+  border: 2px solid var(--muted);
   box-shadow: none;
 }
 .motion-lane.is-reference .motion-runner span {
-  border-color: #e1d8ec;
+  border-color: var(--muted);
 }
 .motion-track {
   position: relative;
@@ -88,24 +86,24 @@
   left: 0;
   right: 0;
   top: 34px;
-  border-top: 1px dashed #8b78a3;
+  border-top: 1px dashed var(--lab-wire);
 }
 .motion-runner {
   width: 44px;
   height: 44px;
-  background: #d1b7ff;
+  background: var(--flow-fill);
   position: absolute;
   left: 0;
   top: 12px;
   display: grid;
   place-items: center;
   border-radius: 12px;
-  box-shadow: 0 0 28px #d1b7ff20;
+  box-shadow: 0 0 28px color-mix(in srgb, var(--accent) 12%, transparent);
 }
 .motion-runner span {
   width: 12px;
   height: 12px;
-  border: 2px solid #352744;
+  border: 2px solid var(--flow-ink);
   border-radius: 50%;
 }
 .motion-runner.has-arrived {
@@ -125,16 +123,16 @@
 }
 .motion-curve-note path {
   fill: none;
-  stroke: #d1b7ff;
+  stroke: var(--accent);
   stroke-width: 2.5;
 }
 .motion-curve-note .curve-reference {
-  stroke: #e1d8ec;
+  stroke: var(--muted);
   stroke-width: 1.5;
   stroke-dasharray: 5 4;
 }
 .motion-curve-note .curve-guide {
-  stroke: #8b78a3;
+  stroke: var(--lab-wire);
   stroke-width: 1;
   stroke-dasharray: 3 4;
 }
@@ -146,11 +144,11 @@
   margin: 8px 0 0;
   font-size: 12px;
   line-height: 1.7;
-  color: #c8bfd7;
+  color: var(--muted);
 }
 .motion-controls {
   padding: 30px 0 0 30px;
-  border-left: 1px solid #635575;
+  border-left: 1px solid var(--line);
 }
 .motion-options {
   display: grid;
@@ -161,15 +159,15 @@
   min-height: 44px;
   padding: 9px;
   font-size: 11px;
-  border: 1px solid #8b78a3;
+  border: 1px solid var(--lab-wire);
   background: transparent;
   border-radius: 5px;
-  color: #f4efff;
+  color: var(--ink);
 }
 .motion-options button[aria-pressed="true"] {
-  background: #d1b7ff;
-  color: #241f37;
-  border-color: #d1b7ff;
+  background: var(--flow-fill);
+  color: var(--flow-ink);
+  border-color: var(--flow-fill);
 }
 .motion-duration {
   margin-block: 24px;
@@ -182,14 +180,14 @@
 .motion-duration input {
   flex-basis: 100%;
   width: 100%;
-  accent-color: #d1b7ff;
+  accent-color: var(--accent);
 }
 .motion-play {
   min-height: 44px;
   width: 100%;
   border: none;
-  background: #f4efff;
-  color: #241f37;
+  background: var(--flow-fill);
+  color: var(--flow-ink);
   border-radius: 6px;
   font-size: 13px;
   font-weight: 500;
@@ -197,7 +195,7 @@
 .motion-feedback {
   font-size: 11px;
   line-height: 1.6;
-  color: #c8bfd7;
+  color: var(--muted);
   min-height: 36px;
   margin: 12px 0 0;
 }
@@ -222,7 +220,7 @@
   }
   .motion-controls {
     border-left: none;
-    border-top: 1px solid #635575;
+    border-top: 1px solid var(--line);
     padding: 24px 0 0;
   }
 }
@@ -247,7 +245,7 @@
 }
 
 .motion-recipe {
-  border-top: 1px solid #81739e;
+  border-top: 1px solid var(--line);
   margin-top: 18px;
   padding-top: 16px;
   min-width: 0;
@@ -264,10 +262,10 @@
   width: 100%;
   margin: 8px 0 12px;
   padding: 12px;
-  border: 1px solid #81739e;
+  border: 1px solid var(--lab-wire);
   border-radius: 8px;
-  background: #17132a;
-  color: #eee7ff;
+  background: var(--paper);
+  color: var(--ink);
   font: 0.75rem/1.6 var(--mono);
   resize: vertical;
 }
@@ -278,9 +276,9 @@
 }
 .motion-recipe button {
   padding: 10px 16px;
-  background: #eee7ff;
-  color: #302341;
-  border: 1px solid #81739e;
+  background: var(--flow-fill);
+  color: var(--flow-ink);
+  border: 1px solid var(--lab-wire);
   border-radius: 8px;
 }
 .motion-recipe [role="status"] {

@@ -3,13 +3,7 @@ import { createMatrixRain } from "./matrix-rain-renderer";
 import type { MatrixRainRenderer } from "./matrix-rain-renderer";
 import { RAIN_GLYPHS } from "./matrix-rain-model";
 
-export function MatrixBackdrop({
-  paused,
-  onAvailabilityChange,
-}: {
-  paused: boolean;
-  onAvailabilityChange: (available: boolean) => void;
-}) {
+export function MatrixBackdrop({ paused }: { paused: boolean }) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const renderer = useRef<MatrixRainRenderer | undefined>(undefined);
   useEffect(() => {
@@ -17,12 +11,11 @@ export function MatrixBackdrop({
     if (!drawing) return;
     const rain = createMatrixRain(drawing);
     renderer.current = rain;
-    onAvailabilityChange(Boolean(rain));
     return () => {
       rain?.dispose();
       renderer.current = undefined;
     };
-  }, [onAvailabilityChange]);
+  }, []);
   useEffect(() => {
     renderer.current?.setPaused(paused);
   }, [paused]);

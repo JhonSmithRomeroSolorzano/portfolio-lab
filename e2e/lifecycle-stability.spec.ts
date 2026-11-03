@@ -17,7 +17,7 @@ async function settle(page: Page) {
   await expect
     .poll(() =>
       page
-        .locator("[data-playing=true]")
+        .locator("[data-playing=true]:not(.matrix-backdrop)")
         .evaluateAll((nodes) => nodes.map((node) => node.className)),
     )
     .toEqual([]);
@@ -32,7 +32,7 @@ async function settle(page: Page) {
           ).__lifecycleProbe.snapshot().pendingFrames,
       ),
     )
-    .toBe(0);
+    .toBe(1);
 }
 
 for (const width of [390, 1440])
@@ -51,10 +51,7 @@ for (const width of [390, 1440])
     const errors: string[] = [];
     page.on("pageerror", (error) => errors.push(error.message));
     await page.goto("/#jet-engine");
-    // Isolate the lab lifecycle from the independently user-controlled ambient rain.
-    await page
-      .getByRole("button", { name: "Pause background", exact: true })
-      .press("Enter");
+    // Isolate lab resources from the one persistent ambient-rain frame.
     const release = await (await page.request.get("/release.json")).json();
     const exhibits = [
       ["jet-engine", ".jet-engine", ".engine-stage"],
@@ -72,7 +69,7 @@ for (const width of [390, 1440])
         );
         await expect
           .poll(async () => (await sample()).pendingFrames)
-          .toBeGreaterThan(0);
+          .toBeGreaterThan(1);
         if (id === "jet-engine") {
           await page
             .getByRole("button", { name: /^Full power 100%/ })
@@ -203,7 +200,7 @@ for (const width of [390, 1440])
     await page.waitForTimeout(300);
     const after = await sample();
     expect(after.paints).toBe(before.paints);
-    expect(after.pendingFrames).toBe(0);
+    expect(after.pendingFrames).toBe(1);
     expect(errors).toEqual([]);
     await heapSnapshot("final");
     const report = JSON.stringify(

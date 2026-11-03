@@ -52,6 +52,24 @@ for (const theme of ["light", "dark"]) {
       return samples;
     });
     for (const ratio of samples) expect(ratio).toBeGreaterThanOrEqual(4.5);
+    await backend.evaluate((element) =>
+      element.setAttribute("data-flow-active", "true"),
+    );
+    const active = await backend.evaluate((element) => {
+      const css = getComputedStyle(element);
+      const probe = document.createElement("span");
+      probe.style.color = "var(--map-active)";
+      element.append(probe);
+      const expected = getComputedStyle(probe).color;
+      probe.remove();
+      return {
+        background: css.backgroundColor,
+        expected,
+        outline: css.outlineStyle,
+      };
+    });
+    expect(active.background).toBe(active.expected);
+    expect(active.outline).toBe("none");
   });
 
   for (const width of [390, 320]) {

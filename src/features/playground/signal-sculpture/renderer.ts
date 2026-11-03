@@ -27,10 +27,10 @@ export function createSculptureRenderer(canvas: HTMLCanvasElement) {
   let height = 1;
   let pointer = { x: 0, y: 0 };
   let pointerTarget = { x: 0, y: 0 };
+  let colors: string[] = [];
 
   function draw() {
     if (!ctx) return;
-    const dark = document.documentElement.dataset.theme === "dark";
     ctx.clearRect(0, 0, width, height);
     // A full, slow turn makes the monogram's perspective/depth perceptible.
     // The same paused clock keeps rotation frozen between explicit plays.
@@ -44,14 +44,7 @@ export function createSculptureRenderer(canvas: HTMLCanvasElement) {
       pulse,
     );
     for (const p of projected) {
-      const amber = p.i % 19 === 0;
-      ctx.fillStyle = amber
-        ? dark
-          ? "#ffd59a"
-          : "#92550f"
-        : dark
-          ? "#8cbfff"
-          : "#245da0";
+      ctx.fillStyle = colors[p.i % 19 === 0 ? 1 : 0];
       const radius = (width < 600 ? 1 : 1.2) + (p.depth + 0.6) * 0.65;
       ctx.globalAlpha = 0.035;
       ctx.beginPath();
@@ -88,6 +81,10 @@ export function createSculptureRenderer(canvas: HTMLCanvasElement) {
   const stopObserving = observeCanvas(canvas, ctx, (nextWidth, nextHeight) => {
     width = nextWidth;
     height = nextHeight;
+    const css = getComputedStyle(canvas);
+    colors = ["--accent", "--lab-trace"].map((name) =>
+      css.getPropertyValue(name).trim(),
+    );
     draw();
   });
   return {

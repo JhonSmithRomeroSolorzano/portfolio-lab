@@ -31,14 +31,12 @@
   letter-spacing: 0.7px;
 }
 .algorithm-garden {
-  background: #fff0d5;
-  color: #53370f;
-  border: 1px solid #d8bb87;
-  color-scheme: light;
-  --focus: #74420b;
+  background: var(--lab-surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
 }
 .garden-intro h3 em {
-  color: #915216;
+  color: var(--accent);
 }
 .garden-modes {
   display: grid;
@@ -55,8 +53,8 @@
   padding: 14px 12px;
   min-height: 48px;
   background: transparent;
-  color: #53370f;
-  border: 1px solid #b29670;
+  color: var(--ink);
+  border: 1px solid var(--lab-wire);
   border-radius: 8px;
 }
 .garden-modes strong {
@@ -67,9 +65,9 @@
   font: 0.625rem var(--mono);
 }
 .garden-modes button[aria-pressed="true"] {
-  background: #704616;
-  color: #fff4dc;
-  border-color: #704616;
+  background: var(--flow-fill);
+  color: var(--flow-ink);
+  border-color: var(--flow-fill);
 }
 .garden-intro .garden-rule {
   font-size: 0.8125rem;
@@ -77,15 +75,15 @@
 }
 .garden-workspace {
   min-width: 0;
-  background: #ffe7b9;
+  background: var(--lab-stage);
   padding: 22px 16px;
   border-radius: 180px 180px 20px 20px;
-  border: 1px solid #d5ad72;
+  border: 1px solid var(--line);
 }
 .garden-caption {
   justify-content: center;
   margin: 18px 0;
-  color: #79521c;
+  color: var(--muted);
 }
 .garden-tree {
   height: 280px;
@@ -100,13 +98,13 @@
 }
 .garden-tree path {
   fill: none;
-  stroke: #b89766;
+  stroke: var(--lab-wire);
   stroke-width: 2px;
   vector-effect: non-scaling-stroke;
   transition: stroke 160ms;
 }
 .garden-tree path.is-lit {
-  stroke: #704616;
+  stroke: var(--accent);
   stroke-width: 3px;
 }
 .garden-node-slot {
@@ -118,32 +116,32 @@
 .garden-node {
   width: 100%;
   height: 100%;
-  background: #fff7e6;
-  border: 1px solid #95764d;
+  background: var(--node);
+  border: 1px solid var(--lab-wire);
   border-radius: 50%;
-  color: #53370f;
+  color: var(--ink);
   font: 1rem var(--mono);
   transition:
     background 160ms,
     box-shadow 160ms;
 }
 .garden-node:hover {
-  box-shadow: 0 0 0 5px #ae771e25;
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 15%, transparent);
 }
 .garden-node.is-lit {
-  background: #704616;
-  color: #fff4dc;
-  border-color: #704616;
-  box-shadow: 0 0 0 5px #d5ad7240;
+  background: var(--flow-fill);
+  color: var(--flow-ink);
+  border-color: var(--flow-fill);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 25%, transparent);
 }
 .garden-node-slot > small {
   position: absolute;
   right: -3px;
   bottom: -4px;
   pointer-events: none;
-  border: 1px solid #95764d;
-  color: #53370f;
-  background: #fff7e6;
+  border: 1px solid var(--lab-wire);
+  color: var(--ink);
+  background: var(--node);
   width: 19px;
   height: 19px;
   border-radius: 50%;
@@ -152,7 +150,7 @@
   place-items: center;
 }
 .garden-node.is-hinted {
-  outline: 2px dashed #704616;
+  outline: 2px dashed var(--accent);
   outline-offset: 5px;
 }
 .garden-trail {
@@ -165,7 +163,7 @@
   height: 32px;
   display: grid;
   place-items: center;
-  border-bottom: 1px solid #b29670;
+  border-bottom: 1px solid var(--lab-wire);
   font: 0.8125rem var(--mono);
 }
 .garden-feedback {
@@ -220,19 +218,20 @@
 .garden-shapes button {
   background: transparent;
   color: inherit;
-  border: 1px solid #95764d;
+  border: 1px solid var(--lab-wire);
   border-radius: 8px;
   padding: 10px;
   font-size: 0.75rem;
   min-height: 44px;
 }
 .garden-shapes button[aria-pressed="true"] {
-  background: #704616;
-  color: #fff4dc;
+  background: var(--flow-fill);
+  color: var(--flow-ink);
+  border-color: var(--flow-fill);
 }
 
 .garden-reasoning {
-  border-top: 1px solid #b29670;
+  border-top: 1px solid var(--line);
   margin-top: 22px;
   padding: 12px 8px 0;
   font-size: 0.8125rem;
@@ -255,13 +254,13 @@
   place-items: center;
   min-width: 32px;
   height: 32px;
-  border: 1px solid #95764d;
+  border: 1px solid var(--lab-wire);
   border-radius: 6px;
-  background: #fff7e6;
-  color: #53370f;
+  background: var(--node);
+  color: var(--ink);
   font-family: var(--mono);
 }
 .garden-reasoning li:first-child {
-  background: #704616;
-  color: #fff4dc;
+  background: var(--flow-fill);
+  color: var(--flow-ink);
 }

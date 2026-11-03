@@ -1,8 +1,16 @@
 .loom-experience {
+  --loom-thread-1: #975014;
+  --loom-thread-2: #245da0;
+  --loom-thread-3: #18756c;
   padding: 32px;
   border: 1px solid var(--line);
   border-radius: 18px;
-  background: var(--paper);
+  background: var(--lab-surface);
+}
+:root[data-theme="dark"] .loom-experience {
+  --loom-thread-1: #ffcc8a;
+  --loom-thread-2: #9ac8ff;
+  --loom-thread-3: #7edaca;
 }
 .loom-header {
   display: flex;
@@ -40,7 +48,7 @@
   touch-action: none;
   user-select: none;
   background:
-    radial-gradient(ellipse, #e9d1ab25, transparent 70%), var(--paper);
+    radial-gradient(ellipse, var(--map-grid), transparent 70%), var(--lab-stage);
 }
 .loom-stage[data-dragging="true"] {
   cursor: grabbing;
@@ -116,9 +124,9 @@
   color: var(--ink);
 }
 .loom-experience button[aria-pressed="true"] {
-  background: var(--ink);
-  color: var(--paper);
-  border-color: var(--ink);
+  background: var(--flow-fill);
+  color: var(--flow-ink);
+  border-color: var(--flow-fill);
 }
 .loom-experience button:hover:not(:disabled) {
   border-color: var(--accent);
@@ -174,11 +182,8 @@
   margin: 0;
 }
 .mini-loom {
-  color: #ffcc8a;
-  background: radial-gradient(ellipse, #3e505b, #132339);
-}
-:root[data-theme="dark"] .loom-stage {
-  background: radial-gradient(ellipse, #2d344430, transparent 70%), #0a1626;
+  color: var(--accent);
+  background: radial-gradient(ellipse, var(--soft), var(--paper));
 }
 @media (max-width: 600px) {
   .loom-experience {

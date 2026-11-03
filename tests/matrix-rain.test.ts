@@ -49,7 +49,7 @@ test("layout envelopes protect text interiors and trace the actual movable bound
   const interior = rainEnvelope(70, 70, [panel]);
   const edge = rainEnvelope(19, 70, [panel]);
   const outside = rainEnvelope(300, 70, [panel]);
-  assert.ok(interior.quiet < 0.1);
+  assert.ok(interior.quiet >= 0.4 && interior.quiet <= 0.5);
   assert.ok(edge.edge > 0.8);
   assert.equal(outside.quiet, 1);
   assert.ok(outside.edge < 0.001);

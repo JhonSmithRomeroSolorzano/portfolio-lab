@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { Arrow } from "../shared/ui/Arrow";
 import { PlaygroundSection } from "../features/playground/PlaygroundSection";
 import { observeScrollReveals } from "./scroll-reveals";
@@ -19,15 +19,6 @@ export function App() {
   const navRef = useRef<HTMLElement>(null);
   const menu = useMobileNavigation(navRef);
   const reducedMotion = useReducedMotion();
-  const [backgroundPaused, setBackgroundPaused] = useState(false);
-  const [backgroundAvailable, setBackgroundAvailable] = useState(true);
-  const backgroundLabel = !backgroundAvailable
-    ? "Static background"
-    : reducedMotion
-      ? "Background animation reduced"
-      : backgroundPaused
-        ? "Resume background"
-        : "Pause background";
   useLayoutEffect(() => {
     if (!menu.ready) return;
     const legacyDestination =
@@ -65,22 +56,13 @@ export function App() {
         Skip to content
       </a>
       <div className="portfolio-frame">
-        <MatrixBackdrop
-          paused={!menu.ready || backgroundPaused || reducedMotion}
-          onAvailabilityChange={setBackgroundAvailable}
-        />
+        <MatrixBackdrop paused={!menu.ready || reducedMotion} />
         <span className="reading-progress" aria-hidden="true" />
         <header
           className="identity-rail"
           data-menu-ready={menu.ready}
           data-menu-open={menu.open}
         >
-          <a className="rail-brand" href="#" aria-label="jhon.romero, home">
-            <span>
-              jhon<span className="wordmark-dot">.</span>
-              <span className="wordmark-surname">romero</span>
-            </span>
-          </a>
           <nav
             id="main-navigation"
             aria-label="Main navigation"
@@ -88,45 +70,12 @@ export function App() {
             onClick={menu.navigate}
           >
             <span className="nav-cursor" aria-hidden="true" />
-            <a href="#workbench">
-              <span aria-hidden="true">01</span> Overview
-            </a>
-            <a href="#resume">
-              <span aria-hidden="true">02</span> Experience
-            </a>
-            <a href="#contact">
-              <span aria-hidden="true">03</span> Contact
-            </a>
-            <a href="#lab">
-              <span aria-hidden="true">04</span> Labs & play
-            </a>
+            <a href="#workbench">Overview</a>
+            <a href="#resume">Experience</a>
+            <a href="#contact">Contact</a>
+            <a href="#lab">Labs & play</a>
           </nav>
           <div className="rail-bottom">
-            <button
-              className="background-toggle"
-              type="button"
-              disabled={!menu.ready || reducedMotion || !backgroundAvailable}
-              aria-label={backgroundLabel}
-              title={backgroundLabel}
-              onClick={() => setBackgroundPaused((value) => !value)}
-            >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                aria-hidden="true"
-              >
-                {backgroundPaused || reducedMotion ? (
-                  <path d="m9 5 10 7-10 7Z" />
-                ) : (
-                  <path d="M8 5v14M16 5v14" />
-                )}
-              </svg>
-              <span>{backgroundLabel}</span>
-            </button>
             <ThemeSwitcher />
             <MotionSettings />
             <button

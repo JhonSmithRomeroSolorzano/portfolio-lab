@@ -16,14 +16,14 @@ export function rainSeed(column: number, salt = 0) {
 
 export function rainColumn(column: number, rows: number) {
   const speed = 5 + rainSeed(column, 2) * 13;
-  const tail = 14 + rainSeed(column, 3) * 34;
-  const cycle = rows + tail + 16 + rainSeed(column, 4) * 55;
+  const tail = 24 + rainSeed(column, 3) * 40;
+  const cycle = rows + tail + 8 + rainSeed(column, 4) * 24;
   return {
     speed,
     tail,
     cycle,
     offset: rainSeed(column, 5) * cycle,
-    depth: 0.3 + rainSeed(column, 6) * 0.7,
+    depth: 0.65 + rainSeed(column, 6) * 0.35,
   };
 }
 
@@ -38,7 +38,7 @@ export function rainCellLight(
   const front = (time * speed + offset) % cycle;
   const behind = front - row;
   if (behind < 0 || behind > tail) return ambient;
-  const head = behind < 1.1 ? 0.9 : 0.58 * (1 - behind / tail) ** 1.6;
+  const head = behind < 1.6 ? 1 : 0.78 * (1 - behind / tail) ** 1.25;
   return clamp(ambient + head * depth);
 }
 
@@ -56,7 +56,7 @@ export function rainLight(
   );
 }
 
-/** Quiet interiors and a narrow luminous edge let the rain suggest real panels. */
+/** Translucent interiors and a luminous edge keep the field continuous. */
 export function rainEnvelope(
   x: number,
   y: number,
@@ -72,7 +72,7 @@ export function rainEnvelope(
     const distance = inside
       ? Math.min(x - box.left, box.right - x, y - box.top, box.bottom - y)
       : Math.hypot(dx, dy);
-    if (inside) quiet = Math.min(quiet, 0.04 + clamp(distance / 14) * 0.02);
+    if (inside) quiet = Math.min(quiet, 0.42 + clamp(distance / 14) * 0.08);
     if (distance < 40) edge = Math.max(edge, Math.exp(-distance / 7));
   }
   return { quiet, edge };

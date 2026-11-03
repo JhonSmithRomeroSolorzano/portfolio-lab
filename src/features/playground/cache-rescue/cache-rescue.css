@@ -8,11 +8,9 @@
   min-width: 0;
 }
 .cache-game {
-  --focus: #ffdaa2;
-  background: #112440;
-  color: #f3f5fa;
-  border: 1px solid #385071;
-  color-scheme: dark;
+  background: var(--lab-surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
 }
 .cache-intro h3 {
   font: 500 clamp(30px, 3.7vw, 46px)/1.12 var(--display);
@@ -25,7 +23,7 @@
     serif;
 }
 .cache-intro h3 em {
-  color: #ffcf96;
+  color: var(--accent);
 }
 .cache-intro p {
   font-size: 0.875rem;
@@ -33,7 +31,7 @@
   max-width: 340px;
 }
 .cache-intro > p {
-  color: #c3cfe1;
+  color: var(--muted);
 }
 .cache-intro h4 {
   margin: 18px 0 0;
@@ -53,15 +51,15 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  border: 1px solid #8096b5;
+  border: 1px solid var(--lab-wire);
   background: transparent;
-  color: #dce5f2;
+  color: var(--ink);
   font: 0.75rem var(--mono);
 }
 .cache-rounds button[aria-pressed="true"] {
-  background: #ffcf96;
-  border-color: #ffcf96;
-  color: #17253c;
+  background: var(--flow-fill);
+  border-color: var(--flow-fill);
+  color: var(--flow-ink);
 }
 .cache-strategies {
   display: grid;
@@ -75,9 +73,9 @@
   gap: 8px;
   padding: 14px 10px;
   text-align: left;
-  background: #1b3557;
-  color: #f3f5fa;
-  border: 1px solid #718baa;
+  background: var(--node);
+  color: var(--ink);
+  border: 1px solid var(--lab-wire);
   border-radius: 10px;
 }
 .cache-strategies button > span {
@@ -93,10 +91,10 @@
   line-height: 1.6;
 }
 .cache-strategies button[aria-pressed="true"] {
-  background: #d8e8ff;
-  color: #122441;
-  border-color: #d8e8ff;
-  box-shadow: inset 0 -3px #8cafec;
+  background: var(--flow-fill);
+  color: var(--flow-ink);
+  border-color: var(--flow-fill);
+  box-shadow: inset 0 -3px var(--flow-ink);
 }
 .cache-actions {
   display: flex;
@@ -109,8 +107,8 @@
   border: 0;
   border-radius: 7px;
   padding: 13px 18px;
-  background: #ffcf96;
-  color: #17253c;
+  background: var(--flow-fill);
+  color: var(--flow-ink);
   min-height: 44px;
   font-size: 0.8125rem;
   font-weight: 600;
@@ -118,16 +116,16 @@
 .cache-reset {
   border: 0;
   background: transparent;
-  color: #d8e8ff;
+  color: var(--accent);
   min-height: 44px;
   text-decoration: underline;
   font-size: 0.75rem;
 }
 .cache-console {
   min-width: 0;
-  border: 1px solid #4d6687;
+  border: 1px solid var(--line);
   border-radius: 18px;
-  background: #0d1d34;
+  background: var(--lab-stage);
   padding: 22px 18px;
 }
 .cache-caption {
@@ -139,13 +137,13 @@
   letter-spacing: 0.7px;
 }
 .cache-caption {
-  color: #bfd0e8;
+  color: var(--muted);
 }
 .cache-stage {
   height: 333px;
   position: relative;
   margin-top: 18px;
-  background: radial-gradient(#334661 1px, transparent 1px) 0 0 / 16px 16px;
+  background: radial-gradient(var(--line) 1px, transparent 1px) 0 0 / 16px 16px;
 }
 .cache-station {
   position: absolute;
@@ -156,7 +154,7 @@
 }
 .cache-station > span {
   font: 0.5625rem/1.5 var(--mono);
-  color: #bccce3;
+  color: var(--muted);
 }
 .cache-station strong {
   font-size: 1rem;
@@ -191,17 +189,17 @@
   height: 8px;
   position: absolute;
   border-radius: 50%;
-  background: #a6bddd;
+  background: var(--lab-wire);
 }
 .cache-person.is-querying {
-  background: #ffcf96;
-  box-shadow: 0 0 0 2px #ffcf9645;
+  background: var(--lab-warning);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--lab-warning) 25%, transparent);
 }
 .cache-person.is-waiting {
-  background: #b4aaff;
+  background: var(--lab-secondary);
 }
 .cache-person.is-done {
-  background: #8fcaff;
+  background: var(--accent);
 }
 .cache-game.is-playing .cache-person {
   transition:
@@ -211,34 +209,34 @@
 }
 .cache-progress {
   height: 4px;
-  background: #3a4c64;
+  background: var(--line);
   border-radius: 4px;
   overflow: hidden;
 }
 .cache-progress span {
   display: block;
   height: 100%;
-  background: #8fcaff;
+  background: var(--accent);
 }
 .cache-feedback {
   min-height: 5.2em;
-  color: #e1ebfa;
+  color: var(--ink);
   font-size: 0.8125rem;
   line-height: 1.7;
   margin: 18px 0 12px;
 }
 .cache-next {
   font-size: 0.75rem;
-  background: #d8e8ff;
+  background: var(--flow-fill);
   width: 100%;
   margin-bottom: 14px;
 }
 .cache-how {
-  border-top: 1px solid #4d6687;
+  border-top: 1px solid var(--line);
   padding-top: 8px;
   font-size: 0.6875rem;
   line-height: 1.8;
-  color: #c3cfe1;
+  color: var(--muted);
 }
 .cache-how summary {
   cursor: pointer;
@@ -289,7 +287,7 @@
 }
 
 .cache-prediction {
-  border-top: 1px solid #607696;
+  border-top: 1px solid var(--line);
   margin-top: 20px;
   padding-top: 12px;
   font-size: 0.8125rem;
@@ -308,9 +306,9 @@
   max-width: 140px;
   min-height: 44px;
   padding: 8px;
-  background: #101b2d;
-  color: #f1f4fd;
-  border: 1px solid #819bbd;
+  background: var(--node);
+  color: var(--ink);
+  border: 1px solid var(--lab-wire);
   border-radius: 8px;
   box-sizing: border-box;
 }
@@ -318,5 +316,5 @@
   opacity: 0.8;
 }
 .cache-prediction [role="alert"] {
-  color: #ffd1a2;
+  color: var(--lab-warning);
 }

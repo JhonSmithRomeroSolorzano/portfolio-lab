@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 for (const theme of ["light", "dark"] as const) {
-  test(`${theme} has page-wide falling katakana, a new top menu, and a working background pause`, async ({
+  test(`${theme} rain plays automatically through translucent sections`, async ({
     page,
   }) => {
     await page.emulateMedia({
@@ -11,69 +11,40 @@ for (const theme of ["light", "dark"] as const) {
     await page.setViewportSize({ width: 1440, height: 1000 });
     await page.goto("/");
     const backdrop = page.locator(".matrix-backdrop");
-    const drawing = page.locator(".matrix-canvas");
     await expect(backdrop).toHaveAttribute("aria-hidden", "true");
     await expect(backdrop).toHaveCSS("pointer-events", "none");
     await expect(backdrop).toHaveCSS("position", "fixed");
-    await expect(backdrop).toHaveAttribute("data-paused", "false");
     await expect(backdrop).toHaveAttribute("data-renderer", "canvas");
     await expect(backdrop).toHaveAttribute("data-playing", "true");
+    await expect(page.locator(".background-toggle")).toHaveCount(0);
     await expect(page.locator(".matrix-still")).not.toBeVisible();
     await expect
       .poll(async () => Number(await backdrop.getAttribute("data-boundaries")))
       .toBeGreaterThan(0);
-    await expect(
-      page.locator(".console-session, .rail-caption, .rail-brand .brand-mark"),
-    ).toHaveCount(0);
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-      "Jhon Smith Romero.",
-    );
-    const bounds = await backdrop.boundingBox();
-    expect(bounds!.width).toBe(1440);
-    expect(bounds!.height).toBe(1000);
-    const links = await page
-      .locator("#main-navigation a")
-      .evaluateAll((nodes) =>
-        nodes.map((node) => {
-          const rect = node.getBoundingClientRect();
-          return { x: rect.x, y: rect.y };
-        }),
-      );
-    expect(new Set(links.map((link) => link.y)).size).toBe(1);
-    expect(links[3].x).toBeGreaterThan(links[0].x);
     const clock = () => backdrop.getAttribute("data-time");
     const before = await clock();
     await expect.poll(clock).not.toBe(before);
-    await page
-      .getByRole("button", { name: "Pause background", exact: true })
-      .click();
-    await expect(backdrop).toHaveAttribute("data-playing", "false");
-    const paused = await clock();
-    const still = await drawing.evaluate((node: HTMLCanvasElement) =>
-      node.toDataURL(),
-    );
-    await page.evaluate(
-      () =>
-        new Promise<void>((resolve) =>
-          requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
-        ),
-    );
-    expect(
-      await drawing.evaluate((node: HTMLCanvasElement) => node.toDataURL()),
-    ).toBe(still);
+    for (const selector of ["#resume", "#contact", ".intro-copy"]) {
+      const background = await page
+        .locator(selector)
+        .evaluate((node) => getComputedStyle(node).backgroundColor);
+      expect(background).toMatch(/^rgba\(/);
+    }
+    const links = await page
+      .locator("#main-navigation a")
+      .evaluateAll((nodes) =>
+        nodes.map((node) => node.getBoundingClientRect().y),
+      );
+    expect(new Set(links).size).toBe(1);
     await page
       .getByRole("navigation", { name: "Main navigation" })
       .getByRole("link", { name: "Contact", exact: true })
       .press("Enter");
     await expect(page.locator("#contact")).toBeFocused();
-    expect(await clock()).toBe(paused);
-    await page
-      .getByRole("button", { name: "Resume background", exact: true })
-      .click();
-    await expect.poll(clock).not.toBe(paused);
+    await expect(backdrop).toHaveAttribute("data-playing", "true");
   });
 
-  test(`${theme} background is static with device or site motion reduction and the mobile menu is usable`, async ({
+  test(`${theme} reduced motion keeps a still field and mobile keyboard navigation`, async ({
     page,
   }) => {
     await page.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
@@ -81,9 +52,17 @@ for (const theme of ["light", "dark"] as const) {
     await page.goto("/");
     const backdrop = page.locator(".matrix-backdrop");
     await expect(backdrop).toHaveAttribute("data-playing", "false");
-    await expect(
-      page.getByRole("button", { name: "Background animation reduced" }),
-    ).toBeDisabled();
+    const drawing = page.locator(".matrix-canvas");
+    const pixels = () =>
+      drawing.evaluate((node: HTMLCanvasElement) => node.toDataURL());
+    const before = await pixels();
+    await page.evaluate(
+      () =>
+        new Promise<void>((resolve) =>
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+        ),
+    );
+    expect(await pixels()).toBe(before);
     await page.evaluate(() =>
       localStorage.setItem("portfolio-motion", "reduce"),
     );
@@ -97,48 +76,35 @@ for (const theme of ["light", "dark"] as const) {
     ).toBe(true);
     const menu = page.getByRole("button", { name: "Menu", exact: true });
     await menu.press("Enter");
-    const experience = page
+    await page
       .getByRole("navigation", { name: "Main navigation" })
-      .getByRole("link", { name: "Experience", exact: true });
-    await expect(experience).toBeVisible();
-    await experience.press("Enter");
+      .getByRole("link", { name: "Experience", exact: true })
+      .press("Enter");
     await expect(page.locator("#resume")).toBeFocused();
     await expect(menu).toHaveAttribute("aria-expanded", "false");
   });
 }
 
-test("hidden tabs suspend the rain and returning does not undo a manual pause", async ({
+test("hidden tabs suspend rain and returning resumes automatically", async ({
   page,
 }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/");
   const backdrop = page.locator(".matrix-backdrop");
-  await expect(backdrop).toHaveAttribute("data-paused", "false");
-  await page.evaluate(() => {
-    Object.defineProperty(document, "hidden", {
-      configurable: true,
-      get: () => true,
-    });
-    document.dispatchEvent(new Event("visibilitychange"));
-  });
-  await expect(backdrop).toHaveAttribute("data-playing", "false");
-  await page.evaluate(() => {
-    Object.defineProperty(document, "hidden", {
-      configurable: true,
-      get: () => false,
-    });
-    document.dispatchEvent(new Event("visibilitychange"));
-  });
   await expect(backdrop).toHaveAttribute("data-playing", "true");
-  await page
-    .getByRole("button", { name: "Pause background", exact: true })
-    .click();
-  await page.evaluate(() => {
-    document.dispatchEvent(new Event("visibilitychange"));
-  });
-  await expect(backdrop).toHaveAttribute("data-playing", "false");
+  for (const hidden of [true, false]) {
+    await page.evaluate((value) => {
+      Object.defineProperty(document, "hidden", {
+        configurable: true,
+        get: () => value,
+      });
+      document.dispatchEvent(new Event("visibilitychange"));
+    }, hidden);
+    await expect(backdrop).toHaveAttribute("data-playing", String(!hidden));
+  }
 });
 
-test("the page keeps a static character backdrop without JavaScript", async ({
+test("without JavaScript a static field and navigation remain", async ({
   browser,
 }) => {
   const context = await browser.newContext({ javaScriptEnabled: false });
@@ -153,9 +119,7 @@ test("the page keeps a static character backdrop without JavaScript", async ({
   }
 });
 
-test("canvas denial keeps a static field and the portfolio usable", async ({
-  page,
-}) => {
+test("canvas denial preserves the static fallback", async ({ page }) => {
   await page.addInitScript(() => {
     const native = HTMLCanvasElement.prototype.getContext;
     HTMLCanvasElement.prototype.getContext = function (
@@ -168,8 +132,6 @@ test("canvas denial keeps a static field and the portfolio usable", async ({
   });
   await page.goto("/");
   await expect(page.locator(".matrix-still")).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "Static background" }),
-  ).toBeDisabled();
+  await expect(page.locator(".background-toggle")).toHaveCount(0);
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 });

@@ -11,13 +11,13 @@ if (
     "Capture only an explicitly started local production preview.",
   );
 const scenes = [
-  ["jet-engine", ".engine-stage", "#0e1b2d", "dark"],
-  ["gravity-loom", ".loom-stage", "#091d2b", "dark"],
-  ["signal-sculpture", ".sculpture-stage", "#112137", "dark"],
-  ["motion-studio", ".motion-stage", "#241f37", "light"],
-  ["connection-game", ".route-board", "#f1e1ca", "light"],
-  ["cache-rescue", ".cache-stage", "#0f2037", "light"],
-  ["algorithm-garden", ".garden-tree", "#fff1d6", "light"],
+  ["jet-engine", ".engine-stage"],
+  ["gravity-loom", ".loom-stage"],
+  ["signal-sculpture", ".sculpture-stage"],
+  ["motion-studio", ".motion-stage"],
+  ["connection-game", ".route-board"],
+  ["cache-rescue", ".cache-stage"],
+  ["algorithm-garden", ".garden-tree"],
 ] as const;
 const output = new URL("../public/lab-previews/", import.meta.url);
 const browser = await chromium.launch();
@@ -26,12 +26,11 @@ try {
     viewport: { width: 1440, height: 1100 },
     deviceScaleFactor: 1,
     reducedMotion: "reduce",
-    colorScheme: "light",
+    colorScheme: "dark",
   });
   page.setDefaultTimeout(15000);
   const images: { id: string; bytes: Buffer }[] = [];
-  for (const [id, selector, background, colorScheme] of scenes) {
-    await page.emulateMedia({ colorScheme });
+  for (const [id, selector] of scenes) {
     const url = new URL(base);
     url.hash = id;
     await page.goto(url.href);
@@ -42,6 +41,9 @@ try {
     if (id === "algorithm-garden")
       await stage.getByRole("button", { name: "Node A", exact: true }).click();
     await page.evaluate(() => document.fonts.ready);
+    const background = await stage.evaluate((node) =>
+      getComputedStyle(node).getPropertyValue("--paper").trim(),
+    );
     // Release deferred anchor alignment before measuring the final stage crop.
     await page.mouse.click(1, 1);
     const png = await stage.screenshot({

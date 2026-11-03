@@ -64,7 +64,7 @@ export function createMatrixRain(
       ink!.globalAlpha = amount ** 0.8;
       ink!.fillStyle = level > levels * 0.86 ? head : low;
       ink!.shadowColor = head;
-      ink!.shadowBlur = level > levels * 0.72 ? 2 : 0;
+      ink!.shadowBlur = level > levels * 0.72 ? 3 : 0;
       for (let glyph = 0; glyph < RAIN_GLYPHS.length; glyph++) {
         ink!.save();
         ink!.translate(
