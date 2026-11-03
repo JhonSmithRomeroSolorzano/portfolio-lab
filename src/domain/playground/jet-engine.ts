@@ -37,7 +37,7 @@ export function enginePower(value: number) {
 }
 
 export function approachSpool(current: number, target: number, dt: number) {
-  const amount = 1 - Math.exp(-Math.max(0, Math.min(dt, 0.05)) / 0.38);
+  const amount = 1 - Math.exp(-Math.max(0, Math.min(dt, 0.25)) / 0.38);
   const next = current + (target - current) * amount;
   return Math.abs(target - next) < 0.015 ? target : next;
 }
@@ -139,8 +139,14 @@ function reverseAirPoint(
 export function approachReverser(current: number, target: number, dt: number) {
   const next =
     current +
-    (target - current) *
-      (1 - Math.exp(-Math.max(0, Math.min(dt, 0.05)) / 0.22));
+    Math.max(
+      -0.24,
+      Math.min(
+        0.24,
+        (target - current) *
+          (1 - Math.exp(-Math.max(0, Math.min(dt, 0.25)) / 0.22)),
+      ),
+    );
   return Math.abs(target - next) < 0.001 ? target : next;
 }
 /** Bypass redirection appears only after the outer doors have opened clear. */

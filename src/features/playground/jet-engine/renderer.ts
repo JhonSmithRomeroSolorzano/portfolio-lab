@@ -215,10 +215,13 @@ export function createEngineRenderer(
     previous = 0;
   }
   function tick(now: number) {
-    const dt = previous ? Math.min((now - previous) / 1000, 0.05) : 0;
+    const elapsed = previous ? Math.max(0, (now - previous) / 1000) : 0;
     previous = now;
-    spool = approachSpool(spool, target, dt);
-    deployment = approachReverser(deployment, reverseTarget, dt);
+    // Control easing follows elapsed time even below 20fps; particle/rotation
+    // travel keeps its smaller catch-up bound to avoid large visual jumps.
+    spool = approachSpool(spool, target, elapsed);
+    deployment = approachReverser(deployment, reverseTarget, elapsed);
+    const dt = Math.min(elapsed, 0.05);
     const power = enginePower(spool);
     angle = (angle + dt * power.rotation) % (Math.PI * 2 * 5);
     clock += dt * power.flow;

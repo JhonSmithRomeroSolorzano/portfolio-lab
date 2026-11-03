@@ -266,6 +266,9 @@ html:has(
     padding-block: 12px 4px;
     border-top: 1px solid var(--line);
   }
+  html[data-navigation="pending"]
+    .identity-rail[data-menu-ready="false"][data-menu-open="false"]
+    nav,
   .identity-rail[data-menu-ready="true"][data-menu-open="false"] nav {
     display: none;
   }
