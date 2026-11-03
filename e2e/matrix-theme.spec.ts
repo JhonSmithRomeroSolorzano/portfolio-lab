@@ -1,5 +1,52 @@
 import { test, expect } from "@playwright/test";
 
+test("steady rain repaints changed cells instead of the whole glyph field", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.addInitScript(() => {
+    let paints = 0;
+    let previous = 0;
+    const batches: number[] = [];
+    Object.defineProperty(window, "__rainPaintBatches", { value: batches });
+    const draw = CanvasRenderingContext2D.prototype.drawImage;
+    CanvasRenderingContext2D.prototype.drawImage = function (
+      this: CanvasRenderingContext2D,
+      ...args: Parameters<typeof draw>
+    ) {
+      if (this.canvas.classList.contains("matrix-canvas")) paints++;
+      return Reflect.apply(draw, this, args);
+    } as typeof draw;
+    new MutationObserver((records) => {
+      for (const record of records) {
+        if (
+          !(record.target instanceof HTMLElement) ||
+          !record.target.classList.contains("matrix-backdrop")
+        )
+          continue;
+        batches.push(paints - previous);
+        previous = paints;
+      }
+    }).observe(document, {
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["data-time"],
+    });
+  });
+  await page.goto("/");
+  const batches = () =>
+    page.evaluate(
+      () =>
+        (window as unknown as { __rainPaintBatches: number[] })
+          .__rainPaintBatches,
+    );
+  await expect.poll(async () => (await batches()).length).toBeGreaterThan(20);
+  // This is a bounded draw-call check, not a device frame-rate promise.
+  for (const count of (await batches()).slice(-8))
+    expect(count).toBeLessThan(3000);
+});
+
 for (const theme of ["light", "dark"] as const) {
   test(`${theme} rain plays automatically through translucent sections`, async ({
     page,

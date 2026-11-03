@@ -49,6 +49,8 @@ export function createMatrixRain(
   let ambient = new Float32Array(0);
   let rates = new Float32Array(0);
   let symbols = new Uint16Array(0);
+  let paintedLevels = new Int8Array(0);
+  let paintedGlyphs = new Uint16Array(0);
   let streams: ReturnType<typeof rainColumn>[] = [];
 
   function paintAtlas() {
@@ -110,7 +112,6 @@ export function createMatrixRain(
   }
 
   function draw() {
-    ctx!.clearRect(0, 0, width, height);
     for (let column = 0; column < columns; column++) {
       const depth = 0.66 + rainSeed(column, 7) * 0.34;
       for (let row = 0; row < rows; row++) {
@@ -121,11 +122,21 @@ export function createMatrixRain(
           1,
           light * quiet[index] + edge * (0.07 + light * 0.8),
         );
-        if (intensity < 0.025) continue;
+        if (intensity < 0.025) {
+          if (paintedLevels[index] >= 0)
+            ctx!.clearRect(column * spacing, row * line, spacing, line);
+          paintedLevels[index] = -1;
+          continue;
+        }
         const level = Math.min(levels - 1, Math.floor(intensity * levels));
         // Per-cell mutation is slow and asynchronous; there is no sliding text strip.
         const change = Math.floor(time * rates[index]);
         const glyph = (symbols[index] + change) % RAIN_GLYPHS.length;
+        // Quantized light and slowly mutating glyphs leave most cells unchanged.
+        // Preserve those exact pixels rather than repainting the entire field.
+        if (paintedLevels[index] === level && paintedGlyphs[index] === glyph)
+          continue;
+        ctx!.clearRect(column * spacing, row * line, spacing, line);
         ctx!.drawImage(
           atlas,
           glyph * tileWidth,
@@ -137,6 +148,8 @@ export function createMatrixRain(
           spacing * depth,
           line * depth,
         );
+        paintedLevels[index] = level;
+        paintedGlyphs[index] = glyph;
       }
     }
     host.dataset.time = time.toFixed(3);
@@ -190,6 +203,9 @@ export function createMatrixRain(
       ambient = new Float32Array(columns * rows);
       rates = new Float32Array(columns * rows);
       symbols = new Uint16Array(columns * rows);
+      paintedLevels = new Int8Array(columns * rows).fill(-2);
+      paintedGlyphs = new Uint16Array(columns * rows);
+      ctx.clearRect(0, 0, width, height);
       streams = Array.from({ length: columns }, (_, column) =>
         rainColumn(column, rows),
       );

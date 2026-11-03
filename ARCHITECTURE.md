@@ -210,6 +210,8 @@ limitations are documented in [the lifecycle audit](README.md#automated-lifecycl
 
 ### Collection previews
 
+The rain renderer retains each cell's last quantized light and glyph identity. A tick clears/repaints only changed cells; resize/theme invalidation clears the canvas and cell cache, while layout-mask changes naturally invalidate affected cells. This preserves the same density, highlights, per-cell mutation rates, and 20Hz draw cap without repeatedly copying every faint glyph. A browser draw-call budget checks steady-frame reuse in addition to playback/fallback behavior.
+
 Engine control easing uses elapsed wall time with a 250ms safety cap, so spool/reverser convergence no longer discards all elapsed time beyond 50ms on slow frames. Reverser movement also caps each rendered change at 0.24 to avoid abrupt retargeting jumps. Rotation and airflow travel retain the smaller 50ms visual catch-up cap, and pause/resume clears the frame timestamp. Unit tests compare 10–60fps easing (allowing the reverser step guard's small convergence difference) and bound long interruptions; browser thresholds remain unchanged.
 
 The pre-paint bootstrap marks navigation startup as pending. At mobile widths, CSS hides the closed, not-yet-hydrated menu as well as the hydrated closed menu, preventing a large content shift. A capture-phase module-error handler clears the startup marker if the entry download fails, restoring native links; the handler is removed at window load. Without JavaScript the marker is never set. Browser tests hold the entry request to compare content positions across hydration and cover both blocked entry and no-JavaScript fallbacks.
