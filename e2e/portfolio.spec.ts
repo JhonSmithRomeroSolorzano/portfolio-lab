@@ -156,7 +156,7 @@ test("mobile overview avoids duplicate actions and uses a compact menu", async (
   const links = page
     .getByRole("navigation", { name: "Main navigation" })
     .getByRole("link");
-  await expect(links.first()).toHaveText("⌘ Overview");
+  await expect(links.first()).toHaveText("Overview");
   const rects = await links.evaluateAll((nodes) =>
     nodes.map((node) => {
       const r = node.getBoundingClientRect();

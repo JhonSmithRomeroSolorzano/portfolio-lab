@@ -2,6 +2,55 @@ import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { openMainNavigation } from "./helpers/main-navigation";
 
+test("mobile hydration does not collapse an initially expanded menu or move content", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  let release!: () => void;
+  const entry = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await page.route("**/assets/*.js", async (route) => {
+    await entry;
+    await route.continue();
+  });
+  try {
+    await page.goto("/", { waitUntil: "commit" });
+    const header = page.locator(".identity-rail");
+    await expect(header).toHaveAttribute("data-menu-ready", "false");
+    await expect(header).toHaveCSS("position", "relative");
+    await expect(page.locator("#main-navigation")).not.toBeVisible();
+    const top = await page
+      .locator(".portfolio-content")
+      .evaluate((node) => node.getBoundingClientRect().top);
+    release();
+    await expect(header).toHaveAttribute("data-menu-ready", "true");
+    expect(
+      await page
+        .locator(".portfolio-content")
+        .evaluate((node) => node.getBoundingClientRect().top),
+    ).toBeCloseTo(top, 0);
+    await page.getByRole("button", { name: "Menu", exact: true }).click();
+    await expect(page.locator("#main-navigation")).toBeVisible();
+  } finally {
+    release();
+  }
+});
+
+test("failed mobile entry script restores native section links", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.route("**/assets/*.js", (route) => route.abort());
+  await page.goto("/");
+  await expect(page.locator("#main-navigation")).toBeVisible();
+  await page
+    .getByRole("navigation", { name: "Main navigation" })
+    .getByRole("link", { name: "Contact", exact: true })
+    .click();
+  await expect(page.locator("#contact")).toBeInViewport();
+});
+
 for (const theme of ["light", "dark"] as const) {
   test(`mobile menu supports keyboard dismissal and native destinations in ${theme}`, async ({
     page,

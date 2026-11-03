@@ -97,7 +97,7 @@ test("collection previews and descriptors are useful without JavaScript", async 
       )
       .toBe(480);
     await expect(page.locator('#main-navigation a[href="#resume"]')).toHaveText(
-      "↗ Experience",
+      "Experience",
     );
   } finally {
     await context.close();

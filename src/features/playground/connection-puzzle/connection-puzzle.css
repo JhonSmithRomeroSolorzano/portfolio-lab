@@ -1,21 +1,19 @@
 .route-game {
-  --route-paper: #f1e1ca;
-  --route-ink: #402e26;
-  --route-muted: #6b5142;
-  --route-tile: #fff5e4;
-  --route-wire: #8a715c;
-  --route-lit: #9e351b;
-  --focus: #8d2c14;
+  --route-paper: var(--lab-surface);
+  --route-ink: var(--ink);
+  --route-muted: var(--muted);
+  --route-tile: var(--node);
+  --route-wire: var(--lab-wire);
+  --route-lit: var(--accent);
   display: grid;
   grid-template-columns: 0.9fr 1.1fr;
   align-items: center;
   gap: 48px;
   color: var(--route-ink);
   background: var(--route-paper);
-  border: 1px solid #d3baa1;
+  border: 1px solid var(--line);
   border-radius: 24px;
   padding: 42px;
-  color-scheme: light;
 }
 .route-instructions h3 {
   font: 500 clamp(30px, 3.7vw, 46px)/1.12 var(--display);
@@ -52,7 +50,7 @@
   font: inherit;
 }
 .play-field option {
-  background: var(--route-paper);
+  background: var(--node);
   color: var(--route-ink);
 }
 .route-hint p {
@@ -100,8 +98,8 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 7px;
   padding: 11px;
-  background: #dac4a9;
-  border: 1px solid #baa187;
+  background: var(--lab-stage);
+  border: 1px solid var(--lab-wire);
   border-radius: 12px;
 }
 .route-tile {
@@ -109,18 +107,18 @@
   aspect-ratio: 1;
   min-width: 0;
   width: 100%;
-  border: 1px solid #c8b198;
+  border: 1px solid var(--lab-wire);
   border-radius: 6px;
   background: var(--route-tile);
   color: var(--route-wire);
-  box-shadow: 0 3px 0 #b99e82;
+  box-shadow: 0 3px 0 var(--line);
 }
 .route-tile:hover {
-  background: #fffaf0;
+  background: var(--soft);
 }
 .route-tile.has-signal {
   color: var(--route-lit);
-  background: #ffedd7;
+  background: var(--soft);
 }
 .route-tile:focus-visible {
   position: relative;
@@ -176,30 +174,6 @@
 .route-board.is-connected {
   outline: 2px solid var(--route-lit);
   outline-offset: 5px;
-}
-:root[data-theme="dark"] .route-game {
-  --route-paper: #30271f;
-  --route-ink: #f5e5d0;
-  --route-muted: #d1bba5;
-  --route-tile: #47392b;
-  --route-wire: #cbb397;
-  --route-lit: #ffb58d;
-  --focus: #ffd0af;
-  border-color: #7a6250;
-}
-:root[data-theme="dark"] .route-board {
-  background: #251e18;
-  border-color: #8c7259;
-}
-:root[data-theme="dark"] .route-tile {
-  border-color: #8c7259;
-  box-shadow: 0 3px 0 #140f0c;
-}
-:root[data-theme="dark"] .route-tile:hover {
-  background: #5a4532;
-}
-:root[data-theme="dark"] .route-tile.has-signal {
-  background: #543d2b;
 }
 @media (max-width: 1180px) {
   .route-game {

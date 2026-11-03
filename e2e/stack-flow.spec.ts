@@ -11,6 +11,14 @@ test("request packets and node activities follow the complete round trip", async
   await drawing.scrollIntoViewIfNeeded();
   await expect(drawing).toHaveAttribute("data-playing", "true");
   await expect(drawing.getByRole("button")).toHaveCount(4);
+  const activeFill = await page.evaluate(() => {
+    const sample = document.createElement("span");
+    sample.style.color = "var(--map-active)";
+    document.body.append(sample);
+    const color = getComputedStyle(sample).color;
+    sample.remove();
+    return color;
+  });
   const topology = page.locator(".map-topology");
   const expected = [
     ["frontend", null],
@@ -31,7 +39,7 @@ test("request packets and node activities follow the complete round trip", async
     if (index === 2) {
       await expect(page.locator(".stack-node-frontend")).not.toHaveCSS(
         "background-color",
-        "rgb(37, 90, 213)",
+        activeFill,
       );
       await expect(page.locator(".stack-node-infrastructure")).toHaveCSS(
         "border-top-style",
@@ -47,7 +55,7 @@ test("request packets and node activities follow the complete round trip", async
     if (node) {
       await expect(page.locator(`.stack-node-${node}`)).toHaveCSS(
         "background-color",
-        "rgb(37, 90, 213)",
+        activeFill,
       );
       await expect(page.locator(`.stack-node-${node}`)).toHaveAttribute(
         "data-flow-active",

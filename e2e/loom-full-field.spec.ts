@@ -53,6 +53,14 @@ for (const width of [320, 1440])
             const canvas = node as HTMLCanvasElement;
             const context = canvas.getContext("2d");
             if (!context) return false;
+            const swatch = document.createElement("canvas");
+            swatch.width = swatch.height = 1;
+            const ink = swatch.getContext("2d")!;
+            ink.fillStyle = getComputedStyle(canvas)
+              .getPropertyValue("--loom-thread-1")
+              .trim();
+            ink.fillRect(0, 0, 1, 1);
+            const marker = ink.getImageData(0, 0, 1, 1).data;
             const ratio = canvas.width / canvas.getBoundingClientRect().width;
             const cx =
               (corner.x < 0 ? 24 : canvas.getBoundingClientRect().width - 24) *
@@ -69,8 +77,9 @@ for (const width of [320, 1440])
             for (let i = 0; i < pixels.length; i += 4)
               if (
                 pixels[i + 3] > 60 &&
-                pixels[i] > pixels[i + 1] * 1.2 &&
-                pixels[i + 1] > pixels[i + 2] * 1.2
+                Math.abs(pixels[i] - marker[0]) < 8 &&
+                Math.abs(pixels[i + 1] - marker[1]) < 8 &&
+                Math.abs(pixels[i + 2] - marker[2]) < 8
               )
                 return true;
             return false;

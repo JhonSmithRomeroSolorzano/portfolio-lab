@@ -8,7 +8,7 @@
   --engine-metal-3: #d4dfe2;
   --engine-metal-4: #f2f5ef;
   color: var(--ink);
-  background: var(--soft);
+  background: var(--lab-surface);
   border: 1px solid var(--line);
   border-radius: 24px;
   overflow: hidden;
@@ -82,7 +82,7 @@
 }
 .engine-stage {
   position: relative;
-  background: var(--paper);
+  background: var(--lab-stage);
   overflow: hidden;
 }
 .engine-rear {
@@ -105,7 +105,7 @@
   gap: 8px;
   padding: 10px 22px 14px;
   color: var(--muted);
-  background: var(--paper);
+  background: var(--lab-stage);
   font: 0.5625rem/1.6 var(--mono);
   letter-spacing: 0.5px;
 }
@@ -231,9 +231,9 @@
   font: 0.8125rem/1.5 var(--mono);
 }
 .engine-thrust-control button[aria-pressed="true"] {
-  color: var(--paper);
-  background: var(--ink);
-  border-color: var(--ink);
+  color: var(--flow-ink);
+  background: var(--flow-fill);
+  border-color: var(--flow-fill);
 }
 .engine-thrust-control button span {
   font-size: 0.6875rem;
@@ -259,9 +259,9 @@
 }
 .engine-presets button[aria-pressed="true"],
 .engine-toolbar .engine-play {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: var(--paper);
+  background: var(--flow-fill);
+  border-color: var(--flow-fill);
+  color: var(--flow-ink);
 }
 .engine-presets button[aria-pressed="true"] span {
   color: inherit;
@@ -304,8 +304,8 @@
   line-height: 1.7;
 }
 .mini-engine {
-  background: #102a42;
-  color: #a8e4ff;
+  background: var(--board);
+  color: var(--accent);
 }
 .engine-art-error {
   margin: 20px 36px;

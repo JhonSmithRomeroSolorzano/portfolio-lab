@@ -20,6 +20,33 @@ import {
 } from "../src/domain/playground/jet-engine";
 import { engineFaces } from "../src/features/playground/jet-engine/mesh";
 
+test("engine control easing follows wall time at low frame rates and bounds long interruptions", () => {
+  const spoolSamples: number[] = [];
+  const reverseSamples: number[] = [];
+  for (const fps of [10, 15, 20, 30, 60]) {
+    let spool = 0;
+    let reverse = 0;
+    for (let frame = 0; frame < fps; frame++) {
+      spool = approachSpool(spool, 100, 1 / fps);
+      const next = approachReverser(reverse, 1, 1 / fps);
+      assert.ok(Math.abs(next - reverse) <= 0.24 + Number.EPSILON);
+      reverse = next;
+    }
+    spoolSamples.push(spool);
+    reverseSamples.push(reverse);
+  }
+  for (const sample of spoolSamples)
+    assert.ok(Math.abs(sample - spoolSamples[0]) < 1e-8);
+  for (const sample of reverseSamples)
+    assert.ok(Math.abs(sample - reverseSamples[0]) < 0.01);
+  assert.ok(spoolSamples[0] > 92);
+  assert.ok(reverseSamples[0] > 0.98);
+  for (const ease of [approachSpool, approachReverser]) {
+    assert.equal(ease(0, 1, 30), ease(0, 1, 0.25));
+    assert.equal(ease(0.5, 1, -1), 0.5);
+  }
+});
+
 test("engine speed drives bounded, strictly increasing visual motion, density and exhaust reach", () => {
   assert.equal(engineSpeed(-1), 0);
   assert.equal(engineSpeed(120), 100);

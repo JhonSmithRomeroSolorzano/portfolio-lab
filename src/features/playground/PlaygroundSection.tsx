@@ -61,7 +61,7 @@ export function PlaygroundSection() {
           </a>
         ))}
       </nav>
-      {experiences.map((experience, index) => (
+      {experiences.map((experience) => (
         <article
           key={experience.id}
           className="play-exhibit"
@@ -71,11 +71,7 @@ export function PlaygroundSection() {
         >
           <DeferredExperiment {...experience} />
           <ImplementationNote experience={experience} />
-          <ExperienceNavigation
-            title={experience.title}
-            previous={experiences[index - 1]}
-            next={experiences[index + 1]}
-          />
+          <ExperienceNavigation title={experience.title} />
         </article>
       ))}
     </section>

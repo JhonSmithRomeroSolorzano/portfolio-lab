@@ -9,7 +9,8 @@ import { ResumeSection } from "../features/portfolio/ResumeSection";
 import { GITHUB, LINKEDIN } from "../features/portfolio/data/profile";
 import { ThemeSwitcher } from "../shared/ui/ThemeSwitcher";
 import { MotionSettings } from "../shared/ui/MotionSettings";
-import { BrandMark } from "../features/portfolio/BrandMark";
+import { useReducedMotion } from "../shared/hooks/useReducedMotion";
+import { MatrixBackdrop } from "./MatrixBackdrop";
 
 import { SOURCE_REPOSITORY } from "../shared/project";
 import { useMobileNavigation } from "./useMobileNavigation";
@@ -17,7 +18,9 @@ export function App() {
   const mainRef = useRef<HTMLElement>(null);
   const navRef = useRef<HTMLElement>(null);
   const menu = useMobileNavigation(navRef);
+  const reducedMotion = useReducedMotion();
   useLayoutEffect(() => {
+    if (!menu.ready) return;
     const legacyDestination =
       window.location.hash === "#signal-lab"
         ? "lab"
@@ -37,7 +40,7 @@ export function App() {
       target.focus({ preventScroll: true });
       target.scrollIntoView({ behavior: "instant", block: "start" });
     }
-  }, []);
+  }, [menu.ready]);
   useEffect(
     () => (mainRef.current ? observeScrollReveals(mainRef.current) : undefined),
     [],
@@ -53,29 +56,13 @@ export function App() {
         Skip to content
       </a>
       <div className="portfolio-frame">
+        <MatrixBackdrop paused={!menu.ready || reducedMotion} />
         <span className="reading-progress" aria-hidden="true" />
         <header
           className="identity-rail"
           data-menu-ready={menu.ready}
           data-menu-open={menu.open}
         >
-          <a
-            className="rail-brand"
-            href="#"
-            aria-label="Jhon Smith Romero, home"
-          >
-            <BrandMark />
-            <span>
-              Jhon Smith
-              <br />
-              <strong>Romero</strong>
-            </span>
-          </a>
-          <p className="rail-caption">
-            ENGINEERING
-            <br />
-            PORTFOLIO
-          </p>
           <nav
             id="main-navigation"
             aria-label="Main navigation"
@@ -83,33 +70,12 @@ export function App() {
             onClick={menu.navigate}
           >
             <span className="nav-cursor" aria-hidden="true" />
-            <a href="#workbench">
-              <span aria-hidden="true">⌘</span> Overview
-            </a>
-            <a href="#resume">
-              <span aria-hidden="true">↗</span> Experience
-            </a>
-            <a href="#contact">
-              <span aria-hidden="true">@</span> Contact
-            </a>
-            <a href="#lab">
-              <span aria-hidden="true">↯</span> Labs & play
-            </a>
+            <a href="#workbench">Overview</a>
+            <a href="#resume">Experience</a>
+            <a href="#contact">Contact</a>
+            <a href="#lab">Labs & play</a>
           </nav>
           <div className="rail-bottom">
-            <p>
-              Based in Pereira,
-              <br />
-              Colombia.
-            </p>
-            <div className="rail-socials">
-              <a href={GITHUB} target="_blank" rel="noreferrer">
-                GitHub ↗
-              </a>
-              <a href={LINKEDIN} target="_blank" rel="noreferrer">
-                LinkedIn ↗
-              </a>
-            </div>
             <ThemeSwitcher />
             <MotionSettings />
             <button
@@ -148,6 +114,13 @@ export function App() {
           </main>
           <footer className="site-footer wrap">
             <span>© 2026 Jhon Smith Romero</span>
+            <span>Pereira, Colombia</span>
+            <a href={GITHUB} target="_blank" rel="noreferrer">
+              GitHub ↗
+            </a>
+            <a href={LINKEDIN} target="_blank" rel="noreferrer">
+              LinkedIn ↗
+            </a>
             <a href="#workbench">Back to overview ↑</a>
             <a href={SOURCE_REPOSITORY} target="_blank" rel="noreferrer">
               View source <Arrow diagonal />

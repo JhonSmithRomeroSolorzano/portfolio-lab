@@ -2,7 +2,7 @@
   padding: 32px;
   border: 1px solid var(--line);
   border-radius: 18px;
-  background: var(--paper);
+  background: var(--lab-surface);
 }
 .sculpture-header {
   display: flex;
@@ -38,8 +38,8 @@
   border-radius: 12px;
   overflow: hidden;
   background:
-    radial-gradient(ellipse at 50% 45%, #295da016, transparent 70%),
-    var(--paper);
+    radial-gradient(ellipse at 50% 45%, var(--map-grid), transparent 70%),
+    var(--lab-stage);
 }
 .sculpture-stage::before {
   content: "";
@@ -98,9 +98,9 @@
   color: var(--ink);
 }
 .sculpture-controls button[aria-pressed="true"] {
-  background: var(--ink);
-  color: var(--paper);
-  border-color: var(--ink);
+  background: var(--flow-fill);
+  color: var(--flow-ink);
+  border-color: var(--flow-fill);
 }
 .sculpture-controls button:hover:not(:disabled) {
   border-color: var(--accent);
@@ -122,13 +122,9 @@
   margin: 0;
 }
 .mini-sculpture {
-  background: #132339;
-  color: #a1caff;
-  background-image: radial-gradient(ellipse, #295da070, transparent);
-}
-:root[data-theme="dark"] .sculpture-stage {
-  background:
-    radial-gradient(ellipse at 50% 45%, #295da030, transparent 70%), #0a1626;
+  background: var(--board);
+  color: var(--accent);
+  background-image: radial-gradient(ellipse, var(--map-grid), transparent);
 }
 @media (max-width: 600px) {
   .sculpture-experience {

@@ -29,15 +29,13 @@ export function createLoomRenderer(canvas: HTMLCanvasElement) {
   let boostRemaining = 0;
   let width = 1;
   let height = 1;
+  let colors: string[] = [];
 
   function draw() {
     if (!ctx) return;
     ctx.clearRect(0, 0, width, height);
     const dark = document.documentElement.dataset.theme === "dark";
     const viewport = loomViewport(width, height);
-    const colors = dark
-      ? ["#ffcc8a", "#9ac8ff", "#7edaca"]
-      : ["#975014", "#245da0", "#18756c"];
     trails.forEach((trail, i) => {
       const trace = () => {
         ctx.beginPath();
@@ -70,7 +68,7 @@ export function createLoomRenderer(canvas: HTMLCanvasElement) {
     ctx.globalAlpha = 1;
     attractors.forEach((p, i) => {
       const { x, y } = projectLoomPoint(p, viewport);
-      ctx.strokeStyle = dark ? "#ffcc8a" : "#975014";
+      ctx.strokeStyle = colors[0];
       if (i === selected) {
         ctx.fillStyle = ctx.strokeStyle;
         ctx.globalAlpha = i === held ? 0.2 : 0.08;
@@ -86,7 +84,7 @@ export function createLoomRenderer(canvas: HTMLCanvasElement) {
       ctx.beginPath();
       ctx.arc(x, y, 3, 0, Math.PI * 2);
       ctx.stroke();
-      ctx.fillStyle = dark ? "#ffcc8a" : "#975014";
+      ctx.fillStyle = colors[0];
       ctx.font = "11px monospace";
       ctx.fillText(String(i + 1), x + 14, y - 12);
     });
@@ -130,6 +128,10 @@ export function createLoomRenderer(canvas: HTMLCanvasElement) {
   const stopObserving = observeCanvas(canvas, ctx, (nextWidth, nextHeight) => {
     width = nextWidth;
     height = nextHeight;
+    const css = getComputedStyle(canvas);
+    colors = ["--loom-thread-1", "--loom-thread-2", "--loom-thread-3"].map(
+      (name) => css.getPropertyValue(name).trim(),
+    );
     draw();
   });
   return {

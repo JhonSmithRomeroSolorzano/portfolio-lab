@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  build:
+  prepare:
     # Upgrade deliberately instead of inheriting ubuntu-latest OS migrations.
     runs-on: ubuntu-24.04
     timeout-minutes: 20
@@ -37,14 +37,50 @@ jobs:
       - name: Audit all dependencies, including build tooling
         run: npm audit --audit-level=high
       - run: npm run check
-      - run: npm run test:browser
+      - name: Share the single production build
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: production-dist
+          path: dist/
+          if-no-files-found: error
+          retention-days: 1
+
+  validate:
+    needs: prepare
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [chromium, webkit, performance]
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble@sha256:7852dc5a7d72f5fe458a597d690f6c42fbc8e9e26ddfa95f8e6ef552558d9bbf
+      options: --init --ipc=host
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: production-dist
+          path: dist/
+          digest-mismatch: error
+      - name: Check browser journeys
+        if: matrix.suite != 'performance'
+        run: npm run test:browser -- --project=${{ matrix.suite }}
       - name: Check mobile loading performance
+        if: matrix.suite == 'performance'
         run: npm run audit:ci
       - name: Retain browser and performance diagnostics
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: validation-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
+          name: validation-diagnostics-${{ matrix.suite }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             test-results/
             playwright-report/
@@ -53,6 +89,27 @@ jobs:
             artifacts/lighthouse*.html
           if-no-files-found: ignore
           retention-days: 14
+
+  build:
+    # Keep the existing required check fail-closed, even for skipped dependencies.
+    if: ${{ always() }}
+    needs: [prepare, validate]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Require every validation job to succeed
+        env:
+          PREPARE_RESULT: ${{ needs.prepare.result }}
+          VALIDATE_RESULT: ${{ needs.validate.result }}
+        run: |
+          test "$PREPARE_RESULT" = success
+          test "$VALIDATE_RESULT" = success
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        with:
+          name: production-dist
+          path: dist/
+          digest-mismatch: error
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         with:

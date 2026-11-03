@@ -47,7 +47,7 @@ test("pre-paint theme and interactive control agree for saved, missing, and corr
       );
       assert.equal(
         chromeColor,
-        root.dataset.theme === "dark" ? "#0e1b2d" : "#f4f3ec",
+        root.dataset.theme === "dark" ? "#080d0a" : "#f0f3ed",
       );
       assert.equal(
         favicon,
