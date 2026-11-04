@@ -270,6 +270,32 @@
 .intro-given-name {
   display: inline;
 }
+.name-letter {
+  display: inline-block;
+}
+.name-letter-ink {
+  display: inline-block;
+}
+.name-baseline {
+  display: inline-block;
+  width: 0;
+  height: 0;
+}
+[data-name-renderer="background"] .name-letter-ink {
+  opacity: 0;
+}
+.workbench-intro[data-name-surface="cutout"] {
+  mask-image: linear-gradient(#000, #000), var(--name-cutout);
+  mask-size:
+    100% 100%,
+    var(--name-cutout-size);
+  mask-position:
+    0 0,
+    var(--name-cutout-position);
+  mask-repeat: no-repeat;
+  mask-origin: border-box;
+  mask-composite: exclude;
+}
 .intro-copy {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
