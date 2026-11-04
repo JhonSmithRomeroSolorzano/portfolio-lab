@@ -54,13 +54,16 @@
 }
 .experience-navigation a:hover {
   color: var(--accent);
-  background: var(--soft);
+  background: var(--control-hover);
 }
 .lab-collection .section-heading {
   align-items: end;
 }
 .play-exhibit {
   scroll-margin-top: 32px;
+}
+.play-exhibit[tabindex="-1"]:focus {
+  outline: none;
 }
 .play-exhibit {
   margin-top: 80px;
@@ -77,18 +80,29 @@
   margin-top: 12px;
 }
 .play-actions button {
-  padding: 10px 0;
-  background: transparent;
+  padding: 10px 14px;
+  background: var(--surface-control);
   color: inherit;
-  border: 0;
+  border: 1px solid var(--control-border);
+  border-radius: var(--ui-radius);
   min-height: 44px;
-  text-decoration: underline;
-  text-underline-offset: 5px;
   font-size: 12px;
 }
 .play-actions button:disabled {
   opacity: 0.5;
   cursor: default;
+}
+.play-exhibit select {
+  appearance: none;
+  padding-right: 36px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position:
+    right 17px center,
+    right 12px center;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
 }
 @media (max-width: 600px) {
   .play-exhibit {
@@ -105,8 +119,8 @@
   min-height: 600px;
   padding: 32px;
   border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--soft);
+  border-radius: var(--ui-radius);
+  background: var(--surface-panel);
   color: var(--ink);
 }
 .experiment-placeholder h3 {
@@ -120,10 +134,10 @@
 .experiment-placeholder button {
   min-height: 44px;
   padding: 10px 16px;
-  border: 1px solid var(--accent);
-  border-radius: 4px;
-  background: var(--paper);
-  color: var(--accent);
+  border: 1px solid var(--control-border);
+  border-radius: var(--ui-radius);
+  background: var(--surface-control);
+  color: var(--ink);
   font: inherit;
 }
 .collection-index {
@@ -139,14 +153,11 @@
   gap: 10px;
   padding: 20px 16px;
   border: 1px solid var(--line);
-  border-radius: 0;
+  border-radius: var(--ui-radius);
   color: var(--ink);
-  transition:
-    transform 180ms,
-    border-color 180ms;
+  transition: border-color 180ms;
 }
 .collection-card:hover {
-  transform: translateY(-4px);
   border-color: var(--accent);
 }
 .collection-preview {
@@ -155,7 +166,7 @@
   height: auto;
   aspect-ratio: 8 / 5;
   object-fit: contain;
-  border-radius: 0;
+  border-radius: var(--ui-radius);
   border: 1px solid var(--line);
   margin-bottom: 10px;
 }
@@ -200,7 +211,6 @@
   .collection-card {
     gap: 8px;
     padding: 16px;
-    border-radius: 10px;
   }
   .collection-card strong {
     font-size: 1.125rem;
@@ -220,12 +230,6 @@
   .collection-card {
     transition: none;
   }
-  .collection-card:hover {
-    transform: none;
-  }
-}
-html[data-motion="reduce"] .collection-card:hover {
-  transform: none;
 }
 
 .implementation-note {
@@ -249,4 +253,44 @@ html[data-motion="reduce"] .collection-card:hover {
   display: inline-block;
   padding: 10px 0;
   margin-right: 24px;
+}
+
+/* Secondary controls share one opaque resting surface and one hover treatment.
+   Primary/selected green fills and semantic diagram nodes retain their roles. */
+.play-exhibit
+  :is(
+    .play-actions button,
+    .cache-reset,
+    .cache-rounds button,
+    .cache-strategies button,
+    .garden-modes button,
+    .garden-shapes button,
+    .motion-options button,
+    .route-hint button,
+    .loom-experience button,
+    .sculpture-controls button,
+    .engine-toolbar button:not(.engine-play),
+    .engine-thrust-control button,
+    .engine-art-error button,
+    select,
+    textarea,
+    input[type="number"]
+  ):not([aria-pressed="true"]):hover:not(:disabled),
+.experiment-placeholder button:hover,
+.resume-actions .resume-download:hover {
+  background-color: var(--control-hover);
+  border-color: var(--accent);
+}
+.play-exhibit
+  :is(
+    .motion-play,
+    .cache-launch,
+    .cache-next,
+    .route-next,
+    .motion-recipe button,
+    .engine-play,
+    button[aria-pressed="true"]
+  ):hover:not(:disabled):not(:focus-visible) {
+  outline: 1px solid var(--accent);
+  outline-offset: 3px;
 }

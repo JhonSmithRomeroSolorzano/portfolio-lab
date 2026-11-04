@@ -1,6 +1,67 @@
 import { test, expect } from "@playwright/test";
 
 for (const theme of ["light", "dark"] as const) {
+  test(`${theme} introduction fills its width with aligned, independently sized copy`, async ({
+    page,
+  }) => {
+    await page.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
+    await page.goto("/");
+    await page.evaluate(() => document.fonts.ready);
+    for (const width of [320, 375, 768, 900, 1024, 1440, 1920]) {
+      await page.setViewportSize({ width, height: 1000 });
+      const blocks = page.locator(
+        "#intro-title, .intro-role, .intro-stack, .intro-summary",
+      );
+      await expect(blocks).toHaveCount(4);
+      const boxes = await blocks.evaluateAll((nodes) =>
+        nodes.map((node) => {
+          const { x, y, width, height } = node.getBoundingClientRect();
+          return {
+            x,
+            y,
+            width,
+            height,
+            fontSize: parseFloat(getComputedStyle(node).fontSize),
+          };
+        }),
+      );
+      const [name, role, stack, summary] = boxes;
+      expect(Math.abs(role.x - name.x)).toBeLessThan(1);
+      expect(Math.abs(stack.x - name.x)).toBeLessThan(1);
+      const headingGap = role.y - (name.y + name.height);
+      expect(headingGap).toBeGreaterThanOrEqual(20);
+      expect(headingGap).toBeLessThanOrEqual(32);
+      const positionGap = stack.y - (role.y + role.height);
+      expect(positionGap).toBeGreaterThanOrEqual(10);
+      expect(positionGap).toBeLessThanOrEqual(14);
+      expect(
+        Math.abs(summary.x + summary.width - (name.x + name.width)),
+      ).toBeLessThan(1);
+      if (width > 900) {
+        expect(Math.abs(role.y - summary.y)).toBeLessThan(1);
+        const columnGap = summary.x - (role.x + role.width);
+        expect(columnGap).toBeGreaterThanOrEqual(32);
+        expect(columnGap).toBeLessThanOrEqual(56);
+        expect(summary.width / name.width).toBeGreaterThan(0.45);
+      } else {
+        expect(Math.abs(summary.x - name.x)).toBeLessThan(1);
+        const summaryGap = summary.y - (stack.y + stack.height);
+        expect(summaryGap).toBeGreaterThanOrEqual(16);
+        expect(summaryGap).toBeLessThanOrEqual(24);
+      }
+      if (width >= 1440) {
+        // The desktop name occupies one line instead of leaving a vacant half-row.
+        expect(name.height).toBeLessThanOrEqual(name.fontSize * 1.1);
+        expect(name.width).toBeGreaterThan(1000);
+      }
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= innerWidth,
+        ),
+      ).toBe(true);
+    }
+  });
+
   test(`${theme} all selected lab buttons share the engine-speed accent`, async ({
     page,
   }) => {
@@ -73,7 +134,15 @@ for (const theme of ["light", "dark"] as const) {
     await expect(
       page.locator(".rail-brand, #main-navigation a > span"),
     ).toHaveCount(0);
-    await expect(page.locator(".profile-portrait")).toHaveCSS("filter", "none");
+    await expect(
+      page.locator('.profile-portrait, img[src*="jhon-smith-romero.jpg"]'),
+    ).toHaveCount(0);
+    await expect(
+      page.getByText("FULL-STACK ENGINEERING", { exact: true }),
+    ).toHaveCount(0);
+    await expect(
+      page.getByText("Open to opportunities", { exact: true }),
+    ).toHaveCount(0);
     for (const width of [320, 375, 600, 900, 1024, 1440, 1920]) {
       await page.setViewportSize({ width, height: 900 });
       const header = await page.locator(".identity-rail").boundingBox();
@@ -86,6 +155,13 @@ for (const theme of ["light", "dark"] as const) {
         ),
       ).toBe(true);
     }
+    expect(
+      await page.evaluate(() =>
+        performance
+          .getEntriesByType("resource")
+          .some((entry) => entry.name.includes("jhon-smith-romero.jpg")),
+      ),
+    ).toBe(false);
   });
 
   test(`${theme} labs inherit shared surfaces, text and focus colors`, async ({
@@ -155,14 +231,30 @@ for (const theme of ["light", "dark"] as const) {
             (Math.max(backLight, textLight) + 0.05) /
             (Math.min(backLight, textLight) + 0.05),
         };
+        // General reading copy must meet the same worst-case rain contrast as labs.
+        document.body.append(probe);
+        const pageSurface = channels(
+          getComputedStyle(document.querySelector(".workbench-intro")!)
+            .backgroundColor,
+        );
+        const pageBackLight = luminance(
+          blend(pageSurface, rain, pageSurface[3] ?? 1),
+        );
+        const pageTextLight = luminance(channels(resolve("--muted")));
         probe.remove();
-        return result;
+        return {
+          ...result,
+          worstPageMutedContrast:
+            (Math.max(pageBackLight, pageTextLight) + 0.05) /
+            (Math.min(pageBackLight, pageTextLight) + 0.05),
+        };
       });
       expect(palette.ink).toBe(palette.expectedInk);
       expect(palette.surfaces).toContain(palette.surface);
       expect(palette.surface).toMatch(/^rgba\(/);
       expect(palette.focus).toBe(palette.expectedFocus);
       expect(palette.worstMutedContrast).toBeGreaterThanOrEqual(4.5);
+      expect(palette.worstPageMutedContrast).toBeGreaterThanOrEqual(4.5);
     }
   });
 }

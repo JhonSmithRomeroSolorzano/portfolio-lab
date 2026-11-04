@@ -11,7 +11,7 @@
 .motion-studio {
   background: var(--lab-surface);
   color: var(--ink);
-  border-radius: 4px 32px 4px 32px;
+  border-radius: var(--ui-radius);
   padding: 42px;
   border: 1px solid var(--line);
 }
@@ -97,8 +97,7 @@
   top: 12px;
   display: grid;
   place-items: center;
-  border-radius: 12px;
-  box-shadow: 0 0 28px color-mix(in srgb, var(--accent) 12%, transparent);
+  border-radius: var(--ui-radius);
 }
 .motion-runner span {
   width: 12px;
@@ -159,9 +158,9 @@
   min-height: 44px;
   padding: 9px;
   font-size: 11px;
-  border: 1px solid var(--lab-wire);
-  background: transparent;
-  border-radius: 5px;
+  border: 1px solid var(--control-border);
+  background: var(--surface-control);
+  border-radius: var(--ui-radius);
   color: var(--ink);
 }
 .motion-options button[aria-pressed="true"] {
@@ -185,10 +184,10 @@
 .motion-play {
   min-height: 44px;
   width: 100%;
-  border: none;
+  border: 1px solid var(--flow-fill);
   background: var(--flow-fill);
   color: var(--flow-ink);
-  border-radius: 6px;
+  border-radius: var(--ui-radius);
   font-size: 13px;
   font-weight: 500;
 }
@@ -262,9 +261,9 @@
   width: 100%;
   margin: 8px 0 12px;
   padding: 12px;
-  border: 1px solid var(--lab-wire);
-  border-radius: 8px;
-  background: var(--paper);
+  border: 1px solid var(--control-border);
+  border-radius: var(--ui-radius);
+  background: var(--surface-control);
   color: var(--ink);
   font: 0.75rem/1.6 var(--mono);
   resize: vertical;
@@ -278,8 +277,8 @@
   padding: 10px 16px;
   background: var(--flow-fill);
   color: var(--flow-ink);
-  border: 1px solid var(--lab-wire);
-  border-radius: 8px;
+  border: 1px solid var(--flow-fill);
+  border-radius: var(--ui-radius);
 }
 .motion-recipe [role="status"] {
   min-height: 1.7em;
