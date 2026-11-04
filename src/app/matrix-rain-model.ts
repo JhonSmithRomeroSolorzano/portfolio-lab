@@ -5,8 +5,7 @@ export type RainBoundary = {
   bottom: number;
 };
 
-export const RAIN_GLYPHS =
-  "ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜ012345789:=";
+export { RAIN_GLYPHS } from "../shared/canvas/matrix-glyphs";
 
 const clamp = (value: number) => Math.max(0, Math.min(1, value));
 export function rainSeed(column: number, salt = 0) {

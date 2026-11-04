@@ -1,6 +1,7 @@
 import { StackMap } from "./StackMap";
 import { TechnologyOverview } from "./TechnologyOverview";
 import { professionalProfile } from "./data/profile";
+import { NameEntrance } from "./NameEntrance";
 
 export function OverviewSection() {
   return (
@@ -13,10 +14,7 @@ export function OverviewSection() {
       <span className="section-signal" aria-hidden="true" />
       <div className="workbench-intro">
         <div className="intro-copy" id="about" tabIndex={-1}>
-          <h1 id="intro-title">
-            <span className="intro-given-name">Jhon Smith</span> Romero
-            <span className="heading-dot">.</span>
-          </h1>
+          <NameEntrance />
           <div className="intro-details">
             <div className="intro-position">
               <p className="intro-role">{professionalProfile.role}</p>
