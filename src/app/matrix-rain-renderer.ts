@@ -72,6 +72,8 @@ export function createMatrixRain(
   const nameCells: number[] = [];
   const nameLight = document.createElement("canvas");
   const nameInk = nameLight.getContext("2d");
+  const nameBloom = document.createElement("canvas");
+  const bloomInk = nameBloom.getContext("2d");
   let nameLeft = 0;
   let nameTop = 0;
   let rainHead = "";
@@ -106,7 +108,7 @@ export function createMatrixRain(
           ? "running"
           : "complete";
     }
-    if (!name || !nameInk) {
+    if (!name || !nameInk || !bloomInk) {
       for (const index of nameCells) paintedLevels[index] = levels;
       nameWeights.fill(0);
       nameCells.length = 0;
@@ -139,7 +141,10 @@ export function createMatrixRain(
     const lightHeight = Math.ceil(name.height * ratio);
     if (nameLight.width !== lightWidth) nameLight.width = lightWidth;
     if (nameLight.height !== lightHeight) nameLight.height = lightHeight;
+    if (nameBloom.width !== lightWidth) nameBloom.width = lightWidth;
+    if (nameBloom.height !== lightHeight) nameBloom.height = lightHeight;
     nameInk.setTransform(ratio, 0, 0, ratio, 0, 0);
+    bloomInk.setTransform(ratio, 0, 0, ratio, 0, 0);
     for (let column = 0; column < columns; column++) {
       for (let row = 0; row < rows; row++) {
         const left = column * spacing - box.left;
@@ -271,13 +276,9 @@ export function createMatrixRain(
         paintedGlyphs[index] = glyph;
       }
     }
-    if (name && nameVisible && nameInk && repaintName) {
+    if (name && nameVisible && nameInk && bloomInk && repaintName) {
       nameInk.globalCompositeOperation = "source-over";
       nameInk.clearRect(0, 0, name.width, name.height);
-      // Bloom belongs to the actual background glyphs, filling the tiny gaps
-      // between their strokes without inventing a second, denser code field.
-      nameInk.shadowColor = rainHead;
-      nameInk.shadowBlur = 3;
       for (const index of nameCells) {
         const column = Math.floor(index / rows);
         const row = index % rows;
@@ -305,10 +306,17 @@ export function createMatrixRain(
       }
       // This is a clipped lighting pass of the SAME cells, not another rain field.
       nameInk.globalAlpha = 1;
-      nameInk.shadowBlur = 0;
-      nameInk.globalCompositeOperation = "destination-in";
-      nameInk.drawImage(name.mask, 0, 0);
-      ctx!.drawImage(nameLight, nameLeft, nameTop, name.width, name.height);
+      // Blur the assembled light once, rather than filtering hundreds of glyphs
+      // separately. This buffer adds glow only; it owns no glyphs or clock.
+      bloomInk.globalCompositeOperation = "source-over";
+      bloomInk.clearRect(0, 0, name.width, name.height);
+      bloomInk.shadowColor = rainHead;
+      bloomInk.shadowBlur = 3;
+      bloomInk.drawImage(nameLight, 0, 0, name.width, name.height);
+      bloomInk.shadowBlur = 0;
+      bloomInk.globalCompositeOperation = "destination-in";
+      bloomInk.drawImage(name.mask, 0, 0);
+      ctx!.drawImage(nameBloom, nameLeft, nameTop, name.width, name.height);
     }
     nameLightingDirty = false;
     namePaintedTime = time;
@@ -436,6 +444,7 @@ export function createMatrixRain(
       window.removeEventListener(RAIN_NAME_CHANGE, nameChanged);
       name?.activate(false);
       nameLight.width = nameLight.height = 1;
+      nameBloom.width = nameBloom.height = 1;
       document.removeEventListener("visibilitychange", sync);
       motion.removeEventListener("change", sync);
     },

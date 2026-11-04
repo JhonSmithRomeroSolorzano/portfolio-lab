@@ -8,14 +8,20 @@ test("steady rain repaints changed cells instead of the whole glyph field", asyn
   await page.addInitScript(() => {
     let paints = 0;
     let previous = 0;
+    let filters = 0;
     const batches: number[] = [];
+    const filterBatches: number[] = [];
     Object.defineProperty(window, "__rainPaintBatches", { value: batches });
+    Object.defineProperty(window, "__rainFilterBatches", {
+      value: filterBatches,
+    });
     const draw = CanvasRenderingContext2D.prototype.drawImage;
     CanvasRenderingContext2D.prototype.drawImage = function (
       this: CanvasRenderingContext2D,
       ...args: Parameters<typeof draw>
     ) {
       if (this.canvas.classList.contains("matrix-canvas")) paints++;
+      if (this.shadowBlur > 0) filters++;
       return Reflect.apply(draw, this, args);
     } as typeof draw;
     new MutationObserver((records) => {
@@ -26,6 +32,8 @@ test("steady rain repaints changed cells instead of the whole glyph field", asyn
         )
           continue;
         batches.push(paints - previous);
+        filterBatches.push(filters);
+        filters = 0;
         previous = paints;
       }
     }).observe(document, {
@@ -45,6 +53,14 @@ test("steady rain repaints changed cells instead of the whole glyph field", asyn
   // This is a bounded draw-call check, not a device frame-rate promise.
   for (const count of (await batches()).slice(-8))
     expect(count).toBeLessThan(3000);
+  // Name glow filters the assembled light once, never each individual glyph.
+  const filters = await page.evaluate(
+    () =>
+      (window as unknown as { __rainFilterBatches: number[] })
+        .__rainFilterBatches,
+  );
+  expect(filters.slice(-8).some((count) => count > 0)).toBe(true);
+  for (const count of filters.slice(-8)) expect(count).toBeLessThanOrEqual(1);
 });
 
 for (const theme of ["light", "dark"] as const) {
