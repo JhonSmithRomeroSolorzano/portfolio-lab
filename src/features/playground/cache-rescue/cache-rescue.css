@@ -4,7 +4,7 @@
   gap: 42px;
   padding: 42px;
   align-items: center;
-  border-radius: 24px;
+  border-radius: var(--ui-radius);
   min-width: 0;
 }
 .cache-game {
@@ -50,9 +50,9 @@
 .cache-rounds button {
   width: 44px;
   height: 44px;
-  border-radius: 50%;
-  border: 1px solid var(--lab-wire);
-  background: transparent;
+  border-radius: var(--ui-radius);
+  border: 1px solid var(--control-border);
+  background: var(--surface-control);
   color: var(--ink);
   font: 0.75rem var(--mono);
 }
@@ -73,10 +73,10 @@
   gap: 8px;
   padding: 14px 10px;
   text-align: left;
-  background: var(--node);
+  background: var(--surface-control);
   color: var(--ink);
-  border: 1px solid var(--lab-wire);
-  border-radius: 10px;
+  border: 1px solid var(--control-border);
+  border-radius: var(--ui-radius);
 }
 .cache-strategies button > span {
   font-size: 1.125rem;
@@ -94,7 +94,6 @@
   background: var(--flow-fill);
   color: var(--flow-ink);
   border-color: var(--flow-fill);
-  box-shadow: inset 0 -3px var(--flow-ink);
 }
 .cache-actions {
   display: flex;
@@ -104,8 +103,8 @@
 }
 .cache-launch,
 .cache-next {
-  border: 0;
-  border-radius: 7px;
+  border: 1px solid var(--flow-fill);
+  border-radius: var(--ui-radius);
   padding: 13px 18px;
   background: var(--flow-fill);
   color: var(--flow-ink);
@@ -114,17 +113,18 @@
   font-weight: 600;
 }
 .cache-reset {
-  border: 0;
-  background: transparent;
-  color: var(--accent);
+  border: 1px solid var(--control-border);
+  border-radius: var(--ui-radius);
+  padding: 10px 14px;
+  background: var(--surface-control);
+  color: var(--ink);
   min-height: 44px;
-  text-decoration: underline;
   font-size: 0.75rem;
 }
 .cache-console {
   min-width: 0;
   border: 1px solid var(--line);
-  border-radius: 18px;
+  border-radius: var(--ui-radius);
   background: var(--lab-stage);
   padding: 22px 18px;
 }
@@ -210,7 +210,7 @@
 .cache-progress {
   height: 4px;
   background: var(--line);
-  border-radius: 4px;
+  border-radius: var(--ui-radius);
   overflow: hidden;
 }
 .cache-progress span {
@@ -306,10 +306,10 @@
   max-width: 140px;
   min-height: 44px;
   padding: 8px;
-  background: var(--node);
+  background: var(--surface-control);
   color: var(--ink);
-  border: 1px solid var(--lab-wire);
-  border-radius: 8px;
+  border: 1px solid var(--control-border);
+  border-radius: var(--ui-radius);
   box-sizing: border-box;
 }
 .cache-prediction input:disabled {

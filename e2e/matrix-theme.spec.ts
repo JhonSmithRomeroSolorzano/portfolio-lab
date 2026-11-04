@@ -71,7 +71,7 @@ for (const theme of ["light", "dark"] as const) {
     const clock = () => backdrop.getAttribute("data-time");
     const before = await clock();
     await expect.poll(clock).not.toBe(before);
-    for (const selector of ["#resume", "#contact", ".intro-copy"]) {
+    for (const selector of ["#resume", "#contact", ".workbench-intro"]) {
       const background = await page
         .locator(selector)
         .evaluate((node) => getComputedStyle(node).backgroundColor);

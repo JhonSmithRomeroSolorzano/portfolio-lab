@@ -10,7 +10,7 @@
   color: var(--ink);
   background: var(--lab-surface);
   border: 1px solid var(--line);
-  border-radius: 24px;
+  border-radius: var(--ui-radius);
   overflow: hidden;
 }
 :root[data-theme="dark"] .jet-engine {
@@ -72,7 +72,7 @@
 .engine-legend i {
   width: 24px;
   height: 3px;
-  border-radius: 2px;
+  border-radius: var(--ui-radius);
 }
 .engine-cool-key {
   background: var(--engine-cool);
@@ -204,9 +204,9 @@
   min-height: 44px;
   padding: 11px 16px;
   color: var(--ink);
-  background: var(--paper);
-  border: 1px solid var(--line);
-  border-radius: 7px;
+  background: var(--surface-control);
+  border: 1px solid var(--control-border);
+  border-radius: var(--ui-radius);
   font: 0.8125rem/1.5 var(--mono);
 }
 .engine-thrust-control {
@@ -224,10 +224,10 @@
   gap: 12px;
   min-height: 44px;
   padding: 11px 16px;
-  border: 1px solid var(--line);
-  border-radius: 7px;
+  border: 1px solid var(--control-border);
+  border-radius: var(--ui-radius);
   color: var(--ink);
-  background: var(--paper);
+  background: var(--surface-control);
   font: 0.8125rem/1.5 var(--mono);
 }
 .engine-thrust-control button[aria-pressed="true"] {
@@ -316,10 +316,10 @@
   min-height: 44px;
   margin-left: 8px;
   padding: 8px 14px;
-  background: var(--paper);
+  background: var(--surface-control);
   color: var(--ink);
-  border: 1px solid var(--line);
-  border-radius: 6px;
+  border: 1px solid var(--control-border);
+  border-radius: var(--ui-radius);
   font: inherit;
 }
 @media (max-width: 760px) {

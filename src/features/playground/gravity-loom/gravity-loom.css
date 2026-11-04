@@ -4,7 +4,7 @@
   --loom-thread-3: #18756c;
   padding: 32px;
   border: 1px solid var(--line);
-  border-radius: 18px;
+  border-radius: var(--ui-radius);
   background: var(--lab-surface);
 }
 :root[data-theme="dark"] .loom-experience {
@@ -42,13 +42,12 @@
   position: relative;
   aspect-ratio: 1.6;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--ui-radius);
   overflow: hidden;
   cursor: grab;
   touch-action: none;
   user-select: none;
-  background:
-    radial-gradient(ellipse, var(--map-grid), transparent 70%), var(--lab-stage);
+  background: var(--lab-stage);
 }
 .loom-stage[data-dragging="true"] {
   cursor: grabbing;
@@ -118,9 +117,9 @@
   padding: 10px 16px;
   font: inherit;
   font-size: 0.875rem;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  background: var(--paper);
+  border: 1px solid var(--control-border);
+  border-radius: var(--ui-radius);
+  background-color: var(--surface-control);
   color: var(--ink);
 }
 .loom-experience button[aria-pressed="true"] {
@@ -162,12 +161,6 @@
 }
 .loom-placement select {
   max-width: 100%;
-  appearance: none;
-  padding-right: 36px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%2358697e' stroke-width='1.5'/%3E%3C/svg%3E");
-  background-position: right 12px center;
-  background-size: 12px 8px;
-  background-repeat: no-repeat;
 }
 .loom-status {
   font-size: 0.875rem;

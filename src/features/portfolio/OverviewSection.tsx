@@ -11,33 +11,22 @@ export function OverviewSection() {
       aria-labelledby="intro-title"
     >
       <span className="section-signal" aria-hidden="true" />
-      <div className="workspace-topline">
-        <span>FULL-STACK ENGINEERING</span>
-        <span className="opportunity">
-          <i aria-hidden="true" />
-          Open to opportunities
-        </span>
-      </div>
       <div className="workbench-intro">
         <div className="intro-copy" id="about" tabIndex={-1}>
           <h1 id="intro-title">
             <span className="intro-given-name">Jhon Smith</span> Romero
             <span className="heading-dot">.</span>
           </h1>
-          <p className="intro-role">{professionalProfile.role}</p>
-          <p className="intro-stack" aria-label="Core technologies">
-            React · TypeScript · Node.js · Azure
-          </p>
-          <p>{professionalProfile.summary}</p>
+          <div className="intro-details">
+            <div className="intro-position">
+              <p className="intro-role">{professionalProfile.role}</p>
+              <p className="intro-stack" aria-label="Core technologies">
+                React · TypeScript · Node.js · Azure
+              </p>
+            </div>
+            <p className="intro-summary">{professionalProfile.summary}</p>
+          </div>
         </div>
-        <img
-          className="profile-portrait"
-          src="./jhon-smith-romero.jpg"
-          alt="Jhon Smith Romero"
-          width="160"
-          height="160"
-          fetchPriority="high"
-        />
       </div>
       <TechnologyOverview />
       <StackMap />

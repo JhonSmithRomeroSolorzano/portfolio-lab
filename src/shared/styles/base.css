@@ -43,14 +43,15 @@
   gap: 10px;
   min-height: 44px;
   padding: 10px 14px;
-  border: 1px solid var(--line);
-  border-radius: 2px;
-  background: transparent;
+  border: 1px solid var(--control-border);
+  border-radius: var(--ui-radius);
+  background: var(--surface-control);
   color: var(--ink);
   font-size: 12px;
 }
 .theme-toggle:hover {
-  background: var(--soft);
+  background: var(--control-hover);
+  border-color: var(--accent);
 }
 
 * {
@@ -114,20 +115,19 @@ svg {
   align-items: center;
   justify-content: space-between;
   gap: 30px;
-  background: var(--ink);
-  color: var(--paper);
+  background: var(--flow-fill);
+  color: var(--flow-ink);
+  border: 1px solid var(--flow-fill);
   padding: 18px 23px;
-  border-radius: 2px;
+  border-radius: var(--ui-radius);
   min-height: 44px;
   font-size: 13px;
   white-space: nowrap;
-  transition:
-    background 0.15s,
-    transform 0.15s;
+  transition: outline-color 0.15s;
 }
-.primary-button:hover {
-  background: var(--accent);
-  transform: translateY(-2px);
+.primary-button:hover:not(:focus-visible) {
+  outline: 1px solid var(--accent);
+  outline-offset: 3px;
 }
 h2 {
   font: 400 44px/1.12 var(--display);
@@ -190,8 +190,9 @@ html[data-motion="reduce"] *::after {
   gap: 10px;
   min-height: 44px;
   padding: 10px 14px;
-  border: 1px solid var(--line);
-  border-radius: 2px;
+  border: 1px solid var(--control-border);
+  border-radius: var(--ui-radius);
+  background: var(--surface-control);
   color: var(--ink);
   font-size: 0.75rem;
   cursor: pointer;
@@ -204,14 +205,15 @@ html[data-motion="reduce"] *::after {
   flex-shrink: 0;
 }
 .motion-settings summary:hover {
-  background: var(--soft);
+  background: var(--control-hover);
+  border-color: var(--accent);
 }
 .motion-settings-panel {
   padding: 12px;
   margin-top: 8px;
   border: 1px solid var(--line);
-  border-radius: 2px;
-  background: var(--node);
+  border-radius: var(--ui-radius);
+  background: var(--surface-overlay);
   color: var(--ink);
 }
 .motion-settings fieldset {

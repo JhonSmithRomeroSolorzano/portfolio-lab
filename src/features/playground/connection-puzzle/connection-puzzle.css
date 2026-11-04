@@ -12,7 +12,7 @@
   color: var(--route-ink);
   background: var(--route-paper);
   border: 1px solid var(--line);
-  border-radius: 24px;
+  border-radius: var(--ui-radius);
   padding: 42px;
 }
 .route-instructions h3 {
@@ -43,10 +43,10 @@
   width: 100%;
   min-height: 44px;
   padding: 10px;
-  background: transparent;
+  background-color: var(--surface-control);
   color: inherit;
-  border: 1px solid var(--route-muted);
-  border-radius: 6px;
+  border: 1px solid var(--control-border);
+  border-radius: var(--ui-radius);
   font: inherit;
 }
 .play-field option {
@@ -61,10 +61,10 @@
 .route-next {
   min-height: 44px;
   padding: 10px 14px;
-  border: 1px solid var(--route-ink);
-  border-radius: 6px;
+  border: 1px solid var(--control-border);
+  border-radius: var(--ui-radius);
   color: var(--route-ink);
-  background: transparent;
+  background: var(--surface-control);
   font-size: 12px;
   line-height: 1.6;
   font-weight: 500;
@@ -72,6 +72,9 @@
 .route-next {
   display: block;
   margin-bottom: 18px;
+  background: var(--flow-fill);
+  border-color: var(--flow-fill);
+  color: var(--flow-ink);
 }
 .route-tile.is-hinted {
   outline: 3px dashed var(--route-ink);
@@ -100,7 +103,7 @@
   padding: 11px;
   background: var(--lab-stage);
   border: 1px solid var(--lab-wire);
-  border-radius: 12px;
+  border-radius: var(--ui-radius);
 }
 .route-tile {
   padding: 0;
@@ -108,10 +111,9 @@
   min-width: 0;
   width: 100%;
   border: 1px solid var(--lab-wire);
-  border-radius: 6px;
+  border-radius: var(--ui-radius);
   background: var(--route-tile);
   color: var(--route-wire);
-  box-shadow: 0 3px 0 var(--line);
 }
 .route-tile:hover {
   background: var(--soft);

@@ -2,7 +2,7 @@
 :root {
   --paper: #f0f3ed;
   --ink: #17271d;
-  --muted: #4d6355;
+  --muted: #3c5142;
   --line: #bdccbf;
   --accent: #21643b;
   --emphasis: #3f6c4e;
@@ -22,21 +22,29 @@
   --flow-ink: #ffffff;
   --rain-ink: #458329;
   --rain-head: #244d16;
-  --reading-surface: #f0f3ed99;
-  --header-surface: #f0f3ede6;
+  /* Shared surface roles: reading panels, drawing grounds, opaque controls/overlays. */
+  --surface-panel: #f0f3edb3;
+  --surface-stage: #f0f3ed33;
+  --surface-control: var(--paper);
+  --surface-overlay: var(--paper);
+  --control-border: var(--lab-wire);
+  --control-hover: var(--soft);
+  --ui-radius: 0;
+  --reading-surface: var(--surface-panel);
+  --header-surface: var(--surface-overlay);
   --lab-wire: #71856d;
   --lab-warning: #85500c;
   --lab-secondary: #476572;
   --lab-trace: #619244;
-  --lab-surface: #f0f3edb3;
-  --lab-stage: #f0f3ed33;
-  --lab-muted: #3c5142;
+  --lab-surface: var(--surface-panel);
+  --lab-stage: var(--surface-stage);
+  --lab-muted: var(--muted);
   --map-active: #e0ebd9;
 }
 :root[data-theme="dark"] {
   --paper: #080d0a;
   --ink: #e6eee7;
-  --muted: #a0b5a6;
+  --muted: #b4c7b8;
   --line: #344c3c;
   --accent: #7deb46;
   --emphasis: #bad6a8;
@@ -54,14 +62,12 @@
   --flow-ink: #080d0a;
   --rain-ink: #56c82c;
   --rain-head: #d5ffaf;
-  --reading-surface: #080d0a80;
-  --header-surface: #0b120ee6;
+  --surface-panel: #080d0ab3;
+  --surface-stage: #080d0a33;
   --lab-wire: #718b69;
   --lab-warning: #f0c477;
   --lab-secondary: #a7c5d1;
   --lab-trace: #c1e7a5;
-  --lab-surface: #080d0ab3;
-  --lab-stage: #080d0a33;
-  --lab-muted: #b4c7b8;
+  --lab-muted: var(--muted);
   --map-active: #1d321a;
 }

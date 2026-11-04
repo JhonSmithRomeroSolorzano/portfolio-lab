@@ -50,9 +50,8 @@
   margin: 16px auto 0;
   padding: 12px 20px;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: var(--ui-radius);
   background: var(--header-surface);
-  box-shadow: 0 10px 40px #00000012;
 }
 .identity-rail nav {
   position: relative;
@@ -70,11 +69,14 @@
   min-height: 44px;
   padding: 10px 14px;
   font: 0.8125rem/1.5 var(--display);
-  transition: color 180ms;
 }
-.identity-rail nav a:hover,
-.identity-rail nav a[aria-current="location"] {
+.identity-rail nav a:hover {
   color: var(--accent);
+  background: var(--control-hover);
+}
+.identity-rail nav a[aria-current="location"] {
+  color: var(--flow-ink);
+  background: var(--flow-fill);
 }
 .identity-rail .nav-cursor {
   position: absolute;
@@ -83,9 +85,8 @@
   width: var(--nav-w, 0px);
   height: var(--nav-h, 0px);
   transform: translate(var(--nav-x, 0px), var(--nav-y, 0px));
-  background: var(--soft);
   border-bottom: 2px solid var(--electric);
-  border-radius: 6px;
+  border-radius: var(--ui-radius);
   pointer-events: none;
   opacity: 0;
   transition:
@@ -109,7 +110,7 @@
   justify-content: center;
   width: 44px;
   padding: 10px;
-  border-radius: 6px;
+  border-radius: var(--ui-radius);
 }
 .rail-bottom .theme-toggle > span,
 .rail-bottom .motion-settings summary > span {
@@ -127,7 +128,7 @@
   width: min(20rem, calc(100vw - 40px));
   max-height: 65vh;
   overflow-y: auto;
-  background: var(--node);
+  background: var(--surface-overlay);
 }
 .mobile-menu-toggle {
   display: none;
@@ -136,10 +137,20 @@
   align-items: center;
   justify-content: center;
   padding: 0;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  background: var(--soft);
-  color: var(--accent);
+  border: 1px solid var(--control-border);
+  border-radius: var(--ui-radius);
+  background: var(--surface-control);
+  color: var(--ink);
+}
+.mobile-menu-toggle:hover {
+  border-color: var(--accent);
+  background: var(--control-hover);
+}
+.mobile-menu-toggle[aria-expanded="true"],
+.motion-settings[open] summary {
+  border-color: var(--flow-fill);
+  background: var(--flow-fill);
+  color: var(--flow-ink);
 }
 .mobile-menu-toggle[hidden] {
   display: none;
@@ -173,8 +184,8 @@
   left: 20px;
   z-index: 10;
   padding: 15px;
-  background: var(--ink);
-  color: var(--paper);
+  background: var(--flow-fill);
+  color: var(--flow-ink);
 }
 .skip-link:focus {
   top: 15px;
@@ -280,9 +291,6 @@ html:has(
     letter-spacing: -0.5px;
     overflow-wrap: anywhere;
   }
-  .identity-rail nav a[aria-current="location"] {
-    background: var(--soft);
-  }
   .identity-rail .nav-cursor {
     display: none;
   }
@@ -299,7 +307,6 @@ html:has(
   .identity-rail {
     padding-inline: 10px;
     gap: 0 8px;
-    border-radius: 10px;
   }
   .rail-bottom {
     gap: 4px;
