@@ -25,6 +25,7 @@ test("mobile hydration does not collapse an initially expanded menu or move cont
       .evaluate((node) => node.getBoundingClientRect().top);
     release();
     await expect(header).toHaveAttribute("data-menu-ready", "true");
+    await expect(header).toHaveCSS("position", "sticky");
     expect(
       await page
         .locator(".portfolio-content")
@@ -136,7 +137,8 @@ for (const theme of ["light", "dark"] as const) {
     await page.getByRole("button", { name: /Switch to .* theme/ }).focus();
     await expect(nav).not.toBeVisible();
     await openMainNavigation(page);
-    await page.locator("h1").click();
+    // Tap the page gutter, outside the persistent dock and its dropdown.
+    await page.mouse.click(8, 800);
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
   });
 
@@ -210,6 +212,10 @@ test("mobile section links remain available without JavaScript", async ({
   });
   const page = await context.newPage();
   await page.goto("/");
+  await expect(page.locator(".identity-rail")).toHaveCSS(
+    "position",
+    "relative",
+  );
   await expect(
     page.getByRole("button", { name: "Menu", exact: true }),
   ).not.toBeVisible();
