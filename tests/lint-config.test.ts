@@ -1,9 +1,31 @@
 import assert from "node:assert/strict";
 import { readdirSync } from "node:fs";
+import { relative } from "node:path";
 import test from "node:test";
 import { ESLint } from "eslint";
 
 const eslint = new ESLint();
+
+test("lint glob discovery retains nested paths and brace alternatives", async () => {
+  const results = await eslint.lintFiles([
+    "scripts/{build-resume,profile-engine}.{ts,mjs}",
+    "src/**/App.tsx",
+  ]);
+  assert.deepEqual(
+    results
+      .map(({ filePath }) =>
+        relative(process.cwd(), filePath).replaceAll("\\", "/"),
+      )
+      .sort(),
+    [
+      "scripts/build-resume.ts",
+      "scripts/profile-engine.mjs",
+      "src/app/App.tsx",
+    ],
+  );
+  for (const result of results)
+    assert.deepEqual(result.messages, [], result.filePath);
+});
 
 test("all first-party MJS tooling and future JavaScript receive recommended lint rules", async () => {
   const scripts = readdirSync(new URL("../scripts/", import.meta.url))
