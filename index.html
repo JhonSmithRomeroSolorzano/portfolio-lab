@@ -41,9 +41,16 @@
         const root = document.documentElement;
         root.dataset.navigation = "pending";
         function restoreLinks(event) {
+          // A healthy hydrated menu must not reopen for an unrelated error.
           if (
-            event.target instanceof HTMLScriptElement &&
-            event.target.type === "module"
+            document.querySelector(".identity-rail")?.dataset.menuReady ===
+            "true"
+          )
+            return;
+          if (
+            event instanceof ErrorEvent ||
+            (event.target instanceof HTMLScriptElement &&
+              event.target.type === "module")
           ) {
             root.removeAttribute("data-navigation");
           }
