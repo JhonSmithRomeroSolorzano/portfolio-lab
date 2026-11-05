@@ -55,7 +55,7 @@ export function rainLight(
   );
 }
 
-/** Translucent interiors and a luminous edge keep the field continuous. */
+/** Faint reading interiors and a luminous edge keep the field continuous. */
 export function rainEnvelope(
   x: number,
   y: number,
@@ -71,7 +71,7 @@ export function rainEnvelope(
     const distance = inside
       ? Math.min(x - box.left, box.right - x, y - box.top, box.bottom - y)
       : Math.hypot(dx, dy);
-    if (inside) quiet = Math.min(quiet, 0.42 + clamp(distance / 14) * 0.08);
+    if (inside) quiet = Math.min(quiet, 0.2 + clamp(distance / 14) * 0.04);
     if (distance < 40) edge = Math.max(edge, Math.exp(-distance / 7));
   }
   return { quiet, edge };

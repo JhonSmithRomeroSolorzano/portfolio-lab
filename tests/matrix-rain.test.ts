@@ -49,7 +49,7 @@ test("layout envelopes protect text interiors and trace the actual movable bound
   const interior = rainEnvelope(70, 70, [panel]);
   const edge = rainEnvelope(19, 70, [panel]);
   const outside = rainEnvelope(300, 70, [panel]);
-  assert.ok(interior.quiet >= 0.4 && interior.quiet <= 0.5);
+  assert.ok(Math.abs(interior.quiet - 0.24) < 1e-12);
   assert.ok(edge.edge > 0.8);
   assert.equal(outside.quiet, 1);
   assert.ok(outside.edge < 0.001);
@@ -58,4 +58,36 @@ test("layout envelopes protect text interiors and trace the actual movable bound
     edge,
   );
   assert.deepEqual(rainEnvelope(20, 20, []), { quiet: 1, edge: 0 });
+});
+
+test("reading interiors halve their lighting envelope without changing exterior or edge falloff", () => {
+  const panel = { left: 0, top: 0, right: 300, bottom: 300 };
+  for (const distance of [0, 1, 7, 14, 30, 100, 150]) {
+    const current = rainEnvelope(distance, 150, [panel]);
+    const previousQuiet = 0.42 + Math.min(1, distance / 14) * 0.08;
+    assert.ok(current.quiet > 0 && current.quiet <= previousQuiet / 2);
+    assert.equal(current.edge, distance < 40 ? Math.exp(-distance / 7) : 0);
+  }
+  for (const distance of [1, 7, 14, 39, 40, 100]) {
+    const exterior = rainEnvelope(-distance, 150, [panel]);
+    assert.equal(exterior.quiet, 1);
+    assert.equal(exterior.edge, distance < 40 ? Math.exp(-distance / 7) : 0);
+  }
+});
+
+test("overlapping reading regions use the quietest envelope without multiplying it away", () => {
+  const outer = { left: 0, top: 0, right: 300, bottom: 300 };
+  const inner = { left: 50, top: 50, right: 250, bottom: 250 };
+  for (const [x, y] of [
+    [51, 150],
+    [150, 150],
+    [249, 249],
+  ]) {
+    const a = rainEnvelope(x, y, [outer]);
+    const b = rainEnvelope(x, y, [inner]);
+    const combined = rainEnvelope(x, y, [outer, inner]);
+    assert.equal(combined.quiet, Math.min(a.quiet, b.quiet));
+    assert.equal(combined.edge, Math.max(a.edge, b.edge));
+    assert.deepEqual(rainEnvelope(x, y, [inner, outer]), combined);
+  }
 });

@@ -1,5 +1,73 @@
 import { test, expect } from "@playwright/test";
 
+for (const theme of ["light", "dark"] as const) {
+  for (const width of [375, 1440]) {
+    test(`reading interiors retain animated rain and shared surfaces in ${theme} at ${width}px`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width, height: 1000 });
+      await page.emulateMedia({
+        colorScheme: theme,
+        reducedMotion: "no-preference",
+      });
+      await page.clock.install({ time: new Date("2026-11-05T12:00:00Z") });
+      await page.clock.pauseAt(new Date("2026-11-05T12:00:01Z"));
+      await page.goto("/");
+      await expect(page.locator("h1")).toHaveAttribute(
+        "data-name-renderer",
+        "background",
+      );
+      await page.clock.runFor(4800);
+      const sample = () =>
+        page.locator(".matrix-canvas").evaluate((canvas: HTMLCanvasElement) => {
+          const summary = document
+            .querySelector(".intro-summary")!
+            .getBoundingClientRect();
+          const bounds = canvas.getBoundingClientRect();
+          const ratio = canvas.width / bounds.width;
+          const left = Math.max(0, summary.left + summary.width * 0.25);
+          const top = Math.max(0, summary.top + 20);
+          const width = Math.min(summary.width * 0.5, bounds.width - left);
+          const height = Math.min(
+            summary.height - 40,
+            bounds.height - top - 20,
+          );
+          const pixels = canvas
+            .getContext("2d")!
+            .getImageData(
+              Math.floor(left * ratio),
+              Math.floor(top * ratio),
+              Math.floor(width * ratio),
+              Math.floor(height * ratio),
+            ).data;
+          let alpha = 0;
+          let fingerprint = 0;
+          for (let index = 3; index < pixels.length; index += 4) {
+            alpha += pixels[index];
+            fingerprint = (fingerprint + pixels[index] * index) >>> 0;
+          }
+          return { alpha, fingerprint };
+        });
+      const before = await sample();
+      expect(before.alpha).toBeGreaterThan(0);
+      await page.clock.runFor(600);
+      const after = await sample();
+      expect(after.alpha).toBeGreaterThan(0);
+      expect(after.fingerprint).not.toBe(before.fingerprint);
+      await expect(page.locator("h1")).toHaveAttribute(
+        "data-name-entrance",
+        "complete",
+      );
+      for (const selector of [".workbench-intro", "#resume", "#contact"]) {
+        const surface = await page
+          .locator(selector)
+          .evaluate((node) => getComputedStyle(node).backgroundColor);
+        expect(surface).toMatch(/, 0\.7\)$/);
+      }
+    });
+  }
+}
+
 test("steady rain repaints changed cells instead of the whole glyph field", async ({
   page,
 }) => {
