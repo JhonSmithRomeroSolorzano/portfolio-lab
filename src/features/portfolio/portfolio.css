@@ -296,6 +296,17 @@
   mask-origin: border-box;
   mask-composite: exclude;
 }
+@media (forced-colors: active) {
+  .workbench h1 {
+    color: CanvasText;
+  }
+  [data-name-renderer="background"] .name-letter-ink {
+    opacity: 1;
+  }
+  .workbench-intro[data-name-surface="cutout"] {
+    mask-image: none;
+  }
+}
 .intro-copy {
   display: grid;
   grid-template-columns: minmax(0, 1fr);

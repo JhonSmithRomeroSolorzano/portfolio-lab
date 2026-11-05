@@ -4,6 +4,94 @@ const name = "Jhon Smith Romero.";
 
 for (const theme of ["light", "dark"] as const) {
   for (const width of [375, 1440]) {
+    test(`forced colors retain plain name ink in ${theme} at ${width}px without replay`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width, height: 1000 });
+      await page.emulateMedia({ colorScheme: theme, forcedColors: "active" });
+      await page.goto("/");
+      const heading = page.getByRole("heading", {
+        level: 1,
+        name,
+        exact: true,
+      });
+      const ink = heading.locator(".name-letter-ink").first();
+      const panel = page.locator(".workbench-intro");
+      await expect(heading).toHaveAttribute("data-name-entrance", "complete");
+      await expect(heading).not.toHaveAttribute("data-name-renderer");
+      await expect(heading).toHaveAttribute("data-name-playing", "false");
+      await expect(ink).toHaveCSS("opacity", "1");
+      await expect(panel).toHaveCSS("mask-image", "none");
+      const bounds = await heading.boundingBox();
+      await page.emulateMedia({ forcedColors: "none" });
+      await expect(heading).toHaveAttribute("data-name-renderer", "background");
+      await expect(heading).toHaveAttribute("data-name-entrance", "complete");
+      await expect(ink).toHaveCSS("opacity", "0");
+      expect(await heading.boundingBox()).toEqual(bounds);
+      await page.emulateMedia({ forcedColors: "active" });
+      await expect(heading).not.toHaveAttribute("data-name-renderer");
+      await expect(heading).toHaveAttribute("data-name-playing", "false");
+      await expect(ink).toHaveCSS("opacity", "1");
+      await expect(panel).not.toHaveAttribute("data-name-surface");
+      await expect(panel).toHaveCSS("mask-image", "none");
+      expect(await heading.boundingBox()).toEqual(bounds);
+      await expect(page.locator("canvas:visible")).toHaveCount(1);
+    });
+  }
+}
+
+test("reinforced name light uses one assembled glow pass rather than per-glyph filters", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    const scope = window as typeof window & {
+      __nameGlowStats: { passes: number; composites: number };
+    };
+    const stats = (scope.__nameGlowStats = { passes: 0, composites: 0 });
+    const shadow = Object.getOwnPropertyDescriptor(
+      CanvasRenderingContext2D.prototype,
+      "shadowBlur",
+    )!;
+    Object.defineProperty(CanvasRenderingContext2D.prototype, "shadowBlur", {
+      ...shadow,
+      set(value: number) {
+        // The glyph atlas independently owns its original 3px glow.
+        if (value === 6) stats.passes++;
+        shadow.set!.call(this, value);
+      },
+    });
+    const draw = CanvasRenderingContext2D.prototype.drawImage;
+    CanvasRenderingContext2D.prototype.drawImage = function (
+      this: CanvasRenderingContext2D,
+      ...args: unknown[]
+    ) {
+      if (this.canvas.matches(".matrix-canvas") && args.length === 5)
+        stats.composites++;
+      Reflect.apply(draw, this, args);
+    };
+  });
+  await page.clock.install({ time: new Date("2026-11-05T12:00:00Z") });
+  await page.clock.pauseAt(new Date("2026-11-05T12:00:01Z"));
+  await page.goto("/");
+  await expect(page.locator("h1")).toHaveAttribute(
+    "data-name-renderer",
+    "background",
+  );
+  await page.clock.runFor(1000);
+  const stats = await page.evaluate(
+    () =>
+      (
+        window as typeof window & {
+          __nameGlowStats: { passes: number; composites: number };
+        }
+      ).__nameGlowStats,
+  );
+  expect(stats.passes).toBeGreaterThan(0);
+  expect(stats.composites).toBe(stats.passes * 2);
+});
+
+for (const theme of ["light", "dark"] as const) {
+  for (const width of [375, 1440]) {
     test(`one background rain illuminates the name in ${theme} at ${width}px`, async ({
       page,
     }) => {
