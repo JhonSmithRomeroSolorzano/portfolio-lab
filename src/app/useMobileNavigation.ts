@@ -14,7 +14,9 @@ export function useMobileNavigation(nav: RefObject<HTMLElement | null>) {
     const trigger = button.current;
     if (!menu || !trigger) return;
     const doc = menu.ownerDocument;
-    menu.querySelector<HTMLAnchorElement>("a")?.focus();
+    // Reopen at the first link without scrolling the reading position underneath.
+    menu.scrollTop = 0;
+    menu.querySelector<HTMLAnchorElement>("a")?.focus({ preventScroll: true });
     function dismissOutside(event: Event) {
       const target = event.target as Node | null;
       if (target && !menu!.contains(target) && !trigger!.contains(target))
@@ -25,7 +27,7 @@ export function useMobileNavigation(nav: RefObject<HTMLElement | null>) {
       setOpen(false);
       if (trigger!.getClientRects().length) {
         event.preventDefault();
-        trigger!.focus();
+        trigger!.focus({ preventScroll: true });
       }
     }
     doc.addEventListener("pointerdown", dismissOutside);
