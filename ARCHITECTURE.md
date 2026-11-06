@@ -227,6 +227,14 @@ arrival timer, or browser-specific routing branch is added. Browser tests inspec
 focus and scroll policy before the native default action, actual collection
 arrival, marker cleanup, keyboard focus rings, and Back navigation.
 
+WebKit pointer/legacy navigation regressions install bounded diagnostics only after
+startup assertions pass. Failed journeys attach event history and final geometry,
+focus, and scroll policy, including scripted focus/scroll calls and main/header
+resizes. These test-only wrappers delegate to the original browser methods; they
+do not correct scrolling or change viewport assertions, deadlines, or retries.
+Instrumentation can affect timing, so diagnostic runs are evidence, not proof
+that an uninstrumented failure is fixed.
+
 The stack tour, like viewport autoplay, uses the latest entry in each batch for its
 single observed drawing. An earlier visible entry must not retain the interval when
 the final entry is offscreen. The lifecycle browser regression injects that ordering

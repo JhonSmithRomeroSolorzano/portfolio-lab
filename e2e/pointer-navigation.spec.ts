@@ -1,11 +1,20 @@
 import { expect, test } from "@playwright/test";
 import { openMainNavigation } from "./helpers/main-navigation";
+import {
+  attachNavigationDiagnostics,
+  installNavigationDiagnostics,
+} from "./helpers/navigation-diagnostics";
+
+test.afterEach(async ({ page }, info) => {
+  await attachNavigationDiagnostics(page, info);
+});
 
 for (const width of [390, 1280])
   for (const theme of ["light", "dark"] as const)
     for (const reducedMotion of ["no-preference", "reduce"] as const)
       test(`pointer navigation hands off focus before native scrolling at ${width}px in ${theme}, ${reducedMotion}`, async ({
         page,
+        browserName,
       }) => {
         await page.setViewportSize({ width, height: 844 });
         await page.emulateMedia({ colorScheme: theme, reducedMotion });
@@ -15,6 +24,7 @@ for (const width of [390, 1280])
           "location",
         );
         await expect(page.locator("#about")).toBeInViewport();
+        if (browserName === "webkit") await installNavigationDiagnostics(page);
         await openMainNavigation(page);
         await page.evaluate(() => {
           // Bubble after React's delegated click handler, but before the
