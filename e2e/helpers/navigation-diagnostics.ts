@@ -8,8 +8,13 @@ type DiagnosticWindow = Window & {
 };
 
 /** Install after readiness assertions, never during hydration. */
-export async function installNavigationDiagnostics(page: Page) {
-  await page.evaluate(() => {
+export async function installNavigationDiagnostics(
+  page: Page,
+  mode: "barrier" | "geometry" | "events" | "on" = "on",
+) {
+  await page.evaluate((mode) => {
+    // Control for the extra page-evaluation task without installing a probe.
+    if (mode === "barrier") return;
     const view = window as DiagnosticWindow;
     const events: unknown[] = [];
     const root = document.documentElement;
@@ -49,6 +54,10 @@ export async function installNavigationDiagnostics(page: Page) {
         });
     };
     view.__navigationDiagnostics = { events, snapshot };
+    if (mode === "geometry") {
+      record("initial-geometry", snapshot());
+      return;
+    }
     for (const [host, methods] of [
       [HTMLElement.prototype, ["focus"]],
       [Element.prototype, ["scrollIntoView", "scroll", "scrollTo", "scrollBy"]],
@@ -77,9 +86,12 @@ export async function installNavigationDiagnostics(page: Page) {
     for (const type of ["click", "focusin", "focusout", "scrollend"])
       window.addEventListener(type, () => record(type));
     window.addEventListener("hashchange", () =>
-      record("hashchange", {
-        behavior: getComputedStyle(root).scrollBehavior,
-      }),
+      record(
+        "hashchange",
+        mode === "on"
+          ? { behavior: getComputedStyle(root).scrollBehavior }
+          : undefined,
+      ),
     );
     let lastScroll = -Infinity;
     window.addEventListener("scroll", () => {
@@ -102,8 +114,8 @@ export async function installNavigationDiagnostics(page: Page) {
       document.querySelector("header"),
     ])
       if (target) resize.observe(target);
-    record("attached", snapshot());
-  });
+    record("attached", mode === "on" ? snapshot() : undefined);
+  }, mode);
 }
 
 /** Evidence only: no waits, scroll corrections, or changes to assertions/retries. */

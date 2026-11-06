@@ -228,7 +228,9 @@ focus and scroll policy before the native default action, actual collection
 arrival, marker cleanup, keyboard focus rings, and Back navigation.
 
 Pointer regressions run paired cases with WebKit diagnostics off/on; legacy About
-navigation remains untraced. Traced cases install bounded diagnostics only after
+navigation remains untraced. Smooth-pointer probes additionally isolate an extra
+evaluation task, initial geometry measurement, and event/call logging without
+style/geometry sampling during the journey. Traced cases install bounded diagnostics only after
 startup assertions pass. Failed traced journeys attach event history and final geometry,
 focus, and scroll policy, including scripted focus/scroll calls and main/header
 resizes. These test-only wrappers delegate to the original browser methods; they

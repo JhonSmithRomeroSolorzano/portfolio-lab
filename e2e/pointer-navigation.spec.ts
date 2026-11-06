@@ -12,7 +12,9 @@ test.afterEach(async ({ page }, info) => {
 for (const width of [390, 1280])
   for (const theme of ["light", "dark"] as const)
     for (const reducedMotion of ["no-preference", "reduce"] as const)
-      for (const diagnostics of ["off", "on"] as const)
+      for (const diagnostics of reducedMotion === "reduce"
+        ? (["off", "on"] as const)
+        : (["off", "barrier", "geometry", "events", "on"] as const))
         test(`pointer navigation hands off focus before native scrolling at ${width}px in ${theme}, ${reducedMotion}, WebKit diagnostics ${diagnostics}`, async ({
           page,
           browserName,
@@ -24,8 +26,8 @@ for (const width of [390, 1280])
             page.locator('nav a[href="#workbench"]'),
           ).toHaveAttribute("aria-current", "location");
           await expect(page.locator("#about")).toBeInViewport();
-          if (browserName === "webkit" && diagnostics === "on")
-            await installNavigationDiagnostics(page);
+          if (browserName === "webkit" && diagnostics !== "off")
+            await installNavigationDiagnostics(page, diagnostics);
           await openMainNavigation(page);
           await page.evaluate(() => {
             // Bubble after React's delegated click handler, but before the
