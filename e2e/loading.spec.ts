@@ -25,11 +25,71 @@ test("career content loads without downloading the optional experiments", async 
     .getByRole("navigation", { name: "Main navigation" })
     .getByRole("link", { name: "Labs & play" })
     .press("Enter");
+  await expect(page.locator("#lab")).toBeFocused();
+  await expect(page.locator("#collection")).toBeInViewport();
+  await expect(
+    page.getByRole("button", { name: "Load Jet Engine", exact: true }),
+  ).toBeAttached();
+  expect(chunks).toEqual([]);
+  await page.locator('[data-experiment="jet-engine"]').scrollIntoViewIfNeeded();
   await expect(
     page.getByRole("slider", { name: "Engine speed" }),
   ).toBeVisible();
   expect(chunks.some((url) => url.includes("JetEngine-"))).toBeTruthy();
 });
+
+for (const width of [390, 1440])
+  for (const theme of ["light", "dark"] as const)
+    for (const hash of ["lab", "collection", "signal-lab"])
+      test(`${hash} collection entry defers Jet Engine until approached at ${width}px in ${theme}`, async ({
+        page,
+      }) => {
+        await page.setViewportSize({ width, height: 844 });
+        await page.emulateMedia({
+          colorScheme: theme,
+          reducedMotion: theme === "light" ? "no-preference" : "reduce",
+        });
+        const chunks: string[] = [];
+        page.on("request", (request) => {
+          if (/\/JetEngine-.*\.js/.test(request.url()))
+            chunks.push(request.url());
+        });
+        await page.goto(`/?entry=collection#${hash}`);
+        await expect(page.locator("#collection")).toBeInViewport();
+        const placeholder = page.locator('[data-experiment="jet-engine"]');
+        await expect(
+          placeholder.getByRole("button", {
+            name: "Load Jet Engine",
+            exact: true,
+          }),
+        ).toBeAttached();
+        expect(
+          await placeholder.evaluate(
+            (element) => element.getBoundingClientRect().top - innerHeight,
+          ),
+        ).toBeGreaterThan(300);
+        // Include a quiet observation window after hydration/anchor settling:
+        // an eager alias request must not escape a single immediate assertion.
+        await page.waitForTimeout(500);
+        expect(chunks).toEqual([]);
+        await expect(page).toHaveURL(/\?entry=collection#/);
+        await placeholder.scrollIntoViewIfNeeded();
+        await expect(
+          page.getByRole("slider", { name: "Engine speed" }),
+        ).toBeVisible();
+        expect(chunks).toHaveLength(1);
+      });
+
+for (const hash of ["jet-engine", "pin-lock"])
+  test(`direct ${hash} entry still downloads Jet Engine`, async ({ page }) => {
+    await page.goto(`/?entry=engine#${hash}`);
+    await expect(
+      page.getByRole("slider", { name: "Engine speed" }),
+    ).toBeVisible();
+    await expect(page).toHaveURL("/?entry=engine#jet-engine");
+    await expect(page.locator("#jet-engine")).toBeFocused();
+    await expect(page.locator("#engine-title")).toBeInViewport();
+  });
 
 for (const [hash, control] of [
   ["connection-game", "Give me a hint"],
