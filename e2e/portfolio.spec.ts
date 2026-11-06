@@ -111,9 +111,9 @@ test("legacy About links still select Overview without losing query state", asyn
     .getByRole("navigation", { name: "Main navigation" })
     .getByRole("link", { name: "Labs & play" })
     .click();
-  await expect(
-    page.getByRole("slider", { name: "Engine speed", exact: true }),
-  ).toBeVisible();
+  await expect(page).toHaveURL("/?traffic=250#lab");
+  await expect(page.locator("#lab")).toBeFocused();
+  await expect(page.locator("#collection")).toBeInViewport();
 });
 
 test("experience and contact precede the lab in document and menu order", async ({
