@@ -10,7 +10,7 @@ type DiagnosticWindow = Window & {
 /** Install after readiness assertions, never during hydration. */
 export async function installNavigationDiagnostics(
   page: Page,
-  mode: "barrier" | "geometry" | "events" | "on" = "on",
+  mode: "barrier" | "geometry" | "calls" | "events" | "on" = "on",
 ) {
   await page.evaluate((mode) => {
     // Control for the extra page-evaluation task without installing a probe.
@@ -47,7 +47,7 @@ export async function installNavigationDiagnostics(
           event,
           details,
           time: performance.now(),
-          y: scrollY,
+          ...(mode === "calls" ? {} : { y: scrollY }),
           hash: location.hash,
           focus: document.activeElement?.id,
           pointer: document.getElementById("lab")?.dataset.pointerNavigation,
@@ -83,7 +83,9 @@ export async function installNavigationDiagnostics(
         };
       }
     }
-    for (const type of ["click", "focusin", "focusout", "scrollend"])
+    for (const type of mode === "calls"
+      ? ["click", "focusin", "focusout"]
+      : ["click", "focusin", "focusout", "scrollend"])
       window.addEventListener(type, () => record(type));
     window.addEventListener("hashchange", () =>
       record(
@@ -93,6 +95,10 @@ export async function installNavigationDiagnostics(
           : undefined,
       ),
     );
+    if (mode === "calls") {
+      record("attached");
+      return;
+    }
     let lastScroll = -Infinity;
     window.addEventListener("scroll", () => {
       if (performance.now() - lastScroll < 200) return;
