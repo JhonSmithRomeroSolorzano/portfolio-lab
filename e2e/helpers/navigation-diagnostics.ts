@@ -10,11 +10,35 @@ type DiagnosticWindow = Window & {
 /** Install after readiness assertions, never during hydration. */
 export async function installNavigationDiagnostics(
   page: Page,
-  mode: "barrier" | "geometry" | "calls" | "events" | "on" = "on",
+  mode:
+    | "barrier"
+    | "geometry"
+    | "calls"
+    | "events"
+    | "on"
+    | "focus-allow"
+    | "focus-prevent" = "on",
 ) {
   await page.evaluate((mode) => {
     // Control for the extra page-evaluation task without installing a probe.
     if (mode === "barrier") return;
+    if (mode === "focus-allow" || mode === "focus-prevent") {
+      document
+        .getElementById("main-navigation")
+        ?.addEventListener("mousedown", (event) => {
+          if (
+            mode === "focus-prevent" &&
+            event.button === 0 &&
+            !event.metaKey &&
+            !event.ctrlKey &&
+            !event.shiftKey &&
+            !event.altKey &&
+            (event.target as Element).closest('a[href^="#"]')
+          )
+            event.preventDefault();
+        });
+      return;
+    }
     const view = window as DiagnosticWindow;
     const events: unknown[] = [];
     const root = document.documentElement;

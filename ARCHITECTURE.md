@@ -231,7 +231,10 @@ Pointer regressions run paired cases with WebKit diagnostics off/on; legacy Abou
 navigation remains untraced. Smooth-pointer probes additionally isolate an extra
 evaluation task, initial geometry measurement, and event/call logging without
 style/geometry sampling during the journey. A calls-only mode also omits scroll
-listeners, resize observation, and scroll-position reads during focus. Traced cases install bounded diagnostics only after
+listeners, resize observation, and scroll-position reads during focus. Matched
+allow/prevent controls test the dock link's native primary-mousedown focus without
+cancelling the anchor click. These controls are test-only hypotheses, not a
+production navigation policy. Traced cases install bounded diagnostics only after
 startup assertions pass. Failed traced journeys attach event history and final geometry,
 focus, and scroll policy, including scripted focus/scroll calls and main/header
 resizes. These test-only wrappers delegate to the original browser methods; they

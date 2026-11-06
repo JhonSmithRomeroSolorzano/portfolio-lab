@@ -14,7 +14,16 @@ for (const width of [390, 1280])
     for (const reducedMotion of ["no-preference", "reduce"] as const)
       for (const diagnostics of reducedMotion === "reduce"
         ? (["off", "on"] as const)
-        : (["off", "barrier", "geometry", "calls", "events", "on"] as const))
+        : ([
+            "off",
+            "barrier",
+            "geometry",
+            "calls",
+            "events",
+            "on",
+            "focus-allow",
+            "focus-prevent",
+          ] as const))
         test(`pointer navigation hands off focus before native scrolling at ${width}px in ${theme}, ${reducedMotion}, WebKit diagnostics ${diagnostics}`, async ({
           page,
           browserName,
