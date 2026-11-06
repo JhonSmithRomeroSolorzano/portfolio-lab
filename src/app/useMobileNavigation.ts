@@ -3,6 +3,10 @@ import type { MouseEvent, RefObject } from "react";
 import { useClientReady } from "../shared/hooks/useClientReady";
 import { isPlainNavigation } from "./portfolio-motion";
 
+function clearPointerFocus(event: FocusEvent) {
+  delete (event.currentTarget as HTMLElement).dataset.pointerNavigation;
+}
+
 export function useMobileNavigation(nav: RefObject<HTMLElement | null>) {
   const ready = useClientReady();
   const [open, setOpen] = useState(false);
@@ -41,14 +45,23 @@ export function useMobileNavigation(nav: RefObject<HTMLElement | null>) {
   }, [open, nav]);
 
   function navigate(event: MouseEvent<HTMLElement>) {
-    if (!open || !isPlainNavigation(event)) return;
+    if (!isPlainNavigation(event)) return;
     const link = (event.target as Element).closest<HTMLAnchorElement>(
       "a[href]",
     );
     if (!link) return;
-    // Move focus before hiding the active link; native anchors still own URL/scroll.
-    document.getElementById(link.hash.slice(1))?.focus({ preventScroll: true });
-    setOpen(false);
+    // Hand off focus without scrolling before the native anchor journey, even
+    // when desktop links are always visible. WebKit's later focus adjustment
+    // must not start a competing scroll. Native anchors still own URL/history.
+    const target = document.getElementById(link.hash.slice(1));
+    if (target) {
+      if (event.detail > 0) {
+        target.dataset.pointerNavigation = "true";
+        target.addEventListener("blur", clearPointerFocus, { once: true });
+      } else delete target.dataset.pointerNavigation;
+      target.focus({ preventScroll: true });
+    }
+    if (open) setOpen(false);
   }
 
   function toggle() {

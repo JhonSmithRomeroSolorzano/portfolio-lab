@@ -201,7 +201,7 @@ main > section[tabindex="-1"]:focus {
 }
 html:has(
   .identity-rail :focus-visible,
-  main > section:focus-visible,
+  main > section:focus-visible:not([data-pointer-navigation="true"]),
   .collection-index:focus-visible,
   .collection-index a:focus-visible,
   .play-exhibit:focus-visible,
