@@ -107,8 +107,12 @@ export async function installNavigationDiagnostics(page: Page) {
 }
 
 /** Evidence only: no waits, scroll corrections, or changes to assertions/retries. */
-export async function attachNavigationDiagnostics(page: Page, info: TestInfo) {
-  if (info.status === info.expectedStatus || page.isClosed()) return;
+export async function attachNavigationDiagnostics(
+  page: Page | null | undefined,
+  info: TestInfo,
+) {
+  // Failed page fixtures can reach afterEach without creating a page.
+  if (!page || info.status === info.expectedStatus || page.isClosed()) return;
   const state = await page.evaluate(() => {
     const diagnostic = (window as DiagnosticWindow).__navigationDiagnostics;
     return diagnostic

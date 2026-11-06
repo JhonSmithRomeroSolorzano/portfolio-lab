@@ -1,10 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { openMainNavigation } from "./helpers/main-navigation";
 import { professionalProfile } from "../src/features/portfolio/data/profile";
-import {
-  attachNavigationDiagnostics,
-  installNavigationDiagnostics,
-} from "./helpers/navigation-diagnostics";
+import { attachNavigationDiagnostics } from "./helpers/navigation-diagnostics";
 
 test.afterEach(async ({ page }, info) => {
   await attachNavigationDiagnostics(page, info);
@@ -108,7 +105,6 @@ test("theme selection survives reload and a small viewport stays usable", async 
 
 test("legacy About links still select Overview without losing query state", async ({
   page,
-  browserName,
 }) => {
   await page.goto("/?traffic=250#about");
   await expect(page.locator('nav a[href="#workbench"]')).toHaveAttribute(
@@ -116,7 +112,6 @@ test("legacy About links still select Overview without losing query state", asyn
     "location",
   );
   await expect(page.locator("#about")).toBeInViewport();
-  if (browserName === "webkit") await installNavigationDiagnostics(page);
   await page
     .getByRole("navigation", { name: "Main navigation" })
     .getByRole("link", { name: "Labs & play" })
