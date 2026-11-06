@@ -195,6 +195,14 @@ as observers/listeners. Explicit controls and animation clocks are not debounced
 Engine still owns palette/guide invalidation and creates a new raster only when
 backing dimensions change; artwork-loading policy remains in its feature.
 
+The canvas-invalidation browser test retains exact pixel equality after restoring
+the original viewport and theme; it has no image-difference tolerance. A failed
+restoration attaches the original and restored canvas PNGs plus backing/logical
+dimensions, last paint size, transform, pixel ratio, theme, and motion state to the
+existing CI report. These are test-only diagnostics, not an application readiness
+API or a claimed fix for intermittent WebKit raster differences. Diagnostic
+capture failures cannot replace the original assertion failure.
+
 For an uninterrupted, focused direct entry, `DeferredExperiment` observes the containing main element's size and coalesces landing alignment into animation frames. This covers layout changes from neighboring lazy imports and WebKit's deferred focus adjustment. Alignment checks the current hash, focus, and existing input-interruption flag before scrolling; its observer disconnects once that ownership is lost or the effect cleans up. Without resize observation, one deferred alignment still runs. It does not intercept normal scrolling or move focus.
 
 The Connection puzzle's feature controller owns progress, visit-local Undo/hints, and reconciliation of validated browser saves. Storage/focus events refresh boards without changing the current selection; reads before writes guard against delayed notifications. The last observed save remains separate from unsaved play so quota failures do not reset the session. This is best-effort synchronization of localStorage snapshots, not an atomic transaction across simultaneous tabs; progress is never shared between hosting origins.
