@@ -203,6 +203,17 @@ existing CI report. These are test-only diagnostics, not an application readines
 API or a claimed fix for intermittent WebKit raster differences. Diagnostic
 capture failures cannot replace the original assertion failure.
 
+The diagnostic-only `canvas-replay` browser test separately captures a bounded
+Canvas2D command stream from the actual Loom renderer and fingerprints the
+baseline/restoration paint inputs. It then closes the application page and replays
+those frozen commands on blank pages, comparing repeated light frames, the source
+drawing history, and fresh-canvas controls with exact PNG equality. Compressed
+command/state inputs, build-source provenance, observations, and both PNGs are
+attached for native analysis. Capture instrumentation can affect timing; these
+isolated observations do not replace or weaken the original application pixel
+test. Fresh canvases are a diagnostic control, not a production rendering policy
+or an established correction for the intermittent restoration difference.
+
 For an uninterrupted, focused direct entry, `DeferredExperiment` observes the containing main element's size and coalesces landing alignment into animation frames. This covers layout changes from neighboring lazy imports and WebKit's deferred focus adjustment. Alignment checks the current hash, focus, and existing input-interruption flag before scrolling; its observer disconnects once that ownership is lost or the effect cleans up. Pointer movement, like wheel, touch, pointer press, and keyboard input, releases landing ownership: hovering a mounted control must not let a late neighboring import scroll it out from under the pointer while its section still has anchor focus. The same passive listener lifecycle handles every interruption. Controlled late-download browser coverage checks hover colors and unchanged scroll position across the resize/alignment boundary, alongside uninterrupted heading preservation. Without resize observation, one deferred alignment still runs. It does not intercept normal scrolling or move focus.
 
 The Connection puzzle's feature controller owns progress, visit-local Undo/hints, and reconciliation of validated browser saves. Storage/focus events refresh boards without changing the current selection; reads before writes guard against delayed notifications. The last observed save remains separate from unsaved play so quota failures do not reset the session. This is best-effort synchronization of localStorage snapshots, not an atomic transaction across simultaneous tabs; progress is never shared between hosting origins.
