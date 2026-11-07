@@ -221,30 +221,28 @@ mobile menu. Pointer activation marks that focused section until blur: WebKit
 can match `:focus-visible` even for this programmatic pointer handoff, so the
 section's keyboard-only immediate-scroll selector excludes that marker. Keyboard
 activation clears the marker, and blur removes it through a deduplicated one-shot
-listener. Reduced motion still overrides smooth scrolling. Native anchors retain
+listener. The focusable legacy `#about` descendant participates in the same
+keyboard-visible immediate-scroll policy as section destinations, including when
+Back restores its focus before another keyboard journey. Reduced motion still
+overrides smooth scrolling. Native anchors retain
 scrolling, query strings, and history; no click cancellation, scripted scroll,
 arrival timer, or browser-specific routing branch is added. Browser tests inspect
 focus and scroll policy before the native default action, actual collection
 arrival, marker cleanup, keyboard focus rings, and Back navigation.
 
-Pointer regressions run paired cases with WebKit diagnostics off/on; legacy About
-navigation remains untraced. Smooth-pointer probes additionally isolate an extra
-evaluation task, initial geometry measurement, and event/call logging without
-style/geometry sampling during the journey. A calls-only mode also omits scroll
-listeners, resize observation, and scroll-position reads during focus. Matched
-allow/prevent controls test the dock link's native primary-mousedown focus without
-cancelling the anchor click. These controls are test-only hypotheses, not a
-production navigation policy. Reveal allow/prevent controls delegate `animate`
-normally or settle only `[data-reveal]` entrances immediately, to isolate their
-effect on native scrolling without changing app source. Repeated matched samples
-also test opacity-only entrances with the original timing and other keyframe
-fields, isolating translation from animation duration. Traced cases install bounded diagnostics only after
-startup assertions pass. Failed traced journeys attach event history and final geometry,
-focus, and scroll policy, including scripted focus/scroll calls and main/header
-resizes. These test-only wrappers delegate to the original browser methods; they
-do not correct scrolling or change viewport assertions, deadlines, or retries.
-Instrumentation can affect timing, so diagnostic runs are evidence, not proof
-that an uninstrumented failure is fixed.
+Section entrances fade from 35% opacity without translating content. Their 560ms
+duration, bounded stagger, easing, focus cancellation, and reduced-motion policy
+are unchanged. Keeping their geometry still avoids the interrupted native smooth
+journeys reproduced with translated entrances in Linux WebKit. Unit coverage
+asserts the exact keyframes and timing; browser journeys exercise actual arrival,
+history, and keyboard follow-up without animation overrides or in-flight logging.
+
+Failed navigation tests attach final geometry, focus, URL hash, and scroll policy
+only after the original assertion fails. A missing/closed page or unavailable
+snapshot must not replace that original failure. Diagnostic probes that wrapped
+browser methods or measured during travel affected reproduction; their experiments
+remain in Git history rather than the maintained regression suite. Viewport
+assertions, deadlines, and retries are unchanged.
 
 The stack tour, like viewport autoplay, uses the latest entry in each batch for its
 single observed drawing. An earlier visible entry must not retain the interval when
