@@ -25,7 +25,7 @@ function describePosition(point: LoomPoint) {
 }
 
 export function GravityLoom() {
-  const canvas = useRef<HTMLCanvasElement>(null);
+  const canvasHost = useRef<HTMLDivElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const renderer = useRef<ReturnType<typeof createLoomRenderer>>(undefined);
   const liveAttractors = useRef<readonly LoomPoint[]>(defaultAttractors);
@@ -74,8 +74,10 @@ export function GravityLoom() {
     else releaseGesture();
   }, [playing, reduced, inView, visible, releaseGesture]);
   useEffect(() => {
-    if (!canvas.current) return;
-    renderer.current = createLoomRenderer(canvas.current);
+    if (!canvasHost.current) return;
+    renderer.current = createLoomRenderer(canvasHost.current, () =>
+      setAvailable(false),
+    );
     setAvailable(Boolean(renderer.current));
     return () => {
       renderer.current?.dispose();
@@ -280,7 +282,12 @@ export function GravityLoom() {
         <span className="loom-stage-label" aria-hidden="true">
           JSR / THREADS OF LIGHT
         </span>
-        <canvas ref={canvas} aria-hidden="true" hidden={!available} />
+        <div
+          ref={canvasHost}
+          className="loom-canvas-host"
+          aria-hidden="true"
+          hidden={!available}
+        />
         {!available && (
           <svg
             viewBox={`0 0 ${fallbackViewport.width} ${fallbackViewport.height}`}

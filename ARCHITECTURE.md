@@ -195,6 +195,21 @@ as observers/listeners. Explicit controls and animation clocks are not debounced
 Engine still owns palette/guide invalidation and creates a new raster only when
 backing dimensions change; artwork-loading policy remains in its feature.
 
+Gravity Loom retains its simulation and a stable, empty React-owned drawing host
+across environmental changes. Its feature-local `paint-surface.ts` owns the visible
+canvas children of that host, renewing the context only when the atomically cached
+thread colors/opacity mode change. Canvas attributes persist, but pixels/context
+state are not copied. The new child is connected before drawing so WebKit resolves
+numeric label fonts; the previous child is removed and its backing dimensions zeroed
+after that synchronous paint. One canvas is retained, with transient overlap only at
+palette boundaries. Animation draws directly, without a second raster or image copy.
+`observeCanvasEnvironment` observes the stable host and coalesces the same size/theme/
+DPR notifications used by `observeCanvas`; stage focus and pointer capture stay on
+React-owned nodes. Explicit model/control revisions skip unchanged paints without
+command hashing or per-frame canvas creation. Allocation denial stops playback,
+releases observation/storage, and enables the existing SVG fallback. Trail bounds,
+particle counts, resolution caps, and playback intent are unchanged.
+
 The canvas-invalidation browser test retains exact pixel equality after restoring
 the original viewport and theme; it has no image-difference tolerance. A failed
 restoration attaches the original and restored canvas PNGs plus backing/logical

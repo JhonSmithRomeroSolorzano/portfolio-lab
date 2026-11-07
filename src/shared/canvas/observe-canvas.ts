@@ -5,6 +5,33 @@ export function observeCanvas(
   redraw: (width: number, height: number) => void,
   maxRatio = 2,
 ) {
+  return observeCanvasEnvironment(
+    canvas,
+    (width, height, ratio, resized) => {
+      if (resized) {
+        const backingWidth = Math.round(width * ratio),
+          backingHeight = Math.round(height * ratio);
+        if (canvas.width !== backingWidth) canvas.width = backingWidth;
+        if (canvas.height !== backingHeight) canvas.height = backingHeight;
+        ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      }
+      redraw(width, height);
+    },
+    maxRatio,
+  );
+}
+
+/** A stable host may own observation while its renderer renews canvas children. */
+export function observeCanvasEnvironment(
+  target: HTMLElement,
+  redraw: (
+    width: number,
+    height: number,
+    ratio: number,
+    resized: boolean,
+  ) => void,
+  maxRatio = 2,
+) {
   let width = 0,
     height = 0,
     ratio = 0,
@@ -14,7 +41,7 @@ export function observeCanvas(
   function refresh() {
     frame = 0;
     if (disposed) return;
-    const box = canvas.getBoundingClientRect(),
+    const box = target.getBoundingClientRect(),
       nextWidth = Math.max(1, box.width),
       nextHeight = Math.max(1, box.height),
       nextRatio = Math.min(window.devicePixelRatio || 1, maxRatio),
@@ -32,14 +59,7 @@ export function observeCanvas(
     height = nextHeight;
     ratio = nextRatio;
     theme = nextTheme;
-    if (resized) {
-      const backingWidth = Math.round(width * ratio),
-        backingHeight = Math.round(height * ratio);
-      if (canvas.width !== backingWidth) canvas.width = backingWidth;
-      if (canvas.height !== backingHeight) canvas.height = backingHeight;
-      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-    }
-    redraw(width, height);
+    redraw(width, height, ratio, resized);
   }
   function schedule() {
     if (!disposed && !frame) frame = requestAnimationFrame(refresh);
@@ -49,7 +69,7 @@ export function observeCanvas(
       ? undefined
       : new ResizeObserver(schedule);
   const appearance = new MutationObserver(schedule);
-  size?.observe(canvas);
+  size?.observe(target);
   appearance.observe(document.documentElement, {
     attributes: true,
     attributeFilter: ["data-theme"],

@@ -81,7 +81,12 @@
   height: 100%;
   color: var(--accent);
 }
-.loom-stage canvas[hidden] {
+.loom-canvas-host {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.loom-canvas-host[hidden] {
   display: none;
 }
 .loom-stage-label,
