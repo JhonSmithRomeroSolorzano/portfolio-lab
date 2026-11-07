@@ -106,7 +106,7 @@ All labs remain visible in one scrolling page, so redundant Previous/Next cards 
 
 The seven pieces download independently as they approach the viewport or when followed directly. Failed downloads offer reload recovery; runtime render/effect errors are isolated to the affected experience and offer a local retry. Both keep the résumé usable. Their styles load with the page. Native dynamic imports avoid a WebKit recovery issue triggered by module preloading shared optional dependencies. `#lab` reaches the collection; old `#signal-lab` anchors also reach it. Old dashboard query parameters no longer configure the public experiences.
 
-Direct experience links retain their landing while nearby content finishes loading. Wheel, touch, pointer, and keyboard input release that adjustment; browsing away never pulls the visitor back to a pending experience.
+Direct experience links retain their landing while nearby content finishes loading. Wheel, touch, pointer movement or presses, and keyboard input release that adjustment; hovering a control or browsing away never pulls the visitor back to a pending experience.
 
 Jet Engine's **Reverse thrust** control deploys a simplified cold-stream reverser:
 blue bypass air turns forward through open doors while the fan keeps its normal
