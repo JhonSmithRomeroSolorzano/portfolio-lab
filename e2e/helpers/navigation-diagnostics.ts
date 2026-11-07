@@ -19,22 +19,37 @@ export async function installNavigationDiagnostics(
     | "focus-allow"
     | "focus-prevent"
     | "reveal-allow"
-    | "reveal-prevent" = "on",
+    | "reveal-prevent"
+    | "reveal-opacity" = "on",
 ) {
   await page.evaluate((mode) => {
     // Control for the extra page-evaluation task without installing a probe.
     if (mode === "barrier") return;
-    if (mode === "reveal-allow" || mode === "reveal-prevent") {
+    if (
+      mode === "reveal-allow" ||
+      mode === "reveal-prevent" ||
+      mode === "reveal-opacity"
+    ) {
       const native = Element.prototype.animate;
       Element.prototype.animate = function (
         this: Element,
         keyframes: Keyframe[] | PropertyIndexedKeyframes | null,
         options?: number | KeyframeAnimationOptions,
       ) {
-        if (mode === "reveal-prevent" && this.hasAttribute("data-reveal"))
+        const entrance = this.hasAttribute("data-reveal");
+        if (mode === "reveal-prevent" && entrance)
           return Reflect.apply(native, this, [
             [{ opacity: 1, transform: "none" }],
             { duration: 0 },
+          ]);
+        if (mode === "reveal-opacity" && entrance && Array.isArray(keyframes))
+          return Reflect.apply(native, this, [
+            keyframes.map((frame) => {
+              const next = { ...frame };
+              delete next.transform;
+              return next;
+            }),
+            options,
           ]);
         return Reflect.apply(native, this, [keyframes, options]);
       };

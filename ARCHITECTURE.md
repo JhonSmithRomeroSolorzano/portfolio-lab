@@ -236,7 +236,9 @@ allow/prevent controls test the dock link's native primary-mousedown focus witho
 cancelling the anchor click. These controls are test-only hypotheses, not a
 production navigation policy. Reveal allow/prevent controls delegate `animate`
 normally or settle only `[data-reveal]` entrances immediately, to isolate their
-effect on native scrolling without changing app source. Traced cases install bounded diagnostics only after
+effect on native scrolling without changing app source. Repeated matched samples
+also test opacity-only entrances with the original timing and other keyframe
+fields, isolating translation from animation duration. Traced cases install bounded diagnostics only after
 startup assertions pass. Failed traced journeys attach event history and final geometry,
 focus, and scroll policy, including scripted focus/scroll calls and main/header
 resizes. These test-only wrappers delegate to the original browser methods; they
