@@ -1,6 +1,11 @@
 import { test, expect } from "@playwright/test";
 import { openMainNavigation } from "./helpers/main-navigation";
 import { professionalProfile } from "../src/features/portfolio/data/profile";
+import { attachNavigationDiagnostics } from "./helpers/navigation-diagnostics";
+
+test.afterEach(async ({ page }, info) => {
+  await attachNavigationDiagnostics(page, info);
+});
 
 test.beforeEach(async ({ page }) => {
   await page.route("https://fonts.googleapis.com/**", (route) => route.abort());

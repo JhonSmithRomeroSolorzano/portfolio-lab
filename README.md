@@ -68,7 +68,7 @@ The Matrix interface follows one angular surface language in both themes and at 
 
 When JavaScript starts, the mobile header paints in its compact state before hydration rather than briefly showing all links and shifting the page upward. Without JavaScript, links stay expanded; a failed entry-module download or uncaught startup script exception before the window finishes loading restores that native fallback. Errors do not reopen an already hydrated menu.
 
-Section entrances use progressive enhancement: content stays visible without animation support. Reduced-motion preferences disable entrances and smooth scrolling; keyboard focus cancels an active entrance.
+Section entrances use progressive enhancement: content stays visible without animation support. They fade without translating content, keeping native anchor geometry still during navigation. Reduced-motion preferences disable entrances and smooth scrolling; keyboard focus cancels an active entrance.
 
 **Motion settings** in the navigation dock offers Follow device or Reduce animation. The site can reduce motion, never override a device's reduced-motion preference. The choice applies to the Matrix backdrop, stack map, navigation/reveal effects, and all labs, and is restored before the first paint. It persists and synchronizes between tabs on the same site; blocked storage leaves it usable for the current visit. Switching back to Follow device does not undo a lab's Pause or Reset. The separate light/dark toggle is unchanged. On narrow phones both settings controls use labeled, keyboard-accessible icons; the motion disclosure closes with Escape or when keyboard focus moves outside it.
 

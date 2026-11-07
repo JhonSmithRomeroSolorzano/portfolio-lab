@@ -215,6 +215,35 @@ At mobile widths, the hydrated dock is sticky with a 12px top inset and a matchi
 
 Keyboard-visible focus anywhere in the dock—not just its destination links—switches document scrolling to immediate mode. This includes Menu, appearance, and motion controls, so focusing a sticky control cannot leave a smooth focus-scroll competing with the next native anchor navigation. Pointer journeys retain smooth scrolling unless reduced motion is enabled. Browser regressions check the resolved scroll policy for each dock control before navigating from a live lab to Experience.
 
+Main-navigation activation hands focus to the destination with `preventScroll`
+before the browser's anchor default action, for desktop as well as the open
+mobile menu. Pointer activation marks that focused section until blur: WebKit
+can match `:focus-visible` even for this programmatic pointer handoff, so the
+section's keyboard-only immediate-scroll selector excludes that marker. Keyboard
+activation clears the marker, and blur removes it through a deduplicated one-shot
+listener. The focusable legacy `#about` descendant participates in the same
+keyboard-visible immediate-scroll policy as section destinations, including when
+Back restores its focus before another keyboard journey. Reduced motion still
+overrides smooth scrolling. Native anchors retain
+scrolling, query strings, and history; no click cancellation, scripted scroll,
+arrival timer, or browser-specific routing branch is added. Browser tests inspect
+focus and scroll policy before the native default action, actual collection
+arrival, marker cleanup, keyboard focus rings, and Back navigation.
+
+Section entrances fade from 35% opacity without translating content. Their 560ms
+duration, bounded stagger, easing, focus cancellation, and reduced-motion policy
+are unchanged. Keeping their geometry still avoids the interrupted native smooth
+journeys reproduced with translated entrances in Linux WebKit. Unit coverage
+asserts the exact keyframes and timing; browser journeys exercise actual arrival,
+history, and keyboard follow-up without animation overrides or in-flight logging.
+
+Failed navigation tests attach final geometry, focus, URL hash, and scroll policy
+only after the original assertion fails. A missing/closed page or unavailable
+snapshot must not replace that original failure. Diagnostic probes that wrapped
+browser methods or measured during travel affected reproduction; their experiments
+remain in Git history rather than the maintained regression suite. Viewport
+assertions, deadlines, and retries are unchanged.
+
 The stack tour, like viewport autoplay, uses the latest entry in each batch for its
 single observed drawing. An earlier visible entry must not retain the interval when
 the final entry is offscreen. The lifecycle browser regression injects that ordering
