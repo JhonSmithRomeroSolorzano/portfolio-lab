@@ -17,11 +17,29 @@ export async function installNavigationDiagnostics(
     | "events"
     | "on"
     | "focus-allow"
-    | "focus-prevent" = "on",
+    | "focus-prevent"
+    | "reveal-allow"
+    | "reveal-prevent" = "on",
 ) {
   await page.evaluate((mode) => {
     // Control for the extra page-evaluation task without installing a probe.
     if (mode === "barrier") return;
+    if (mode === "reveal-allow" || mode === "reveal-prevent") {
+      const native = Element.prototype.animate;
+      Element.prototype.animate = function (
+        this: Element,
+        keyframes: Keyframe[] | PropertyIndexedKeyframes | null,
+        options?: number | KeyframeAnimationOptions,
+      ) {
+        if (mode === "reveal-prevent" && this.hasAttribute("data-reveal"))
+          return Reflect.apply(native, this, [
+            [{ opacity: 1, transform: "none" }],
+            { duration: 0 },
+          ]);
+        return Reflect.apply(native, this, [keyframes, options]);
+      };
+      return;
+    }
     if (mode === "focus-allow" || mode === "focus-prevent") {
       document
         .getElementById("main-navigation")
