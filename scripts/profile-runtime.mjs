@@ -99,7 +99,7 @@ await runBrowserCapture({
               const playing = async (value) =>
                 page.waitForFunction(
                   ({ selector, value }) =>
-                    document
+                    globalThis.document
                       .querySelector(selector)
                       ?.getAttribute("data-playing") === String(value),
                   { selector: exhibit.state, value },
@@ -112,8 +112,8 @@ await runBrowserCapture({
                 await stage.scrollIntoViewIfNeeded();
                 await page.waitForFunction(
                   () =>
-                    document.querySelector(".engine-canvas")?.dataset.spool ===
-                    "100.00",
+                    globalThis.document.querySelector(".engine-canvas")?.dataset
+                      .spool === "100.00",
                 );
               }
               await page.waitForTimeout(500);
@@ -144,7 +144,7 @@ await runBrowserCapture({
                     1000,
                   elapsedMs: sample.elapsed,
                   visibility: await page.evaluate(
-                    () => document.visibilityState,
+                    () => globalThis.document.visibilityState,
                   ),
                 };
                 record.states.push(result);
@@ -160,7 +160,7 @@ await runBrowserCapture({
                 await stage.scrollIntoViewIfNeeded();
                 await page.waitForFunction(
                   () =>
-                    document.querySelector(".engine-canvas")?.dataset
+                    globalThis.document.querySelector(".engine-canvas")?.dataset
                       .reverser === "1.000",
                 );
                 await measure("active-reverse");
@@ -170,7 +170,7 @@ await runBrowserCapture({
                 await stage.scrollIntoViewIfNeeded();
                 await page.waitForFunction(
                   () =>
-                    document.querySelector(".engine-canvas")?.dataset
+                    globalThis.document.querySelector(".engine-canvas")?.dataset
                       .reverser === "0.000",
                 );
               }
@@ -236,7 +236,7 @@ await runBrowserCapture({
                 await other.bringToFront();
                 await other.waitForTimeout(250);
                 const visibility = await page.evaluate(
-                  () => document.visibilityState,
+                  () => globalThis.document.visibilityState,
                 );
                 if (visibility === "hidden") {
                   await playing(false);

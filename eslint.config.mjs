@@ -17,6 +17,27 @@ export default defineConfig(
     ],
   },
   {
+    files: ["**/*.{js,mjs,cjs}"],
+    extends: [js.configs.recommended],
+  },
+  {
+    files: ["eslint.config.mjs", "scripts/**/*.{js,mjs,cjs}"],
+    languageOptions: {
+      // Node APIs used by our tooling, not globals for application/domain code.
+      globals: {
+        AbortController: "readonly",
+        AbortSignal: "readonly",
+        URL: "readonly",
+        clearTimeout: "readonly",
+        console: "readonly",
+        fetch: "readonly",
+        performance: "readonly",
+        process: "readonly",
+        setTimeout: "readonly",
+      },
+    },
+  },
+  {
     files: ["**/*.{ts,tsx}"],
     extends: [js.configs.recommended, tseslint.configs.recommended],
   },

@@ -6,12 +6,17 @@ import {
   type LoomPoint,
 } from "../../../domain/playground/gravity-loom";
 import { loomViewport, projectLoomPoint } from "./viewport";
-import { observeCanvas } from "../../../shared/canvas/observe-canvas";
+import { observeCanvasEnvironment } from "../../../shared/canvas/observe-canvas";
+import { createLoomPaintSurface } from "./paint-surface";
 
 /** Bounded histories retain the woven trails without persistent canvas overdraw. */
-export function createLoomRenderer(canvas: HTMLCanvasElement) {
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return undefined;
+export function createLoomRenderer(
+  host: HTMLElement,
+  onUnavailable: () => void = () => {},
+) {
+  const candidateSurface = createLoomPaintSurface(host);
+  if (!candidateSurface) return undefined;
+  const surface = candidateSurface;
   const count = window.matchMedia("(max-width: 600px)").matches ? 48 : 96;
   let particles = seedLoom(count);
   let trails: LoomPoint[][] = [];
@@ -28,13 +33,36 @@ export function createLoomRenderer(canvas: HTMLCanvasElement) {
   let boost: number | undefined;
   let boostRemaining = 0;
   let width = 1;
+  let ratio = 1;
   let height = 1;
   let colors: string[] = [];
+  let dark = false;
+  let paintPalette = "";
+  let revision = 0;
+  let preview = false;
+  let unavailable = false;
+  let stopObserving = () => {};
+
+  function samePoints(next: readonly LoomPoint[]) {
+    return (
+      next.length === attractors.length &&
+      next.every((p, i) => p.x === attractors[i].x && p.y === attractors[i].y)
+    );
+  }
 
   function draw() {
+    if (unavailable) return;
+    const ctx = surface.prepare(paintPalette, revision, width, height, ratio);
+    if (ctx === null) {
+      unavailable = true;
+      pause();
+      stopObserving();
+      surface.dispose();
+      onUnavailable();
+      return;
+    }
     if (!ctx) return;
     ctx.clearRect(0, 0, width, height);
-    const dark = document.documentElement.dataset.theme === "dark";
     const viewport = loomViewport(width, height);
     trails.forEach((trail, i) => {
       const trace = () => {
@@ -88,6 +116,7 @@ export function createLoomRenderer(canvas: HTMLCanvasElement) {
       ctx.font = "11px monospace";
       ctx.fillText(String(i + 1), x + 14, y - 12);
     });
+    surface.finish(revision);
   }
   function tick(now: number) {
     if (previous) accumulator += Math.min((now - previous) / 1000, 0.05);
@@ -106,9 +135,11 @@ export function createLoomRenderer(canvas: HTMLCanvasElement) {
         if (trails[i].length > 90) trails[i].shift();
       });
       accumulator -= 1 / 60;
+      preview = false;
+      revision++;
     }
     draw();
-    frame = requestAnimationFrame(tick);
+    if (playing) frame = requestAnimationFrame(tick);
   }
   function pause() {
     cancelAnimationFrame(frame);
@@ -121,19 +152,30 @@ export function createLoomRenderer(canvas: HTMLCanvasElement) {
     particles = scene.particles;
     trails = scene.trails;
     ready = true;
+    preview = true;
+    revision++;
     held = undefined;
     boost = undefined;
     boostRemaining = 0;
   }
-  const stopObserving = observeCanvas(canvas, ctx, (nextWidth, nextHeight) => {
-    width = nextWidth;
-    height = nextHeight;
-    const css = getComputedStyle(canvas);
-    colors = ["--loom-thread-1", "--loom-thread-2", "--loom-thread-3"].map(
-      (name) => css.getPropertyValue(name).trim(),
-    );
-    draw();
-  });
+  stopObserving = observeCanvasEnvironment(
+    host,
+    (nextWidth, nextHeight, nextRatio) => {
+      ratio = nextRatio;
+      width = nextWidth;
+      height = nextHeight;
+      const css = getComputedStyle(host);
+      colors = ["--loom-thread-1", "--loom-thread-2", "--loom-thread-3"].map(
+        (name) => css.getPropertyValue(name).trim(),
+      );
+      // Cache opacity mode and colors together; control redraws must not combine
+      // a new root theme with the previous observer-delivered palette.
+      dark = document.documentElement.dataset.theme === "dark";
+      paintPalette = `${dark}:${colors.join(",")}`;
+      revision++;
+      draw();
+    },
+  );
   return {
     configure(
       next: readonly LoomPoint[],
@@ -143,31 +185,49 @@ export function createLoomRenderer(canvas: HTMLCanvasElement) {
     ) {
       // Flow and force affect future steps, not the already woven trails.
       // Preserve paused pixels instead of rasterizing the same paths again.
-      const redraw = !ready || staticMode || next !== attractors;
+      const moved = !samePoints(next);
+      const changed = moved || flow !== mode || strength !== force;
       attractors = next;
       flow = mode;
       strength = force;
-      if (!ready || staticMode) resetScene();
-      if (redraw) draw();
+      if (!ready || (staticMode && (!preview || changed))) resetScene();
+      else {
+        if (changed) preview = false;
+        if (moved) revision++;
+      }
+      draw();
     },
     move(next: readonly LoomPoint[], staticMode: boolean) {
+      const moved = !samePoints(next);
       attractors = next;
-      if (staticMode) resetScene();
+      if (staticMode && (moved || !preview)) resetScene();
+      else if (moved) {
+        preview = false;
+        revision++;
+      }
       draw();
     },
     select(index: number) {
+      if (selected === index) return;
       selected = index;
+      revision++;
       draw();
     },
     grab(index: number) {
+      if (held === index) return;
       held = index;
+      revision++;
       draw();
     },
     release() {
+      const changed = held !== undefined;
       boost = held;
       boostRemaining = 0.65;
       held = undefined;
-      draw();
+      if (changed) {
+        revision++;
+        draw();
+      }
     },
     nudge(index: number) {
       boost = index;
@@ -175,22 +235,37 @@ export function createLoomRenderer(canvas: HTMLCanvasElement) {
     },
     reset(next: readonly LoomPoint[], mode: LoomFlow, force: number) {
       pause();
+      const changed =
+        !ready ||
+        !preview ||
+        !samePoints(next) ||
+        flow !== mode ||
+        strength !== force;
+      const markerChanged = selected !== 0 || held !== undefined;
       attractors = next;
       flow = mode;
       strength = force;
       selected = 0;
-      resetScene();
+      if (changed) resetScene();
+      else {
+        held = undefined;
+        boost = undefined;
+        boostRemaining = 0;
+      }
+      if (markerChanged) revision++;
       draw();
     },
     play() {
-      if (playing) return;
+      if (playing || unavailable) return;
       playing = true;
       frame = requestAnimationFrame(tick);
     },
     pause,
     dispose() {
       pause();
+      unavailable = true;
       stopObserving();
+      surface.dispose();
     },
   };
 }

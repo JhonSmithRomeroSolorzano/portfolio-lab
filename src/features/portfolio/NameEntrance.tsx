@@ -32,6 +32,7 @@ export function NameEntrance() {
   useEffect(() => {
     const heading = title.current;
     if (!heading) return;
+    const forcedColors = window.matchMedia("(forced-colors: active)");
     let disposed = false;
     let ready = false;
     let built = false;
@@ -55,6 +56,14 @@ export function NameEntrance() {
       width = box.width;
       height = box.height;
       unregister?.();
+      unregister = undefined;
+      stencil = undefined;
+      if (forcedColors.matches) {
+        built = true;
+        heading!.dataset.nameEntrance = "complete";
+        heading!.dataset.namePlaying = "false";
+        return;
+      }
       stencil = createNameStencil(heading!, !built, () => {
         built = true;
       });
@@ -79,6 +88,7 @@ export function NameEntrance() {
     window.addEventListener("keydown", settle);
     window.addEventListener("pointerdown", settle);
     window.addEventListener("hashchange", settle);
+    forcedColors.addEventListener("change", schedule);
     if (
       motionQuery().matches ||
       document.hidden ||
@@ -102,6 +112,7 @@ export function NameEntrance() {
       window.removeEventListener("keydown", settle);
       window.removeEventListener("pointerdown", settle);
       window.removeEventListener("hashchange", settle);
+      forcedColors.removeEventListener("change", schedule);
     };
   }, []);
 

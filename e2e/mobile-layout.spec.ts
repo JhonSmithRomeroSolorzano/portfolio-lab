@@ -25,6 +25,7 @@ test("mobile hydration does not collapse an initially expanded menu or move cont
       .evaluate((node) => node.getBoundingClientRect().top);
     release();
     await expect(header).toHaveAttribute("data-menu-ready", "true");
+    await expect(header).toHaveCSS("position", "sticky");
     expect(
       await page
         .locator(".portfolio-content")
@@ -49,6 +50,37 @@ test("failed mobile entry script restores native section links", async ({
     .getByRole("link", { name: "Contact", exact: true })
     .click();
   await expect(page.locator("#contact")).toBeInViewport();
+});
+
+test("a mobile entry startup exception restores native keyboard navigation", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.route("**/assets/index-*.js", (route) =>
+    route.fulfill({
+      contentType: "application/javascript",
+      body: 'throw new Error("Entry startup failed");',
+    }),
+  );
+  await page.goto("/?review=startup");
+  await expect(page.locator(".identity-rail")).toHaveAttribute(
+    "data-menu-ready",
+    "false",
+  );
+  await expect(page.locator("html")).not.toHaveAttribute("data-navigation");
+  await expect(
+    page.getByRole("button", { name: "Menu", exact: true }),
+  ).toBeHidden();
+  const nav = page.getByRole("navigation", { name: "Main navigation" });
+  await expect(nav).toBeVisible();
+  await expect(nav.getByRole("link")).toHaveCount(4);
+  await nav.getByRole("link", { name: "Contact", exact: true }).press("Enter");
+  await expect(page).toHaveURL(/review=startup#contact$/);
+  await expect(page.locator("#contact")).toBeInViewport();
+  expect(errors).toEqual(["Entry startup failed"]);
 });
 
 for (const theme of ["light", "dark"] as const) {
@@ -105,7 +137,8 @@ for (const theme of ["light", "dark"] as const) {
     await page.getByRole("button", { name: /Switch to .* theme/ }).focus();
     await expect(nav).not.toBeVisible();
     await openMainNavigation(page);
-    await page.locator("h1").click();
+    // Tap the page gutter, outside the persistent dock and its dropdown.
+    await page.mouse.click(8, 800);
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
   });
 
@@ -179,6 +212,10 @@ test("mobile section links remain available without JavaScript", async ({
   });
   const page = await context.newPage();
   await page.goto("/");
+  await expect(page.locator(".identity-rail")).toHaveCSS(
+    "position",
+    "relative",
+  );
   await expect(
     page.getByRole("button", { name: "Menu", exact: true }),
   ).not.toBeVisible();

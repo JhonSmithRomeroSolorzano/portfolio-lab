@@ -1,6 +1,11 @@
 import { test, expect } from "@playwright/test";
 import { openMainNavigation } from "./helpers/main-navigation";
 import { professionalProfile } from "../src/features/portfolio/data/profile";
+import { attachNavigationDiagnostics } from "./helpers/navigation-diagnostics";
+
+test.afterEach(async ({ page }, info) => {
+  await attachNavigationDiagnostics(page, info);
+});
 
 test.beforeEach(async ({ page }) => {
   await page.route("https://fonts.googleapis.com/**", (route) => route.abort());
@@ -111,9 +116,9 @@ test("legacy About links still select Overview without losing query state", asyn
     .getByRole("navigation", { name: "Main navigation" })
     .getByRole("link", { name: "Labs & play" })
     .click();
-  await expect(
-    page.getByRole("slider", { name: "Engine speed", exact: true }),
-  ).toBeVisible();
+  await expect(page).toHaveURL("/?traffic=250#lab");
+  await expect(page.locator("#lab")).toBeFocused();
+  await expect(page.locator("#collection")).toBeInViewport();
 });
 
 test("experience and contact precede the lab in document and menu order", async ({

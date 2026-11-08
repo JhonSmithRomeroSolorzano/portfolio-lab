@@ -110,7 +110,15 @@ export function DeferredExperiment({
     const interrupt = () => {
       anchorUninterrupted.current = false;
     };
-    const inputs = ["wheel", "touchstart", "pointerdown", "keydown"] as const;
+    // Hover is exploration too: a late neighbor must not pull a control out
+    // from under the pointer while native anchor focus remains on its section.
+    const inputs = [
+      "wheel",
+      "touchstart",
+      "pointerdown",
+      "pointermove",
+      "keydown",
+    ] as const;
     inputs.forEach((type) =>
       window.addEventListener(type, interrupt, { passive: true }),
     );

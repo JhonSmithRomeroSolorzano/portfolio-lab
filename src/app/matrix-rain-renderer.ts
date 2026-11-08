@@ -311,11 +311,14 @@ export function createMatrixRain(
       bloomInk.globalCompositeOperation = "source-over";
       bloomInk.clearRect(0, 0, name.width, name.height);
       bloomInk.shadowColor = rainHead;
-      bloomInk.shadowBlur = 3;
+      bloomInk.shadowBlur = 6;
       bloomInk.drawImage(nameLight, 0, 0, name.width, name.height);
       bloomInk.shadowBlur = 0;
       bloomInk.globalCompositeOperation = "destination-in";
       bloomInk.drawImage(name.mask, 0, 0);
+      ctx!.drawImage(nameBloom, nameLeft, nameTop, name.width, name.height);
+      // Reinforce the same clipped light, not a solid text layer or more glyphs.
+      // One additional composite closes weak strokes without another blur pass.
       ctx!.drawImage(nameBloom, nameLeft, nameTop, name.width, name.height);
     }
     nameLightingDirty = false;

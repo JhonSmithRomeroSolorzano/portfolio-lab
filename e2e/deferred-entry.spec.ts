@@ -57,3 +57,78 @@ for (const browseAway of [false, true]) {
     ).toBeInViewport();
   });
 }
+
+for (const theme of ["light", "dark"] as const)
+  for (const reducedMotion of ["no-preference", "reduce"] as const)
+    test(`a late neighboring lab preserves pointer hover in ${theme}, ${reducedMotion}`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 1280, height: 720 });
+      await page.emulateMedia({ colorScheme: theme, reducedMotion });
+      let release!: () => void;
+      const pending = new Promise<void>((resolve) => {
+        release = resolve;
+      });
+      let requested = false;
+      await page.route("**/MotionStudio-*.js", async (route) => {
+        requested = true;
+        await pending;
+        await route.continue();
+      });
+      try {
+        await page.goto("/#signal-sculpture");
+        const button = page
+          .locator('.sculpture-forms button[aria-pressed="false"]')
+          .first();
+        await expect(button).toBeVisible();
+        const colors = await button.evaluate((node) => {
+          const probe = document.createElement("span");
+          node.append(probe);
+          const resolve = (token: string) => {
+            probe.style.color = `var(${token})`;
+            return getComputedStyle(probe).color;
+          };
+          const colors = {
+            hover: resolve("--control-hover"),
+            accent: resolve("--accent"),
+          };
+          probe.remove();
+          return colors;
+        });
+        await button.hover();
+        await expect(button).toHaveCSS("background-color", colors.hover);
+        await expect(button).toHaveCSS("border-top-color", colors.accent);
+        await expect.poll(() => requested).toBe(true);
+        const before = await page.evaluate(() => ({
+          y: scrollY,
+          height: document.querySelector("main")!.getBoundingClientRect()
+            .height,
+        }));
+        release();
+        await expect(page.locator(".motion-studio")).toBeVisible();
+        await expect
+          .poll(() =>
+            page
+              .locator("main")
+              .evaluate((node) => node.getBoundingClientRect().height),
+          )
+          .not.toBe(before.height);
+        // Cross the resize-observer and its scheduled alignment frame before
+        // checking hover; an immediate CSS assertion can miss the later jump.
+        await page.evaluate(
+          () =>
+            new Promise<void>((resolve) =>
+              requestAnimationFrame(() =>
+                requestAnimationFrame(() => resolve()),
+              ),
+            ),
+        );
+        await expect(button).toHaveCSS("border-top-color", colors.accent);
+        await expect(button).toHaveCSS("background-color", colors.hover);
+        expect(await page.evaluate(() => scrollY)).toBe(before.y);
+        await expect(page.locator("#signal-sculpture")).toBeFocused();
+        await expect(page).toHaveURL("/#signal-sculpture");
+      } finally {
+        release();
+      }
+    });

@@ -10,11 +10,14 @@ function fixture(reduced = false) {
   let calls = 0;
   let cancelled = 0;
   let focused = false;
+  let animation:
+    { keyframes: Keyframe[]; options: KeyframeAnimationOptions } | undefined;
   const target = {
     dataset: { reveal: "80" },
     matches: () => focused,
     contains: (node: unknown) => node === target,
-    animate: () => {
+    animate: (keyframes: Keyframe[], options: KeyframeAnimationOptions) => {
+      animation = { keyframes, options };
       calls++;
       return {
         cancel: () => {
@@ -72,6 +75,7 @@ function fixture(reduced = false) {
       focus({ target });
     },
     cleanup,
+    animation: () => animation,
     stats: () => ({ calls, cancelled, observed: observed.size }),
   };
 }
@@ -85,6 +89,21 @@ test("reveals enter once, ignore offscreen reports, and release their observer",
   assert.deepEqual(view.stats(), { calls: 1, cancelled: 0, observed: 0 });
   view.cleanup();
   assert.equal(view.stats().cancelled, 1);
+});
+
+test("reveals retain fade timing without translating native anchor geometry", () => {
+  const view = fixture();
+  view.enter(true);
+  assert.deepEqual(view.animation(), {
+    keyframes: [{ opacity: 0.35 }, { opacity: 1 }],
+    options: {
+      duration: 560,
+      delay: 80,
+      easing: "cubic-bezier(.2,.7,.2,1)",
+      fill: "backwards",
+    },
+  });
+  view.cleanup();
 });
 
 test("reduced motion prevents entrances and cancels animations when changed live", () => {
