@@ -184,7 +184,7 @@ Each game has an independent download placeholder and runtime error boundary. An
 
 `ExperienceNavigation` provides one native collection-return link per lab rather than Previous/Next cards: all experiences remain visible in the same document. The link lives outside deferred downloads/error boundaries, so wayfinding works during failures and without JavaScript. Visible link text supplies its accessible name without an ARIA override. The chooser's `#collection` target accepts focus without entering the Tab order; query/history handling and direct-entry alignment remain native/existing app responsibilities. No routing dependency or extra catalog is introduced.
 
-Intersection observation enhances loading/playback but is not required. Reduced motion, page visibility, and (where appropriate) navigation/offscreen changes interrupt playback. Effects release listeners, observers, and animation frames on cleanup.
+Intersection observation enhances loading/playback but is not required. Collection anchors (`#lab`, `#collection`, and legacy `#signal-lab`) do not request an individual experience: Jet Engine loads when its placeholder approaches within the existing 300px viewport margin, on explicit load, or through `#jet-engine`/legacy `#pin-lock` entry. Without IntersectionObserver, the existing eager fallback keeps every experience usable. Reduced motion, page visibility, and (where appropriate) navigation/offscreen changes interrupt playback. Effects release listeners, observers, and animation frames on cleanup.
 
 The three canvas experiences share `shared/canvas/observe-canvas.ts` for environmental
 invalidation only. ResizeObserver, window resize, and theme notifications coalesce
@@ -195,13 +195,69 @@ as observers/listeners. Explicit controls and animation clocks are not debounced
 Engine still owns palette/guide invalidation and creates a new raster only when
 backing dimensions change; artwork-loading policy remains in its feature.
 
-For an uninterrupted, focused direct entry, `DeferredExperiment` observes the containing main element's size and coalesces landing alignment into animation frames. This covers layout changes from neighboring lazy imports and WebKit's deferred focus adjustment. Alignment checks the current hash, focus, and existing input-interruption flag before scrolling; its observer disconnects once that ownership is lost or the effect cleans up. Without resize observation, one deferred alignment still runs. It does not intercept normal scrolling or move focus.
+Gravity Loom retains its simulation and a stable, empty React-owned drawing host
+across environmental changes. Its feature-local `paint-surface.ts` owns the visible
+canvas children of that host, renewing the context only when the atomically cached
+thread colors/opacity mode change. Canvas attributes persist, but pixels/context
+state are not copied. The new child is connected before drawing so WebKit resolves
+numeric label fonts; the previous child is removed and its backing dimensions zeroed
+after that synchronous paint. One canvas is retained, with transient overlap only at
+palette boundaries. Animation draws directly, without a second raster or image copy.
+`observeCanvasEnvironment` observes the stable host and coalesces the same size/theme/
+DPR notifications used by `observeCanvas`; stage focus and pointer capture stay on
+React-owned nodes. Explicit model/control revisions skip unchanged paints without
+command hashing or per-frame canvas creation. Allocation denial stops playback,
+releases observation/storage, and enables the existing SVG fallback. Trail bounds,
+particle counts, resolution caps, and playback intent are unchanged.
+
+The canvas-invalidation browser test retains exact pixel equality after restoring
+the original viewport and theme; it has no image-difference tolerance. A failed
+restoration attaches the original and restored canvas PNGs plus backing/logical
+dimensions, last paint size, transform, pixel ratio, theme, and motion state to the
+existing CI report. These are test-only diagnostics, not an application readiness
+API or a claimed fix for intermittent WebKit raster differences. Diagnostic
+capture failures cannot replace the original assertion failure.
+
+For an uninterrupted, focused direct entry, `DeferredExperiment` observes the containing main element's size and coalesces landing alignment into animation frames. This covers layout changes from neighboring lazy imports and WebKit's deferred focus adjustment. Alignment checks the current hash, focus, and existing input-interruption flag before scrolling; its observer disconnects once that ownership is lost or the effect cleans up. Pointer movement, like wheel, touch, pointer press, and keyboard input, releases landing ownership: hovering a mounted control must not let a late neighboring import scroll it out from under the pointer while its section still has anchor focus. The same passive listener lifecycle handles every interruption. Controlled late-download browser coverage checks hover colors and unchanged scroll position across the resize/alignment boundary, alongside uninterrupted heading preservation. Without resize observation, one deferred alignment still runs. It does not intercept normal scrolling or move focus.
 
 The Connection puzzle's feature controller owns progress, visit-local Undo/hints, and reconciliation of validated browser saves. Storage/focus events refresh boards without changing the current selection; reads before writes guard against delayed notifications. The last observed save remains separate from unsaved play so quota failures do not reset the session. This is best-effort synchronization of localStorage snapshots, not an atomic transaction across simultaneous tabs; progress is never shared between hosting origins.
 
-CSS belongs to the relevant feature, with global tokens/base elements and app layout kept separate. The Matrix palette, translucent reading surfaces, and paired processing fill/text colors live in shared tokens. App owns `MatrixBackdrop` and its imperative canvas renderer: cached half-width glyphs change in place while independently phased bright fronts travel downward with fading tails. There is no corridor, human geometry, graphics library, or per-frame React work. The pure rain model owns deterministic lighting and boundary envelopes. Geometry is measured from the actual header, introduction, stack map, experience, contact, and collection; scroll/size changes coalesce into a frame, moderating interior brightness without erasing the rain, with narrow luminous edges. Column parameters, glyph identities/rates, and mask arrays are cached; drawing uses an atlas rather than per-frame text rasterization. The grid is capped at 160×110 cells, backing pixel ratio at 1.25, and draw cadence at 20Hz (not a promised device frame rate). The shared canvas observer handles resize/theme invalidation. Playback starts automatically after hydration; readiness, the effective reduced-motion source, and document visibility gate it. There is no manual rain-pause state or separate playback button; the existing site motion settings remain available. Cleanup releases every observer, listener and frame. Static SVG remains before hydration, without JavaScript, or when canvas is unavailable. The viewport-sized layer is fixed behind the entire page, ignores pointer input, and is hidden from assistive technology. The navigation is a horizontal dock, sticky on desktop and in normal flow on mobile; scroll padding accounts for the desktop dock. See [presentation](README.md#résumé-and-presentation) for the visual direction. Retired dashboard styles are outside the public bundle. Game styles remain eager, while JavaScript stays lazy. Native dynamic imports are used without Vite module preloading: preloading a shared optional dependency caused failed-download recovery to remain broken in WebKit. Browser tests cover both aborted downloads and HTTP 503, plus runtime render/effect failures.
+CSS belongs to the relevant feature, with global tokens/base elements and app layout kept separate. The Matrix palette, translucent reading surfaces, and paired processing fill/text colors live in shared tokens. App owns `MatrixBackdrop` and its imperative canvas renderer: cached half-width glyphs change in place while independently phased bright fronts travel downward with fading tails. There is no corridor, human geometry, graphics library, or per-frame React work. The pure rain model owns deterministic lighting and boundary envelopes. Geometry is measured from the actual header, introduction, stack map, experience, contact, and collection; scroll/size changes coalesce into a frame, moderating interior brightness without erasing the rain, with narrow luminous edges. Column parameters, glyph identities/rates, and mask arrays are cached; drawing uses an atlas rather than per-frame text rasterization. The grid is capped at 160×110 cells, backing pixel ratio at 1.25, and draw cadence at 20Hz (not a promised device frame rate). The shared canvas observer handles resize/theme invalidation. Playback starts automatically after hydration; readiness, the effective reduced-motion source, and document visibility gate it. There is no manual rain-pause state or separate playback button; the existing site motion settings remain available. Cleanup releases every observer, listener and frame. Static SVG remains before hydration, without JavaScript, or when canvas is unavailable. The viewport-sized layer is fixed behind the entire page, ignores pointer input, and is hidden from assistive technology. The navigation is a horizontal dock, sticky on desktop and on mobile after hydration; scroll padding accounts for the dock. See [presentation](README.md#résumé-and-presentation) for the visual direction. Retired dashboard styles are outside the public bundle. Game styles remain eager, while JavaScript stays lazy. Native dynamic imports are used without Vite module preloading: preloading a shared optional dependency caused failed-download recovery to remain broken in WebKit. Browser tests cover both aborted downloads and HTTP 503, plus runtime render/effect failures.
 
 Reading-region envelopes retain a nonzero 0.20–0.24 interior lighting weight; overlapping regions use the minimum weight rather than multiplying away the field. The exterior weight and luminous-edge falloff are unchanged. This adjusts the existing measured mask, not reading-surface opacity, glyph density, palette, animation cadence, or the name's separate reinforced illumination pass. The no-JavaScript/canvas-free static SVG is unchanged. Unit tests bound the interior reduction and preserve exterior/overlap behavior; browser tests verify that glyphs still change behind the summary while shared 70% surfaces and the completed name remain intact.
+
+At mobile widths, the hydrated dock is sticky with a 12px top inset and a matching 100px document scroll-padding allowance. The menu is an opaque absolutely positioned dropdown, capped to the small viewport height minus 100px (with a `vh` fallback), with internal scrolling and contained overscroll. Opening it does not resize the header or shift content; focus uses `preventScroll`, and reopening resets only the menu's internal scroll. The existing dismissal/listener lifecycle is unchanged. Unhydrated, no-JavaScript, and failed-startup links stay in normal document flow. No new scroll listener, React state, or second navigation is added. Browser tests cover deep-page reachability, unchanged reading position on open/dismiss, unobscured keyboard destinations, and dropdown scrolling at 200% text and short landscape sizes in both themes.
+
+Keyboard-visible focus anywhere in the dock—not just its destination links—switches document scrolling to immediate mode. This includes Menu, appearance, and motion controls, so focusing a sticky control cannot leave a smooth focus-scroll competing with the next native anchor navigation. Pointer journeys retain smooth scrolling unless reduced motion is enabled. Browser regressions check the resolved scroll policy for each dock control before navigating from a live lab to Experience.
+
+Main-navigation activation hands focus to the destination with `preventScroll`
+before the browser's anchor default action, for desktop as well as the open
+mobile menu. Pointer activation marks that focused section until blur: WebKit
+can match `:focus-visible` even for this programmatic pointer handoff, so the
+section's keyboard-only immediate-scroll selector excludes that marker. Keyboard
+activation clears the marker, and blur removes it through a deduplicated one-shot
+listener. The focusable legacy `#about` descendant participates in the same
+keyboard-visible immediate-scroll policy as section destinations, including when
+Back restores its focus before another keyboard journey. Reduced motion still
+overrides smooth scrolling. Native anchors retain
+scrolling, query strings, and history; no click cancellation, scripted scroll,
+arrival timer, or browser-specific routing branch is added. Browser tests inspect
+focus and scroll policy before the native default action, actual collection
+arrival, marker cleanup, keyboard focus rings, and Back navigation.
+
+Section entrances fade from 35% opacity without translating content. Their 560ms
+duration, bounded stagger, easing, focus cancellation, and reduced-motion policy
+are unchanged. Keeping their geometry still avoids the interrupted native smooth
+journeys reproduced with translated entrances in Linux WebKit. Unit coverage
+asserts the exact keyframes and timing; browser journeys exercise actual arrival,
+history, and keyboard follow-up without animation overrides or in-flight logging.
+
+Failed navigation tests attach final geometry, focus, URL hash, and scroll policy
+only after the original assertion fails. A missing/closed page or unavailable
+snapshot must not replace that original failure. Diagnostic probes that wrapped
+browser methods or measured during travel affected reproduction; their experiments
+remain in Git history rather than the maintained regression suite. Viewport
+assertions, deadlines, and retries are unchanged.
 
 The stack tour, like viewport autoplay, uses the latest entry in each batch for its
 single observed drawing. An earlier visible entry must not retain the interval when

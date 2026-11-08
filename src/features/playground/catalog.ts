@@ -39,7 +39,7 @@ export const experiences: readonly Experience[] = [
         "monotonic speed-to-flow mappings, blade clearances, actual canvas movement and pause stability, lifecycle interruption, static fallback, and responsive keyboard/touch controls.",
       source: "src/features/playground/jet-engine",
     },
-    entryAliases: ["#lab", "#pin-lock"],
+    entryAliases: ["#pin-lock"],
     load: () =>
       import("./jet-engine/JetEngine").then((module) => module.JetEngine),
   },

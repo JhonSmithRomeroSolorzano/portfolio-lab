@@ -200,8 +200,9 @@ main > section[tabindex="-1"]:focus {
   position: relative;
 }
 html:has(
-  .identity-rail nav a:focus-visible,
-  main > section:focus-visible,
+  .identity-rail :focus-visible,
+  #about:focus-visible,
+  main > section:focus-visible:not([data-pointer-navigation="true"]),
   .collection-index:focus-visible,
   .collection-index a:focus-visible,
   .play-exhibit:focus-visible,
@@ -258,6 +259,28 @@ html:has(
     gap: 0 12px;
     padding: 10px 12px;
     margin-top: 16px;
+  }
+  html:has(.identity-rail[data-menu-ready="true"]) {
+    scroll-padding-top: 100px;
+  }
+  .identity-rail[data-menu-ready="true"] {
+    position: sticky;
+    top: 12px;
+  }
+  .identity-rail[data-menu-ready="true"] nav {
+    position: absolute;
+    top: 100%;
+    left: -1px;
+    right: -1px;
+    max-height: calc(100vh - 100px);
+    max-height: calc(100svh - 100px);
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scroll-padding-block: 12px;
+    margin-top: 0;
+    padding: 12px;
+    border: 1px solid var(--line);
+    background: var(--surface-overlay);
   }
   .rail-bottom {
     grid-column: 1 / -1;

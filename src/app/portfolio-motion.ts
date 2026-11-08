@@ -35,7 +35,7 @@ export function isPlainNavigation(
   );
 }
 
-/** Native links own scrolling, URL history, and focus. This only paints feedback. */
+/** Native links own scrolling/history; the navigation hook hands off focus. This only paints feedback. */
 export function observePortfolioMotion(
   root: HTMLElement,
   nav: HTMLElement,

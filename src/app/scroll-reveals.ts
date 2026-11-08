@@ -29,10 +29,9 @@ export function observeScrollReveals(
           Math.max(0, Number(element.dataset.reveal) || 0),
         );
         const animation = element.animate(
-          [
-            { opacity: 0.35, transform: "translateY(16px)" },
-            { opacity: 1, transform: "translateY(0)" },
-          ],
+          // Keep anchor geometry still during native scrolling. Translated
+          // entrances can interrupt smooth anchor journeys in Linux WebKit.
+          [{ opacity: 0.35 }, { opacity: 1 }],
           {
             duration: 560,
             delay,
