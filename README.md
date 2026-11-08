@@ -17,15 +17,15 @@ Looking for something specific? Jump to [local setup](#run-locally),
 
 ## Current status and next steps
 
-The latest verified release is [PR #44](https://github.com/JhonSmithRomeroSolorzano/portfolio-lab/pull/44),
-published as [`c71be67`](https://github.com/JhonSmithRomeroSolorzano/portfolio-lab/commit/c71be67a00bdc93cda4ed56cc4d1fbf257bafe1b)
-on November 7, 2026. It fixes Gravity Loom's canvas lifecycle without adding a copy
-on every animation frame.
+See the [main deployment workflow](https://github.com/JhonSmithRomeroSolorzano/portfolio-lab/actions/workflows/deploy.yml?query=branch%3Amain)
+for current validation and publication status. The public site's
+[release manifest](https://jhonsmithromerosolorzano.github.io/portfolio-lab/release.json)
+identifies the deployed source commit and fingerprinted assets.
 
-Native Linux checks and public Chromium/WebKit smoke checks passed for that
-release. Deployment verification matched its source and asset hashes.
-See the [release evidence](https://github.com/JhonSmithRomeroSolorzano/portfolio-lab/pull/44#issuecomment-6714480354)
-for the dated results and limitations; automated checks are not real-device guarantees.
+A merged PR is not necessarily published: main's validation, deployment, and public
+asset verification must finish successfully. See [Deployment](#deployment) for the
+release gates. Automated checks do not replace the human reviews below or establish
+real-device performance guarantees.
 
 Next priorities:
 
