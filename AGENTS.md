@@ -12,7 +12,7 @@ This file owns instructions for agents working in this repository: preparation, 
 
 ## Commands and verification
 
-- Use Node.js 22.19+ and `npm ci`; CI uses Node 24. Tests use Node's test runner with `tsx`, not Jest.
+- Use Node.js 26.13+ within the Node 26 release line and `npm ci`; CI pins Node 26.13.0. Node 22/24 are no longer supported for tooling or the optional API. Tests use Node's test runner with `tsx`, not Jest.
 - Run `npm run check` before committing. It runs ESLint, read-only Prettier validation, unit/integration tests, and the production build. Build runs strict app/test/domain type checks, résumé generation, then Vite. Use `npm run format` only for intentional formatting changes; avoid rewriting unrelated files.
 - Focused unit/integration test: `node --import tsx --test tests/cache-rescue.test.ts`. API tests start their own ephemeral loopback servers; no database, Redis, or separately running API is needed.
 - Browser tests require a fresh `npm run build` and installed browsers (`npx playwright install chromium webkit`). `npm run test:browser` starts the production preview on port 4173, not the dev server; an existing local server there may be reused. Focus: `npm run test:browser -- e2e/cache-rescue.spec.ts --project=webkit`.

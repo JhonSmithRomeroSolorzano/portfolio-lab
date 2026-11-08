@@ -140,7 +140,9 @@ step, not part of ordinary builds. See [preview authoring](ARCHITECTURE.md#colle
 
 ## Run locally
 
-Use **Node.js 22.19 or newer**. Node 24 is recommended and is the version used in CI.
+Use **Node.js 26.13 or newer within the Node 26 release line**. CI uses Node 26.13.0;
+Node 22 and 24 are no longer supported for this repository's tooling and optional API.
+The public portfolio remains a static site and does not require a Node runtime to visit.
 
 ```sh
 npm ci

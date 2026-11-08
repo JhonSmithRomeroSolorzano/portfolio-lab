@@ -38,6 +38,22 @@ function job(name: string) {
   return section[1];
 }
 
+test("runtime, Node declarations, and every Node CI job share the supported release line", () => {
+  const readJson = (path: string) =>
+    JSON.parse(readFileSync(new URL(path, import.meta.url), "utf8"));
+  const pkg = readJson("../package.json");
+  const lock = readJson("../package-lock.json");
+  assert.equal(pkg.engines.node, ">=26.13.0 <27");
+  assert.equal(lock.packages[""].engines.node, pkg.engines.node);
+  assert.match(pkg.devDependencies["@types/node"], /^\^26\./);
+  assert.match(lock.packages["node_modules/@types/node"].version, /^26\./);
+  const runtimes = [...workflow.matchAll(/node-version: "([^"]+)"/g)];
+  assert.equal(runtimes.length, 3);
+  for (const runtime of runtimes) assert.equal(runtime[1], "26.13.0");
+  for (const name of ["prepare", "validate", "verify"])
+    assert.match(job(name), /node-version: "26\.13\.0"/);
+});
+
 test("release validates one shared build in isolated jobs without weakening gates", () => {
   const prepare = job("prepare");
   const validate = job("validate");
