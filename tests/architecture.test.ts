@@ -1,34 +1,60 @@
 import assert from "node:assert/strict";
-import { readdirSync, readFileSync } from "node:fs";
+import {
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
 import { relative, resolve } from "node:path";
 import test from "node:test";
 import {
   allowedDependency,
   dependencyViolations,
 } from "./helpers/architecture";
+import { sourceFiles } from "./helpers/source-files";
 
 const root = resolve(import.meta.dirname, "..");
-function files(directory: string): string[] {
-  return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
-    const name = resolve(directory, entry.name);
-    return entry.isDirectory()
-      ? files(name)
-      : /\.(ts|tsx|mjs)$/.test(name)
-        ? [name]
-        : [];
-  });
-}
 
 /** Check resolved imports, including re-exports and lazy imports, not naming conventions. */
 test("maintained modules respect layer direction and never depend on retired UI", () => {
   const violations: string[] = [];
   for (const file of ["src", "server", "scripts"].flatMap((dir) =>
-    files(resolve(root, dir)),
+    sourceFiles(resolve(root, dir)),
   )) {
     const from = relative(root, file).replaceAll("\\", "/");
     violations.push(...dependencyViolations(from, readFileSync(file, "utf8")));
   }
   assert.deepEqual(violations, [], "Dependency direction violations");
+});
+
+test("dependency discovery checks nested JavaScript and TypeScript source formats", (t) => {
+  const fixture = mkdtempSync(resolve(tmpdir(), "portfolio-architecture-"));
+  t.after(() => rmSync(fixture, { recursive: true, force: true }));
+  const directory = resolve(fixture, "src/shared/nested");
+  mkdirSync(directory, { recursive: true });
+  const extensions = ["ts", "tsx", "mts", "cts", "js", "jsx", "mjs", "cjs"];
+  for (const extension of [...extensions, "css", "json", "txt"])
+    writeFileSync(
+      resolve(directory, `probe.${extension}`),
+      'import "../../features/portfolio/data/profile";',
+    );
+  const discovered = sourceFiles(resolve(fixture, "src"));
+  assert.deepEqual(
+    discovered.map((file) => relative(directory, file)).sort(),
+    extensions.map((extension) => `probe.${extension}`).sort(),
+  );
+  for (const file of discovered)
+    assert.deepEqual(
+      dependencyViolations(
+        relative(fixture, file).replaceAll("\\", "/"),
+        readFileSync(file, "utf8"),
+      ),
+      [
+        `src/shared/nested/${relative(directory, file)} → ../../features/portfolio/data/profile`,
+      ],
+    );
 });
 
 test("dependency policy rejects inverted layers and browser/build boundary leaks", () => {

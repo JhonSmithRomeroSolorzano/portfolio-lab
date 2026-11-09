@@ -23,8 +23,13 @@ export function ThemeSwitcher() {
   const systemDark = useMediaQuery("(prefers-color-scheme: dark)");
   useEffect(() => {
     const onStorage = (event: StorageEvent) => {
-      if (event.key === THEME_KEY || event.key === null)
-        setPreference(themePreference(event.newValue));
+      if (event.key !== THEME_KEY && event.key !== null) return;
+      try {
+        if (event.storageArea !== window.localStorage) return;
+      } catch {
+        return;
+      }
+      setPreference(themePreference(event.newValue));
     };
     window.addEventListener("storage", onStorage);
     return () => {
