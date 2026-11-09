@@ -90,6 +90,17 @@ test("release validates one shared build in isolated jobs without weakening gate
   }
   assert.match(job("deploy"), /needs: build/);
   assert.match(job("verify"), /needs: deploy/);
+  const verify = job("verify");
+  assert.match(verify, /uses: actions\/download-artifact@[a-f\d]{40}/);
+  assert.match(
+    verify,
+    /name: production-dist\n\s+path: dist\/\n\s+digest-mismatch: error/,
+  );
+  assert.doesNotMatch(verify, /run: npm run (check|build)/);
+  assert.ok(
+    verify.indexOf("uses: actions/download-artifact@") <
+      verify.indexOf("run: npm run verify:deployment"),
+  );
   assert.doesNotMatch(workflow, /continue-on-error/);
   for (const section of [prepare, validate, build])
     assert.match(section, /timeout-minutes: 20/);

@@ -39,20 +39,14 @@ function withoutSitesChallenge(data: Uint8Array): string {
     .replace(
       /<script>((?:(?!<\/script>)[\s\S])*)<\/script>(?=\s*<\/body>)/,
       (script: string, code: string) =>
-        (code.startsWith("(function(){function c(){var b=a.contentDocument") &&
-          code.includes("window.__CF$cv$params=") &&
-          code.includes(
-            "a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';",
-          )) ||
-        isOriginAwareChallenge(code)
-          ? ""
-          : script,
+        isOriginAwareChallenge(code) ? "" : script,
     );
 }
 export function parseRelease(value: unknown): Release {
   const data = value as Release;
   if (
     data?.version !== 1 ||
+    typeof data.source !== "string" ||
     !/^[a-f0-9]{40}$/.test(data.source) ||
     !data.files ||
     typeof data.files !== "object" ||
@@ -71,6 +65,7 @@ export function parseRelease(value: unknown): Release {
     if (
       !/^[a-zA-Z0-9][a-zA-Z0-9_./-]*$/.test(name) ||
       name.split("/").some((part) => !part || part === "." || part === "..") ||
+      typeof hash !== "string" ||
       !/^[a-f0-9]{64}$/.test(hash)
     )
       throw new Error("Invalid release asset.");
@@ -78,16 +73,19 @@ export function parseRelease(value: unknown): Release {
   return data;
 }
 
-/** Authentication is scoped to the existing owner-private origin; never follow redirects. */
+/** Compare against a trusted build artifact, never just the remote manifest's claims. */
 export async function verifyRelease(
   base: URL,
-  source: string,
+  expected: Release,
   token?: string,
 ): Promise<Release> {
   if (token && base.origin !== privatePreview)
     throw new Error("Private credentials cannot be sent to this origin.");
   if (!["https:", "http:"].includes(base.protocol))
     throw new Error("Expected an HTTP(S) deployment.");
+  const trusted = parseRelease(expected);
+  const source = trusted.source;
+  const files = Object.entries(trusted.files);
   const headers: Record<string, string> = { "Cache-Control": "no-cache" };
   if (token) headers["OAI-Sites-Authorization"] = `Bearer ${token}`;
   async function read(path: string) {
@@ -111,13 +109,20 @@ export async function verifyRelease(
     throw new Error(
       `Deployment is serving a different source commit: ${manifest.source}.`,
     );
-  for (const [path, expected] of Object.entries(manifest.files)) {
+  if (
+    Object.keys(manifest.files).length !== files.length ||
+    files.some(([path, hash]) => manifest.files[path] !== hash)
+  )
+    throw new Error(
+      "Deployment manifest does not match the trusted build artifact.",
+    );
+  for (const [path, hash] of files) {
     const data = await read(path);
     const content =
       base.origin === privatePreview && path === "index.html"
         ? withoutSitesChallenge(data)
         : data;
-    if (digest(content) !== expected)
+    if (digest(content) !== hash)
       throw new Error(`Deployed asset does not match release: ${path}.`);
   }
   return manifest;

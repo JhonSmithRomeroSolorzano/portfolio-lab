@@ -1,16 +1,36 @@
 import { execFileSync } from "node:child_process";
-import { privatePreview, verifyRelease } from "./release";
+import { readFile } from "node:fs/promises";
+import { parseRelease, privatePreview, verifyRelease } from "./release";
 
 const args = process.argv.slice(2);
-const privateAuth = args.includes("--private-stdin");
-const urls = args
-  .filter((arg) => arg !== "--private-stdin")
-  .map((value) => new URL(value.endsWith("/") ? value : `${value}/`));
+let privateAuth = false;
+let manifestPath = "dist/release.json";
+let manifestProvided = false;
+const targets: string[] = [];
+for (let i = 0; i < args.length; i++) {
+  const arg = args[i];
+  if (arg === "--private-stdin") privateAuth = true;
+  else if (arg === "--manifest") {
+    const value = args[++i];
+    if (manifestProvided || !value || value.startsWith("--"))
+      throw new Error("Provide one local manifest path after --manifest.");
+    manifestPath = value;
+    manifestProvided = true;
+  } else if (arg.startsWith("--")) {
+    throw new Error(`Unknown verification option: ${arg}`);
+  } else targets.push(arg);
+}
+const urls = targets.map(
+  (value) => new URL(value.endsWith("/") ? value : `${value}/`),
+);
 if (!urls.length)
   throw new Error("Provide one or more deployed portfolio URLs.");
 const source =
   process.env.GITHUB_SHA ||
   execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+const expected = parseRelease(JSON.parse(await readFile(manifestPath, "utf8")));
+if (expected.source !== source)
+  throw new Error("Trusted build manifest is from a different source commit.");
 let token: string | undefined;
 if (privateAuth) {
   let input = "";
@@ -22,17 +42,12 @@ if (privateAuth) {
   if (typeof token !== "string" || !token.length)
     throw new Error("Missing private preview credential.");
 }
-let reference: string | undefined;
 for (const url of urls) {
   const release = await verifyRelease(
     url,
-    source,
+    expected,
     url.origin === privatePreview ? token : undefined,
   );
-  const fingerprint = JSON.stringify(Object.entries(release.files).sort());
-  if (reference && fingerprint !== reference)
-    throw new Error("Deployments have different build assets.");
-  reference = fingerprint;
   console.log(
     `Verified ${url.origin}${url.pathname}: ${source.slice(0, 7)}, ${Object.keys(release.files).length} matching assets.`,
   );
