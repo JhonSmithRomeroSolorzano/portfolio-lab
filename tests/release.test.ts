@@ -8,6 +8,7 @@ import {
   parseRelease,
   privatePreview,
   verifyRelease,
+  type Release,
 } from "../scripts/release";
 
 const source = "a".repeat(40);
@@ -18,6 +19,10 @@ const good = {
   source,
   files: { "index.html": digest(entryHtml), "assets/app.js": digest("code") },
 };
+const originAwareChallenge = readFileSync(
+  new URL("./fixtures/sites-origin-challenge.txt", import.meta.url),
+  "utf8",
+).trim();
 test("release manifests reject path traversal, foreign URLs, empty or invalid fingerprints", () => {
   assert.deepEqual(parseRelease(good), good);
   for (const files of [
@@ -28,6 +33,13 @@ test("release manifests reject path traversal, foreign URLs, empty or invalid fi
   ])
     assert.throws(() => parseRelease({ ...good, files }));
   assert.throws(() => parseRelease({ ...good, source: "bad" }));
+  assert.throws(() => parseRelease({ ...good, source: [source] }));
+  assert.throws(() =>
+    parseRelease({
+      ...good,
+      files: { ...good.files, "index.html": [good.files["index.html"]] },
+    }),
+  );
 });
 test("deployment verification rejects source and content mismatches", async () => {
   let responseSource = source;
@@ -46,14 +58,14 @@ test("deployment verification rejects source and content mismatches", async () =
     const address = server.address();
     assert.ok(address && typeof address !== "string");
     const url = new URL(`http://127.0.0.1:${address.port}/`);
-    assert.deepEqual(await verifyRelease(url, source), good);
+    assert.deepEqual(await verifyRelease(url, good), good);
     responseSource = "b".repeat(40);
-    await assert.rejects(verifyRelease(url, source), /different source commit/);
+    await assert.rejects(verifyRelease(url, good), /different source commit/);
     responseSource = source;
     responseHtml = mismatchedHtml;
-    await assert.rejects(verifyRelease(url, source), /does not match/);
+    await assert.rejects(verifyRelease(url, good), /does not match/);
     await assert.rejects(
-      verifyRelease(url, source, "private token"),
+      verifyRelease(url, good, "private token"),
       /cannot be sent/,
     );
   } finally {
@@ -64,7 +76,7 @@ test("deployment verification rejects source and content mismatches", async () =
 test("private verification authenticates assets and tolerates only the provider challenge", async (t) => {
   const requests: string[] = [];
   let html = entryHtml;
-  const challenge = `<script>(function(){function c(){var b=a.contentDocument;window.__CF$cv$params={r:'fixture'};a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';}})();</script>`;
+  const challenge = originAwareChallenge;
   t.mock.method(
     globalThis,
     "fetch",
@@ -87,18 +99,18 @@ test("private verification authenticates assets and tolerates only the provider 
     },
   );
   assert.deepEqual(
-    await verifyRelease(new URL(`${privatePreview}/`), source, "fixture-token"),
+    await verifyRelease(new URL(`${privatePreview}/`), good, "fixture-token"),
     good,
   );
   assert.deepEqual(requests, ["/release.json", "/", "/assets/app.js"]);
   await assert.rejects(
-    verifyRelease(new URL("https://example.com/"), source, "fixture-token"),
+    verifyRelease(new URL("https://example.com/"), good, "fixture-token"),
     /cannot be sent/,
   );
   assert.equal(requests.length, 3);
   html = mismatchedHtml;
   await assert.rejects(
-    verifyRelease(new URL(`${privatePreview}/`), source, "fixture-token"),
+    verifyRelease(new URL(`${privatePreview}/`), good, "fixture-token"),
     /does not match release: index.html/,
   );
   html = entryHtml.replace(
@@ -106,17 +118,14 @@ test("private verification authenticates assets and tolerates only the provider 
     "<script>changedApplication()</script></body>",
   );
   await assert.rejects(
-    verifyRelease(new URL(`${privatePreview}/`), source, "fixture-token"),
+    verifyRelease(new URL(`${privatePreview}/`), good, "fixture-token"),
     /does not match release: index.html/,
   );
 });
 
 test("private verification recognizes the origin-aware provider loader without ignoring page edits", async (t) => {
   // Captured from Sites; request-specific values are replaced with fixture values.
-  const challenge = readFileSync(
-    new URL("./fixtures/sites-origin-challenge.txt", import.meta.url),
-    "utf8",
-  ).trim();
+  const challenge = originAwareChallenge;
   let html = entryHtml;
   t.mock.method(globalThis, "fetch", async (input: string | URL | Request) => {
     const path = new URL(String(input)).pathname;
@@ -128,7 +137,7 @@ test("private verification recognizes the origin-aware provider loader without i
           : "code",
     );
   });
-  const verify = () => verifyRelease(new URL(`${privatePreview}/`), source);
+  const verify = () => verifyRelease(new URL(`${privatePreview}/`), good);
   const append = (script: string) =>
     entryHtml.replace("</body>", `${script}</body>`);
 
@@ -161,7 +170,133 @@ test("private verification recognizes the origin-aware provider loader without i
 
   html = append(challenge);
   await assert.rejects(
-    verifyRelease(new URL("https://example.com/"), source),
+    verifyRelease(new URL("https://example.com/"), good),
     /does not match release: index.html/,
   );
+});
+
+test("a changed remote build cannot replace the trusted artifact while claiming the same source", async (t) => {
+  const trusted = {
+    ...good,
+    files: { ...good.files, "assets/app.css": digest("styles") },
+  };
+  const requests: string[] = [];
+  let remote: Release = trusted;
+  const server = createServer((req, res) => {
+    requests.push(req.url!);
+    res.end(
+      req.url === "/release.json"
+        ? JSON.stringify(remote)
+        : req.url === "/"
+          ? mismatchedHtml
+          : "changed code",
+    );
+  }).listen(0, "127.0.0.1");
+  await once(server, "listening");
+  t.after(
+    () =>
+      new Promise<void>((resolve) => {
+        server.close(() => resolve());
+        server.closeAllConnections();
+      }),
+  );
+  const address = server.address();
+  assert.ok(address && typeof address !== "string");
+  const url = new URL(`http://127.0.0.1:${address.port}/`);
+  for (const files of [
+    { ...trusted.files, "index.html": digest(mismatchedHtml) },
+    { ...trusted.files, "assets/app.js": digest("changed code") },
+    { ...good.files }, // Missing a trusted asset, despite a self-consistent remote manifest.
+    { ...trusted.files, "assets/extra.js": digest("extra") },
+    {
+      ...trusted.files,
+      "index.html": digest(mismatchedHtml),
+      "assets/app.js": digest("changed code"),
+    },
+  ]) {
+    requests.length = 0;
+    remote = { ...trusted, files };
+    await assert.rejects(verifyRelease(url, trusted), /trusted build artifact/);
+    assert.deepEqual(requests, ["/release.json"]);
+  }
+});
+
+test("trusted manifests are mandatory and remote object order is irrelevant", async (t) => {
+  let requests = 0;
+  t.mock.method(globalThis, "fetch", async (input: string | URL | Request) => {
+    requests++;
+    const path = new URL(String(input)).pathname;
+    return new Response(
+      path === "/release.json"
+        ? JSON.stringify({
+            ...good,
+            files: Object.fromEntries(Object.entries(good.files).reverse()),
+          })
+        : path === "/"
+          ? entryHtml
+          : "code",
+    );
+  });
+  const url = new URL("https://example.com/");
+  for (const invalid of [undefined, source, { ...good, source: [source] }])
+    await assert.rejects(
+      verifyRelease(url, invalid as unknown as Release),
+      /Invalid release manifest/,
+    );
+  assert.equal(requests, 0);
+  assert.deepEqual((await verifyRelease(url, good)).files, good.files);
+});
+
+test("deployment verification never follows a manifest redirect", async (t) => {
+  const requests: string[] = [];
+  const server = createServer((req, res) => {
+    requests.push(req.url!);
+    res.writeHead(302, { location: "/redirected" });
+    res.end();
+  }).listen(0, "127.0.0.1");
+  await once(server, "listening");
+  t.after(
+    () =>
+      new Promise<void>((resolve) => {
+        server.close(() => resolve());
+        server.closeAllConnections();
+      }),
+  );
+  const address = server.address();
+  assert.ok(address && typeof address !== "string");
+  await assert.rejects(
+    verifyRelease(new URL(`http://127.0.0.1:${address.port}/`), good),
+  );
+  assert.deepEqual(requests, ["/release.json"]);
+});
+
+test("legacy challenge-like scripts and appended application code fail closed", async (t) => {
+  const legacy =
+    "<script>(function(){function c(){var b=a.contentDocument;window.__CF$cv$params={r:'fixture'};a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';}})();</script>";
+  let html = entryHtml;
+  t.mock.method(globalThis, "fetch", async (input: string | URL | Request) => {
+    const path = new URL(String(input)).pathname;
+    return new Response(
+      path === "/release.json"
+        ? JSON.stringify(good)
+        : path === "/"
+          ? html
+          : "code",
+    );
+  });
+  for (const script of [
+    legacy,
+    legacy.replace(
+      "</script>",
+      "globalThis.__unexpectedApplicationCode=true;</script>",
+    ),
+    legacy.replace("</script>", "/* extra content */</script>"),
+    legacy.replace("/jsd/main.js", "/jsd/unknown.js"),
+  ]) {
+    html = entryHtml.replace("</body>", script + "</body>");
+    await assert.rejects(
+      verifyRelease(new URL(`${privatePreview}/`), good),
+      /does not match release: index.html/,
+    );
+  }
 });

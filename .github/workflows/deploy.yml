@@ -146,5 +146,13 @@ jobs:
           node-version: "26.13.0"
           cache: npm
       - run: npm ci
-      - name: Verify public release and asset integrity
+      - name: Download the trusted production build
+        # Use the same immutable build that passed validation and was published.
+        # Never rebuild or accept only the deployed manifest's own hash claims.
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: production-dist
+          path: dist/
+          digest-mismatch: error
+      - name: Compare public release with the trusted build
         run: npm run verify:deployment -- https://jhonsmithromerosolorzano.github.io/portfolio-lab/

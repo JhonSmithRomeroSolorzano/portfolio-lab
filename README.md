@@ -233,14 +233,25 @@ production artifact. Publication never rebuilds it. The required `build` check
 rejects failed, skipped, or cancelled validation; protection also applies to admins.
 
 Every build writes `release.json` with its source commit and SHA-256 asset hashes.
-The workflow verifies the public source and assets after deployment. To repeat
-that check from the matching release checkout:
+After deployment, the workflow downloads the same tested `production-dist` artifact
+and compares the public manifest and assets against that trusted build, without rebuilding.
+
+To repeat the check, use the matching release checkout and download that run's
+`production-dist` artifact into `dist/` first (CI retains it for one day):
 
 ```sh
 npm run verify:deployment -- https://jhonsmithromerosolorzano.github.io/portfolio-lab/
 ```
 
-The expected source defaults to the checked-out commit, or `GITHUB_SHA` in CI.
+The verifier requires a trusted local manifest at `dist/release.json`. To use an
+independently retained copy elsewhere, pass `--manifest /path/to/release.json`
+alongside the URL. Never obtain this reference from the deployed site being checked.
+A locally generated manifest can check a local build, but does not establish equality
+with the CI-tested artifact. Missing, invalid, wrong-source, or different file/hash
+sets fail verification; the verifier does not fall back to the remote manifest.
+
+The expected source defaults to the checked-out commit, or `GITHUB_SHA` in CI;
+both trusted and public manifests must match it.
 A failed verification is a failed release check; it does not automatically roll
 back a site that was already published. Inspect the evidence instead of rerunning
 a failed gate merely to obtain green.
