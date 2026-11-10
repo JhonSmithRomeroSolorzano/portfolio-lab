@@ -10,22 +10,22 @@ import {
 
 export const ROUTE_PROGRESS_KEY = "jsr-connection-progress-v1";
 export type PuzzleBoard = {
-  tiles: number[];
-  moves: number;
-  assisted: boolean;
-  rotations: number | null;
+  readonly tiles: readonly number[];
+  readonly moves: number;
+  readonly assisted: boolean;
+  readonly rotations: number | null;
 };
 export type RouteProgress = {
-  version: 2;
-  level: number;
-  boards: PuzzleBoard[];
-  records: PuzzleRecord[];
+  readonly version: 2;
+  readonly level: number;
+  readonly boards: readonly PuzzleBoard[];
+  readonly records: readonly PuzzleRecord[];
 };
 type StorageAccess = () => Pick<Storage, "getItem" | "setItem">;
 type ProgressStatus = "new" | "saved" | "invalid" | "unavailable";
 export type LoadedProgress = {
-  progress: RouteProgress;
-  status: ProgressStatus;
+  readonly progress: RouteProgress;
+  readonly status: ProgressStatus;
 };
 
 export function freshProgress(): RouteProgress {
@@ -68,8 +68,11 @@ export function parseProgress(raw: string): RouteProgress | null {
           const value = record?.[category];
           if (value !== null && (!Number.isSafeInteger(value) || value < 1))
             return null;
-          records[i][category] = value;
         }
+        records[i] = {
+          unassisted: record.unassisted,
+          assisted: record.assisted,
+        };
       }
     }
     const boards: PuzzleBoard[] = [];

@@ -110,8 +110,18 @@ function nearWin(assisted = false, rotations: number | null = 10) {
   const visit = fresh();
   const tiles = solvedBoard(0);
   for (let i = 0; i < 3; i++) tiles[0] = rotateTile(tiles[0]);
-  visit.saved.progress.boards[0] = { tiles, moves: 8, rotations, assisted };
-  return visit;
+  return {
+    ...visit,
+    saved: {
+      ...visit.saved,
+      progress: {
+        ...visit.saved.progress,
+        boards: visit.saved.progress.boards.map((board, index) =>
+          index === 0 ? { tiles, moves: 8, rotations, assisted } : board,
+        ),
+      },
+    },
+  };
 }
 
 test("completion records the correct category and reset preserves the best", () => {

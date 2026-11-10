@@ -5,10 +5,15 @@ import { solvedBoard, rotateTile } from "../src/domain/playground/route-puzzle";
 test("a completed attempt keeps its best after reset and reload", async ({
   page,
 }) => {
-  const progress = freshProgress();
+  const initial = freshProgress();
   const tiles = solvedBoard(0);
   for (let i = 0; i < 3; i++) tiles[0] = rotateTile(tiles[0]);
-  progress.boards[0] = { tiles, moves: 8, rotations: 10, assisted: false };
+  const progress = {
+    ...initial,
+    boards: initial.boards.map((board, index) =>
+      index === 0 ? { tiles, moves: 8, rotations: 10, assisted: false } : board,
+    ),
+  };
   await page.goto("/");
   await page.evaluate(
     (value) =>

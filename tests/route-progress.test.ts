@@ -9,14 +9,23 @@ import {
 import { rotateTile, traceRoute } from "../src/domain/playground/route-puzzle";
 
 test("progress restores distinct boards, turns, and selection without storing derived results", () => {
-  const progress = freshProgress();
-  progress.level = 2;
-  progress.boards[0].tiles[0] = rotateTile(progress.boards[0].tiles[0]);
-  progress.boards[0].moves = 1;
-  progress.boards[0].rotations = 1;
-  progress.boards[2].tiles[4] = rotateTile(progress.boards[2].tiles[4]);
-  progress.boards[2].moves = 3;
-  progress.boards[2].rotations = 3;
+  const initial = freshProgress();
+  const progress = {
+    ...initial,
+    level: 2,
+    boards: initial.boards.map((board, level) =>
+      level === 1
+        ? board
+        : {
+            ...board,
+            tiles: board.tiles.map((tile, index) =>
+              index === (level === 0 ? 0 : 4) ? rotateTile(tile) : tile,
+            ),
+            moves: level === 0 ? 1 : 3,
+            rotations: level === 0 ? 1 : 3,
+          },
+    ),
+  };
   let value: string | null = null;
   const storage = () => ({
     getItem: () => value,
@@ -45,17 +54,33 @@ test("corrupt, excessive, incompatible, and impossible saves are rejected atomic
   for (const data of invalid)
     assert.equal(parseProgress(JSON.stringify(data)), null);
   for (const value of [-1, 1.5, "2", null, Number.MAX_SAFE_INTEGER + 1]) {
-    const data = freshProgress();
-    Object.assign(data.boards[1], { moves: value });
+    const progress = freshProgress();
+    const data = {
+      ...progress,
+      boards: progress.boards.map((board, i) =>
+        i === 1 ? { ...board, moves: value } : board,
+      ),
+    };
     assert.equal(parseProgress(JSON.stringify(data)), null);
   }
   for (const value of [0, 15, 3, "5", null, 5.5]) {
-    const data = freshProgress();
-    Object.assign(data.boards[0].tiles, { 0: value }); // Tile zero must remain a straight.
+    const progress = freshProgress();
+    const data = {
+      ...progress,
+      boards: progress.boards.map((board, i) =>
+        // Tile zero must remain a straight.
+        i === 0 ? { ...board, tiles: [value, ...board.tiles.slice(1)] } : board,
+      ),
+    };
     assert.equal(parseProgress(JSON.stringify(data)), null);
   }
-  const short = freshProgress();
-  short.boards[2].tiles.pop();
+  const progress = freshProgress();
+  const short = {
+    ...progress,
+    boards: progress.boards.map((board, i) =>
+      i === 2 ? { ...board, tiles: board.tiles.slice(0, -1) } : board,
+    ),
+  };
   assert.equal(parseProgress(JSON.stringify(short)), null);
 });
 
@@ -106,12 +131,21 @@ test("legacy progress preserves boards without inventing personal records", () =
 });
 test("records and attempt history reject invalid storage values", () => {
   for (const value of [-1, 0, 1.5, "3", false]) {
-    const data = freshProgress();
-    Object.assign(data.records[0], { unassisted: value });
+    const progress = freshProgress();
+    const data = {
+      ...progress,
+      records: progress.records.map((record, i) =>
+        i === 0 ? { ...record, unassisted: value } : record,
+      ),
+    };
     assert.equal(parseProgress(JSON.stringify(data)), null);
   }
-  const data = freshProgress();
-  data.boards[0].moves = 3;
-  data.boards[0].rotations = 2;
+  const progress = freshProgress();
+  const data = {
+    ...progress,
+    boards: progress.boards.map((board, i) =>
+      i === 0 ? { ...board, moves: 3, rotations: 2 } : board,
+    ),
+  };
   assert.equal(parseProgress(JSON.stringify(data)), null);
 });

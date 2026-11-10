@@ -1,6 +1,6 @@
 export type PuzzleRecord = {
-  unassisted: number | null;
-  assisted: number | null;
+  readonly unassisted: number | null;
+  readonly assisted: number | null;
 };
 export const emptyRecord = (): PuzzleRecord => ({
   unassisted: null,
