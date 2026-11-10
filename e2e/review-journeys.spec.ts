@@ -257,7 +257,7 @@ for (const theme of ["light", "dark"] as const) {
     }
     expect(
       await contact
-        .locator("p")
+        .getByText(/^Open to full-stack opportunities/)
         .evaluate((node) => parseFloat(getComputedStyle(node).fontSize)),
     ).toBeGreaterThanOrEqual(16);
     const linkedin = contact.getByRole("link", { name: "Find me on LinkedIn" });
