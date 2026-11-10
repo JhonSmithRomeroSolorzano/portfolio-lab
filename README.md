@@ -36,8 +36,10 @@ Next priorities:
   new responsibilities, outcomes, or metrics need my confirmation.
 - Review dependency updates against the supported runtime and current checks.
 
-The private preview is separate from the public site. It has not been republished,
-and its audience is unchanged.
+The owner-private preview has a separate publication step. Keep its audience
+unchanged and verify its delivered files against the same trusted CI artifact as
+the public site; a successful public deployment does not establish private-preview
+parity. See [Deployment](#deployment) for that verification workflow.
 
 ## Résumé and presentation
 
