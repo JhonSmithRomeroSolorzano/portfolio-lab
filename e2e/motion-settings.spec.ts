@@ -13,6 +13,32 @@ async function chooseMotion(page: Page, reduced: boolean) {
   await radio.press("Escape");
 }
 
+test("motion settings dismiss on a nonfocusable outside pointer target", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 640, height: 900 });
+  await page.goto("/");
+  const settings = page.locator(".motion-settings");
+  await settings.locator("summary").click();
+  await expect(settings).toHaveAttribute("open", "");
+  const header = page.locator(".identity-rail");
+  const bounds = await header.boundingBox();
+  // The middle of the compact header is deliberately empty, not a focus target.
+  await header.click({
+    position: { x: bounds!.width / 2, y: bounds!.height / 2 },
+  });
+  await expect(settings).not.toHaveAttribute("open");
+  await expect(settings.locator("summary")).not.toBeFocused();
+  await settings.locator("summary").click();
+  await settings.getByRole("radio", { name: "Reduce animation" }).check();
+  await expect(settings).toHaveAttribute("open", "");
+  await expect(page.locator("html")).toHaveAttribute("data-motion", "reduce");
+  await settings
+    .getByRole("radio", { name: "Reduce animation" })
+    .press("Escape");
+  await expect(settings.locator("summary")).toBeFocused();
+});
+
 test("motion preference persists, synchronizes tabs, and never overrides device reduction", async ({
   page,
   context,
