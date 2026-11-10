@@ -29,7 +29,7 @@ This file owns instructions for agents working in this repository: preparation, 
 
 ## Content safeguards
 
-- Career/contact additions need Jhon's verified details; do not invent email/phone, outcomes, metrics, or ownership. Preserve overlapping employment dates and qualifications such as “some Next.js/AWS experience.”
+- Career/contact additions need Jhon's verified details; do not invent email/phone, outcomes, metrics, or ownership. Preserve overlapping employment dates and the owner-confirmed qualifications in the [shared profile](src/features/portfolio/data/profile.ts) and [résumé content rules](README.md#résumé-downloads); historical snapshots do not override later corrections.
 - Never publish private conversations, interview feedback, client data, credentials, or employer source code.
 - Keep simulation assumptions visible; modeled output is not a measurement of running services.
 
