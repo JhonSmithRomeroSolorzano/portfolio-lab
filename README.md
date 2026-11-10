@@ -73,6 +73,11 @@ copy and owner-supplied self-ratings live in
 - Skills keep their qualifications, including some AWS experience. No Go experience
   or unverified professional metrics are claimed.
 
+Contact offers native email/phone links and **Copy contact details** for visitors
+who prefer to use another app. Copying uses the same verified facts as the résumé;
+when clipboard access is unavailable, a selectable text field provides a manual
+fallback. The native links remain usable without JavaScript.
+
 `npm run dev` and `npm run build` generate the downloads. If profile content changes
 while the dev server is running, use `npm run build:resume` to refresh them.
 Generated files under `public/resume/` are ignored by Git. The PDF generator rejects
