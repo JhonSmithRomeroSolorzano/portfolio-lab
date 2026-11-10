@@ -5,7 +5,12 @@ import {
   parseProgress,
   loadProgress,
   saveProgress,
+  ROUTE_PROGRESS_KEY,
 } from "../src/features/playground/connection-puzzle/route-progress";
+import {
+  createRouteVisit,
+  routeTransition,
+} from "../src/features/playground/connection-puzzle/route-transitions";
 import { rotateTile, traceRoute } from "../src/domain/playground/route-puzzle";
 
 test("progress restores distinct boards, turns, and selection without storing derived results", () => {
@@ -148,4 +153,118 @@ test("records and attempt history reject invalid storage values", () => {
     ),
   };
   assert.equal(parseProgress(JSON.stringify(data)), null);
+});
+
+test("malformed nested saves are rejected without modifying stored bytes", () => {
+  const fresh = freshProgress();
+  const malformed = [
+    { ...fresh, version: "2" },
+    { ...fresh, version: 99 },
+    { ...fresh, records: null },
+    { ...fresh, records: [null, ...fresh.records.slice(1)] },
+    { ...fresh, records: [{ assisted: null }, ...fresh.records.slice(1)] },
+    {
+      ...fresh,
+      records: [{ unassisted: 0, assisted: null }, ...fresh.records.slice(1)],
+    },
+    { ...fresh, boards: [null, ...fresh.boards.slice(1)] },
+    ...[
+      { assisted: "false" },
+      { assisted: undefined },
+      { rotations: undefined },
+      { rotations: -1 },
+      { rotations: 0.5 },
+      { rotations: Number.MAX_SAFE_INTEGER + 1 },
+      { tiles: null },
+      { tiles: [...fresh.boards[0].tiles, 5] },
+    ].map((patch) => ({
+      ...fresh,
+      boards: [{ ...fresh.boards[0], ...patch }, ...fresh.boards.slice(1)],
+    })),
+  ];
+  for (const value of malformed) {
+    const raw = JSON.stringify(value);
+    let stored = raw;
+    let writes = 0;
+    const storage = () => ({
+      getItem: (key: string) => {
+        assert.equal(key, ROUTE_PROGRESS_KEY);
+        return stored;
+      },
+      setItem: (_key: string, next: string) => {
+        writes++;
+        stored = next;
+      },
+    });
+    assert.deepEqual(loadProgress(storage), {
+      progress: fresh,
+      status: "invalid",
+    });
+    assert.equal(stored, raw);
+    assert.equal(writes, 0);
+  }
+});
+
+test("read denial and quota failures preserve the old save until an explicit successful retry", () => {
+  const initial = freshProgress();
+  const next = routeTransition(
+    createRouteVisit({ progress: initial, status: "saved" }),
+    { type: "turn", index: 0 },
+  )!;
+  let raw = JSON.stringify(initial);
+  let denyRead = true;
+  let denyWrite = true;
+  const storage = () => ({
+    getItem: () => {
+      if (denyRead) throw new DOMException("Denied", "SecurityError");
+      return raw;
+    },
+    setItem: (_key: string, value: string) => {
+      if (denyWrite) throw new DOMException("Full", "QuotaExceededError");
+      raw = value;
+    },
+  });
+  assert.equal(loadProgress(storage).status, "unavailable");
+  assert.equal(saveProgress(next.saved.progress, storage), false);
+  assert.equal(raw, JSON.stringify(initial));
+  denyRead = false;
+  assert.deepEqual(loadProgress(storage), {
+    progress: initial,
+    status: "saved",
+  });
+  denyWrite = false;
+  // A read does not silently retry a failed write.
+  assert.equal(raw, JSON.stringify(initial));
+  assert.equal(saveProgress(next.saved.progress, storage), true);
+  assert.deepEqual(loadProgress(storage), {
+    progress: next.saved.progress,
+    status: "saved",
+  });
+});
+
+test("snapshot writes remain last-writer-wins if two tabs read before either writes", () => {
+  let raw = JSON.stringify(freshProgress());
+  const storage = () => ({
+    getItem: () => raw,
+    setItem: (_key: string, value: string) => {
+      raw = value;
+    },
+  });
+  // Model the race beyond the controller's read-before-write check: both reads finish first.
+  const left = createRouteVisit(loadProgress(storage));
+  const right = createRouteVisit(loadProgress(storage));
+  const leftTurn = routeTransition(left, { type: "turn", index: 0 })!;
+  const rightTurn = routeTransition(right, { type: "turn", index: 1 })!;
+  assert.equal(saveProgress(leftTurn.saved.progress, storage), true);
+  assert.equal(saveProgress(rightTurn.saved.progress, storage), true);
+  const final = loadProgress(storage).progress;
+  assert.deepEqual(final, rightTurn.saved.progress);
+  assert.equal(
+    final.boards[0].tiles[0],
+    left.saved.progress.boards[0].tiles[0],
+  );
+  assert.notEqual(
+    final.boards[0].tiles[0],
+    leftTurn.saved.progress.boards[0].tiles[0],
+  );
 });
