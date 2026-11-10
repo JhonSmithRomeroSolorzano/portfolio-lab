@@ -192,6 +192,12 @@ The portfolio's `useStackFlow` owns the stack map's nine-step request tour, with
 
 Each game has an independent download placeholder and runtime error boundary. An import failure offers a reload; a render/effect failure offers a local remount. Navigation and career content remain usable. Error boundaries do not catch arbitrary event-handler or asynchronous callback errors; expected storage and Web Animation cancellation failures are handled where those operations run.
 
+Motion settings closes on outside pointer input even when that target cannot
+receive focus. Its document listener is released on unmount; pointer dismissal
+leaves focus to the native action. Focus departure and Escape remain separate
+paths, with Escape returning focus to the summary. Internal radio clicks never
+count as outside input, including WebKit's non-focusing pointer behavior.
+
 Motion Studio keeps its native recipe disclosure mounted while curve and duration
 change. Only the copy controls are keyed to the generated CSS, so feedback resets
 for each recipe and an outstanding clipboard request cannot update the replacement

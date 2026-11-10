@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useClientReady } from "../hooks/useClientReady";
 import {
   useMotionPreference,
@@ -11,8 +11,23 @@ export function MotionSettings() {
   const preference = useMotionPreference();
   const reduced = useReducedMotion();
   const [saved, setSaved] = useState(true);
+  const disclosure = useRef<HTMLDetailsElement>(null);
+  useEffect(() => {
+    const dismissOutside = (event: PointerEvent) => {
+      const panel = disclosure.current;
+      if (
+        panel?.open &&
+        event.target instanceof Node &&
+        !panel.contains(event.target)
+      )
+        panel.open = false;
+    };
+    document.addEventListener("pointerdown", dismissOutside);
+    return () => document.removeEventListener("pointerdown", dismissOutside);
+  }, []);
   return (
     <details
+      ref={disclosure}
       className="motion-settings"
       onKeyDown={(event) => {
         if (event.key !== "Escape") return;
