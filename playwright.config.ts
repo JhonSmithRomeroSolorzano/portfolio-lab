@@ -1,5 +1,17 @@
 import { defineConfig } from "@playwright/test";
 
+const requestedPort = process.env.PLAYWRIGHT_PORT ?? "4173";
+const port = Number(requestedPort);
+if (
+  !requestedPort ||
+  /\D/.test(requestedPort) ||
+  !Number.isInteger(port) ||
+  port < 1 ||
+  port > 65535
+)
+  throw new Error("PLAYWRIGHT_PORT must be an integer between 1 and 65535.");
+const baseURL = `http://127.0.0.1:${port}`;
+
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: true,
@@ -15,7 +27,7 @@ export default defineConfig({
       ]
     : "list",
   use: {
-    baseURL: "http://127.0.0.1:4173",
+    baseURL,
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
   },
@@ -25,9 +37,9 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: "npm run preview -- --port 4173 --strictPort",
-      url: "http://127.0.0.1:4173",
-      reuseExistingServer: !process.env.CI,
+      command: `npm run preview -- --port ${port} --strictPort`,
+      url: baseURL,
+      reuseExistingServer: false,
     },
   ],
 });

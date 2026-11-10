@@ -55,6 +55,12 @@ test("runtime, Node declarations, and every Node CI job share the supported rele
 });
 
 test("release validates one shared build in isolated jobs without weakening gates", () => {
+  const { scripts } = JSON.parse(
+    readFileSync(new URL("../package.json", import.meta.url), "utf8"),
+  );
+  assert.equal(scripts["test:browser"], "playwright test");
+  assert.equal(scripts["pretest:browser"], undefined);
+  assert.equal(scripts["posttest:browser"], undefined);
   const prepare = job("prepare");
   const validate = job("validate");
   const build = job("build");
