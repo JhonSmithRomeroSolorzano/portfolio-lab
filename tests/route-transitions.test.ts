@@ -235,6 +235,69 @@ test("invalid or unavailable reads preserve local boards, histories, hints and c
   }
 });
 
+test("readable identical saves clear stale read warnings without replacing visit state", () => {
+  const local = act(act(fresh(), { type: "turn", index: 0 }), { type: "hint" });
+  for (const status of ["invalid", "unavailable"] as const) {
+    const warned = reconcileRouteVisit(freeze(local), local.saved.progress, {
+      progress: freshProgress(),
+      status,
+    });
+    const incoming = freeze({
+      progress: local.saved.progress,
+      status: "saved" as const,
+    });
+    const restored = reconcileRouteVisit(
+      freeze(warned),
+      local.saved.progress,
+      incoming,
+    );
+    assert.equal(restored.saved.status, "saved");
+    assert.equal(restored.saved.progress, local.saved.progress);
+    assert.equal(restored.history, local.history);
+    assert.equal(restored.hint, local.hint);
+    assert.equal(restored.notice, local.notice);
+  }
+});
+
+test("read recovery cannot label unsaved local work as persisted", () => {
+  const initial = fresh();
+  const local = act(initial, { type: "turn", index: 0 }, false);
+  const incoming = freeze({
+    progress: initial.saved.progress,
+    status: "saved" as const,
+  });
+  const restored = reconcileRouteVisit(
+    freeze(local),
+    initial.saved.progress,
+    incoming,
+  );
+  assert.equal(restored, local);
+  assert.equal(restored.saved.status, "unavailable");
+});
+
+test("recovering an absent save restores new-visit feedback only when local content matches", () => {
+  const initial = fresh();
+  const warned = {
+    ...initial,
+    saved: { ...initial.saved, status: "unavailable" as const },
+  };
+  const restored = reconcileRouteVisit(
+    freeze(warned),
+    initial.saved.progress,
+    freeze(initial.saved),
+  );
+  assert.equal(restored.saved.status, "new");
+  assert.equal(restored.saved.progress, initial.saved.progress);
+  assert.equal(
+    reconcileRouteVisit(
+      freeze(restored),
+      initial.saved.progress,
+      initial.saved,
+    ),
+    restored,
+  );
+});
+
 test("remote changes clear only obsolete history and hints, keeping the selected puzzle", () => {
   let local = act(fresh(), { type: "turn", index: 0 });
   local = act(local, { type: "select", level: 1 });
@@ -342,10 +405,22 @@ test("seeded action and save sequences preserve serializable progress and undo i
         if (stored) knownSave = visit.saved.progress;
       }
       const unchanged = { progress: knownSave, status: "saved" as const };
-      assert.equal(
-        reconcileRouteVisit(freeze(visit), knownSave, unchanged),
-        visit,
+      const refreshed = reconcileRouteVisit(
+        freeze(visit),
+        knownSave,
+        unchanged,
       );
+      assert.equal(refreshed.saved.progress, visit.saved.progress);
+      assert.equal(refreshed.history, visit.history);
+      assert.equal(refreshed.hint, visit.hint);
+      assert.equal(refreshed.notice, visit.notice);
+      if (
+        (visit.saved.status === "invalid" ||
+          visit.saved.status === "unavailable") &&
+        !hasRouteUpdate(visit.saved.progress, unchanged)
+      )
+        assert.equal(refreshed.saved.status, "saved");
+      else assert.equal(refreshed, visit);
       assert.deepEqual(
         parseProgress(JSON.stringify(visit.saved.progress)),
         visit.saved.progress,

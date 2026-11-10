@@ -184,7 +184,17 @@ export function reconcileRouteVisit(
           notice: "",
         };
   }
-  if (!hasRouteUpdate(knownSave, incoming)) return visit;
+  if (!hasRouteUpdate(knownSave, incoming)) {
+    // A repaired read can match the checkpoint without representing a board update.
+    // Do not claim persistence if a failed write left different local progress.
+    if (
+      (visit.saved.status !== "invalid" &&
+        visit.saved.status !== "unavailable") ||
+      hasRouteUpdate(visit.saved.progress, incoming)
+    )
+      return visit;
+    return { ...visit, saved: { ...visit.saved, status: incoming.status } };
+  }
   const { level, boards } = visit.saved.progress;
   const changed = boards.map(
     (board, i) => !sameBoard(board, incoming.progress.boards[i]),
