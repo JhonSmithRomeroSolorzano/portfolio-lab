@@ -23,6 +23,10 @@ export type RouteProgress = {
 };
 type StorageAccess = () => Pick<Storage, "getItem" | "setItem">;
 type ProgressStatus = "new" | "saved" | "invalid" | "unavailable";
+export type LoadedProgress = {
+  progress: RouteProgress;
+  status: ProgressStatus;
+};
 
 export function freshProgress(): RouteProgress {
   return {
@@ -113,10 +117,7 @@ export function parseProgress(raw: string): RouteProgress | null {
 
 export function loadProgress(
   storage: StorageAccess = () => window.localStorage,
-): {
-  progress: RouteProgress;
-  status: ProgressStatus;
-} {
+): LoadedProgress {
   try {
     const raw = storage().getItem(ROUTE_PROGRESS_KEY);
     if (raw === null) return { progress: freshProgress(), status: "new" };
