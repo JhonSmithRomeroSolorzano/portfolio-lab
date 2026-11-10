@@ -171,12 +171,25 @@ npx playwright install chromium webkit
 npm run test:browser
 ```
 
-The browser suite starts the production preview on port 4173, not the dev server.
+The browser suite owns a production preview on port 4173, not the dev server.
+It never reuses an existing server: if the port is occupied, the run fails instead
+of silently testing another checkout. Existing processes are left untouched.
 For example, a focused run is:
 
 ```sh
 npm run test:browser -- e2e/loom-context-lifecycle.spec.ts --project=webkit
 ```
+
+For another worktree or an occupied default port, choose an unused port:
+
+```sh
+PLAYWRIGHT_PORT=4199 npm run test:browser -- e2e/cache-rescue.spec.ts --project=webkit
+```
+
+`PLAYWRIGHT_PORT` accepts decimal integers from 1 to 65535 and applies to both
+the loopback test URL and preview command. Browser tests do not rebuild `dist/`:
+build locally first, as above. CI tests its downloaded production artifact without
+rebuilding it.
 
 ## Project structure
 
