@@ -32,21 +32,6 @@ export function MotionRecipe({
     transform: rotate(180deg);
   }
 }`;
-  const text = useRef<HTMLTextAreaElement>(null);
-  const [status, setStatus] = useState<
-    "idle" | "copying" | "copied" | "manual"
-  >("idle");
-  async function copy() {
-    setStatus("copying");
-    try {
-      await navigator.clipboard.writeText(code);
-      setStatus("copied");
-    } catch {
-      setStatus("manual");
-      text.current?.focus();
-      text.current?.select();
-    }
-  }
   return (
     <details className="motion-recipe">
       <summary>Take this motion with you</summary>
@@ -61,6 +46,31 @@ export function MotionRecipe({
           }
         </code>
       </pre>
+      <RecipeCopy key={code} code={code} />
+    </details>
+  );
+}
+
+// Reset copy feedback for a new recipe without closing the native disclosure.
+function RecipeCopy({ code }: { code: string }) {
+  const text = useRef<HTMLTextAreaElement>(null);
+  const [status, setStatus] = useState<
+    "idle" | "copying" | "copied" | "manual"
+  >("idle");
+  async function copy() {
+    setStatus("copying");
+    try {
+      await navigator.clipboard.writeText(code);
+      if (text.current) setStatus("copied");
+    } catch {
+      if (!text.current) return;
+      setStatus("manual");
+      text.current.focus();
+      text.current.select();
+    }
+  }
+  return (
+    <>
       <label htmlFor="motion-recipe">Reusable animation CSS</label>
       <textarea
         ref={text}
@@ -80,6 +90,6 @@ export function MotionRecipe({
             ? "Clipboard unavailable. The CSS is selected; copy it manually."
             : ""}
       </p>
-    </details>
+    </>
   );
 }
