@@ -1,5 +1,6 @@
 import { Arrow } from "../../shared/ui/Arrow";
 import { LINKEDIN, verifiedContactDetails } from "./data/profile";
+import { ContactCopy } from "./ContactCopy";
 
 export function ContactSection() {
   return (
@@ -12,7 +13,7 @@ export function ContactSection() {
     >
       <span className="section-signal" aria-hidden="true" />
       <span className="eyebrow">GET IN TOUCH</span>
-      <div>
+      <div className="contact-heading">
         <h2 id="contact-title">Let’s talk.</h2>
         <div className="contact-actions">
           {verifiedContactDetails.map((detail) => (
@@ -39,6 +40,7 @@ export function ContactSection() {
         Open to full-stack opportunities with JavaScript, TypeScript, React, and
         Node.js.
       </p>
+      <ContactCopy />
     </section>
   );
 }
