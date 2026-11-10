@@ -116,11 +116,7 @@ export function MotionStudio() {
                   ? "Both arrived together. Try another curve."
                   : "Two paths. One shared duration. Ready when you are."}
           </p>
-          <MotionRecipe
-            key={`${curve}-${duration}`}
-            curve={curve}
-            duration={duration}
-          />
+          <MotionRecipe curve={curve} duration={duration} />
         </div>
       </div>
     </div>

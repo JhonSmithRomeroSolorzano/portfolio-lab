@@ -192,6 +192,12 @@ The portfolio's `useStackFlow` owns the stack map's nine-step request tour, with
 
 Each game has an independent download placeholder and runtime error boundary. An import failure offers a reload; a render/effect failure offers a local remount. Navigation and career content remain usable. Error boundaries do not catch arbitrary event-handler or asynchronous callback errors; expected storage and Web Animation cancellation failures are handled where those operations run.
 
+Motion Studio keeps its native recipe disclosure mounted while curve and duration
+change. Only the copy controls are keyed to the generated CSS, so feedback resets
+for each recipe and an outstanding clipboard request cannot update the replacement
+controls or move focus to them. Clipboard denial selects the current CSS for manual
+copying. Browser checks cover live tuning, keyboard copying, and late success/failure.
+
 `ExperienceNavigation` provides one native collection-return link per lab rather than Previous/Next cards: all experiences remain visible in the same document. The link lives outside deferred downloads/error boundaries, so wayfinding works during failures and without JavaScript. Visible link text supplies its accessible name without an ARIA override. The chooser's `#collection` target accepts focus without entering the Tab order; query/history handling and direct-entry alignment remain native/existing app responsibilities. No routing dependency or extra catalog is introduced.
 
 Intersection observation enhances loading/playback but is not required. Collection anchors (`#lab`, `#collection`, and legacy `#signal-lab`) do not request an individual experience: Jet Engine loads when its placeholder approaches within the existing 300px viewport margin, on explicit load, or through `#jet-engine`/legacy `#pin-lock` entry. Without IntersectionObserver, the existing eager fallback keeps every experience usable. Reduced motion, page visibility, and (where appropriate) navigation/offscreen changes interrupt playback. Effects release listeners, observers, and animation frames on cleanup.
