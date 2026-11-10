@@ -14,6 +14,7 @@ import {
   dependencyViolations,
 } from "./helpers/architecture";
 import { sourceFiles } from "./helpers/source-files";
+import { runtimeCycleViolations } from "./helpers/runtime-cycles";
 
 const root = resolve(import.meta.dirname, "..");
 
@@ -27,6 +28,25 @@ test("maintained modules respect layer direction and never depend on retired UI"
     violations.push(...dependencyViolations(from, readFileSync(file, "utf8")));
   }
   assert.deepEqual(violations, [], "Dependency direction violations");
+});
+
+test("maintained eager dependency graph has no cycles", () => {
+  const modules = new Map(
+    ["src", "server", "scripts"].flatMap((directory) =>
+      sourceFiles(resolve(root, directory)).map(
+        (file) =>
+          [
+            relative(root, file).replaceAll("\\", "/"),
+            readFileSync(file, "utf8"),
+          ] as const,
+      ),
+    ),
+  );
+  assert.deepEqual(
+    runtimeCycleViolations(modules),
+    [],
+    "Eager dependency graph violations",
+  );
 });
 
 test("dependency discovery checks nested JavaScript and TypeScript source formats", (t) => {
