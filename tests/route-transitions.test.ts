@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  PUZZLES,
   rotateTile,
   routeHint,
   solvedBoard,
@@ -46,6 +47,56 @@ test("visit starts with independent empty histories and no derived hints or noti
   assert.equal(visit.hint, null);
   assert.equal(visit.notice, "");
   assert.equal(routeTransition(freeze(visit), { type: "undo" }), null);
+});
+
+for (const type of ["select", "turn"] as const) {
+  test(`invalid ${type} indices reject the action without changing visit state`, () => {
+    const invalid = [
+      -1,
+      -0.5,
+      0.5,
+      Number.NaN,
+      Number.POSITIVE_INFINITY,
+      Number.NEGATIVE_INFINITY,
+      Number.MAX_SAFE_INTEGER,
+    ];
+    for (let level = 0; level < PUZZLES.length; level++) {
+      let visit = act(fresh(), { type: "select", level });
+      visit = act(visit, { type: "turn", index: 0 });
+      visit = act(visit, { type: "hint" });
+      visit = freeze({ ...visit, notice: "Keep this notice" });
+      const before = structuredClone(visit);
+      const tileCount = visit.saved.progress.boards[level].tiles.length;
+      const bound = type === "select" ? PUZZLES.length : tileCount;
+      for (const value of [...invalid, bound, bound + 1]) {
+        const action: RouteAction =
+          type === "select" ? { type, level: value } : { type, index: value };
+        assert.equal(routeTransition(visit, freeze(action)), null);
+        assert.deepEqual(visit, before);
+      }
+    }
+  });
+}
+
+test("all valid selection and turn indices remain accepted at both boundaries", () => {
+  const initial = freeze(fresh());
+  for (let level = 0; level < PUZZLES.length; level++) {
+    const selected = routeTransition(initial, { type: "select", level });
+    assert.ok(selected);
+    assert.equal(selected.saved.progress.level, level);
+    const before = selected.saved.progress.boards[level];
+    for (let index = 0; index < before.tiles.length; index++) {
+      const turned = routeTransition(freeze(selected), { type: "turn", index });
+      assert.ok(turned);
+      assert.deepEqual(
+        turned.saved.progress.boards[level].tiles,
+        before.tiles.map((tile, i) => (i === index ? rotateTile(tile) : tile)),
+      );
+      assert.equal(turned.saved.progress.boards[level].moves, 1);
+      assert.equal(turned.saved.progress.boards[level].rotations, 1);
+      assert.deepEqual(turned.history[level], [before]);
+    }
+  }
 });
 
 test("turns preserve other puzzles, cap undo history, and track cumulative rotations", () => {
