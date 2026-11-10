@@ -6,9 +6,11 @@ import {
 } from "../src/domain/playground/puzzle-records";
 
 test("personal bests keep assistance categories separate and only improve", () => {
-  const first = recordCompletion(emptyRecord(), 20, false);
+  const first = Object.freeze(
+    recordCompletion(Object.freeze(emptyRecord()), 20, false),
+  );
   assert.deepEqual(first, { unassisted: 20, assisted: null });
-  const helped = recordCompletion(first, 10, true);
+  const helped = Object.freeze(recordCompletion(first, 10, true));
   assert.deepEqual(helped, { unassisted: 20, assisted: 10 });
   assert.deepEqual(recordCompletion(helped, 25, false), helped);
   assert.deepEqual(recordCompletion(helped, 18, false), {

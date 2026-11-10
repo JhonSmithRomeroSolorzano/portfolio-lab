@@ -13,18 +13,18 @@ import type {
 } from "./route-progress";
 
 export type RouteVisit = {
-  saved: LoadedProgress;
-  history: PuzzleBoard[][];
-  hint: ReturnType<typeof routeHint>;
-  notice: string;
+  readonly saved: LoadedProgress;
+  readonly history: readonly (readonly PuzzleBoard[])[];
+  readonly hint: Readonly<ReturnType<typeof routeHint>>;
+  readonly notice: string;
 };
 
 export type RouteAction =
-  | { type: "select"; level: number }
-  | { type: "turn"; index: number }
-  | { type: "reset" }
-  | { type: "undo" }
-  | { type: "hint" };
+  | { readonly type: "select"; readonly level: number }
+  | { readonly type: "turn"; readonly index: number }
+  | { readonly type: "reset" }
+  | { readonly type: "undo" }
+  | { readonly type: "hint" };
 
 export function createRouteVisit(saved: LoadedProgress): RouteVisit {
   return {
