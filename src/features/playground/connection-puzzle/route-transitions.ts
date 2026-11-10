@@ -35,7 +35,7 @@ export function createRouteVisit(saved: LoadedProgress): RouteVisit {
   };
 }
 
-/** Pure visit controls; callers supply the same valid indices as the puzzle UI. */
+/** Pure visit controls over validated state; invalid action indices are refused. */
 export function routeTransition(
   visit: RouteVisit,
   action: RouteAction,
@@ -47,6 +47,12 @@ export function routeTransition(
   let hint: RouteVisit["hint"] = null;
   switch (action.type) {
     case "select":
+      if (
+        !Number.isInteger(action.level) ||
+        action.level < 0 ||
+        action.level >= PUZZLES.length
+      )
+        return null;
       return {
         ...visit,
         saved: {
@@ -56,6 +62,12 @@ export function routeTransition(
         hint: null,
       };
     case "turn":
+      if (
+        !Number.isInteger(action.index) ||
+        action.index < 0 ||
+        action.index >= board.tiles.length
+      )
+        return null;
       history = history.map((turns, i) =>
         i === level ? [...turns.slice(-99), board] : turns,
       );
