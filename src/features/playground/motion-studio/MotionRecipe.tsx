@@ -53,6 +53,7 @@ export function MotionRecipe({
 
 // Reset copy feedback for a new recipe without closing the native disclosure.
 function RecipeCopy({ code }: { code: string }) {
+  const button = useRef<HTMLButtonElement>(null);
   const text = useRef<HTMLTextAreaElement>(null);
   const [status, setStatus] = useState<
     "idle" | "copying" | "copied" | "manual"
@@ -65,8 +66,11 @@ function RecipeCopy({ code }: { code: string }) {
     } catch {
       if (!text.current) return;
       setStatus("manual");
-      text.current.focus();
-      text.current.select();
+      // A delayed denial must not undo navigation or focus on another control.
+      if (document.activeElement === button.current) {
+        text.current.focus();
+        text.current.select();
+      }
     }
   }
   return (
@@ -80,14 +84,14 @@ function RecipeCopy({ code }: { code: string }) {
         rows={8}
         spellCheck={false}
       />
-      <button onClick={copy} disabled={status === "copying"}>
+      <button ref={button} onClick={copy} disabled={status === "copying"}>
         {status === "copying" ? "Copying…" : "Copy CSS"}
       </button>
       <p role="status">
         {status === "copied"
           ? "CSS copied. Ready for your project."
           : status === "manual"
-            ? "Clipboard unavailable. The CSS is selected; copy it manually."
+            ? "Clipboard unavailable. You can copy it manually from the CSS field."
             : ""}
       </p>
     </>
