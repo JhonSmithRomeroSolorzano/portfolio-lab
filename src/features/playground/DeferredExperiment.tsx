@@ -107,9 +107,6 @@ export function DeferredExperiment({
 
   useEffect(() => {
     if (!requested) return;
-    const interrupt = () => {
-      anchorUninterrupted.current = false;
-    };
     // Hover is exploration too: a late neighbor must not pull a control out
     // from under the pointer while native anchor focus remains on its section.
     const inputs = [
@@ -119,6 +116,13 @@ export function DeferredExperiment({
       "pointermove",
       "keydown",
     ] as const;
+    const stopListening = () => {
+      inputs.forEach((type) => window.removeEventListener(type, interrupt));
+    };
+    const interrupt = () => {
+      anchorUninterrupted.current = false;
+      stopListening();
+    };
     inputs.forEach((type) =>
       window.addEventListener(type, interrupt, { passive: true }),
     );
@@ -128,12 +132,13 @@ export function DeferredExperiment({
         if (current) setExperiment(() => component);
       },
       () => {
+        stopListening();
         if (current) setFailed(true);
       },
     );
     return () => {
       current = false;
-      inputs.forEach((type) => window.removeEventListener(type, interrupt));
+      stopListening();
     };
   }, [requested, load]);
 
