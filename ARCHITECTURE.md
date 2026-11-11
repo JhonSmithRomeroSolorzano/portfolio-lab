@@ -204,7 +204,11 @@ Motion Studio keeps its native recipe disclosure mounted while curve and duratio
 change. Only the copy controls are keyed to the generated CSS, so feedback resets
 for each recipe and an outstanding clipboard request cannot update the replacement
 controls or move focus to them. Clipboard denial selects the current CSS for manual
-copying. Browser checks cover live tuning, keyboard copying, and late success/failure.
+copying only while the copy button still owns focus; a delayed denial after
+navigation preserves the destination's focus and scroll position. The fallback
+message remains usable without implying the CSS was selected. Browser checks cover
+live tuning, keyboard copying, late success/failure, and navigation away at desktop
+and mobile widths.
 
 `ExperienceNavigation` provides one native collection-return link per lab rather than Previous/Next cards: all experiences remain visible in the same document. The link lives outside deferred downloads/error boundaries, so wayfinding works during failures and without JavaScript. Visible link text supplies its accessible name without an ARIA override. The chooser's `#collection` target accepts focus without entering the Tab order; query/history handling and direct-entry alignment remain native/existing app responsibilities. No routing dependency or extra catalog is introduced.
 
