@@ -1,7 +1,22 @@
-import { useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { CacheArena } from "./CacheArena";
 import { ROUNDS } from "./rounds";
 import { useCacheRescue } from "./useCacheRescue";
+
+function focusPrediction(
+  panel: HTMLDetailsElement | null,
+  input: HTMLInputElement | null,
+) {
+  if (!panel || !input) return;
+  panel.open = true;
+  input.focus({ preventScroll: true });
+  // Native focus alone may leave a partially visible field clipped.
+  input.scrollIntoView({
+    behavior: "instant",
+    block: "center",
+    inline: "nearest",
+  });
+}
 
 export function CacheRescue() {
   const {
@@ -25,6 +40,13 @@ export function CacheRescue() {
     togglePlayback,
   } = useCacheRescue();
   const launch = useRef<HTMLButtonElement>(null);
+  const predictionPanel = useRef<HTMLDetailsElement>(null);
+  const predictionInput = useRef<HTMLInputElement>(null);
+  useLayoutEffect(() => {
+    if (!predictionError) return;
+    // Focus after the error text commits so native scrolling uses final geometry.
+    focusPrediction(predictionPanel.current, predictionInput.current);
+  }, [predictionError]);
 
   return (
     <div className={`cache-game ${playing ? "is-playing" : ""}`}>
@@ -73,10 +95,11 @@ export function CacheRescue() {
             <small>Wait for one answer</small>
           </button>
         </div>
-        <details className="cache-prediction">
+        <details className="cache-prediction" ref={predictionPanel}>
           <summary>Predict before you play</summary>
           <label htmlFor="cache-prediction">How many database reads?</label>
           <input
+            ref={predictionInput}
             id="cache-prediction"
             type="number"
             inputMode="numeric"
@@ -87,13 +110,21 @@ export function CacheRescue() {
             disabled={time >= 0}
             onChange={(event) => guess(event.target.value)}
             aria-invalid={!!predictionError}
-            aria-describedby="cache-prediction-help"
+            aria-describedby={
+              predictionError
+                ? "cache-prediction-help cache-prediction-error"
+                : "cache-prediction-help"
+            }
           />
           <p id="cache-prediction-help">
             Optional. Pick 1–{settings.requests}, then send the crowd. Reset or
             change strategy to make another prediction.
           </p>
-          {predictionError && <p role="alert">{predictionError}</p>}
+          {predictionError && (
+            <p id="cache-prediction-error" role="alert">
+              {predictionError}
+            </p>
+          )}
           <p className="cache-prediction-result" role="status">
             {finished && prediction !== ""
               ? Number(prediction) === counts.queries
@@ -106,7 +137,15 @@ export function CacheRescue() {
           <button
             ref={launch}
             className="cache-launch"
-            onClick={togglePlayback}
+            onClick={() => {
+              // Identical errors may not produce another React commit.
+              if (!togglePlayback() && predictionError) {
+                focusPrediction(
+                  predictionPanel.current,
+                  predictionInput.current,
+                );
+              }
+            }}
           >
             {reduced
               ? "Send & see the result"
@@ -144,7 +183,7 @@ export function CacheRescue() {
             className="cache-next"
             onClick={() => {
               reset((round + 1) % ROUNDS.length);
-              launch.current?.focus({ preventScroll: true });
+              launch.current?.focus();
             }}
           >
             {round === 2 ? "Back to the first challenge" : "Next challenge →"}

@@ -75,7 +75,7 @@ export function useCacheRescue() {
       setPredictionError(
         `Use a whole number from 1 to ${settings.requests}, or clear your prediction.`,
       );
-      return;
+      return false;
     }
 
     if (reduced) {
@@ -86,6 +86,7 @@ export function useCacheRescue() {
       if (finished || time < 0) setTime(0);
       setPlaying(true);
     }
+    return true;
   }
   return {
     prediction,

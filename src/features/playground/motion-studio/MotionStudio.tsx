@@ -107,9 +107,11 @@ export function MotionStudio() {
                 ? "Replay motion ↗"
                 : "Play motion ↗"}
           </button>
-          <p className="motion-feedback" role="status">
+          <p className="motion-feedback" role="status" aria-atomic="true">
             {reduced
-              ? "Reduced motion is on. Show both end states without animation."
+              ? arrived
+                ? "Both end states shown without animation. Try another curve."
+                : "Reduced motion is on. Show both end states without animation."
               : playing
                 ? "Comparing both curves…"
                 : arrived
