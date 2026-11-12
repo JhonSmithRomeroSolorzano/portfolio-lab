@@ -75,6 +75,16 @@ The cycle resolver uses TypeScript's relative bundler resolution against the dis
 - **Dependency inversion:** feature policy stays outside browser subscription utilities, and the API/CLI depend on pure models. No abstract base classes or dependency-injection container are needed for this app. Substitutability is relevant at these contracts, not a reason to introduce inheritance.
 - **KISS and DRY:** keep each game distinct. Share browser lifecycle and common UI primitives, not one configurable animation engine for every experience. Career facts are authored once and reused by the page and résumé downloads.
 
+Cache Rescue memoizes its unshared reference-read count by the current authored
+challenge settings, independently of the displayed strategy. Playback still derives
+live counts from the displayed run and current time on every render. This is a local
+allocation optimization, not a global challenge cache or a measured speedup; React
+may discard the memo without changing correctness. An in-memory browser fixture
+instruments the actual hook's model calls to check reuse during renders, strategy
+changes, resets, motion changes and playback, and recalculation on challenge changes.
+That test-only instrumentation never enters the application build and does not
+promise permanent caching across remounts or React cache eviction.
+
 Jet Engine replaces the earlier lock. Its pure model maps a normalized speed setting to deliberately slowed rotation, tracer flow/density, heat, and exhaust reach; these are visual parameters, not operating data. Its imperative 2D canvas uses a cached static depth buffer and per-pixel moving-face depth above the complete SVG base. Every air segment/head and exhaust patch tests the same nearest opaque depth; interpolated depth planes replace the old average-depth sort and unconditional foreground image. Concave blade caps use ear clipping. Settled guide samples are cached but retested against current moving depth. The SVG-only fallback clips faces and line intervals against the same geometry and is computed only when needed. Static audit, pixel/ray probes over a full fan/core pattern period, and browser composite samples cover different boundaries rather than claiming that a fixed-parts audit proves the mixed render.
 
 Metal triangles are scanned once: opaque interiors establish depth immediately,

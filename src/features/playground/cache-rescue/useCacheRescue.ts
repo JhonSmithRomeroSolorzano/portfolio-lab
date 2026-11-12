@@ -24,9 +24,10 @@ export function useCacheRescue() {
   const counts = rescueSnapshot(run, time);
   const finished = time >= end;
   const playing = playRequested && !finished;
-  const unsharedReads = rescueRun(settings, false).filter(
-    (r) => r.route === "origin",
-  ).length;
+  const unsharedReads = useMemo(
+    () => rescueRun(settings, false).filter((r) => r.route === "origin").length,
+    [settings],
+  );
   function reset(next = round, nextShared = shared) {
     setPlaying(false);
     setPrediction("");
