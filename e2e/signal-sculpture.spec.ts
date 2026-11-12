@@ -1,5 +1,115 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Locator, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+
+async function waitForSculptureCanvas(canvas: Locator) {
+  await expect(canvas).toBeVisible();
+  // React's playback attribute can commit before the ResizeObserver's redraw.
+  // Wait for actual backing pixels, not a fixed delay or playback state alone.
+  await expect
+    .poll(() =>
+      canvas.evaluate((node: HTMLCanvasElement) => {
+        const box = node.getBoundingClientRect();
+        const ratio = Math.min(window.devicePixelRatio || 1, 2);
+        return {
+          drawable: box.width > 1 && box.height > 1,
+          sized:
+            node.width === Math.round(box.width * ratio) &&
+            node.height === Math.round(box.height * ratio),
+        };
+      }),
+    )
+    .toEqual({ drawable: true, sized: true });
+}
+
+type ResizeGateWindow = typeof window & {
+  sculptureResizeGate: { pending(): number; release(): void };
+};
+
+async function holdSculptureResize(page: Page) {
+  // Delay only the sculpture's real ResizeObserver delivery. Other observers,
+  // animation frames and layout keep running; no production hooks are added.
+  await page.addInitScript(() => {
+    const NativeResizeObserver = window.ResizeObserver;
+    let held = true;
+    const pending = new Map<ResizeObserver, () => void>();
+    window.ResizeObserver = class extends NativeResizeObserver {
+      constructor(callback: ResizeObserverCallback) {
+        super((entries, observer) => {
+          const sculpture = entries.filter((entry) =>
+            entry.target.matches("#signal-sculpture canvas"),
+          );
+          const other = entries.filter((entry) => !sculpture.includes(entry));
+          if (other.length) callback(other, observer);
+          if (!sculpture.length) return;
+          if (held) pending.set(observer, () => callback(sculpture, observer));
+          else callback(sculpture, observer);
+        });
+      }
+      disconnect() {
+        pending.delete(this);
+        super.disconnect();
+      }
+    };
+    (window as ResizeGateWindow).sculptureResizeGate = {
+      pending: () => pending.size,
+      release() {
+        held = false;
+        const callbacks = [...pending.values()];
+        pending.clear();
+        for (const callback of callbacks) callback();
+      },
+    };
+  });
+}
+
+test("pixel readiness waits for the sculpture's delayed initial canvas resize", async ({
+  page,
+}) => {
+  await holdSculptureResize(page);
+  await page.goto("/#signal-sculpture");
+  const stage = page.locator("#signal-sculpture .sculpture-stage");
+  const canvas = stage.locator("canvas");
+  await expect(stage).toHaveAttribute("data-playing", "true");
+  await expect
+    .poll(() =>
+      page.evaluate(() =>
+        (window as ResizeGateWindow).sculptureResizeGate.pending(),
+      ),
+    )
+    .toBeGreaterThan(0);
+  expect(
+    await canvas.evaluate((node: HTMLCanvasElement) => [
+      node.width,
+      node.height,
+    ]),
+  ).toEqual([1, 1]);
+  await canvas.evaluate((node) => {
+    const measure = node.getBoundingClientRect.bind(node);
+    node.getBoundingClientRect = () => {
+      node.dataset.readinessChecked = "true";
+      return measure();
+    };
+  });
+  let ready = false;
+  const readiness = waitForSculptureCanvas(canvas).then(() => {
+    ready = true;
+  });
+  try {
+    // Synchronize on a real readiness measurement, not an arbitrary sleep.
+    await expect(canvas).toHaveAttribute("data-readiness-checked", "true");
+    expect(ready).toBe(false);
+  } finally {
+    await page.evaluate(() =>
+      (window as ResizeGateWindow).sculptureResizeGate.release(),
+    );
+    await readiness;
+  }
+  expect(
+    await canvas.evaluate(
+      (node: HTMLCanvasElement) => node.width > 1 && node.height > 1,
+    ),
+  ).toBe(true);
+});
 
 test("sculpture starts in view, transforms without resetting playback, pulses, pauses and resets", async ({
   page,
@@ -14,6 +124,7 @@ test("sculpture starts in view, transforms without resetting playback, pulses, p
     exhibit.getByRole("heading", { name: "Signal Sculpture." }),
   ).toBeVisible();
   await expect(stage).toHaveAttribute("data-playing", "true");
+  await waitForSculptureCanvas(exhibit.locator("canvas"));
   const pixels = () =>
     exhibit
       .locator("canvas")
@@ -55,6 +166,7 @@ test("hidden document freezes sculpture pixels and returning resumes the clock",
       .locator("canvas")
       .evaluate((node: HTMLCanvasElement) => node.toDataURL());
   await expect(stage).toHaveAttribute("data-playing", "true");
+  await waitForSculptureCanvas(exhibit.locator("canvas"));
   await page.evaluate(() => {
     Object.defineProperty(document, "hidden", {
       configurable: true,

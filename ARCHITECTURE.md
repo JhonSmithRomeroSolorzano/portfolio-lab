@@ -235,6 +235,14 @@ as observers/listeners. Explicit controls and animation clocks are not debounced
 Engine still owns palette/guide invalidation and creates a new raster only when
 backing dimensions change; artwork-loading policy remains in its feature.
 
+Signal Sculpture's pixel tests wait for a visible canvas with backing dimensions
+matching its current logical size and capped device-pixel ratio before taking a
+baseline. React's playback attribute alone does not establish resize readiness:
+the initially hidden canvas can still have a 1×1 backing store. A browser-only
+regression holds its initial ResizeObserver delivery to verify that readiness
+waits, then releases it. Hidden-document checks retain exact frozen-pixel equality;
+they model visibility events, not physical-device app switching.
+
 Gravity Loom retains its simulation and a stable, empty React-owned drawing host
 across environmental changes. Its feature-local `paint-surface.ts` owns the visible
 canvas children of that host, renewing the context only when the atomically cached
