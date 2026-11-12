@@ -8,7 +8,15 @@ import { rotateTile, solvedBoard } from "../src/domain/playground/route-puzzle";
 
 async function activate(control: Locator) {
   await control.focus();
-  await control.scrollIntoViewIfNeeded();
+  // Arrange the keyboard target away from viewport-edge rounding. This is
+  // pre-activation setup; post-action focus/visibility assertions stay separate.
+  await control.evaluate((node) =>
+    node.scrollIntoView({
+      behavior: "instant",
+      block: "center",
+      inline: "center",
+    }),
+  );
   await expect(control).toBeInViewport({ ratio: 1 });
   await control.press("Enter");
 }
