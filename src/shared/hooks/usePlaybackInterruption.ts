@@ -14,6 +14,7 @@ export function usePlaybackInterruption(
   { target, activeHashes }: Options = {},
 ) {
   useEffect(() => {
+    const node = target?.current;
     const media = motionQuery();
     const visibility = () => {
       if (document.hidden) stop();
@@ -21,8 +22,21 @@ export function usePlaybackInterruption(
     const navigate = () => {
       if (activeHashes && !activeHashes.includes(window.location.hash)) stop();
     };
+    const measure = () => {
+      if (!node) return;
+      const box = node.getBoundingClientRect();
+      if (
+        box.width <= 0 ||
+        box.height <= 0 ||
+        box.bottom <= 0 ||
+        box.top >= innerHeight ||
+        box.right <= 0 ||
+        box.left >= innerWidth
+      )
+        stop();
+    };
     const observer =
-      target?.current && typeof IntersectionObserver !== "undefined"
+      node && typeof IntersectionObserver !== "undefined"
         ? new IntersectionObserver((entries) => {
             // One observed target: queued earlier transitions must not override
             // its latest visibility, just as in useViewportPlayback.
@@ -30,12 +44,21 @@ export function usePlaybackInterruption(
             if (entry && !entry.isIntersecting) stop();
           })
         : undefined;
-    if (target?.current) observer?.observe(target.current);
+    if (node) {
+      if (observer) observer.observe(node);
+      else {
+        measure();
+        window.addEventListener("scroll", measure, { passive: true });
+        window.addEventListener("resize", measure);
+      }
+    }
     media.addEventListener("change", stop);
     document.addEventListener("visibilitychange", visibility);
     if (activeHashes) window.addEventListener("hashchange", navigate);
     return () => {
       observer?.disconnect();
+      window.removeEventListener("scroll", measure);
+      window.removeEventListener("resize", measure);
       media.removeEventListener("change", stop);
       document.removeEventListener("visibilitychange", visibility);
       if (activeHashes) window.removeEventListener("hashchange", navigate);
