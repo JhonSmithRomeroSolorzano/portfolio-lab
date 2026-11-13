@@ -30,6 +30,8 @@ function Probe() {
 }
 
 // Actual shared hook, isolated from feature clocks and bundled only by the tests.
-createRoot(document.getElementById("playback-probe")!).render(
-  createElement(Probe),
-);
+const root = createRoot(document.getElementById("playback-probe")!);
+root.render(createElement(Probe));
+document
+  .getElementById("unmount-probe")
+  ?.addEventListener("click", () => root.unmount());

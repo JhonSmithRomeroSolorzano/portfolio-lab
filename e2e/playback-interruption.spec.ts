@@ -1,6 +1,10 @@
 import { expect, test, type Page } from "@playwright/test";
 import { fileURLToPath } from "node:url";
 import { build } from "vite";
+import {
+  installLifecycleProbe,
+  readLifecycleSnapshot,
+} from "./helpers/lifecycle-probe";
 
 type ProbeWindow = typeof window & {
   interruptionObserver: { targets(): number; emit(visible: boolean[]): void };
@@ -155,3 +159,60 @@ test("a latest offscreen entry stops once and re-entry does not restart explicit
     await expect(state).toHaveAttribute("data-stops", String(stops));
   }
 });
+
+for (const exit of ["scroll", "resize"] as const) {
+  test(`explicit playback stops on ${exit} without IntersectionObserver and releases its fallback`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.addInitScript(() => {
+      Object.defineProperty(window, "IntersectionObserver", {
+        configurable: true,
+        value: undefined,
+      });
+    });
+    await page.addInitScript(installLifecycleProbe);
+    await page.route("**/__playback-probe", (route) =>
+      route.fulfill({
+        contentType: "text/html",
+        body: `<style>
+          body { margin: 0; height: 2400px; }
+          #playback-target { position: ${exit === "resize" ? "fixed" : "absolute"}; top: 300px; left: 16px; }
+          #unmount-probe { position: fixed; top: 0; right: 0; }
+        </style>
+        <button id="unmount-probe">Unmount</button>
+        <div id="playback-probe"></div>`,
+      }),
+    );
+    await page.goto("/__playback-probe#playback-probe");
+    const listeners = async () => {
+      const { resources } = await page.evaluate(readLifecycleSnapshot);
+      return [
+        resources["window:scroll:false"] ?? 0,
+        resources["window:resize:false"] ?? 0,
+      ];
+    };
+    const before = await listeners();
+    await page.addScriptTag({ type: "module", content: fixture });
+    const state = page.getByTestId("playback-state");
+    const target = page.locator("#playback-target");
+    const start = page.getByRole("button", { name: "Start", exact: true });
+    await start.click();
+    await expect(state).toHaveAttribute("data-playing", "true");
+    if (exit === "scroll") await page.mouse.wheel(0, 800);
+    else await page.setViewportSize({ width: 1280, height: 200 });
+    await expect(target).not.toBeInViewport();
+    await expect(state).toHaveAttribute("data-playing", "false");
+    if (exit === "scroll") await page.mouse.wheel(0, -800);
+    else await page.setViewportSize({ width: 1280, height: 800 });
+    await expect(target).toBeInViewport();
+    await expect(state).toHaveAttribute("data-playing", "false");
+    await start.click();
+    await expect(state).toHaveAttribute("data-playing", "true");
+    await expect.poll(listeners).toEqual(before.map((count) => count + 1));
+    await page.getByRole("button", { name: "Unmount", exact: true }).click();
+    await expect(state).toHaveCount(0);
+    await expect.poll(listeners).toEqual(before);
+  });
+}
