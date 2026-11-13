@@ -289,6 +289,12 @@ Reading-region envelopes retain a nonzero 0.20–0.24 interior lighting weight; 
 
 At mobile widths, the hydrated dock is sticky with a 12px top inset and a matching 100px document scroll-padding allowance. The menu is an opaque absolutely positioned dropdown, capped to the small viewport height minus 100px (with a `vh` fallback), with internal scrolling and contained overscroll. Opening it does not resize the header or shift content; focus uses `preventScroll`, and reopening resets only the menu's internal scroll. The existing dismissal/listener lifecycle is unchanged. Unhydrated, no-JavaScript, and failed-startup links stay in normal document flow. No new scroll listener, React state, or second navigation is added. Browser tests cover deep-page reachability, unchanged reading position on open/dismiss, unobscured keyboard destinations, and dropdown scrolling at 200% text and short landscape sizes in both themes.
 
+Wayfinding failures attach before/after viewport and document-space content
+coordinates, document height, font status and focus state. Deterministic
+scroll-only/content-only probes check those diagnostics and the original strict
+tolerance. These snapshots distinguish coordinate changes, not the browser's
+internal cause; no native-focus instrumentation or settling delay hides a jump.
+
 Keyboard-visible focus anywhere in the dock—not just its destination links—switches document scrolling to immediate mode. This includes Menu, appearance, and motion controls, so focusing a sticky control cannot leave a smooth focus-scroll competing with the next native anchor navigation. Pointer journeys retain smooth scrolling unless reduced motion is enabled. Browser regressions check the resolved scroll policy for each dock control before navigating from a live lab to Experience.
 
 Main-navigation activation hands focus to the destination with `preventScroll`
