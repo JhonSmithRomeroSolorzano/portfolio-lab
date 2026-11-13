@@ -232,6 +232,12 @@ batch: an earlier offscreen transition must not stop a now-visible experience.
 An empty batch does nothing; a final offscreen entry still stops once, and re-entry
 does not restart these explicit-playback experiences. An in-memory actual-hook
 fixture checks both batch orders without relying on scroll timing or feature clocks.
+When IntersectionObserver is unavailable, the hook checks the target's viewport
+bounds on setup, passive window scroll, and resize. This fallback only stops
+playback; returning onscreen still requires explicit replay. Both listeners are
+removed on cleanup, and no fallback listeners are installed without a target or
+alongside an available observer. Browser fixtures exercise real scroll/resize
+exits, explicit replay, and listener restoration after unmount.
 
 The three canvas experiences share `shared/canvas/observe-canvas.ts` for environmental
 invalidation only. ResizeObserver, window resize, and theme notifications coalesce
