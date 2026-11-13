@@ -24,7 +24,10 @@ export function usePlaybackInterruption(
     const observer =
       target?.current && typeof IntersectionObserver !== "undefined"
         ? new IntersectionObserver((entries) => {
-            if (entries.some((entry) => !entry.isIntersecting)) stop();
+            // One observed target: queued earlier transitions must not override
+            // its latest visibility, just as in useViewportPlayback.
+            const entry = entries[entries.length - 1];
+            if (entry && !entry.isIntersecting) stop();
           })
         : undefined;
     if (target?.current) observer?.observe(target.current);

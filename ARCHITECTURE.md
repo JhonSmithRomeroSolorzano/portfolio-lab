@@ -226,6 +226,13 @@ Lab feedback uses the existing status/alert regions rather than a separate annou
 
 Intersection observation enhances loading/playback but is not required. Collection anchors (`#lab`, `#collection`, and legacy `#signal-lab`) do not request an individual experience: Jet Engine loads when its placeholder approaches within the existing 300px viewport margin, on explicit load, or through `#jet-engine`/legacy `#pin-lock` entry. Without IntersectionObserver, the existing eager fallback keeps every experience usable. Reduced motion, page visibility, and (where appropriate) navigation/offscreen changes interrupt playback. Effects release listeners, observers, and animation frames on cleanup.
 
+`usePlaybackInterruption` observes one target for Cache Rescue and Motion Studio.
+Like `useViewportPlayback`, it uses the final entry in a delivered intersection
+batch: an earlier offscreen transition must not stop a now-visible experience.
+An empty batch does nothing; a final offscreen entry still stops once, and re-entry
+does not restart these explicit-playback experiences. An in-memory actual-hook
+fixture checks both batch orders without relying on scroll timing or feature clocks.
+
 The three canvas experiences share `shared/canvas/observe-canvas.ts` for environmental
 invalidation only. ResizeObserver, window resize, and theme notifications coalesce
 into one frame; unchanged logical size, capped pixel ratio, and theme do not clear
