@@ -257,7 +257,7 @@ After deployment, the workflow downloads the same tested `production-dist` artif
 and compares the public manifest and assets against that trusted build, without rebuilding.
 
 To repeat the check, use the matching release checkout and download that run's
-`production-dist` artifact into `dist/` first (CI retains it for one day):
+`production-dist` artifact into `dist/` first (CI retains it for seven days):
 
 ```sh
 npm run verify:deployment -- https://jhonsmithromerosolorzano.github.io/portfolio-lab/
@@ -269,6 +269,14 @@ alongside the URL. Never obtain this reference from the deployed site being chec
 A locally generated manifest can check a local build, but does not establish equality
 with the CI-tested artifact. Missing, invalid, wrong-source, or different file/hash
 sets fail verification; the verifier does not fall back to the remote manifest.
+
+The seven-day window also covers deferred private-preview synchronization. Retain
+an authenticated artifact ZIP and its digest outside operating-system temporary
+directories when delivery will happen later; `artifacts/releases/` is ignored by
+Git. If the CI artifact has expired and no independently authenticated copy remains,
+rerun the full release workflow for the intended source and wait for every gate to
+pass before using its new artifact. Do not substitute a local rebuild or a manifest
+downloaded from the deployed site.
 
 The expected source defaults to the checked-out commit, or `GITHUB_SHA` in CI;
 both trusted and public manifests must match it.

@@ -68,7 +68,8 @@ test("release validates one shared build in isolated jobs without weakening gate
   assert.match(prepare, /run: npm run check/);
   assert.match(
     prepare,
-    /name: production-dist\n\s+path: dist\/\n\s+if-no-files-found: error/,
+    /name: production-dist\n\s+path: dist\/\n\s+if-no-files-found: error\n\s+retention-days: 7\b/,
+    "Keep the tested build available for deferred private-preview synchronization.",
   );
   assert.match(validate, /needs: prepare/);
   assert.match(validate, /fail-fast: false/);
