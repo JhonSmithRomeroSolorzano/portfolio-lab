@@ -15,6 +15,7 @@ export function ContactCopy() {
   >("idle");
 
   async function copy() {
+    if (status === "copying") return;
     setStatus("copying");
     try {
       await navigator.clipboard.writeText(contactText);
@@ -28,7 +29,8 @@ export function ContactCopy() {
     <div className="contact-copy">
       <button
         ref={button}
-        disabled={!ready || status === "copying"}
+        disabled={!ready}
+        aria-disabled={status === "copying"}
         onClick={copy}
       >
         {status === "copying" ? "Copying…" : "Copy contact details"}

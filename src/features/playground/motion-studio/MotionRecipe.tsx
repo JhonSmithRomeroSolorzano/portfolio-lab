@@ -59,6 +59,7 @@ function RecipeCopy({ code }: { code: string }) {
     "idle" | "copying" | "copied" | "manual"
   >("idle");
   async function copy() {
+    if (status === "copying") return;
     setStatus("copying");
     try {
       await navigator.clipboard.writeText(code);
@@ -84,7 +85,7 @@ function RecipeCopy({ code }: { code: string }) {
         rows={8}
         spellCheck={false}
       />
-      <button ref={button} onClick={copy} disabled={status === "copying"}>
+      <button ref={button} onClick={copy} aria-disabled={status === "copying"}>
         {status === "copying" ? "Copying…" : "Copy CSS"}
       </button>
       <p role="status">
