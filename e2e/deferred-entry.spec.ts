@@ -1,4 +1,42 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+async function enterWithPendingDownload(page: Page, url: string) {
+  // A deliberately held script can delay load. Callers assert their own UI.
+  await page.goto(url, { waitUntil: "domcontentloaded" });
+}
+
+test("a held script cannot block deferred-entry test setup before readiness assertions", async ({
+  page,
+}) => {
+  let release!: () => void;
+  const pending = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  let requested = false;
+  await page.route("**/__deferred-load-probe", (route) =>
+    route.fulfill({
+      contentType: "text/html",
+      body: '<script async src="/held-neighbor.js"></script><button>Selected lab ready</button>',
+    }),
+  );
+  await page.route("**/held-neighbor.js", async (route) => {
+    requested = true;
+    await pending;
+    await route.fulfill({ contentType: "text/javascript", body: "" });
+  });
+  try {
+    await enterWithPendingDownload(page, "/__deferred-load-probe");
+    await expect(
+      page.getByRole("button", { name: "Selected lab ready" }),
+    ).toBeVisible();
+    await expect.poll(() => requested).toBe(true);
+    expect(await page.evaluate(() => document.readyState)).toBe("interactive");
+  } finally {
+    release();
+  }
+  await page.waitForLoadState("load");
+  expect(await page.evaluate(() => document.readyState)).toBe("complete");
+});
 
 for (const reducedMotion of ["no-preference", "reduce"] as const) {
   test(`a direct lab link keeps its heading onscreen after layout settles (${reducedMotion})`, async ({
@@ -32,7 +70,7 @@ for (const browseAway of [false, true]) {
       await pending;
       await route.continue();
     });
-    await page.goto("/#gravity-loom", { waitUntil: "domcontentloaded" });
+    await enterWithPendingDownload(page, "/#gravity-loom");
     await expect(page.locator(".loom-stage")).toBeVisible();
     await expect.poll(() => requested).toBe(true);
     if (browseAway) {
@@ -76,7 +114,7 @@ for (const theme of ["light", "dark"] as const)
         await route.continue();
       });
       try {
-        await page.goto("/#signal-sculpture");
+        await enterWithPendingDownload(page, "/#signal-sculpture");
         const button = page
           .locator('.sculpture-forms button[aria-pressed="false"]')
           .first();
