@@ -238,10 +238,11 @@
 .contact-copy button {
   min-height: 44px;
 }
-.contact-copy button:hover:not(:disabled) {
+.contact-copy button:hover:not(:disabled):not([aria-disabled="true"]) {
   border-color: var(--accent);
 }
-.contact-copy button:disabled {
+.contact-copy button:disabled,
+.contact-copy button[aria-disabled="true"] {
   cursor: default;
 }
 .contact-copy textarea {

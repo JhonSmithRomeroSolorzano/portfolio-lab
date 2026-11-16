@@ -283,3 +283,6 @@
 .motion-recipe [role="status"] {
   min-height: 1.7em;
 }
+.motion-recipe button[aria-disabled="true"] {
+  cursor: default;
+}

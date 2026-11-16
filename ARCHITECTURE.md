@@ -220,6 +220,17 @@ message remains usable without implying the CSS was selected. Browser checks cov
 live tuning, keyboard copying, late success/failure, and navigation away at desktop
 and mobile widths.
 
+Contact and recipe copy buttons retain keyboard focus while a clipboard request is
+pending. They expose `aria-disabled` and refuse repeat activation in the click
+handler instead of natively disabling a focused button, which sends focus to the
+document body before an asynchronous permission result. Contact still uses native
+`disabled` before hydration. Success retains focus; denial selects the manual-copy
+field only if its button still owns focus. Moving to another task or replacing the
+recipe keeps the existing focus-protection policy. Browser regressions hold the
+clipboard promise open, check repeated activation, and verify success/denial at
+mobile and desktop widths; no polling, clipboard timeout, or new shared state is
+introduced.
+
 Lab feedback uses the existing status/alert regions rather than a separate announcer. Motion Studio updates its atomic status with a static-completion message after a reduced-motion run; choosing another curve restores its ready explanation without moving focus. Cache Rescue's playback controller reports whether a launch was accepted. A refused prediction opens the native disclosure and focuses/centers its input after the error text commits, so scrolling uses the updated geometry; native focus alone can leave a partially visible field clipped. That correction scroll is immediate and action-scoped, without timers or a global scroll-policy change. Repeated identical errors reopen/focus from the action handler because they may not trigger another commit. The input description combines existing help with the current inline error. Correcting the value clears that association, and successful playback does not redirect focus. Next-challenge activation focuses the launch control with native scrolling enabled, rather than leaving keyboard focus offscreen. Keyboard/browser checks cover computed names/descriptions, status updates, invalid/disabled/pressed states, correction, resets, and next-step focus/viewport visibility in both themes at desktop/mobile widths. These checks and automated accessibility scans do not establish actual spoken announcements or replace the outstanding human screen-reader review.
 
 `ExperienceNavigation` provides one native collection-return link per lab rather than Previous/Next cards: all experiences remain visible in the same document. The link lives outside deferred downloads/error boundaries, so wayfinding works during failures and without JavaScript. Visible link text supplies its accessible name without an ARIA override. The chooser's `#collection` target accepts focus without entering the Tab order; query/history handling and direct-entry alignment remain native/existing app responsibilities. No routing dependency or extra catalog is introduced.

@@ -290,7 +290,7 @@
     .motion-recipe button,
     .engine-play,
     button[aria-pressed="true"]
-  ):hover:not(:disabled):not(:focus-visible) {
+  ):hover:not(:disabled):not([aria-disabled="true"]):not(:focus-visible) {
   outline: 1px solid var(--accent);
   outline-offset: 3px;
 }
