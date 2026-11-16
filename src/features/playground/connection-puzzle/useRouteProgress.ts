@@ -41,11 +41,15 @@ export function useRouteProgress() {
     };
     window.addEventListener("storage", sync);
     window.addEventListener("focus", refresh);
-    refresh();
     return () => {
       window.removeEventListener("storage", sync);
       window.removeEventListener("focus", refresh);
     };
+  }, [refresh]);
+
+  // Keep the post-progress consistency read without renewing browser listeners.
+  useEffect(() => {
+    refresh();
   }, [refresh, progress]);
 
   function act(action: RouteAction) {
