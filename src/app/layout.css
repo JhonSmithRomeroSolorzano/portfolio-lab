@@ -263,6 +263,11 @@ html:has(
   html:has(.identity-rail[data-menu-ready="true"]) {
     scroll-padding-top: 100px;
   }
+  /* The inset protects section destinations, not controls already pinned above
+     it. Native Tab focus must not scroll the reading surface to reveal them. */
+  html:has(.identity-rail[data-menu-ready="true"] .rail-bottom :focus) {
+    scroll-padding-top: 0;
+  }
   .identity-rail[data-menu-ready="true"] {
     position: sticky;
     top: 12px;

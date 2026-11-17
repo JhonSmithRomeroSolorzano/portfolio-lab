@@ -103,6 +103,108 @@ test("dock diagnostics reject scroll-only and content-only movement with the ori
 });
 
 for (const theme of ["light", "dark"] as const) {
+  for (const [width, height, textSize] of [
+    [390, 844, 100],
+    [320, 568, 200],
+    [844, 390, 100],
+    [844, 390, 200],
+  ]) {
+    test(`leaving the dropdown for sticky dock controls preserves reading position in ${theme} at ${width}×${height}, ${textSize}% text`, async ({
+      page,
+      browserName,
+    }, info) => {
+      await page.setViewportSize({ width, height });
+      await page.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
+      await page.goto("/#gravity-loom");
+      await expect(
+        page.getByRole("button", { name: "Add attractor" }),
+      ).toBeVisible();
+      await page.evaluate(() => document.fonts.ready);
+      await page.keyboard.press("Escape");
+      await page.evaluate((size) => {
+        document.documentElement.style.fontSize = `${size}%`;
+        document
+          .getElementById("gravity-loom")!
+          .scrollIntoView({ behavior: "instant" });
+      }, textSize);
+      const toggle = page.getByRole("button", { name: "Menu", exact: true });
+      const nav = page.getByRole("navigation", {
+        name: "Main navigation",
+        exact: true,
+      });
+      await toggle.press("Enter");
+      await expect(nav.getByRole("link").first()).toBeFocused();
+      await expect(page.locator("html")).toHaveCSS(
+        "scroll-padding-top",
+        "100px",
+      );
+      const tab =
+        browserName === "webkit" && process.platform === "darwin"
+          ? "Alt+Tab"
+          : "Tab";
+      for (let index = 0; index < 3; index++) await page.keyboard.press(tab);
+      await expect(nav.getByRole("link").last()).toBeFocused();
+      const position = await dockPosition(page);
+      for (const control of [
+        page.getByRole("button", { name: /Switch to .* theme/ }),
+        page.locator(".motion-settings summary"),
+        toggle,
+      ]) {
+        await page.keyboard.press(tab);
+        await expect(control).toBeFocused();
+        await expect(nav).not.toBeVisible();
+        await expect(page.locator("html")).toHaveCSS(
+          "scroll-padding-top",
+          "0px",
+        );
+        // Cross the deferred native focus adjustment before another action can
+        // obscure its cause. Do not rebaseline after Tab or restore scroll here.
+        await page.evaluate(
+          () =>
+            new Promise<void>((resolve) =>
+              requestAnimationFrame(() =>
+                requestAnimationFrame(() => resolve()),
+              ),
+            ),
+        );
+        await expectDockPosition(page, position, info, "tab-to-dock");
+        await expect(control).toBeInViewport({ ratio: 1 });
+        expect(
+          await control.evaluate((node) => {
+            const box = node.getBoundingClientRect();
+            const hit = document.elementFromPoint(
+              box.left + box.width / 2,
+              box.top + box.height / 2,
+            );
+            return hit === node || (hit !== null && node.contains(hit));
+          }),
+        ).toBe(true);
+      }
+      await toggle.press("Enter");
+      await expect(nav.getByRole("link").first()).toBeFocused();
+      await expect(page.locator("html")).toHaveCSS(
+        "scroll-padding-top",
+        "100px",
+      );
+      await nav
+        .getByRole("link", { name: "Contact", exact: true })
+        .press("Enter");
+      await expect(page.locator("#contact")).toBeFocused();
+      await expect(page.locator("html")).toHaveCSS(
+        "scroll-padding-top",
+        "100px",
+      );
+      const dock = (await page.locator(".identity-rail").boundingBox())!;
+      await expect
+        .poll(() =>
+          page
+            .locator("#contact")
+            .evaluate((node) => node.getBoundingClientRect().top),
+        )
+        .toBeGreaterThan(dock.y + dock.height);
+    });
+  }
+
   test(`keyboard dock controls use immediate scrolling before section navigation in ${theme}`, async ({
     page,
   }) => {
