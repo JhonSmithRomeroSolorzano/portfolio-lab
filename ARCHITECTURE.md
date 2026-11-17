@@ -323,6 +323,16 @@ internal cause; no native-focus instrumentation or settling delay hides a jump.
 
 Keyboard-visible focus anywhere in the dock—not just its destination links—switches document scrolling to immediate mode. This includes Menu, appearance, and motion controls, so focusing a sticky control cannot leave a smooth focus-scroll competing with the next native anchor navigation. Pointer journeys retain smooth scrolling unless reduced motion is enabled. Browser regressions check the resolved scroll policy for each dock control before navigating from a live lab to Experience.
 
+At mobile widths, focus in the hydrated dock's pinned control row temporarily
+removes the document's top scroll-padding allowance. Those controls are already
+visible above the 100px destination inset; applying it to native Tab focus can
+scroll the reading surface unnecessarily. Dropdown links and section destinations
+retain the 100px allowance, restored as soon as focus leaves the control row.
+No scroll restoration, key interception or timers are used. Browser regressions
+cross deferred focus adjustment before comparing unchanged scroll/content
+coordinates, verify all row controls remain unobscured at phone/landscape widths
+and 100%/200% text in both themes, and check subsequent section landing clearance.
+
 Main-navigation activation hands focus to the destination with `preventScroll`
 before the browser's anchor default action, for desktop as well as the open
 mobile menu. Pointer activation marks that focused section until blur: WebKit
