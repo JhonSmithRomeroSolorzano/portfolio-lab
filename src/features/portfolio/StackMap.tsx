@@ -60,6 +60,8 @@ export function StackMap() {
         onFocusCapture={(event) =>
           flow.setKeyboardFocus(event.target.matches(":focus-visible"))
         }
+        onKeyDownCapture={() => flow.setKeyboardFocus(true)}
+        onPointerDownCapture={() => flow.setKeyboardFocus(false)}
         onBlurCapture={(event) => {
           if (!event.currentTarget.contains(event.relatedTarget))
             flow.setKeyboardFocus(false);
