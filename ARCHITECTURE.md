@@ -389,7 +389,24 @@ Shared surface roles live in `tokens.css`: `--surface-panel` (70% reading/lab pa
 
 ## Runtime and build boundaries
 
-The batch replay CLI keeps its 1 MiB input limit and pure `replayBatch` model boundary. Its small `scripts/write-lines.ts` adapter owns and ends the output stream through Node's promise-based pipeline, honoring backpressure and awaiting write completion before printing the scenario summary. Input or output failures, including a consumer closing its pipe early (`EPIPE`), produce a concise diagnostic and exit code 2 without a completion summary; valid output retains exit 0 or exit 1 for invalid scenarios. Deterministic writable fixtures cover backpressure and first/final asynchronous write failures; subprocess tests cover a closed pipe and complete NDJSON delivery to a delayed consumer.
+The batch replay CLI still buffers its input within the 1 MiB byte limit before
+output begins; input acquisition is not streaming. `iterateBatch` validates that
+limit immediately, then scans physical lines and parses/simulates each nonblank
+row only when pulled. It does not split all lines or collect a result array.
+`replayBatch` retains the existing eager array API by collecting that iterator.
+Order, CRLF handling, physical line numbers and per-row errors are unchanged.
+
+The small `scripts/write-lines.ts` adapter owns and ends the output stream through
+Node's promise-based pipeline, honoring backpressure. The CLI counts rows and
+invalid scenarios as they are consumed, but prints the completion summary only
+after successful output completion. Input or output failures, including a consumer
+closing its pipe early (`EPIPE`), still produce a concise diagnostic and exit 2
+without a completion summary; valid output retains exit 0 or exit 1 for invalid
+scenarios. Deterministic fixtures check lazy parsing, early iterator closure,
+blocked/failed output and first/final asynchronous write failures. Subprocess
+tests cover closed pipes and complete NDJSON delivery to a delayed consumer.
+This bounds result production by output demand rather than total batch results;
+it is not a measured speedup or a claim of zero stream buffering.
 
 [The browser entry](src/main.tsx) hydrates the prerendered [App](src/app/App.tsx), or mounts it into an empty root in development. App composes the career content and optional experiences. The retired dashboard is outside this entry graph; its retained API and CLI use maintained domain models independently of the public page.
 

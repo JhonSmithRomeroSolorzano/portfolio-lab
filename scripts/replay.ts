@@ -1,5 +1,5 @@
 import { createReadStream } from "node:fs";
-import { MAX_BATCH_BYTES, replayBatch } from "./batch.ts";
+import { MAX_BATCH_BYTES, iterateBatch } from "./batch.ts";
 import { writeLines } from "./write-lines.ts";
 const input = process.argv[2];
 let operation = "Input";
@@ -26,17 +26,22 @@ try {
       if (size > MAX_BATCH_BYTES) throw new Error("Input exceeds 1 MiB.");
       chunks.push(buffer);
     }
-    const rows = replayBatch(Buffer.concat(chunks).toString("utf8"));
+    const rows = iterateBatch(Buffer.concat(chunks).toString("utf8"));
+    let total = 0,
+      failed = 0;
     operation = "Output";
     await writeLines(
       (function* () {
-        for (const row of rows) yield JSON.stringify(row);
+        for (const row of rows) {
+          total++;
+          if (!row.ok) failed++;
+          yield JSON.stringify(row);
+        }
       })(),
       process.stdout,
     );
-    const failed = rows.filter((r) => !r.ok).length;
     console.error(
-      `${rows.length} scenarios; ${failed} invalid. Results are illustrative, not production measurements.`,
+      `${total} scenarios; ${failed} invalid. Results are illustrative, not production measurements.`,
     );
     process.exitCode = failed ? 1 : 0;
   }
