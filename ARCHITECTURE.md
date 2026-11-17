@@ -210,6 +210,15 @@ leaves focus to the native action. Focus departure and Escape remain separate
 paths, with Escape returning focus to the summary. Internal radio clicks never
 count as outside input, including WebKit's non-focusing pointer behavior.
 
+Motion Studio owns both Web Animations as one run. Missing support, a synchronous
+creation/start failure, or rejection of the active run releases every created
+animation and shows explicitly labelled static end states. Partial setup observes
+cancellation rejections before cleanup. Replay, tuning, interruption, and unmount
+invalidate the run first, so a stale completion/rejection cannot replace newer
+feedback. A fresh explicit Play retries the API; no failure loop or extra clock is
+introduced. Controlled browser failures cover either lane failing, unexpected
+cancellation, successful recovery, and an older cancelled run settling after replay.
+
 Motion Studio keeps its native recipe disclosure mounted while curve and duration
 change. Only the copy controls are keyed to the generated CSS, so feedback resets
 for each recipe and an outstanding clipboard request cannot update the replacement
