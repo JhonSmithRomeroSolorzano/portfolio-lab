@@ -29,6 +29,7 @@ export function useCacheRescue() {
     [settings],
   );
   function reset(next = round, nextShared = shared) {
+    if (!Number.isInteger(next) || next < 0 || next >= ROUNDS.length) return;
     setPlaying(false);
     setPrediction("");
     setPredictionError("");

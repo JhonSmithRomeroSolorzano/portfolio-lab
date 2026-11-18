@@ -82,6 +82,95 @@ async function state(page: Page): Promise<CacheProbeState> {
 const calls = (page: Page) =>
   page.evaluate(() => (window as CacheProbeWindow).cacheRescueRunCalls);
 
+for (const action of ["round", "reset"] as const) {
+  for (const phase of ["prediction error", "playback"] as const) {
+    test(`invalid ${action} indices preserve ${phase} and valid challenge boundaries still work`, async ({
+      page,
+    }) => {
+      const start = new Date("2026-01-01T00:00:00Z");
+      await page.clock.install({ time: start });
+      await openProbe(page);
+      await page.clock.pauseAt(new Date(start.getTime() + 60_000));
+      await page.evaluate(() =>
+        (window as CacheProbeWindow).cacheRescueProbe.round(1),
+      );
+      await expect.poll(async () => (await state(page)).round).toBe(1);
+      await page.evaluate(() =>
+        (window as CacheProbeWindow).cacheRescueProbe.strategy(true),
+      );
+      await expect.poll(async () => (await state(page)).shared).toBe(true);
+      await page.evaluate(
+        (value) => (window as CacheProbeWindow).cacheRescueProbe.guess(value),
+        phase === "playback" ? "1" : "0",
+      );
+      await expect
+        .poll(async () => (await state(page)).prediction)
+        .toBe(phase === "playback" ? "1" : "0");
+      await page.evaluate(() =>
+        (window as CacheProbeWindow).cacheRescueProbe.play(),
+      );
+      if (phase === "playback") {
+        await expect.poll(async () => (await state(page)).playing).toBe(true);
+        await page.clock.runFor(250);
+        expect((await state(page)).time).toBeGreaterThan(0);
+      } else {
+        await expect
+          .poll(async () => (await state(page)).predictionError)
+          .toContain("whole number");
+      }
+      const before = await state(page);
+      const previousCalls = await calls(page);
+      let tick = 0;
+      for (const value of [
+        NaN,
+        Infinity,
+        -Infinity,
+        -1,
+        -0.5,
+        0.5,
+        1.5,
+        2.5,
+        ROUNDS.length,
+        ROUNDS.length + 1,
+        Number.MAX_SAFE_INTEGER,
+      ]) {
+        await page.evaluate(
+          ({ action, value }) => {
+            const probe = (window as CacheProbeWindow).cacheRescueProbe;
+            probe[action](value);
+            probe.rerender();
+          },
+          { action, value },
+        );
+        await expect(page.getByTestId("cache-state")).toHaveAttribute(
+          "data-tick",
+          String(++tick),
+        );
+        expect(
+          await state(page),
+          `${action}(${String(value)}) must not change the controller`,
+        ).toEqual(before);
+        expect(await calls(page)).toEqual(previousCalls);
+      }
+      for (const value of [ROUNDS.length - 1, 0]) {
+        await page.evaluate(
+          ({ action, value }) =>
+            (window as CacheProbeWindow).cacheRescueProbe[action](value),
+          { action, value },
+        );
+        await expect.poll(async () => (await state(page)).round).toBe(value);
+        const reset = await state(page);
+        expect(reset.shared).toBe(true);
+        expect(reset.playing).toBe(false);
+        expect(reset.time).toBe(-25);
+        expect(reset.prediction).toBe("");
+        expect(reset.predictionError).toBe("");
+        expect(reset.run).toEqual(rescueRun(ROUNDS[value], true));
+      }
+    });
+  }
+}
+
 test("reference calculation is reused across ordinary renders, strategy changes, reset and motion updates", async ({
   page,
 }) => {
