@@ -12,6 +12,7 @@ const ACTIVE_HASHES = ["#cache-rescue", "#lab"];
 export function useCacheRescue() {
   const [prediction, setPrediction] = useState("");
   const [predictionError, setPredictionError] = useState("");
+  const predictionInput = useRef<HTMLInputElement>(null);
   const [round, setRound] = useState(0);
   const [shared, setShared] = useState(false);
   const [time, setTime] = useState(-25);
@@ -32,6 +33,9 @@ export function useCacheRescue() {
     setPlaying(false);
     setPrediction("");
     setPredictionError("");
+    // A number input can retain an unfinished edit while its value is already
+    // empty. Reset that native edit buffer as well as React's prediction state.
+    if (predictionInput.current) predictionInput.current.value = "";
     setTime(-25);
     setRound(next);
     setShared(nextShared);
@@ -68,10 +72,11 @@ export function useCacheRescue() {
   function togglePlayback() {
     if (
       time < 0 &&
-      prediction.trim() !== "" &&
-      (!Number.isInteger(Number(prediction)) ||
-        Number(prediction) < 1 ||
-        Number(prediction) > settings.requests)
+      (predictionInput.current?.validity.badInput ||
+        (prediction.trim() !== "" &&
+          (!Number.isInteger(Number(prediction)) ||
+            Number(prediction) < 1 ||
+            Number(prediction) > settings.requests)))
     ) {
       setPredictionError(
         `Use a whole number from 1 to ${settings.requests}, or clear your prediction.`,
@@ -92,6 +97,7 @@ export function useCacheRescue() {
   return {
     prediction,
     predictionError,
+    predictionInput,
     guess,
     round,
     shared,
