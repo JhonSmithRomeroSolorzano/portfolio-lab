@@ -85,6 +85,13 @@ changes, resets, motion changes and playback, and recalculation on challenge cha
 That test-only instrumentation never enters the application build and does not
 promise permanent caching across remounts or React cache eviction.
 
+Cache Rescue rejects noninteger or out-of-range challenge indices at the reset
+boundary before changing any state. Challenge selection shares that boundary;
+invalid calls preserve prediction feedback and live playback rather than
+coercing/clamping an index or reaching the model with missing settings. Browser
+fixtures exercise both callers during invalid-prediction feedback and playback,
+including nonfinite values and valid first/last challenge changes.
+
 Jet Engine replaces the earlier lock. Its pure model maps a normalized speed setting to deliberately slowed rotation, tracer flow/density, heat, and exhaust reach; these are visual parameters, not operating data. Its imperative 2D canvas uses a cached static depth buffer and per-pixel moving-face depth above the complete SVG base. Every air segment/head and exhaust patch tests the same nearest opaque depth; interpolated depth planes replace the old average-depth sort and unconditional foreground image. Concave blade caps use ear clipping. Settled guide samples are cached but retested against current moving depth. The SVG-only fallback clips faces and line intervals against the same geometry and is computed only when needed. Static audit, pixel/ray probes over a full fan/core pattern period, and browser composite samples cover different boundaries rather than claiming that a fixed-parts audit proves the mixed render.
 
 Metal triangles are scanned once: opaque interiors establish depth immediately,

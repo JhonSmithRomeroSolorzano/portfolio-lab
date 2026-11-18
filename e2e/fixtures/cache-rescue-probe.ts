@@ -14,6 +14,7 @@ export type CacheProbeState = Pick<
   | "counts"
   | "run"
   | "prediction"
+  | "predictionError"
 >;
 export type RunCall = {
   requests: number;
@@ -27,7 +28,7 @@ export type CacheProbeWindow = typeof window & {
     guess(value: string): void;
     round(index: number): void;
     strategy(shared: boolean): void;
-    reset(): void;
+    reset(next?: number): void;
     play(): boolean;
     rerender(): void;
   };
@@ -53,6 +54,7 @@ function Probe() {
     counts,
     run,
     prediction,
+    predictionError,
   } = current;
   const state: CacheProbeState = {
     round,
@@ -65,6 +67,7 @@ function Probe() {
     counts,
     run,
     prediction,
+    predictionError,
   };
   return createElement(
     "div",
@@ -87,7 +90,7 @@ Object.assign(window, {
     guess: (value: string) => controls.guess(value),
     round: (index: number) => controls.chooseRound(index),
     strategy: (shared: boolean) => controls.chooseStrategy(shared),
-    reset: () => controls.reset(),
+    reset: (next?: number) => controls.reset(next),
     play: () => controls.togglePlayback(),
     rerender: () => rerender(),
   },
