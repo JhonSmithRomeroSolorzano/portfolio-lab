@@ -178,6 +178,12 @@ npx playwright install chromium webkit
 npm run test:browser
 ```
 
+Browser binaries are shared across local checkouts. Finish active browser runs
+before installing another Playwright version: its installer can remove older
+executables that a running suite still needs. When validating different versions
+in separate worktrees, use `PLAYWRIGHT_SKIP_BROWSER_GC=1 npx playwright install chromium webkit`
+to retain their required binaries during the comparison.
+
 The browser suite owns a production preview on port 4173, not the dev server.
 It never reuses an existing server: if the port is occupied, the run fails instead
 of silently testing another checkout. Existing processes are left untouched.
