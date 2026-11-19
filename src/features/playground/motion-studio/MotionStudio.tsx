@@ -1,5 +1,5 @@
 import { MotionRecipe } from "./MotionRecipe";
-import { CURVES } from "./curves";
+import { CURVES, MOTION_DURATION } from "./curves";
 import { useMotionPlayback } from "./useMotionPlayback";
 
 export function MotionStudio() {
@@ -94,9 +94,9 @@ export function MotionStudio() {
             <input
               id="motion-duration"
               type="range"
-              min="600"
-              max="1800"
-              step="100"
+              min={MOTION_DURATION.min}
+              max={MOTION_DURATION.max}
+              step={MOTION_DURATION.step}
               value={duration}
               onChange={(e) => chooseDuration(Number(e.target.value))}
             />

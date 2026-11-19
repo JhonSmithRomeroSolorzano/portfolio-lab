@@ -1,3 +1,10 @@
+export const MOTION_DURATION = {
+  min: 600,
+  max: 1800,
+  step: 100,
+  initial: 1100,
+} as const;
+
 export const CURVES = [
   {
     name: "Steady",

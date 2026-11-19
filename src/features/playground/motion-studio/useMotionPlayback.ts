@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "../../../shared/hooks/useReducedMotion";
 import { usePlaybackInterruption } from "../../../shared/hooks/usePlaybackInterruption";
-import { CURVES } from "./curves";
+import { CURVES, MOTION_DURATION } from "./curves";
 
 const ACTIVE_HASHES = ["#motion-studio", "#lab"];
 
 export function useMotionPlayback() {
   const [curve, setCurve] = useState(1);
-  const [duration, setDuration] = useState(1100);
+  const [duration, setDuration] = useState<number>(MOTION_DURATION.initial);
   const [playing, setPlaying] = useState(false);
   const [arrived, setArrived] = useState(false);
   const [unavailable, setUnavailable] = useState(false);
@@ -40,11 +40,19 @@ export function useMotionPlayback() {
     [],
   );
   function chooseCurve(next: number) {
+    if (!Number.isInteger(next) || next < 0 || next >= CURVES.length) return;
     if (next === curve) return;
     interrupt();
     setCurve(next);
   }
   function chooseDuration(next: number) {
+    if (
+      !Number.isInteger(next) ||
+      next < MOTION_DURATION.min ||
+      next > MOTION_DURATION.max ||
+      (next - MOTION_DURATION.min) % MOTION_DURATION.step !== 0
+    )
+      return;
     if (next === duration) return;
     interrupt();
     setDuration(next);

@@ -14,6 +14,7 @@ export type CacheProbeState = Pick<
   | "counts"
   | "run"
   | "prediction"
+  | "predictionError"
 >;
 export type RunCall = {
   requests: number;
@@ -27,9 +28,10 @@ export type CacheProbeWindow = typeof window & {
     guess(value: string): void;
     round(index: number): void;
     strategy(shared: boolean): void;
-    reset(): void;
+    reset(next?: number): void;
     play(): boolean;
     rerender(): void;
+    unmount(): void;
   };
 };
 
@@ -53,6 +55,7 @@ function Probe() {
     counts,
     run,
     prediction,
+    predictionError,
   } = current;
   const state: CacheProbeState = {
     round,
@@ -65,6 +68,7 @@ function Probe() {
     counts,
     run,
     prediction,
+    predictionError,
   };
   return createElement(
     "div",
@@ -80,6 +84,7 @@ function Probe() {
   );
 }
 
+const root = createRoot(document.getElementById("cache-probe")!);
 // Test-only host, bundled in memory without changing the portfolio build.
 Object.assign(window, {
   cacheRescueRunCalls: [],
@@ -87,11 +92,10 @@ Object.assign(window, {
     guess: (value: string) => controls.guess(value),
     round: (index: number) => controls.chooseRound(index),
     strategy: (shared: boolean) => controls.chooseStrategy(shared),
-    reset: () => controls.reset(),
+    reset: (next?: number) => controls.reset(next),
     play: () => controls.togglePlayback(),
     rerender: () => rerender(),
+    unmount: () => root.unmount(),
   },
 });
-createRoot(document.getElementById("cache-probe")!).render(
-  createElement(Probe),
-);
+root.render(createElement(Probe));

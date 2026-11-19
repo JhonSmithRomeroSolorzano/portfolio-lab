@@ -85,6 +85,24 @@ changes, resets, motion changes and playback, and recalculation on challenge cha
 That test-only instrumentation never enters the application build and does not
 promise permanent caching across remounts or React cache eviction.
 
+Cache Rescue rejects noninteger or out-of-range challenge indices at the reset
+boundary before changing any state. Challenge selection shares that boundary;
+invalid calls preserve prediction feedback and live playback rather than
+coercing/clamping an index or reaching the model with missing settings. Browser
+fixtures exercise both callers during invalid-prediction feedback and playback,
+including nonfinite values and valid first/last challenge changes.
+
+Cache Rescue's playback effect owns one pending animation frame while running.
+Pause, reset, challenge/strategy changes, navigation away, effective-motion changes,
+completion and unmount release that frame through effect cleanup. Returning to the
+experience does not restart it; explicit resume retains the current modeled time,
+while replay after completion starts from zero. A clock-controlled actual-hook
+fixture counts scheduled, delivered, canceled and pending frames across repeated
+transitions and checks unchanged snapshots during stopped periods. It wraps the
+clock's frame APIs without invoking canceled callbacks or entering the app build.
+These checks cover frame ownership and model consistency, not physical background
+behavior, real-device performance or a newly reproduced visitor-facing defect.
+
 Jet Engine replaces the earlier lock. Its pure model maps a normalized speed setting to deliberately slowed rotation, tracer flow/density, heat, and exhaust reach; these are visual parameters, not operating data. Its imperative 2D canvas uses a cached static depth buffer and per-pixel moving-face depth above the complete SVG base. Every air segment/head and exhaust patch tests the same nearest opaque depth; interpolated depth planes replace the old average-depth sort and unconditional foreground image. Concave blade caps use ear clipping. Settled guide samples are cached but retested against current moving depth. The SVG-only fallback clips faces and line intervals against the same geometry and is computed only when needed. Static audit, pixel/ray probes over a full fan/core pattern period, and browser composite samples cover different boundaries rather than claiming that a fixed-parts audit proves the mixed render.
 
 Metal triangles are scanned once: opaque interiors establish depth immediately,
@@ -218,6 +236,27 @@ invalidate the run first, so a stale completion/rejection cannot replace newer
 feedback. A fresh explicit Play retries the API; no failure loop or extra clock is
 introduced. Controlled browser failures cover either lane failing, unexpected
 cancellation, successful recovery, and an older cancelled run settling after replay.
+
+Motion Studio validates curve indices and supported duration values before
+interrupting animation. Curve indices must be integers within the authored list;
+duration uses the same 600–1800ms bounds and 100ms step as the range control,
+defined once alongside the curves. Refused actions preserve playback handles and
+completion feedback; reselecting the current setting remains a no-op. An in-memory
+actual-hook fixture pauses real native animations, awaits their ready promises and
+finishes them explicitly to check cancellation/completion without short-clock
+races. It also covers reduced motion, unmount cleanup and all valid slider steps;
+the fixture does not enter the application build.
+
+Native completion belongs to the current pair of lane animations, checked by
+array identity before updating feedback or releasing handles. Canceling pending
+animations rejects their completion promises, but canceling already-finished
+animations cannot revoke a queued fulfillment callback. Replay or setting changes
+must therefore invalidate ownership as well as cancel handles. Browser regressions
+finish and supersede within one task, before queued callbacks can run, and check
+that replay remains active or changed settings remain ready; only the replacement
+run may report completion. Pending-cancellation cases cover the rejection path
+separately. These checks preserve the existing guard rather than establish a new
+visitor-facing defect.
 
 Motion Studio keeps its native recipe disclosure mounted while curve and duration
 change. Only the copy controls are keyed to the generated CSS, so feedback resets
@@ -400,7 +439,24 @@ Shared surface roles live in `tokens.css`: `--surface-panel` (70% reading/lab pa
 
 ## Runtime and build boundaries
 
-The batch replay CLI keeps its 1 MiB input limit and pure `replayBatch` model boundary. Its small `scripts/write-lines.ts` adapter owns and ends the output stream through Node's promise-based pipeline, honoring backpressure and awaiting write completion before printing the scenario summary. Input or output failures, including a consumer closing its pipe early (`EPIPE`), produce a concise diagnostic and exit code 2 without a completion summary; valid output retains exit 0 or exit 1 for invalid scenarios. Deterministic writable fixtures cover backpressure and first/final asynchronous write failures; subprocess tests cover a closed pipe and complete NDJSON delivery to a delayed consumer.
+The batch replay CLI still buffers its input within the 1 MiB byte limit before
+output begins; input acquisition is not streaming. `iterateBatch` validates that
+limit immediately, then scans physical lines and parses/simulates each nonblank
+row only when pulled. It does not split all lines or collect a result array.
+`replayBatch` retains the existing eager array API by collecting that iterator.
+Order, CRLF handling, physical line numbers and per-row errors are unchanged.
+
+The small `scripts/write-lines.ts` adapter owns and ends the output stream through
+Node's promise-based pipeline, honoring backpressure. The CLI counts rows and
+invalid scenarios as they are consumed, but prints the completion summary only
+after successful output completion. Input or output failures, including a consumer
+closing its pipe early (`EPIPE`), still produce a concise diagnostic and exit 2
+without a completion summary; valid output retains exit 0 or exit 1 for invalid
+scenarios. Deterministic fixtures check lazy parsing, early iterator closure,
+blocked/failed output and first/final asynchronous write failures. Subprocess
+tests cover closed pipes and complete NDJSON delivery to a delayed consumer.
+This bounds result production by output demand rather than total batch results;
+it is not a measured speedup or a claim of zero stream buffering.
 
 [The browser entry](src/main.tsx) hydrates the prerendered [App](src/app/App.tsx), or mounts it into an empty root in development. App composes the career content and optional experiences. The retired dashboard is outside this entry graph; its retained API and CLI use maintained domain models independently of the public page.
 
