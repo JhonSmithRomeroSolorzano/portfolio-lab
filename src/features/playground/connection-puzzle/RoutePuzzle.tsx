@@ -154,6 +154,7 @@ export function RoutePuzzle() {
               onFocus={() => setFocused(i)}
               onClick={() => turn(i)}
               onKeyDown={(e) => {
+                if (e.altKey || e.ctrlKey || e.metaKey) return;
                 const row = Math.floor(i / 4),
                   col = i % 4;
                 const next =

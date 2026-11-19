@@ -8,6 +8,7 @@ export function MotionStudio() {
     duration,
     playing,
     arrived,
+    unavailable,
     reduced,
     container,
     runner,
@@ -114,9 +115,11 @@ export function MotionStudio() {
                 : "Reduced motion is on. Show both end states without animation."
               : playing
                 ? "Comparing both curves…"
-                : arrived
-                  ? "Both arrived together. Try another curve."
-                  : "Two paths. One shared duration. Ready when you are."}
+                : unavailable
+                  ? "Animation is unavailable. Both end states are shown."
+                  : arrived
+                    ? "Both arrived together. Try another curve."
+                    : "Two paths. One shared duration. Ready when you are."}
           </p>
           <MotionRecipe curve={curve} duration={duration} />
         </div>

@@ -22,6 +22,7 @@ export function CacheRescue() {
   const {
     prediction,
     predictionError,
+    predictionInput,
     guess,
     round,
     shared,
@@ -41,12 +42,11 @@ export function CacheRescue() {
   } = useCacheRescue();
   const launch = useRef<HTMLButtonElement>(null);
   const predictionPanel = useRef<HTMLDetailsElement>(null);
-  const predictionInput = useRef<HTMLInputElement>(null);
   useLayoutEffect(() => {
     if (!predictionError) return;
     // Focus after the error text commits so native scrolling uses final geometry.
     focusPrediction(predictionPanel.current, predictionInput.current);
-  }, [predictionError]);
+  }, [predictionError, predictionInput]);
 
   return (
     <div className={`cache-game ${playing ? "is-playing" : ""}`}>
@@ -108,7 +108,7 @@ export function CacheRescue() {
             step="1"
             value={prediction}
             disabled={time >= 0}
-            onChange={(event) => guess(event.target.value)}
+            onInput={(event) => guess(event.currentTarget.value)}
             aria-invalid={!!predictionError}
             aria-describedby={
               predictionError
