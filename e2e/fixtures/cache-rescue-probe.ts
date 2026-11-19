@@ -31,6 +31,7 @@ export type CacheProbeWindow = typeof window & {
     reset(next?: number): void;
     play(): boolean;
     rerender(): void;
+    unmount(): void;
   };
 };
 
@@ -83,6 +84,7 @@ function Probe() {
   );
 }
 
+const root = createRoot(document.getElementById("cache-probe")!);
 // Test-only host, bundled in memory without changing the portfolio build.
 Object.assign(window, {
   cacheRescueRunCalls: [],
@@ -93,8 +95,7 @@ Object.assign(window, {
     reset: (next?: number) => controls.reset(next),
     play: () => controls.togglePlayback(),
     rerender: () => rerender(),
+    unmount: () => root.unmount(),
   },
 });
-createRoot(document.getElementById("cache-probe")!).render(
-  createElement(Probe),
-);
+root.render(createElement(Probe));

@@ -92,6 +92,17 @@ coercing/clamping an index or reaching the model with missing settings. Browser
 fixtures exercise both callers during invalid-prediction feedback and playback,
 including nonfinite values and valid first/last challenge changes.
 
+Cache Rescue's playback effect owns one pending animation frame while running.
+Pause, reset, challenge/strategy changes, navigation away, effective-motion changes,
+completion and unmount release that frame through effect cleanup. Returning to the
+experience does not restart it; explicit resume retains the current modeled time,
+while replay after completion starts from zero. A clock-controlled actual-hook
+fixture counts scheduled, delivered, canceled and pending frames across repeated
+transitions and checks unchanged snapshots during stopped periods. It wraps the
+clock's frame APIs without invoking canceled callbacks or entering the app build.
+These checks cover frame ownership and model consistency, not physical background
+behavior, real-device performance or a newly reproduced visitor-facing defect.
+
 Jet Engine replaces the earlier lock. Its pure model maps a normalized speed setting to deliberately slowed rotation, tracer flow/density, heat, and exhaust reach; these are visual parameters, not operating data. Its imperative 2D canvas uses a cached static depth buffer and per-pixel moving-face depth above the complete SVG base. Every air segment/head and exhaust patch tests the same nearest opaque depth; interpolated depth planes replace the old average-depth sort and unconditional foreground image. Concave blade caps use ear clipping. Settled guide samples are cached but retested against current moving depth. The SVG-only fallback clips faces and line intervals against the same geometry and is computed only when needed. Static audit, pixel/ray probes over a full fan/core pattern period, and browser composite samples cover different boundaries rather than claiming that a fixed-parts audit proves the mixed render.
 
 Metal triangles are scanned once: opaque interiors establish depth immediately,
