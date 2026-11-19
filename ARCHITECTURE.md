@@ -217,6 +217,16 @@ leaves focus to the native action. Focus departure and Escape remain separate
 paths, with Escape returning focus to the summary. Internal radio clicks never
 count as outside input, including WebKit's non-focusing pointer behavior.
 
+Motion Studio validates curve indices and supported duration values before
+interrupting animation. Curve indices must be integers within the authored list;
+duration uses the same 600–1800ms bounds and 100ms step as the range control,
+defined once alongside the curves. Refused actions preserve playback handles and
+completion feedback; reselecting the current setting remains a no-op. An in-memory
+actual-hook fixture pauses real native animations, awaits their ready promises and
+finishes them explicitly to check cancellation/completion without short-clock
+races. It also covers reduced motion, unmount cleanup and all valid slider steps;
+the fixture does not enter the application build.
+
 Motion Studio keeps its native recipe disclosure mounted while curve and duration
 change. Only the copy controls are keyed to the generated CSS, so feedback resets
 for each recipe and an outstanding clipboard request cannot update the replacement
