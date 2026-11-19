@@ -224,6 +224,84 @@ for (const reducedMotion of ["no-preference", "reduce"] as const) {
   });
 }
 
+for (const completion of ["pending", "queued"] as const) {
+  for (const action of ["replay", "curve", "duration"] as const) {
+    test(`${action} supersedes ${completion} native completion without stale feedback`, async ({
+      page,
+    }) => {
+      const errors: string[] = [];
+      page.on("pageerror", (error) => errors.push(error.message));
+      await openProbe(page);
+      await play(page);
+      const original = await animations(page);
+      const previous = await state(page);
+      // Finish and supersede in the same browser task: native completion
+      // promises may settle, but their queued callbacks cannot run in between.
+      const superseded = await page.evaluate(
+        async ({ completion, action, duration }) => {
+          const probe = (window as MotionProbeWindow).motionPlaybackProbe;
+          if (completion === "queued") probe.finish();
+          const beforeAction = probe.animations();
+          if (action === "replay") await probe.play();
+          else if (action === "curve") probe.curve(0);
+          else probe.duration(duration);
+          return beforeAction;
+        },
+        { completion, action, duration: MOTION_DURATION.min },
+      );
+      expect(superseded.handles.map((handle) => handle.playState)).toEqual(
+        completion === "queued"
+          ? ["finished", "finished"]
+          : ["paused", "paused"],
+      );
+      // A separate browser task plus a committed rerender exposes state
+      // changes from queued completion/rejection handlers, not just setters
+      // from the superseding action.
+      await page.evaluate(() =>
+        (window as MotionProbeWindow).motionPlaybackProbe.rerender(),
+      );
+      await expect(page.getByTestId("motion-state")).toHaveAttribute(
+        "data-tick",
+        "1",
+      );
+      const current = await state(page);
+      expect(current.arrived).toBe(false);
+      expect(current.playing).toBe(action === "replay");
+      expect(current.curve).toBe(action === "curve" ? 0 : previous.curve);
+      expect(current.duration).toBe(
+        action === "duration" ? MOTION_DURATION.min : previous.duration,
+      );
+      const latest = await animations(page);
+      if (action === "replay") {
+        expect(latest.created).toBe(original.created + 2);
+        expect(latest.handles.map((handle) => handle.id)).not.toEqual(
+          original.handles.map((handle) => handle.id),
+        );
+        expect(latest.handles.map((handle) => handle.playState)).toEqual([
+          "paused",
+          "paused",
+        ]);
+      } else {
+        expect(latest.created).toBe(original.created);
+        expect(latest.handles.map((handle) => handle.playState)).toEqual([
+          "idle",
+          "idle",
+        ]);
+        await play(page);
+      }
+      await page.evaluate(() =>
+        (window as MotionProbeWindow).motionPlaybackProbe.finish(),
+      );
+      await expect.poll(async () => (await state(page)).arrived).toBe(true);
+      expect((await state(page)).playing).toBe(false);
+      expect(
+        (await animations(page)).handles.map((handle) => handle.playState),
+      ).toEqual(["idle", "idle"]);
+      expect(errors).toEqual([]);
+    });
+  }
+}
+
 test("production duration control uses the controller's shared limits and step", async ({
   page,
 }) => {

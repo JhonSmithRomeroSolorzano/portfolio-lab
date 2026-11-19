@@ -227,6 +227,17 @@ finishes them explicitly to check cancellation/completion without short-clock
 races. It also covers reduced motion, unmount cleanup and all valid slider steps;
 the fixture does not enter the application build.
 
+Native completion belongs to the current pair of lane animations, checked by
+array identity before updating feedback or releasing handles. Canceling pending
+animations rejects their completion promises, but canceling already-finished
+animations cannot revoke a queued fulfillment callback. Replay or setting changes
+must therefore invalidate ownership as well as cancel handles. Browser regressions
+finish and supersede within one task, before queued callbacks can run, and check
+that replay remains active or changed settings remain ready; only the replacement
+run may report completion. Pending-cancellation cases cover the rejection path
+separately. These checks preserve the existing guard rather than establish a new
+visitor-facing defect.
+
 Motion Studio keeps its native recipe disclosure mounted while curve and duration
 change. Only the copy controls are keyed to the generated CSS, so feedback resets
 for each recipe and an outstanding clipboard request cannot update the replacement
