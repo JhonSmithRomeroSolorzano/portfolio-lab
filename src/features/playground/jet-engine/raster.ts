@@ -123,8 +123,43 @@ export class EngineRaster {
       right = Math.min(this.width - 1, Math.ceil(t.bounds[2] + pad)),
       top = Math.max(0, Math.floor(t.bounds[1] - pad)),
       bottom = Math.min(this.height - 1, Math.ceil(t.bounds[3] + pad));
-    for (let y = top; y <= bottom; y++)
-      for (let x = left; x <= right; x++) {
+    for (let y = top; y <= bottom; y++) {
+      const py = y + 0.5;
+      let rowLeft = left,
+        rowRight = right;
+      for (const edge of edges) {
+        if (edge.a === 0) continue;
+        const crossing =
+          (-pad * edge.length - edge.b * py - edge.c) / edge.a - 0.5;
+        if (!Number.isFinite(crossing)) continue;
+        // Solve only a broad interval. Confirm the excluded boundary with
+        // the original distance equation, so floating-point cancellation in
+        // the crossing cannot discard a covered pixel. Distance is monotone
+        // across a row; horizontal edges need no X bound.
+        if (edge.a > 0) {
+          const next = Math.min(
+            rowRight + 1,
+            Math.max(rowLeft, Math.floor(crossing) - 1),
+          );
+          if (
+            next > rowLeft &&
+            (edge.a * (next - 0.5) + edge.b * py + edge.c) / edge.length < -pad
+          )
+            rowLeft = next;
+        } else {
+          const next = Math.max(
+            rowLeft - 1,
+            Math.min(rowRight, Math.ceil(crossing) + 1),
+          );
+          if (
+            next < rowRight &&
+            (edge.a * (next + 1.5) + edge.b * py + edge.c) / edge.length < -pad
+          )
+            rowRight = next;
+        }
+        if (rowLeft > rowRight) break;
+      }
+      for (let x = rowLeft; x <= rowRight; x++) {
         const px = x + 0.5,
           py = y + 0.5;
         const d0 =
@@ -211,6 +246,7 @@ export class EngineRaster {
           this.queueFringe(index, z, color, coverage);
         }
       }
+    }
   }
   metal(t: DepthTriangle, color: Ink, boundaries: EdgeMask) {
     this.scan(t, 0.75, color, boundaries);

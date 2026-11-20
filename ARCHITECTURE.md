@@ -116,6 +116,16 @@ occluded fringes in either surface submission order, including epsilon-tied opaq
 updates. Edge samples must not be discarded against intermediate depth. No triangle density, tracer
 density, antialiasing policy, or resolution cap was reduced for this optimization.
 
+Triangle scans narrow the padded rectangle to a conservative interval on each
+pixel row. Edge crossings only propose bounds: the original signed-distance
+equation must reject the last excluded pixel before a bound is accepted. Its
+monotonicity across a row then excludes the rest of that side; nonfinite crossings
+fall back to the previous interval, and horizontal edges do not impose an X bound.
+The inner coverage, nearest-edge depth, top-left fill, fringe order and blend
+equations are unchanged. A frozen rectangle-scan reference checks exact static and
+moving depth and pixel buffers across seeded/clipped/narrow triangles, all boundary
+masks, different scales, both submission orders and actual rotor/reverser faces.
+
 Each raster also owns three projected vertices, one mutable triangle bounds/plane
 buffer, and three edge records. Synchronous scans overwrite these fixed-size
 buffers instead of allocating them per face. `triangle(vertices, out)` preserves
