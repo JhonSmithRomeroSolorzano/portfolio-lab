@@ -74,6 +74,13 @@ export function observeCanvasEnvironment(
     attributes: true,
     attributeFilter: ["data-theme"],
   });
+  // Canvas availability can unhide this target after the synchronous first
+  // measurement. Without ResizeObserver, that reveal needs its own invalidation.
+  if (!size)
+    appearance.observe(target, {
+      attributes: true,
+      attributeFilter: ["hidden"],
+    });
   window.addEventListener("resize", schedule);
   refresh();
   return () => {
