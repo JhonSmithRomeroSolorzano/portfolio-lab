@@ -307,6 +307,16 @@ as observers/listeners. Explicit controls and animation clocks are not debounced
 Engine still owns palette/guide invalidation and creates a new raster only when
 backing dimensions change; artwork-loading policy remains in its feature.
 
+Without ResizeObserver, the same mutation observer also watches the drawing
+target's `hidden` attribute. Sculpture and Loom initially hide their canvas or
+host until allocation succeeds; revealing it must remeasure the visible bounds
+instead of leaving the initial 1×1 buffer until a window resize. This fallback
+uses the existing coalesced frame and cleanup, with no polling or subtree-wide
+observation. The ResizeObserver-backed path is unchanged. Browser regressions
+disable ResizeObserver before startup and require correctly sized, nonempty
+drawings at mobile/desktop widths in reduced/full motion, without a synthetic
+resize or theme change to repair initialization.
+
 Signal Sculpture's pixel tests wait for a visible canvas with backing dimensions
 matching its current logical size and capped device-pixel ratio before taking a
 baseline. React's playback attribute alone does not establish resize readiness:
