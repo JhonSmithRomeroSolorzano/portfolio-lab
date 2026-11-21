@@ -350,6 +350,16 @@ command hashing or per-frame canvas creation. Allocation denial stops playback,
 releases observation/storage, and enables the existing SVG fallback. Trail bounds,
 particle counts, resolution caps, and playback intent are unchanged.
 
+Loom's canvas path projects X/Y as scalars and traverses its dense renderer-owned
+trails with indexed loops, avoiding a temporary point for each path vertex and
+per-trail tracing callbacks. One reusable tracer writes the path. The normal
+point-returning projection remains a fresh object for UI/pointer callers; both use
+the same coordinate formulas. No paths are batched or simplified, and both strokes,
+heads, attractor markers, simulation steps and trail histories keep their existing
+order and values. Seeded scalar/point equivalence checks and an independent
+allocating draw-command reference cover
+static/live geometry, palette changes and held-point Weave movement.
+
 The canvas-invalidation browser test retains exact pixel equality after restoring
 the original viewport and theme; it has no image-difference tolerance. A failed
 restoration attaches the original and restored canvas PNGs plus backing/logical
