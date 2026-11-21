@@ -12,6 +12,8 @@ import {
 import {
   loomViewport,
   projectLoomPoint,
+  projectLoomX,
+  projectLoomY,
   unprojectLoomPoint,
 } from "../src/features/playground/gravity-loom/viewport.ts";
 
@@ -128,6 +130,41 @@ test("viewport mapping reaches every rectangle edge and inverts pointer coordina
       );
       assert.ok(Math.abs(result.x - point.x) < 1e-12);
       assert.ok(Math.abs(result.y - point.y) < 1e-12);
+    }
+  }
+});
+
+test("scalar projections preserve exact allocating coordinates without mutating source points", () => {
+  let seed = 0x6a09e667;
+  const random = () => {
+    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+    return seed / 2 ** 32;
+  };
+  for (const [width, height] of [
+    [1, 1],
+    [318, 318],
+    [1052, 657],
+    [844, 390],
+  ]) {
+    const viewport = Object.freeze(loomViewport(width, height));
+    for (let i = 0; i < 500; i++) {
+      const point = Object.freeze({ x: random() * 2 - 1, y: random() * 2 - 1 });
+      const before = { ...point };
+      const expected = {
+        x: viewport.centerX + point.x * viewport.scaleX,
+        y: viewport.centerY + point.y * viewport.scaleY,
+      };
+      assert.deepEqual(
+        {
+          x: projectLoomX(point.x, viewport),
+          y: projectLoomY(point.y, viewport),
+        },
+        expected,
+      );
+      assert.deepEqual(point, before);
+      const allocated = projectLoomPoint(point, viewport);
+      assert.deepEqual(allocated, expected);
+      assert.notEqual(projectLoomPoint(point, viewport), allocated);
     }
   }
 });

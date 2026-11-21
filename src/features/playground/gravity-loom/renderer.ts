@@ -5,9 +5,24 @@ import {
   type LoomFlow,
   type LoomPoint,
 } from "../../../domain/playground/gravity-loom";
-import { loomViewport, projectLoomPoint } from "./viewport";
+import { loomViewport, projectLoomX, projectLoomY } from "./viewport";
 import { observeCanvasEnvironment } from "../../../shared/canvas/observe-canvas";
 import { createLoomPaintSurface } from "./paint-surface";
+
+function traceLoomTrail(
+  ctx: CanvasRenderingContext2D,
+  trail: readonly LoomPoint[],
+  viewport: ReturnType<typeof loomViewport>,
+) {
+  ctx.beginPath();
+  for (let j = 0; j < trail.length; j++) {
+    const point = trail[j],
+      x = projectLoomX(point.x, viewport),
+      y = projectLoomY(point.y, viewport);
+    if (j === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+}
 
 /** Bounded histories retain the woven trails without persistent canvas overdraw. */
 export function createLoomRenderer(
@@ -64,19 +79,12 @@ export function createLoomRenderer(
     if (!ctx) return;
     ctx.clearRect(0, 0, width, height);
     const viewport = loomViewport(width, height);
-    trails.forEach((trail, i) => {
-      const trace = () => {
-        ctx.beginPath();
-        trail.forEach((p, j) => {
-          const { x, y } = projectLoomPoint(p, viewport);
-          if (j === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        });
-      };
+    for (let i = 0; i < trails.length; i++) {
+      const trail = trails[i];
       ctx.strokeStyle = colors[i % 3];
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
-      trace();
+      traceLoomTrail(ctx, trail, viewport);
       ctx.lineWidth = 5;
       ctx.globalAlpha = dark ? 0.04 : 0.025;
       ctx.stroke();
@@ -88,14 +96,20 @@ export function createLoomRenderer(
         ctx.globalAlpha = 0.9;
         ctx.fillStyle = colors[i % 3];
         ctx.beginPath();
-        const projected = projectLoomPoint(head, viewport);
-        ctx.arc(projected.x, projected.y, 1.5, 0, Math.PI * 2);
+        ctx.arc(
+          projectLoomX(head.x, viewport),
+          projectLoomY(head.y, viewport),
+          1.5,
+          0,
+          Math.PI * 2,
+        );
         ctx.fill();
       }
-    });
+    }
     ctx.globalAlpha = 1;
     attractors.forEach((p, i) => {
-      const { x, y } = projectLoomPoint(p, viewport);
+      const x = projectLoomX(p.x, viewport),
+        y = projectLoomY(p.y, viewport);
       ctx.strokeStyle = colors[0];
       if (i === selected) {
         ctx.fillStyle = ctx.strokeStyle;

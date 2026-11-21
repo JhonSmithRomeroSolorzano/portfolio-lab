@@ -2,9 +2,14 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createLoomPaintSurface } from "../src/features/playground/gravity-loom/paint-surface";
 import { createLoomRenderer } from "../src/features/playground/gravity-loom/renderer";
-import { defaultAttractors } from "../src/domain/playground/gravity-loom";
+import {
+  createLoomScene,
+  defaultAttractors,
+  stepLoom,
+  type LoomPoint,
+} from "../src/domain/playground/gravity-loom";
 
-function canvasFixture() {
+function canvasFixture(record = false) {
   const buffers: ReturnType<typeof makeCanvas>[] = [];
   const attached = new Set<HTMLCanvasElement>();
   let denyBuffer = false;
@@ -16,6 +21,10 @@ function canvasFixture() {
       head: [] as number[],
       transform: [1, 0, 0, 1, 0, 0],
       stack: [] as number[][],
+      commands: [] as (string | number)[][],
+    };
+    const command = (...args: (string | number)[]) => {
+      if (record) state.commands.push(args);
     };
     const ctx = {
       strokeStyle: "",
@@ -26,22 +35,36 @@ function canvasFixture() {
       lineCap: "butt",
       lineJoin: "miter",
       font: "",
-      clearRect() {
+      clearRect(x: number, y: number, width: number, height: number) {
         state.clears++;
         state.firstStroke = undefined;
+        state.commands = [];
+        command("clearRect", x, y, width, height);
       },
-      beginPath() {},
-      moveTo() {},
-      lineTo() {},
-      fill() {},
-      fillText() {},
+      beginPath() {
+        command("beginPath");
+      },
+      moveTo(x: number, y: number) {
+        command("moveTo", x, y);
+      },
+      lineTo(x: number, y: number) {
+        command("lineTo", x, y);
+      },
+      fill() {
+        command("fill", ctx.fillStyle, ctx.globalAlpha);
+      },
+      fillText(text: string, x: number, y: number) {
+        command("fillText", text, x, y);
+      },
       stroke() {
+        command("stroke", ctx.strokeStyle, ctx.lineWidth, ctx.globalAlpha);
         state.firstStroke ??= {
           color: ctx.strokeStyle,
           alpha: ctx.globalAlpha,
         };
       },
-      arc(x: number, y: number, radius: number) {
+      arc(x: number, y: number, radius: number, start: number, end: number) {
+        command("arc", x, y, radius, start, end);
         if (radius === 1.5) state.head = [x, y];
       },
       getTransform() {
@@ -121,6 +144,65 @@ function canvasFixture() {
   };
 }
 
+/** Original allocating projection/draw order, independent of scalar helpers. */
+function referenceCommands(
+  trails: readonly (readonly LoomPoint[])[],
+  attractors: readonly LoomPoint[],
+  dark = false,
+  selected = 0,
+  held?: number,
+) {
+  const commands: (string | number)[][] = [];
+  const command = (...args: (string | number)[]) => commands.push(args);
+  const project = (p: LoomPoint) => ({
+    x: 159 + p.x * 135,
+    y: 159 + p.y * 135,
+  });
+  const colors = dark
+    ? ["#ffcc8a", "#9ac8ff", "#7edaca"]
+    : ["#975014", "#245da0", "#18756c"];
+  command("clearRect", 0, 0, 318, 318);
+  for (const [i, trail] of trails.entries()) {
+    command("beginPath");
+    trail.forEach((p, j) => {
+      const { x, y } = project(p);
+      command(j ? "lineTo" : "moveTo", x, y);
+    });
+    command("stroke", colors[i % 3], 5, dark ? 0.04 : 0.025);
+    command("stroke", colors[i % 3], 0.8, dark ? 0.6 : 0.5);
+    const head = trail.at(-1);
+    if (head) {
+      const { x, y } = project(head);
+      command("beginPath");
+      command("arc", x, y, 1.5, 0, Math.PI * 2);
+      command("fill", colors[i % 3], 0.9);
+    }
+  }
+  for (const [i, point] of attractors.entries()) {
+    const { x, y } = project(point);
+    if (i === selected) {
+      command("beginPath");
+      command("arc", x, y, i === held ? 30 : 24, 0, Math.PI * 2);
+      command("fill", colors[0], i === held ? 0.2 : 0.08);
+    }
+    command("beginPath");
+    command(
+      "arc",
+      x,
+      y,
+      i === held ? 18 : i === selected ? 14 : 10,
+      0,
+      Math.PI * 2,
+    );
+    command("stroke", colors[0], i === selected ? 2 : 1, 1);
+    command("beginPath");
+    command("arc", x, y, 3, 0, Math.PI * 2);
+    command("stroke", colors[0], i === selected ? 2 : 1, 1);
+    command("fillText", String(i + 1), x + 14, y - 12);
+  }
+  return commands;
+}
+
 test("Loom draws directly to one retained canvas and renews it only on palette changes", () => {
   const f = canvasFixture();
   const surface = createLoomPaintSurface(f.host)!;
@@ -177,7 +259,7 @@ test("Loom paint surface reports allocation denial and releases its backing stor
 });
 
 test("Loom palette epochs preserve live geometry, pause intent and cheap no-op controls", () => {
-  const f = canvasFixture();
+  const f = canvasFixture(true);
   const frames = new Map<number, FrameRequestCallback>();
   const observers: (() => void)[] = [];
   const observed: unknown[] = [];
@@ -235,6 +317,32 @@ test("Loom palette epochs preserve live geometry, pause intent and cheap no-op c
       unavailable++;
     })!;
     renderer.configure(defaultAttractors, "orbit", 1, true);
+    const scene = createLoomScene(defaultAttractors, "orbit", 1, 48);
+    const step = (
+      count: number,
+      points: readonly LoomPoint[] = defaultAttractors,
+      flow: "orbit" | "weave" = "orbit",
+      strength = 1,
+      held?: number,
+    ) => {
+      for (let i = 0; i < count; i++) {
+        scene.particles = stepLoom(
+          scene.particles,
+          points,
+          flow,
+          strength,
+          held,
+        );
+        scene.particles.forEach((p, index) => {
+          scene.trails[index].push({ x: p.x, y: p.y });
+          if (scene.trails[index].length > 90) scene.trails[index].shift();
+        });
+      }
+    };
+    assert.deepEqual(
+      f.buffers.at(-1)!.state.commands,
+      referenceCommands(scene.trails, defaultAttractors),
+    );
     const preview = [...f.buffers.at(-1)!.state.head];
     const paints = f.buffers[0].state.clears;
     for (let i = 0; i < 60; i++) {
@@ -248,6 +356,11 @@ test("Loom palette epochs preserve live geometry, pause intent and cheap no-op c
     renderer.play();
     flush(100);
     flush(140);
+    step(2);
+    assert.deepEqual(
+      f.buffers.at(-1)!.state.commands,
+      referenceCommands(scene.trails, defaultAttractors),
+    );
     const live = [...f.buffers.at(-1)!.state.head];
     assert.notDeepEqual(live, preview);
     renderer.pause();
@@ -261,6 +374,10 @@ test("Loom palette epochs preserve live geometry, pause intent and cheap no-op c
     });
     notify();
     flush(140);
+    assert.deepEqual(
+      f.buffers.at(-1)!.state.commands,
+      referenceCommands(scene.trails, defaultAttractors, true, 1),
+    );
     assert.deepEqual(f.buffers.at(-1)!.state.head, live);
     assert.deepEqual(f.buffers.at(-1)!.state.firstStroke, {
       color: "#ffcc8a",
@@ -274,7 +391,32 @@ test("Loom palette epochs preserve live geometry, pause intent and cheap no-op c
     renderer.play();
     flush(200);
     flush(240);
+    step(2);
+    assert.deepEqual(
+      f.buffers.at(-1)!.state.commands,
+      referenceCommands(scene.trails, defaultAttractors, false, 1),
+    );
     assert.notDeepEqual(f.buffers.at(-1)!.state.head, live);
+    const moved = [{ x: -0.8, y: 0.6 }, defaultAttractors[1]];
+    renderer.move(moved, false);
+    renderer.select(0);
+    renderer.configure(moved, "weave", 1.5);
+    renderer.grab(0);
+    assert.deepEqual(
+      f.buffers.at(-1)!.state.commands,
+      referenceCommands(scene.trails, moved, false, 0, 0),
+    );
+    flush(260);
+    step(1, moved, "weave", 1.5, 0);
+    assert.deepEqual(
+      f.buffers.at(-1)!.state.commands,
+      referenceCommands(scene.trails, moved, false, 0, 0),
+    );
+    renderer.release();
+    assert.deepEqual(
+      f.buffers.at(-1)!.state.commands,
+      referenceCommands(scene.trails, moved),
+    );
     const allocations = f.buffers.length;
     for (let i = 0; i < 60; i++) flush(260 + i * 20);
     assert.equal(f.buffers.length, allocations);

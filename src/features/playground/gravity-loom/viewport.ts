@@ -13,13 +13,24 @@ export function loomViewport(width: number, height: number) {
   };
 }
 
+/** Scalar projections avoid point allocations in synchronous canvas drawing. */
+export const projectLoomX = (
+  x: number,
+  viewport: ReturnType<typeof loomViewport>,
+) => viewport.centerX + x * viewport.scaleX;
+
+export const projectLoomY = (
+  y: number,
+  viewport: ReturnType<typeof loomViewport>,
+) => viewport.centerY + y * viewport.scaleY;
+
 export function projectLoomPoint(
   point: LoomPoint,
   viewport: ReturnType<typeof loomViewport>,
 ): LoomPoint {
   return {
-    x: viewport.centerX + point.x * viewport.scaleX,
-    y: viewport.centerY + point.y * viewport.scaleY,
+    x: projectLoomX(point.x, viewport),
+    y: projectLoomY(point.y, viewport),
   };
 }
 
