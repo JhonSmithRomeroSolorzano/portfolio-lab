@@ -228,7 +228,9 @@ export function JetEngine() {
       <div className="engine-control-panel">
         <div className="engine-speed-label">
           <label htmlFor="engine-speed">Engine speed</label>
-          <output htmlFor="engine-speed">{speed}%</output>
+          <output htmlFor="engine-speed" aria-hidden="true">
+            {speed}%
+          </output>
         </div>
         <input
           id="engine-speed"
@@ -237,6 +239,7 @@ export function JetEngine() {
           max="100"
           step="1"
           value={speed}
+          aria-valuetext={`${speed}%`}
           onChange={(event) => chooseSpeed(Number(event.target.value))}
           aria-describedby="engine-speed-help"
         />
