@@ -442,6 +442,14 @@ journeys reproduced with translated entrances in Linux WebKit. Unit coverage
 asserts the exact keyframes and timing; browser journeys exercise actual arrival,
 history, and keyboard follow-up without animation overrides or in-flight logging.
 
+Decorative arrival pulses and section entrances handle animation-construction
+failures at their own boundary. A rejected pulse cannot abort active-section,
+reading-progress, or timeline updates, and a rejected entrance cannot discard
+other entries in the observer batch. Content retains its normal CSS, failed
+entrances are not retried, and later supported animations still work. Controlled
+failure tests cover these recovery paths separately from ordinary navigation
+journeys; keyframes, focus/scroll policy, and reduced-motion behavior are unchanged.
+
 Failed navigation tests attach final geometry, focus, URL hash, and scroll policy
 only after the original assertion fails. A missing/closed page or unavailable
 snapshot must not replace that original failure. Diagnostic probes that wrapped

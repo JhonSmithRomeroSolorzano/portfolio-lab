@@ -28,17 +28,23 @@ export function observeScrollReveals(
           160,
           Math.max(0, Number(element.dataset.reveal) || 0),
         );
-        const animation = element.animate(
-          // Keep anchor geometry still during native scrolling. Translated
-          // entrances can interrupt smooth anchor journeys in Linux WebKit.
-          [{ opacity: 0.35 }, { opacity: 1 }],
-          {
-            duration: 560,
-            delay,
-            easing: "cubic-bezier(.2,.7,.2,1)",
-            fill: "backwards",
-          },
-        );
+        let animation: Animation;
+        try {
+          animation = element.animate(
+            // Keep anchor geometry still during native scrolling. Translated
+            // entrances can interrupt smooth anchor journeys in Linux WebKit.
+            [{ opacity: 0.35 }, { opacity: 1 }],
+            {
+              duration: 560,
+              delay,
+              easing: "cubic-bezier(.2,.7,.2,1)",
+              fill: "backwards",
+            },
+          );
+        } catch {
+          // The normal CSS is readable; keep processing neighboring entrances.
+          continue;
+        }
         active.set(element, animation);
         animation.finished.then(
           () => active.delete(element),

@@ -73,15 +73,21 @@ export function observePortfolioMotion(
       .find((section) => section.id === id)
       ?.querySelector<HTMLElement>(".section-signal");
     if (!line?.animate) return;
-    const animation = line.animate(
-      [
-        { transform: "scaleX(0)", opacity: 0, offset: 0 },
-        { transform: "scaleX(0.25)", opacity: 1, offset: 0.2 },
-        { transform: "scaleX(1)", opacity: 0.9, offset: 0.7 },
-        { transform: "scaleX(1)", opacity: 0, offset: 1 },
-      ],
-      { duration: 950, easing: "cubic-bezier(.22,1,.36,1)" },
-    );
+    let animation: Animation;
+    try {
+      animation = line.animate(
+        [
+          { transform: "scaleX(0)", opacity: 0, offset: 0 },
+          { transform: "scaleX(0.25)", opacity: 1, offset: 0.2 },
+          { transform: "scaleX(1)", opacity: 0.9, offset: 0.7 },
+          { transform: "scaleX(1)", opacity: 0, offset: 1 },
+        ],
+        { duration: 950, easing: "cubic-bezier(.22,1,.36,1)" },
+      );
+    } catch {
+      // Decoration must not abort section tracking or leave navigation pending.
+      return;
+    }
     pulse = animation;
     animation.finished.then(
       () => {

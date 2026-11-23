@@ -61,6 +61,7 @@ function fixture(reduced = false, starts = [0, 1000, 2000]) {
     clearTimeout: (id: number) => timers.delete(id),
   };
   const pulses: Array<{ id: string; cancelled: boolean }> = [];
+  let rejectPulses = false;
   const sections = ["workbench", "resume", "contact"].map((id, index) => ({
     id,
     getBoundingClientRect: () => ({
@@ -70,6 +71,7 @@ function fixture(reduced = false, starts = [0, 1000, 2000]) {
     }),
     querySelector: () => ({
       animate: () => {
+        if (rejectPulses) throw new Error("Animation unavailable");
         const pulse = { id, cancelled: false };
         pulses.push(pulse);
         return {
@@ -121,6 +123,9 @@ function fixture(reduced = false, starts = [0, 1000, 2000]) {
   };
   return {
     cleanup,
+    rejectPulses: (value: boolean) => {
+      rejectPulses = value;
+    },
     pulses,
     frame,
     row,
@@ -288,3 +293,27 @@ test("cleanup cancels pending work and releases every event listener", () => {
   assert.equal(page.motion.listeners.size, 0);
   assert.deepEqual(page.active(), []);
 });
+
+for (const journey of ["scroll", "anchor"] as const)
+  test(`a rejected arrival animation cannot interrupt ${journey} feedback`, () => {
+    const page = fixture();
+    page.rejectPulses(true);
+    if (journey === "anchor") page.click("resume");
+    page.scroll(1000);
+    assert.doesNotThrow(() => page.settle());
+    assert.deepEqual(page.active(), ["#resume"]);
+    assert.equal(page.frame.values.get("--reading-progress"), "0.625");
+    assert.equal(page.row.dataset.traced, "true");
+    assert.equal(page.pulses.length, 0);
+
+    page.rejectPulses(false);
+    page.scroll(1600);
+    page.flush();
+    assert.deepEqual(page.active(), ["#contact"]);
+    assert.equal(page.pulses.at(-1)?.id, "contact");
+    page.cleanup();
+    assert.equal(page.pulses.at(-1)?.cancelled, true);
+    assert.equal(page.frames.size, 0);
+    assert.equal(page.timers.size, 0);
+    assert.equal(page.view.listeners.size, 0);
+  });

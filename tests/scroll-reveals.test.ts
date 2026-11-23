@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { observeScrollReveals } from "../src/app/scroll-reveals.ts";
 
-function fixture(reduced = false) {
+function fixture(reduced = false, targetCount = 1) {
   let enter: (entries: unknown[]) => void;
   let systemChange: () => void = () => {};
   let focus: (event: unknown) => void = () => {};
@@ -10,6 +10,7 @@ function fixture(reduced = false) {
   let calls = 0;
   let cancelled = 0;
   let focused = false;
+  let rejectNext = false;
   let animation:
     { keyframes: Keyframe[]; options: KeyframeAnimationOptions } | undefined;
   const target = {
@@ -17,6 +18,10 @@ function fixture(reduced = false) {
     matches: () => focused,
     contains: (node: unknown) => node === target,
     animate: (keyframes: Keyframe[], options: KeyframeAnimationOptions) => {
+      if (rejectNext) {
+        rejectNext = false;
+        throw new Error("Animation unavailable");
+      }
       animation = { keyframes, options };
       calls++;
       return {
@@ -27,8 +32,12 @@ function fixture(reduced = false) {
       };
     },
   };
+  const targets = [
+    target,
+    ...Array.from({ length: targetCount - 1 }, () => ({ ...target })),
+  ];
   const root = {
-    querySelectorAll: () => [target],
+    querySelectorAll: () => targets,
     addEventListener: (_: string, callback: typeof focus) => {
       focus = callback;
     },
@@ -65,6 +74,11 @@ function fixture(reduced = false) {
     FakeObserver as unknown as typeof IntersectionObserver,
   );
   return {
+    rejectNext: () => {
+      rejectNext = true;
+    },
+    enterAll: () =>
+      enter(targets.map((target) => ({ target, isIntersecting: true }))),
     enter: (visible: boolean) => enter([{ target, isIntersecting: visible }]),
     reduce: (value: boolean) => {
       motion.matches = value;
@@ -129,4 +143,17 @@ test("keyboard focus cancels motion and focused content never starts an entrance
   second.enter(true);
   assert.equal(second.stats().calls, 0);
   second.cleanup();
+});
+
+test("one rejected entrance does not discard the rest of an observer batch", () => {
+  const view = fixture(false, 2);
+  view.rejectNext();
+  assert.doesNotThrow(() => view.enterAll());
+  assert.deepEqual(view.stats(), { calls: 1, cancelled: 0, observed: 0 });
+  view.enterAll();
+  assert.equal(view.stats().calls, 1);
+  view.reduce(true);
+  assert.equal(view.stats().cancelled, 1);
+  view.cleanup();
+  assert.deepEqual(view.stats(), { calls: 1, cancelled: 1, observed: 0 });
 });
