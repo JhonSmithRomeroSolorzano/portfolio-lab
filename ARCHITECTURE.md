@@ -168,6 +168,13 @@ Both door sets hinge on the fixed aft rim; circumferential blocker edge clearanc
 
 `REVERSER` is the single source for the opening and moving panels' axial/radial dimensions; the blocker offset and thickness derive from it, rather than repeating independent dimensions in authoring and runtime. `jet-engine/feedback.ts` owns the pure presentation policy for loading, failure, off, motion, fallback, and thrust-selection messages. It stays in the feature, not the domain, so UI wording does not leak into the geometry model; React only displays its result. Small readonly inputs and explicit renderer methods are sufficient contracts—no inheritance or dependency-injection framework is needed.
 
+Engine artwork recovery follows the currently selected theme image. A successful
+load clears an earlier artwork failure only after verifying completion, nonzero
+natural size, and the current source URL. Switching back to a valid palette can
+therefore restore the drawing without reloading the page. It preserves speed,
+thrust, manual pause, reduced motion, and the canvas-free SVG fallback; loading
+an image does not itself request playback.
+
 React owns engine settings and playback, not per-frame updates. The opt-in shared `useViewportPlayback` gates playback on the drawing’s actual intersection, document visibility, renderer availability, and reduced motion. Its separate requested-playback state starts enabled; Pause, Reset, and zero speed disable it until an explicit Play or speed change. Offscreen/hidden interruptions preserve that intent. When intersection changes arrive in a batch, the latest entry owns viewport state. The hook cleans up its observer and listeners and uses geometry checks on scroll/resize without IntersectionObserver. Reduced motion redraws a still at the selected setting. Canvas denial retains depth-clipped SVG blade faces and air routes; missing art stops playback and offers a reload. Pixel ratio remains capped at 1.5 and frame catch-up at 50ms, with observers/listeners/frames released on cleanup. Static SVG sizes and visibility data stay within their existing art/JavaScript budgets. Cache Rescue retains its original request map.
 
 ### Jet Engine model and authoring
@@ -434,6 +441,14 @@ are unchanged. Keeping their geometry still avoids the interrupted native smooth
 journeys reproduced with translated entrances in Linux WebKit. Unit coverage
 asserts the exact keyframes and timing; browser journeys exercise actual arrival,
 history, and keyboard follow-up without animation overrides or in-flight logging.
+
+Decorative arrival pulses and section entrances handle animation-construction
+failures at their own boundary. A rejected pulse cannot abort active-section,
+reading-progress, or timeline updates, and a rejected entrance cannot discard
+other entries in the observer batch. Content retains its normal CSS, failed
+entrances are not retried, and later supported animations still work. Controlled
+failure tests cover these recovery paths separately from ordinary navigation
+journeys; keyframes, focus/scroll policy, and reduced-motion behavior are unchanged.
 
 Failed navigation tests attach final geometry, focus, URL hash, and scroll policy
 only after the original assertion fails. A missing/closed page or unavailable
