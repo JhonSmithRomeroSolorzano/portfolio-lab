@@ -140,25 +140,37 @@ export function AlgorithmGarden() {
                 );
               })}
           </svg>
-          {tree.map((node) => (
-            <div
-              key={node.id}
-              className="garden-node-slot"
-              style={{ left: `${node.x}%`, top: `${node.y}%` }}
-            >
-              <button
-                className={`garden-node ${visited.includes(node.id) ? "is-lit" : ""} ${hint && order[visited.length] === node.id ? "is-hinted" : ""}`}
-                aria-label={`Node ${node.id}${visited.includes(node.id) ? `, visited ${visited.indexOf(node.id) + 1}` : ""}`}
-                aria-disabled={visited.includes(node.id)}
-                onClick={() => visit(node.id)}
+          {tree.map((node) => {
+            const children = tree.filter((child) => child.parent === node.id);
+            return (
+              <div
+                key={node.id}
+                className="garden-node-slot"
+                style={{ left: `${node.x}%`, top: `${node.y}%` }}
               >
-                {node.id}
-              </button>
-              {visited.includes(node.id) && (
-                <small aria-hidden="true">{visited.indexOf(node.id) + 1}</small>
-              )}
-            </div>
-          ))}
+                <button
+                  className={`garden-node ${visited.includes(node.id) ? "is-lit" : ""} ${hint && order[visited.length] === node.id ? "is-hinted" : ""}`}
+                  aria-label={`Node ${node.id}${visited.includes(node.id) ? `, visited ${visited.indexOf(node.id) + 1}` : ""}`}
+                  aria-describedby={`garden-node-${node.id}-relationships`}
+                  aria-disabled={visited.includes(node.id)}
+                  onClick={() => visit(node.id)}
+                >
+                  {node.id}
+                </button>
+                <span id={`garden-node-${node.id}-relationships`} hidden>
+                  {node.parent ? `Parent: ${node.parent}.` : "Root node."}{" "}
+                  {children.length
+                    ? `Children from left to right: ${children.map((child) => child.id).join(", ")}.`
+                    : "No children."}
+                </span>
+                {visited.includes(node.id) && (
+                  <small aria-hidden="true">
+                    {visited.indexOf(node.id) + 1}
+                  </small>
+                )}
+              </div>
+            );
+          })}
         </div>
         <div className="garden-trail" aria-label="Your traversal">
           {order.map((_, i) => (

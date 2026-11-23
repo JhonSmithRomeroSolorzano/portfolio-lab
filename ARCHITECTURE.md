@@ -300,6 +300,14 @@ Lab feedback uses the existing status/alert regions rather than a separate annou
 
 `ExperienceNavigation` provides one native collection-return link per lab rather than Previous/Next cards: all experiences remain visible in the same document. The link lives outside deferred downloads/error boundaries, so wayfinding works during failures and without JavaScript. Visible link text supplies its accessible name without an ARIA override. The chooser's `#collection` target accepts focus without entering the Tab order; query/history handling and direct-entry alignment remain native/existing app responsibilities. No routing dependency or extra catalog is introduced.
 
+Algorithm Garden describes each node's parent and left-to-right children through
+`aria-describedby`, derived from the same authored tree as the drawing and traversal
+model. Referenced hidden text exposes the connections without adding visual labels
+or duplicate reading stops. Node names, visit order, focus and native button
+activation remain unchanged; this is a group of game buttons, not an ARIA tree
+widget. Browser checks cover descriptions across all three shapes, both traversal
+modes, visited nodes and reset, without claiming human screen-reader validation.
+
 Native lab sliders retain their numeric model values and keyboard behavior while
 `aria-valuetext` supplies the visible units: seconds for Motion Studio, percentages
 for engine speed and Loom strength. Duration keeps a stable control name; visual
