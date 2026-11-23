@@ -300,6 +300,13 @@ Lab feedback uses the existing status/alert regions rather than a separate annou
 
 `ExperienceNavigation` provides one native collection-return link per lab rather than Previous/Next cards: all experiences remain visible in the same document. The link lives outside deferred downloads/error boundaries, so wayfinding works during failures and without JavaScript. Visible link text supplies its accessible name without an ARIA override. The chooser's `#collection` target accepts focus without entering the Tab order; query/history handling and direct-entry alignment remain native/existing app responsibilities. No routing dependency or extra catalog is introduced.
 
+Native lab sliders retain their numeric model values and keyboard behavior while
+`aria-valuetext` supplies the visible units: seconds for Motion Studio, percentages
+for engine speed and Loom strength. Duration keeps a stable control name; visual
+value labels are hidden from accessibility tools where the slider already supplies
+that value. Browser checks cover keyboard bounds/steps, presets, reset and recipe
+agreement. They check exposed semantics, not actual screen-reader speech.
+
 Intersection observation enhances loading/playback but is not required. Collection anchors (`#lab`, `#collection`, and legacy `#signal-lab`) do not request an individual experience: Jet Engine loads when its placeholder approaches within the existing 300px viewport margin, on explicit load, or through `#jet-engine`/legacy `#pin-lock` entry. Without IntersectionObserver, the existing eager fallback keeps every experience usable. Reduced motion, page visibility, and (where appropriate) navigation/offscreen changes interrupt playback. Effects release listeners, observers, and animation frames on cleanup.
 
 `usePlaybackInterruption` observes one target for Cache Rescue and Motion Studio.

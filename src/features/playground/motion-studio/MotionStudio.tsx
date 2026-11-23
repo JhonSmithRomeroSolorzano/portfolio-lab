@@ -90,7 +90,8 @@ export function MotionStudio() {
             ))}
           </div>
           <label className="motion-duration" htmlFor="motion-duration">
-            Duration <span>{(duration / 1000).toFixed(1)} s</span>
+            Duration{" "}
+            <span aria-hidden="true">{(duration / 1000).toFixed(1)} s</span>
             <input
               id="motion-duration"
               type="range"
@@ -98,6 +99,7 @@ export function MotionStudio() {
               max={MOTION_DURATION.max}
               step={MOTION_DURATION.step}
               value={duration}
+              aria-valuetext={`${(duration / 1000).toFixed(1)} seconds`}
               onChange={(e) => chooseDuration(Number(e.target.value))}
             />
           </label>
