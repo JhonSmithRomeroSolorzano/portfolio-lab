@@ -163,8 +163,11 @@ export function JetEngine() {
               image.complete &&
               image.naturalWidth > 0 &&
               image.currentSrc === new URL(artSrc, document.baseURI).href
-            )
+            ) {
               setLoadedArt(artSrc);
+              // A failed palette must not disable a later valid image.
+              setArtFailed(false);
+            }
           }}
           onError={() => {
             setArtFailed(true);
