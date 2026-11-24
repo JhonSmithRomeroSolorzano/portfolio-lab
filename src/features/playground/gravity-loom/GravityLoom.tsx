@@ -114,12 +114,7 @@ export function GravityLoom() {
   );
 
   function add(point: LoomPoint) {
-    if (attractors.length >= MAX_ATTRACTORS) {
-      setFeedback(
-        "Four attractors is the limit. Remove the last one to place another.",
-      );
-      return;
-    }
+    if (liveAttractors.current.length >= MAX_ATTRACTORS) return;
     const next = addLoomAttractor(liveAttractors.current, point);
     liveAttractors.current = next;
     setAttractors(next);
@@ -426,14 +421,15 @@ export function GravityLoom() {
               Move here
             </button>
             <button
-              disabled={attractors.length >= MAX_ATTRACTORS}
+              aria-disabled={attractors.length >= MAX_ATTRACTORS}
               onClick={() => add(loomPlacements[Number(placement)])}
             >
               Add attractor
             </button>
             <button
-              disabled={attractors.length === 0}
+              aria-disabled={attractors.length === 0}
               onClick={() => {
+                if (!liveAttractors.current.length) return;
                 const next = liveAttractors.current.slice(0, -1);
                 liveAttractors.current = next;
                 setAttractors(next);

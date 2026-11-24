@@ -132,10 +132,11 @@
   color: var(--flow-ink);
   border-color: var(--flow-fill);
 }
-.loom-experience button:hover:not(:disabled) {
+.loom-experience button:hover:not(:disabled):not([aria-disabled="true"]) {
   border-color: var(--accent);
 }
-.loom-experience button:disabled {
+.loom-experience button:disabled,
+.loom-experience button[aria-disabled="true"] {
   opacity: 0.5;
   cursor: default;
 }

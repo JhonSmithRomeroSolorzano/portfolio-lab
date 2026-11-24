@@ -581,6 +581,15 @@ buffer or change the pure, allocating field model.
 
 The active Loom gesture retains its initial pointer-to-point offset, so grabbing a handle off-center does not reposition it. Cancellation is scoped to that gesture's pointer ID; a secondary pointer cannot cancel the primary grab. Space ignores auto-repeat while arrows retain repeated movement. Position descriptions are shared by the visible fine-control readout and the single atomic status, updating on user commands/releases rather than animation frames.
 
+Loom's Add attractor and Remove last buttons retain keyboard focus at the four-point
+and empty-field limits. They expose `aria-disabled` with the existing disabled
+appearance; their handlers refuse out-of-bounds actions before changing points,
+selection or feedback. Native disabling at these limits dropped the focused button
+to the document. Tab still advances normally, and the opposite action re-enables
+the control without changing manual pause or reduced-motion behavior. Browser
+regressions cover both limits, repeated activation and recovery at mobile/desktop
+widths in both themes; they do not replace human assistive-technology review.
+
 Flow and strength settings affect future Loom simulation steps. In normal motion mode, changing only these settings preserves the canvas pixels until the next frame; it does not repaint identical paused paths. Attractor changes and reduced-motion settings still redraw immediately. This also avoids small rasterization differences on repeated WebKit paints without relaxing pixel-stability checks.
 
 Loom's feature-local `viewport.ts` maps normalized coordinates independently across the rectangle's width and height, with a 24px handle inset (reduced only for very small fields). Canvas painting, pointer conversion/hit testing, and the resized SVG fallback share that mapping. Pointer conversion excludes the stage border. Attractors and particles are bounded to ±1 on each axis, with soft steering near the outer edge rather than a central square, so edge-positioned handles remain useful to the live field. Resizing preserves normalized positions and trajectory history; SVG observes its container only while canvas is unavailable.
