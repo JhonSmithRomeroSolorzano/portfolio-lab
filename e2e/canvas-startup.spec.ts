@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { build } from "vite";
 import type { CanvasStartupWindow } from "./fixtures/canvas-startup-probe";
@@ -8,7 +9,15 @@ import {
 } from "./helpers/lifecycle-probe";
 
 let fixture: string;
+let styles: string;
 test.beforeAll(async () => {
+  styles = await readFile(
+    new URL(
+      "../src/features/playground/signal-sculpture/signal-sculpture.css",
+      import.meta.url,
+    ),
+    "utf8",
+  );
   const result = await build({
     configFile: false,
     logLevel: "silent",
@@ -48,7 +57,9 @@ for (const resize of [true, false])
     await page.route("**/__canvas-startup", (route) =>
       route.fulfill({
         contentType: "text/html",
-        body: `<style>.sculpture-stage{width:320px;height:240px}canvas{width:100%;height:100%;--accent:green;--lab-trace:teal}</style><article tabindex="-1"><div id="probe-root"></div></article>`,
+        // Retain the real stage/canvas/label positioning. Simplified inline
+        // canvas flow can overlap the controls under Linux WebKit's metrics.
+        body: `<style>${styles}:root{--accent:green;--lab-trace:teal}.sculpture-stage{width:320px;height:240px;min-height:0}</style><article tabindex="-1"><div id="probe-root"></div></article>`,
       }),
     );
     await page.goto("/__canvas-startup");
