@@ -339,6 +339,16 @@ as observers/listeners. Explicit controls and animation clocks are not debounced
 Engine still owns palette/guide invalidation and creates a new raster only when
 backing dimensions change; artwork-loading policy remains in its feature.
 
+Canvas observation setup also owns cleanup before it can return a disposer. If
+subscription, initial measurement, or the synchronous first redraw throws, it
+disconnects established observers, removes its resize listener, cancels queued
+invalidation, and rethrows the original error to the caller. Late deliveries cannot
+restart a failed observer. Controlled setup-failure tests cover those boundaries;
+a browser fixture exercises repeated first-paint failures and recovery through the
+actual Sculpture component and experiment boundary, with and without ResizeObserver.
+This does not catch later asynchronous drawing errors or establish exception safety
+for resources allocated separately by a renderer.
+
 Without ResizeObserver, the same mutation observer also watches the drawing
 target's `hidden` attribute. Sculpture and Loom initially hide their canvas or
 host until allocation succeeds; revealing it must remeasure the visible bounds
