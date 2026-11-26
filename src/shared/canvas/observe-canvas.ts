@@ -64,30 +64,37 @@ export function observeCanvasEnvironment(
   function schedule() {
     if (!disposed && !frame) frame = requestAnimationFrame(refresh);
   }
-  const size =
-    typeof ResizeObserver === "undefined"
-      ? undefined
-      : new ResizeObserver(schedule);
-  const appearance = new MutationObserver(schedule);
-  size?.observe(target);
-  appearance.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ["data-theme"],
-  });
-  // Canvas availability can unhide this target after the synchronous first
-  // measurement. Without ResizeObserver, that reveal needs its own invalidation.
-  if (!size)
-    appearance.observe(target, {
-      attributes: true,
-      attributeFilter: ["hidden"],
-    });
-  window.addEventListener("resize", schedule);
-  refresh();
-  return () => {
+  let size: ResizeObserver | undefined;
+  let appearance: MutationObserver | undefined;
+  const dispose = () => {
     disposed = true;
     cancelAnimationFrame(frame);
     size?.disconnect();
-    appearance.disconnect();
+    appearance?.disconnect();
     window.removeEventListener("resize", schedule);
   };
+  try {
+    if (typeof ResizeObserver !== "undefined")
+      size = new ResizeObserver(schedule);
+    appearance = new MutationObserver(schedule);
+    size?.observe(target);
+    appearance.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+    // Canvas availability can unhide this target after the synchronous first
+    // measurement. Without ResizeObserver, that reveal needs its own invalidation.
+    if (!size)
+      appearance.observe(target, {
+        attributes: true,
+        attributeFilter: ["hidden"],
+      });
+    window.addEventListener("resize", schedule);
+    refresh();
+  } catch (error) {
+    // A failed first paint cannot return cleanup to its owner/error boundary.
+    dispose();
+    throw error;
+  }
+  return dispose;
 }

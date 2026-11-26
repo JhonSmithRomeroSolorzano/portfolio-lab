@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { observeCanvas } from "../src/shared/canvas/observe-canvas";
+import {
+  observeCanvas,
+  observeCanvasEnvironment,
+} from "../src/shared/canvas/observe-canvas";
 
 test("canvas observers coalesce changes, skip identical state, retain DPR and cancel disposal", () => {
   for (const [hasResizeObserver, maxRatio] of [
@@ -142,3 +145,85 @@ test("canvas observers coalesce changes, skip identical state, retain DPR and ca
     }
   }
 });
+
+for (const resize of [true, false])
+  for (const failure of ["observation", "measurement", "paint"] as const)
+    test(`canvas setup releases resources after ${failure} fails, ResizeObserver=${resize}`, (t) => {
+      const expected = new Error(`Failed ${failure}`);
+      const targets = new Set<object>();
+      const callbacks: (() => void)[] = [];
+      const listeners = new Set<() => void>();
+      const frames = new Map<number, FrameRequestCallback>();
+      let frame = 0;
+      class Observer {
+        constructor(callback: () => void) {
+          callbacks.push(callback);
+        }
+        observe(target: object) {
+          if (target === root && failure === "observation") throw expected;
+          targets.add(this);
+        }
+        disconnect() {
+          targets.delete(this);
+        }
+      }
+      const root = { dataset: { theme: "light" } };
+      const globals = {
+        document: { documentElement: root },
+        window: {
+          devicePixelRatio: 1,
+          addEventListener: (_: string, callback: () => void) =>
+            listeners.add(callback),
+          removeEventListener: (_: string, callback: () => void) =>
+            listeners.delete(callback),
+        },
+        ResizeObserver: resize ? Observer : undefined,
+        MutationObserver: Observer,
+        requestAnimationFrame: (callback: FrameRequestCallback) => {
+          frames.set(++frame, callback);
+          return frame;
+        },
+        cancelAnimationFrame: (id: number) => frames.delete(id),
+      };
+      for (const [key, value] of Object.entries(globals)) {
+        const previous = Object.getOwnPropertyDescriptor(globalThis, key);
+        Object.defineProperty(globalThis, key, { value, configurable: true });
+        t.after(() => {
+          if (previous) Object.defineProperty(globalThis, key, previous);
+          else Reflect.deleteProperty(globalThis, key);
+        });
+      }
+      let paints = 0;
+      assert.throws(
+        () =>
+          observeCanvasEnvironment(
+            {
+              getBoundingClientRect() {
+                if (failure === "measurement") throw expected;
+                return { width: 320, height: 240 };
+              },
+            } as HTMLElement,
+            () => {
+              paints++;
+              // A synchronous invalidation during setup must be canceled too.
+              for (const callback of callbacks) callback();
+              throw expected;
+            },
+          ),
+        (error) => error === expected,
+      );
+      assert.equal(targets.size, 0, "failed setup retains no observer targets");
+      assert.equal(
+        listeners.size,
+        0,
+        "failed setup retains no resize listener",
+      );
+      assert.equal(frames.size, 0, "failed setup cancels queued redraws");
+      for (const callback of callbacks) callback();
+      assert.equal(
+        frames.size,
+        0,
+        "late deliveries cannot restart observation",
+      );
+      assert.equal(paints, failure === "paint" ? 1 : 0);
+    });
