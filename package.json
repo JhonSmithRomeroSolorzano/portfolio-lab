@@ -45,7 +45,7 @@
     "eslint": "^10.15.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "lighthouse": "13.6.0",
-    "pdfkit": "0.20.2",
+    "pdfkit": "0.21.0",
     "prettier": "^3.10.1",
     "tsx": "^4.19.0",
     "typescript": "~6.0.3",
