@@ -338,6 +338,18 @@ removed on cleanup, and no fallback listeners are installed without a target or
 alongside an available observer. Browser fixtures exercise real scroll/resize
 exits, explicit replay, and listener restoration after unmount.
 
+Playback observers use thresholds `[0, Number.EPSILON]` and require a positive
+intersection ratio. The [Intersection Observer contract](https://www.w3.org/TR/intersection-observer/#dom-intersectionobserverentry-isintersecting)
+allows `isIntersecting` to remain true when rectangles only touch at an edge;
+a zero-only threshold does not report the transition between that contact and
+visible area. The near-zero positive threshold covers that boundary for automatic
+canvas playback, the stack-map flow, and explicit-playback interruption, without
+waiting for a percentage of a large drawing. Native Chromium/WebKit hook fixtures
+exercise initial edge contact, one-pixel entry, exit through a one-pixel sliver,
+and re-entry. Automatic playback resumes; explicit playback stays stopped until
+replayed. Existing batch ordering, hidden-tab, reduced-motion, manual-pause and
+fallback-listener policies remain unchanged; no scroll polling is added.
+
 The three canvas experiences share `shared/canvas/observe-canvas.ts` for environmental
 invalidation only. ResizeObserver, window resize, and theme notifications coalesce
 into one frame; unchanged logical size, capped pixel ratio, and theme do not clear
