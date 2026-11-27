@@ -41,7 +41,9 @@ export function useViewportPlayback(
               if (entry)
                 setInView(entry.isIntersecting && entry.intersectionRatio > 0);
             },
-            { threshold: [0, 0.01] },
+            // Edge-adjacent targets still intersect at ratio zero. A positive
+            // threshold distinguishes that from even a sliver of visible art.
+            { threshold: [0, Number.EPSILON] },
           );
     if (observer) observer.observe(node);
     else {

@@ -49,13 +49,19 @@ export function useStackFlow() {
     const observer =
       typeof IntersectionObserver === "undefined"
         ? undefined
-        : new IntersectionObserver((entries) => {
-            // This observer owns one drawing. Older entries in a delivered
-            // batch must not keep its interval alive after it leaves view.
-            const latest = entries[entries.length - 1];
-            if (latest)
-              setInView(latest.isIntersecting && latest.intersectionRatio > 0);
-          });
+        : new IntersectionObserver(
+            (entries) => {
+              // This observer owns one drawing. Older entries in a delivered
+              // batch must not keep its interval alive after it leaves view.
+              const latest = entries[entries.length - 1];
+              if (latest)
+                setInView(
+                  latest.isIntersecting && latest.intersectionRatio > 0,
+                );
+            },
+            // Notify when edge-only contact becomes visible (or vice versa).
+            { threshold: [0, Number.EPSILON] },
+          );
     if (target.current) observer?.observe(target.current);
     return () => {
       observer?.disconnect();

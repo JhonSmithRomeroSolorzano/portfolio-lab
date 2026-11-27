@@ -220,6 +220,19 @@ and [separate fan/core airflow](https://www.grc.nasa.gov/WWW/K-12/airplane/turbf
 
 Theme synchronization accepts only matching-key or clear events from local storage; session-storage events from same-origin frames and events without a matching storage area cannot change the visit's appearance. If accessing local storage is denied, the listener leaves the current choice intact. Native browser regressions cover iframe session-storage set/remove/clear isolation, legitimate cross-tab local-storage set/remove/clear synchronization, and keyboard toggling in both themes at desktop/mobile widths. The control's existing system preference, hydration, and visit-local fallback behavior are unchanged.
 
+In forced-color mode, pressed-button and current-navigation controls map their
+shared selected fill/text tokens to the system `Highlight`/`HighlightText` pair.
+Scoping the tokens to selected lab buttons and current links leaves artwork colors
+and ordinary Matrix themes unchanged. Those controls alone opt out of automatic
+forced-color adjustment, since its Canvas text backplate can obscure HighlightText;
+their explicit fill, text and focus outline still use the visitor's system colors.
+Other content retains native adjustment, and focus stays independent of selection.
+Browser checks exercise keyboard selection and nested
+labels across the six labs with pressed controls, plus current-link navigation.
+Chromium provides forced-palette painting coverage; WebKit checks the active media
+rule and resolved system colors, not a Windows High Contrast environment. Human
+high-contrast and screen-reader validation remain separate.
+
 The generic `useMediaQuery` hook keeps one lazily created MediaQueryList in a memoized source for the current hook/query. Subscription and snapshot reads use that same object; query changes replace the source, and React releases the old listener on replacement or unmount. There is no global query cache or cross-component subscription registry. Store creation does not access the browser, and the unchanged false server/hydration snapshot keeps prerendering safe. A Node server-render test rejects browser-global access. A browser-only fixture bundles the actual hook and installed React in memory, outside `dist`, to test controlled cross-instance lag, rerenders, query changes, cleanup, and hydration; native production-page tests separately exercise system appearance changes and persisted keyboard choices. The controlled lag is an external-store contract fixture, not proof of a native-browser failure.
 
 React's effective-motion subscription and snapshot use one lazily created browser
@@ -337,6 +350,18 @@ playback; returning onscreen still requires explicit replay. Both listeners are
 removed on cleanup, and no fallback listeners are installed without a target or
 alongside an available observer. Browser fixtures exercise real scroll/resize
 exits, explicit replay, and listener restoration after unmount.
+
+Playback observers use thresholds `[0, Number.EPSILON]` and require a positive
+intersection ratio. The [Intersection Observer contract](https://www.w3.org/TR/intersection-observer/#dom-intersectionobserverentry-isintersecting)
+allows `isIntersecting` to remain true when rectangles only touch at an edge;
+a zero-only threshold does not report the transition between that contact and
+visible area. The near-zero positive threshold covers that boundary for automatic
+canvas playback, the stack-map flow, and explicit-playback interruption, without
+waiting for a percentage of a large drawing. Native Chromium/WebKit hook fixtures
+exercise initial edge contact, one-pixel entry, exit through a one-pixel sliver,
+and re-entry. Automatic playback resumes; explicit playback stays stopped until
+replayed. Existing batch ordering, hidden-tab, reduced-motion, manual-pause and
+fallback-listener policies remain unchanged; no scroll polling is added.
 
 The three canvas experiences share `shared/canvas/observe-canvas.ts` for environmental
 invalidation only. ResizeObserver, window resize, and theme notifications coalesce

@@ -37,12 +37,20 @@ export function usePlaybackInterruption(
     };
     const observer =
       node && typeof IntersectionObserver !== "undefined"
-        ? new IntersectionObserver((entries) => {
-            // One observed target: queued earlier transitions must not override
-            // its latest visibility, just as in useViewportPlayback.
-            const entry = entries[entries.length - 1];
-            if (entry && !entry.isIntersecting) stop();
-          })
+        ? new IntersectionObserver(
+            (entries) => {
+              // One observed target: queued earlier transitions must not override
+              // its latest visibility, just as in useViewportPlayback.
+              const entry = entries[entries.length - 1];
+              if (
+                entry &&
+                (!entry.isIntersecting || entry.intersectionRatio <= 0)
+              )
+                stop();
+            },
+            // A zero-area edge contact can still have isIntersecting=true.
+            { threshold: [0, Number.EPSILON] },
+          )
         : undefined;
     if (node) {
       if (observer) observer.observe(node);

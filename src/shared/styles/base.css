@@ -101,6 +101,19 @@ summary:focus-visible {
 button {
   color: inherit;
 }
+@media (forced-colors: active) {
+  .play-exhibit button[aria-pressed="true"],
+  a[aria-current="location"] {
+    /* Keep the shared selected fill readable in the visitor's system palette.
+       Author hex colors are otherwise flattened to the unselected surface. */
+    --flow-fill: Highlight;
+    --flow-ink: HighlightText;
+    --focus: CanvasText;
+    /* The colors already follow the system palette. Suppress automatic text
+       backplates here: a Canvas backplate can obscure HighlightText. */
+    forced-color-adjust: none;
+  }
+}
 svg {
   flex-shrink: 0;
 }
