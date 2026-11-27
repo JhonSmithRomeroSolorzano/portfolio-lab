@@ -101,6 +101,15 @@ summary:focus-visible {
 button {
   color: inherit;
 }
+@media (forced-colors: active) {
+  button[aria-pressed],
+  a[aria-current="location"] {
+    /* Keep the shared selected fill readable in the visitor's system palette.
+       Author hex colors are otherwise flattened to the unselected surface. */
+    --flow-fill: Highlight;
+    --flow-ink: HighlightText;
+  }
+}
 svg {
   flex-shrink: 0;
 }
