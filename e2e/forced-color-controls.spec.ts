@@ -27,6 +27,7 @@ for (const theme of ["light", "dark"] as const) {
   for (const experience of experiences) {
     test(`${experience.id} keeps selection visible in forced colors, ${theme}`, async ({
       page,
+      browserName,
     }, testInfo) => {
       await page.setViewportSize({
         width: theme === "light" ? 1440 : 375,
@@ -64,6 +65,9 @@ for (const theme of ["light", "dark"] as const) {
         await expect(choice).toBeInViewport();
         await expect(choice).toHaveCSS("background-color", palette.fill);
         await expect(choice).toHaveCSS("color", palette.ink);
+        // WebKit emulates the media query but does not implement forced-color-adjust.
+        if (browserName === "chromium")
+          await expect(choice).toHaveCSS("forced-color-adjust", "none");
         expect(palette.fill).not.toBe(unselectedFill);
         await expect(choice).toHaveCSS("outline-style", "solid");
         await expect(choice).toHaveCSS("outline-width", "3px");
@@ -77,7 +81,8 @@ for (const theme of ["light", "dark"] as const) {
   }
   test(`current navigation stays distinct in forced colors, ${theme}`, async ({
     page,
-  }) => {
+    browserName,
+  }, testInfo) => {
     await page.setViewportSize({
       width: theme === "light" ? 1440 : 375,
       height: 1000,
@@ -113,6 +118,8 @@ for (const theme of ["light", "dark"] as const) {
     await expect(contact).toHaveAttribute("aria-current", "location");
     await expect(contact).toHaveCSS("background-color", palette.fill);
     await expect(contact).toHaveCSS("color", palette.ink);
+    if (browserName === "chromium")
+      await expect(contact).toHaveCSS("forced-color-adjust", "none");
     await expect(experience).not.toHaveAttribute("aria-current", "location");
     await expect(experience).not.toHaveCSS("background-color", palette.fill);
     await navigation.screenshot({

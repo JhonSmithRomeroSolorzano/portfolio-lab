@@ -222,9 +222,12 @@ Theme synchronization accepts only matching-key or clear events from local stora
 
 In forced-color mode, pressed-button and current-navigation controls map their
 shared selected fill/text tokens to the system `Highlight`/`HighlightText` pair.
-Scoping the tokens to controls leaves artwork colors and ordinary Matrix themes
-unchanged. Native forced-color adjustment stays enabled, and focus outlines remain
-independent of selection. Browser checks exercise keyboard selection and nested
+Scoping the tokens to selected lab buttons and current links leaves artwork colors
+and ordinary Matrix themes unchanged. Those controls alone opt out of automatic
+forced-color adjustment, since its Canvas text backplate can obscure HighlightText;
+their explicit fill, text and focus outline still use the visitor's system colors.
+Other content retains native adjustment, and focus stays independent of selection.
+Browser checks exercise keyboard selection and nested
 labels across the six labs with pressed controls, plus current-link navigation.
 Chromium provides forced-palette painting coverage; WebKit checks the active media
 rule and resolved system colors, not a Windows High Contrast environment. Human
